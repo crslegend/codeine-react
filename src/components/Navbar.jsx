@@ -51,14 +51,14 @@ const Navbar = ({ location }) => {
   const memberNavbar = (
     <Fragment>
       <ListItem className={classes.listItem}>
-        <Link to="/" className={classes.listItemLink}>
+        <Link to="/content-provider" className={classes.listItemLink}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Content Providers
           </Typography>
         </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Link to="/" className={classes.listItemLink}>
+        <Link to="/industry" className={classes.listItemLink}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Industry Partners
           </Typography>
@@ -91,6 +91,92 @@ const Navbar = ({ location }) => {
     </Fragment>
   );
 
+  const industryNavbar = (
+    <Fragment>
+      <ListItem className={classes.listItem}>
+        <Link to="/member" className={classes.listItemLink}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Members
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Link to="/content-provider" className={classes.listItemLink}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Content Providers
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Link to="/" className={classes.listItemLink}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Log In
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/"
+          style={{
+            backgroundColor: "#437FC7",
+            textTransform: "capitalize",
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Join Codeine
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
+  const contentProviderNavbar = (
+    <Fragment>
+      <ListItem className={classes.listItem}>
+        <Link to="/member" className={classes.listItemLink}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Members
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Link to="/industry" className={classes.listItemLink}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Industry Partners
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Link to="/" className={classes.listItemLink}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Log In
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/"
+          style={{
+            backgroundColor: "#437FC7",
+            textTransform: "capitalize",
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Join Codeine
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
   return (
     <AppBar className={classes.appBar} elevation={0}>
       <Toolbar className={classes.toolbar}>
@@ -99,8 +185,12 @@ const Navbar = ({ location }) => {
         </Link>
         <List className={classes.list}>
           {(() => {
-            if (location.pathname === "/") {
+            if (location.pathname === "/member") {
               return memberNavbar;
+            } else if (location.pathname === "/industry") {
+              return industryNavbar;
+            } else {
+              return contentProviderNavbar;
             }
           })()}
         </List>
