@@ -1,13 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  AppBar,
-  Button,
-  List,
-  ListItem,
-  Toolbar,
-  Typography,
-} from "@material-ui/core";
+import { AppBar, List, Toolbar, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,147 +28,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
   },
-  listItem: {
-    whiteSpace: "nowrap",
-  },
-  listItemLink: {
-    textDecoration: "none",
-  },
 }));
 
-const Navbar = ({ location }) => {
+const Navbar = ({ navbarItems }) => {
   const classes = useStyles();
-
-  console.log(location);
-
-  const memberNavbar = (
-    <Fragment>
-      <ListItem className={classes.listItem}>
-        <Link to="/content-provider" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Content Providers
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/industry" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Industry Partners
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/" className={classes.listItemLink}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          component={Link}
-          to="/"
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const industryNavbar = (
-    <Fragment>
-      <ListItem className={classes.listItem}>
-        <Link to="/member" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Members
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/content-provider" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Content Providers
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/" className={classes.listItemLink}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          component={Link}
-          to="/"
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Join Codeine
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const contentProviderNavbar = (
-    <Fragment>
-      <ListItem className={classes.listItem}>
-        <Link to="/member" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Members
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/industry" className={classes.listItemLink}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Industry Partners
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link to="/" className={classes.listItemLink}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          component={Link}
-          to="/"
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Join Codeine
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
 
   return (
     <AppBar className={classes.appBar} elevation={0}>
@@ -183,17 +39,7 @@ const Navbar = ({ location }) => {
         <Link to="/" className={classes.codeineLogo}>
           <Typography variant="h4">codeine</Typography>
         </Link>
-        <List className={classes.list}>
-          {(() => {
-            if (location.pathname === "/member") {
-              return memberNavbar;
-            } else if (location.pathname === "/industry") {
-              return industryNavbar;
-            } else {
-              return contentProviderNavbar;
-            }
-          })()}
-        </List>
+        <List className={classes.list}>{navbarItems}</List>
       </Toolbar>
     </AppBar>
   );
