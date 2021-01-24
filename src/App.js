@@ -1,24 +1,14 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { Typography } from "@material-ui/core";
+import React from "react";
+// import "./App.css";
+import { Route, Switch } from "react-router-dom";
+import MemberLanding from "./member/MemberLanding";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Typography variant="h1">Coding made addictive!</Typography>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Switch>
+      <Route exact path="/" component={MemberLanding} />
+    </Switch>
   );
-}
+};
 
 export default App;
