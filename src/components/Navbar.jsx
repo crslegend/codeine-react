@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     display: "flex",
     flexWrap: "nowrap",
-    paddingLeft: "60px",
-    paddingRight: "60px",
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
   },
   codeineLogo: {
     textDecoration: "none",
