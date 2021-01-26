@@ -7,11 +7,11 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: "#fff",
     // position: "absolute",
-    position: "relative",
+    position: "fixed",
     zIndex: "unset",
   },
   toolbar: {
-    minHeight: "65px",
+    height: "65px",
     flex: "1",
     alignItems: "center",
     justifyContent: "space-between",
@@ -34,7 +34,7 @@ const Navbar = ({ navbarItems }) => {
   const classes = useStyles();
 
   return (
-    <AppBar className={classes.appBar} elevation={0}>
+    <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
         <Link to="/" className={classes.codeineLogo}>
           <Typography variant="h4">codeine</Typography>

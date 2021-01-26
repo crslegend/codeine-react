@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
+import Sidebar from "../components/Sidebar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +63,7 @@ const MemberLanding = () => {
   return (
     <div className={classes.root}>
       <Navbar navbarItems={memberNavbar} />
+      <Sidebar />
     </div>
   );
 };
