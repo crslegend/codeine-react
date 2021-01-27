@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { Link, NavLink } from "react-router-dom";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 import { Dashboard } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
