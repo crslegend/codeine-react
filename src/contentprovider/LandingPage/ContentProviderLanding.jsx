@@ -6,6 +6,7 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 import FirstSection from "./components/FirstSection";
 import SecondSection from "./components/SecondSection";
 import ThirdSection from "./components/ThirdSection";
+import FourthSection from "./components/FourthSection";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +69,8 @@ const ContentProviderLanding = () => {
       <FirstSection />
       <SecondSection />
       <ThirdSection />
+      <div style={{ backgroundColor: "#fff", height: 50 }} />
+      <FourthSection />
     </div>
   );
 };
