@@ -7,6 +7,7 @@ import FirstSection from "./components/FirstSection";
 import SecondSection from "./components/SecondSection";
 import ThirdSection from "./components/ThirdSection";
 import FourthSection from "./components/FourthSection";
+import Footer from "./components/Footer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +72,7 @@ const ContentProviderLanding = () => {
       <ThirdSection />
       <div style={{ backgroundColor: "#fff", height: 50 }} />
       <FourthSection />
+      <Footer />
     </div>
   );
 };
