@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
 import landingmodel from "../../assets/member-landing-model.jpg";
+import FeaturedCourses from "./FeaturedCourses";
+import FeaturedArticles from "./FeaturedArticles";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -113,11 +115,13 @@ const MemberLandingBody = () => {
               alt="Landing Page Model"
             />
           </Grid>
-          <Grid item xs={1} />
+          <Grid item xs={9} sm={3} md={2} lg={1} />
         </Grid>
+        <FeaturedCourses />
+        <FeaturedArticles />
       </Grid>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(MemberLandingBody);
+export default MemberLandingBody;
