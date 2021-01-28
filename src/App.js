@@ -3,7 +3,7 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import MemberLanding from "./member/MemberLanding";
 import IndustryLanding from "./industrypartner/IndustryLanding";
-import ContentProviderLanding from "./contentprovider/ContentProviderLanding";
+import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 
 const App = () => {
   return (

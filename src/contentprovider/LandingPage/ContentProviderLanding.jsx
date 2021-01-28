@@ -1,11 +1,12 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
+import FirstSection from "./components/FirstSection";
 
 const useStyles = makeStyles((theme) => ({
-  oot: {
+  root: {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
@@ -62,6 +63,7 @@ const ContentProviderLanding = () => {
   return (
     <div className={classes.root}>
       <Navbar navbarItems={contentProviderNavbar} />
+      <FirstSection />
     </div>
   );
 };
