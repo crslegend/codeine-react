@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 import FirstSection from "./components/FirstSection";
+import SecondSection from "./components/SecondSection";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,6 +65,7 @@ const ContentProviderLanding = () => {
     <div className={classes.root}>
       <Navbar navbarItems={contentProviderNavbar} />
       <FirstSection />
+      <SecondSection />
     </div>
   );
 };

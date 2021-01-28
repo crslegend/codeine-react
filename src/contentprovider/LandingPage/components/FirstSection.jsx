@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
 import image1 from "../../../assets/first-section-img.png";
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     backgroundColor: theme.palette.primary.main,
     paddingTop: "65px",
-    paddingRight: theme.spacing(10),
+    paddingRight: theme.spacing(5),
     paddingLeft: theme.spacing(15),
     display: "flex",
     flexDirection: "row",
