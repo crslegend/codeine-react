@@ -4,6 +4,7 @@ import { Grid, Typography, Button } from "@material-ui/core";
 import FeaturedCourses from "./FeaturedCourses";
 import FeaturedArticles from "./FeaturedArticles";
 import Categories from "./Categories";
+import RecentProjects from "./RecentProjects";
 
 import landingmodel from "../../assets/member-landing-model.jpg";
 
@@ -122,6 +123,7 @@ const MemberLandingBody = () => {
         <FeaturedCourses />
         <FeaturedArticles />
         <Categories />
+        <RecentProjects />
       </Grid>
     </Fragment>
   );
