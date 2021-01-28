@@ -59,11 +59,7 @@ const ThirdSection = () => {
         >
           Earn money at home
         </Typography>
-        <Typography
-          variant="h5"
-          className={classes.typography}
-          style={{ paddingTop: "40px" }}
-        >
+        <Typography variant="h5" className={classes.typography}>
           Earn money every time a student purchases your course.
           <br /> Get paid monthly through your bank account!
         </Typography>
