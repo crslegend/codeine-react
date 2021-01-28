@@ -1,9 +1,11 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
-import landingmodel from "../../assets/member-landing-model.jpg";
 import FeaturedCourses from "./FeaturedCourses";
 import FeaturedArticles from "./FeaturedArticles";
+import Categories from "./Categories";
+
+import landingmodel from "../../assets/member-landing-model.jpg";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -119,6 +121,7 @@ const MemberLandingBody = () => {
         </Grid>
         <FeaturedCourses />
         <FeaturedArticles />
+        <Categories />
       </Grid>
     </Fragment>
   );

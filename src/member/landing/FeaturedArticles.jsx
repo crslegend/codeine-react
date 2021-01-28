@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button } from "@material-ui/core";
+import { Grid, Typography, Card, CardContent } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -20,6 +20,20 @@ const styles = makeStyles((theme) => ({
       fontSize: "32px",
     },
   },
+  cardroot: {
+    backgroundColor: "transparent",
+    marginTop: "6vh",
+    width: "80%",
+    [theme.breakpoints.down("sm")]: {
+      width: "90%",
+    },
+  },
+  cardheading: {
+    fontSize: "64px",
+    color: "#CECECE",
+    marginLeft: "1vw",
+    lineHeight: "60px",
+  },
 }));
 
 const FeaturedArticles = () => {
@@ -32,6 +46,104 @@ const FeaturedArticles = () => {
         <Grid item xs={10}>
           <Typography className={classes.heading}>FEATURED</Typography>
           <Typography className={classes.heading}>ARTICLES</Typography>
+          <Grid container>
+            <Grid item xs={4}>
+              <Card elevation={0} className={classes.cardroot}>
+                <CardContent>
+                  <Grid container>
+                    <Grid item xs={12} lg={4}>
+                      <Typography className={classes.cardheading}>
+                        01
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} lg={8}>
+                      <Typography variant="h5">Author</Typography>
+                      <Typography
+                        variant="h4"
+                        style={{
+                          fontWeight: "600",
+                        }}
+                      >
+                        Title of article
+                      </Typography>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          color: "#9B9B9B",
+                        }}
+                      >
+                        28 Jan 2021 | category
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={4}>
+              <Card elevation={0} className={classes.cardroot}>
+                <CardContent>
+                  <Grid container>
+                    <Grid item xs={12} lg={4}>
+                      <Typography className={classes.cardheading}>
+                        02
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} lg={8}>
+                      <Typography variant="h5">Author</Typography>
+                      <Typography
+                        variant="h4"
+                        style={{
+                          fontWeight: "600",
+                        }}
+                      >
+                        Title of article
+                      </Typography>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          color: "#9B9B9B",
+                        }}
+                      >
+                        28 Jan 2021 | category
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={4}>
+              <Card elevation={0} className={classes.cardroot}>
+                <CardContent>
+                  <Grid container>
+                    <Grid item xs={12} lg={4}>
+                      <Typography className={classes.cardheading}>
+                        03
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} lg={8}>
+                      <Typography variant="h5">Author</Typography>
+                      <Typography
+                        variant="h4"
+                        style={{
+                          fontWeight: "600",
+                        }}
+                      >
+                        Title of article
+                      </Typography>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          color: "#9B9B9B",
+                        }}
+                      >
+                        28 Jan 2021 | category
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={1} />
       </Grid>
