@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 import FirstSection from "./components/FirstSection";
 import SecondSection from "./components/SecondSection";
+import ThirdSection from "./components/ThirdSection";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,6 +67,7 @@ const ContentProviderLanding = () => {
       <Navbar navbarItems={contentProviderNavbar} />
       <FirstSection />
       <SecondSection />
+      <ThirdSection />
     </div>
   );
 };

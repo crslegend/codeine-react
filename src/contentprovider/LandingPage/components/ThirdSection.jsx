@@ -1,31 +1,32 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
-import image1 from "../../../assets/first-section-img.png";
+import image from "../../../assets/third-section-img.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "100%",
-    backgroundColor: theme.palette.primary.main,
-    paddingTop: "65px",
-    paddingRight: theme.spacing(5),
-    paddingLeft: theme.spacing(15),
+    height: "100%",
+    backgroundColor: "#fff",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingLeft: theme.spacing(15),
   },
   leftCol: {
     display: "flex",
     flexDirection: "column",
     paddingTop: "70px",
+    paddingRight: theme.spacing(2),
   },
   rightCol: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    width: "50%",
   },
   typography: {
-    color: "#fff",
+    color: "#000",
     paddingBottom: "10px",
   },
   startButton: {
@@ -39,50 +40,39 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FirstSection = () => {
+const ThirdSection = () => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
       <div className={classes.leftCol}>
         <Typography
-          variant="h5"
+          variant="h6"
           className={classes.typography}
-          style={{ textTransform: "uppercase", fontWeight: 600 }}
+          style={{ textTransform: "uppercase" }}
         >
-          Teach Online
+          Flexible and Rewarding
         </Typography>
         <Typography
           variant="h1"
           className={classes.typography}
-          style={{ fontWeight: 700 }}
+          style={{ paddingTop: "40px", fontWeight: 600 }}
         >
-          Exceptional{" "}
-          <span style={{ color: "#437FC7", backgroundColor: "#fff" }}>
-            Opportunities
-          </span>
+          Earn money at home
         </Typography>
         <Typography
           variant="h5"
           className={classes.typography}
-          style={{ paddingTop: "20px" }}
+          style={{ paddingTop: "40px" }}
         >
-          Create an online video course and earn money
-          <br />
-          teaching people around the world.
+          Earn money every time a student purchases your course.
+          <br /> Get paid monthly through your bank account!
         </Typography>
-        <Button className={classes.startButton} style={{ marginTop: "40px" }}>
-          Start Now
-        </Button>
       </div>
       <div className={classes.rightCol}>
-        <img
-          src={image1}
-          alt="Exceptional Opportunities in Teaching"
-          width="80%"
-        />
+        <img src={image} alt="Earn Money From Home" width="100%" />
       </div>
     </div>
   );
 };
 
-export default FirstSection;
+export default ThirdSection;

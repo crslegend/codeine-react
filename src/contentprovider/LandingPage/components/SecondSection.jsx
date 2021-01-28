@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     fontWeight: 600,
     "&:hover": {
-      backgroundColor: "#fff",
+      backgroundColor: "#E3E3E3",
     },
   },
 }));
@@ -45,7 +45,7 @@ const SecondSection = () => {
       <div className={classes.leftCol}>
         <img
           src={image}
-          alt="Exceptional Opportunities in Teaching"
+          alt="growing selection of in-demand courses"
           width="90%"
         />
       </div>
@@ -67,10 +67,10 @@ const SecondSection = () => {
         <Typography
           variant="h5"
           className={classes.typography}
-          style={{ paddingTop: "50px" }}
+          style={{ paddingTop: "40px" }}
         >
           Help people learn new skills, advance their careers, and
-          <br /> explore their hobbies by sharing your knowledge
+          <br /> explore their hobbies by sharing your knowledge.
         </Typography>
       </div>
     </div>
