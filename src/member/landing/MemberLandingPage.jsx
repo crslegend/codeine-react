@@ -1,9 +1,11 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
-import MemberLandingBody from "./MemberLandingBody";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
+
+import MemberLandingBody from "./MemberLandingBody";
+import Footer from "./Footer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,6 +94,7 @@ const MemberLandingPage = () => {
     <div className={classes.root}>
       <Navbar navbarItems={memberNavbar} />
       <MemberLandingBody />
+      <Footer />
     </div>
   );
 };
