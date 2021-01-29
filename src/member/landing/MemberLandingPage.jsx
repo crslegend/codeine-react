@@ -1,32 +1,59 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 
+import MemberLandingBody from "./MemberLandingBody";
+import Footer from "./Footer";
+
 const useStyles = makeStyles((theme) => ({
-  oot: {
+  root: {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
   },
+  listItem: {
+    width: "100%",
+    padding: 10,
+    borderLeft: "5px solid #fff",
+    "&:hover": {
+      backgroundColor: "#F4F4F4",
+      borderLeft: "5px solid #F4F4F4",
+    },
+  },
+  listIcon: {
+    marginLeft: "15px",
+    marginRight: "20px",
+  },
+  activeLink: {
+    width: "100%",
+    padding: 10,
+    color: theme.palette.primary.main,
+    backgroundColor: "#F4F4F4",
+    borderLeft: "5px solid",
+    "&:hover": {
+      borderLeft: "5px solid #437FC7",
+    },
+  },
+  avatar: {
+    width: theme.spacing(15),
+    height: theme.spacing(15),
+    fontSize: "60px",
+  },
 }));
 
-const ContentProviderLanding = () => {
+const MemberLandingPage = () => {
   const classes = useStyles();
 
-  const contentProviderNavbar = (
+  const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button>Test</Button>
-        </Link>
-        <Link to="/member" style={{ textDecoration: "none" }}>
-          {/* <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Members
-          </Typography> */}
-          <Button style={{ textTransform: "none" }}>Members</Button>
+        <Link to="/content-provider" style={{ textDecoration: "none" }}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Content Providers
+          </Typography>
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
@@ -56,7 +83,7 @@ const ContentProviderLanding = () => {
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Join Codeine
+            Sign Up
           </Typography>
         </Button>
       </ListItem>
@@ -65,9 +92,11 @@ const ContentProviderLanding = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar navbarItems={contentProviderNavbar} />
+      <Navbar navbarItems={memberNavbar} />
+      <MemberLandingBody />
+      <Footer />
     </div>
   );
 };
 
-export default ContentProviderLanding;
+export default MemberLandingPage;

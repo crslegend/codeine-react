@@ -18,7 +18,7 @@ import codeinelogowhite from "../assets/industrycodeinewhitelogo.svg";
 import codeinelogodefault from "../assets/industrycodeinedefaultlogo.svg";
 
 const useStyles = makeStyles((theme) => ({
-  oot: {
+  root: {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",

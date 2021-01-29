@@ -1,9 +1,9 @@
 import React from "react";
 // import "./App.css";
 import { Redirect, Route, Switch } from "react-router-dom";
-import MemberLanding from "./member/MemberLanding";
+import MemberLandingPage from "./member/landing/MemberLandingPage";
 import IndustryLanding from "./industrypartner/IndustryLanding";
-import ContentProviderLanding from "./contentprovider/ContentProviderLanding";
+import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 
 const App = () => {
   return (
@@ -13,7 +13,7 @@ const App = () => {
         path="/content-provider"
         component={ContentProviderLanding}
       />
-      <Route exact path="/member" component={MemberLanding} />
+      <Route exact path="/member" component={MemberLandingPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Redirect from="/" to="/member" />
     </Switch>
