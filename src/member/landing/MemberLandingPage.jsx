@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
-import { Link, NavLink } from "react-router-dom";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
-import Sidebar from "../components/Sidebar";
-import { Dashboard } from "@material-ui/icons";
+import Navbar from "../../components/Navbar";
+import { Link } from "react-router-dom";
+import { Button, ListItem, Typography } from "@material-ui/core";
+
+import MemberLandingBody from "./MemberLandingBody";
+import Footer from "./Footer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MemberLanding = () => {
+const MemberLandingPage = () => {
   const classes = useStyles();
 
   const memberNavbar = (
@@ -89,46 +90,13 @@ const MemberLanding = () => {
     </Fragment>
   );
 
-  const sidebarHead = (
-    <Fragment>
-      <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>P</Avatar>
-      </div>
-      <Typography variant="h6">Name here</Typography>
-      <Typography variant="body1">Position here</Typography>
-    </Fragment>
-  );
-
-  const sidebarList = (
-    <Fragment>
-      <ListItem
-        component={NavLink}
-        to="/member"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
-      </ListItem>
-      <ListItem
-        component={NavLink}
-        to="/industry"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
-      </ListItem>
-    </Fragment>
-  );
-
   return (
     <div className={classes.root}>
       <Navbar navbarItems={memberNavbar} />
+      <MemberLandingBody />
+      <Footer />
     </div>
   );
 };
 
-export default MemberLanding;
+export default MemberLandingPage;
