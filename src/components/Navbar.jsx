@@ -1,7 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { AppBar, List, Toolbar, Typography } from "@material-ui/core";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -30,17 +29,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Navbar = ({ navbarItems }) => {
+const Navbar = ({ loggedIn, logo, navbarItems }) => {
   const classes = useStyles();
 
   return (
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
-        <Link to="/" className={classes.codeineLogo}>
-          <Typography variant="h4">
-            <strong>codeine</strong>
-          </Typography>
-        </Link>
+        {logo}
         <List className={classes.list}>{navbarItems}</List>
       </Toolbar>
     </AppBar>

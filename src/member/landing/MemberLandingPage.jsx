@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
@@ -6,6 +6,8 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
+
+import logo from "../../assets/logo2.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,10 +44,19 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
+  logoButton: {
+    width: 100,
+    "&:hover,&:focus": {
+      color: "inherit",
+      background: "transparent",
+    },
+  },
 }));
 
 const MemberLandingPage = () => {
   const classes = useStyles();
+
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const memberNavbar = (
     <Fragment>
@@ -90,9 +101,38 @@ const MemberLandingPage = () => {
     </Fragment>
   );
 
+  const memberLoggedInNavbar = (
+    <Fragment>
+      <Button
+        style={{
+          backgroundColor: "#437FC7",
+          textTransform: "capitalize",
+        }}
+      >
+        <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+          Log Out
+        </Typography>
+      </Button>
+    </Fragment>
+  );
+
+  const navLogo = (
+    <Fragment>
+      <Link to="/" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+        <Button className={classes.logoButton}>
+          <img src={logo} width="120%" />
+        </Button>
+      </Link>
+    </Fragment>
+  );
+
   return (
     <div className={classes.root}>
-      <Navbar navbarItems={memberNavbar} />
+      <Navbar
+        loggedIn={loggedIn}
+        logo={navLogo}
+        navbarItems={loggedIn ? memberLoggedInNavbar : memberNavbar}
+      />
       <MemberLandingBody />
       <Footer />
     </div>
