@@ -37,7 +37,9 @@ const Navbar = ({ navbarItems }) => {
     <AppBar className={classes.appBar} elevation={0}>
       <Toolbar className={classes.toolbar}>
         <Link to="/" className={classes.codeineLogo}>
-          <Typography variant="h4">codeine</Typography>
+          <Typography variant="h4">
+            <strong>codeine</strong>
+          </Typography>
         </Link>
         <List className={classes.list}>{navbarItems}</List>
       </Toolbar>
