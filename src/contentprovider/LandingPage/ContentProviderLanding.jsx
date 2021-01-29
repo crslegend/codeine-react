@@ -24,14 +24,10 @@ const ContentProviderLanding = () => {
   const contentProviderNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button>Test</Button>
-        </Link>
         <Link to="/member" style={{ textDecoration: "none" }}>
-          {/* <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Members
-          </Typography> */}
-          <Button style={{ textTransform: "none" }}>Members</Button>
+          </Typography>
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
