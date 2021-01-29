@@ -127,7 +127,6 @@ const MemberLanding = () => {
   return (
     <div className={classes.root}>
       <Navbar navbarItems={memberNavbar} />
-      <Sidebar head={sidebarHead} list={sidebarList} />
     </div>
   );
 };
