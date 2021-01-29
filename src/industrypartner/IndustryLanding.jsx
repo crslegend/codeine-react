@@ -146,7 +146,6 @@ const IndustryLanding = () => {
                   label="First Name"
                   name="FirstName"
                   autoComplete="FirstName"
-                  autoFocus
                   required
                   fullWidth
                   // value={loginDetails.email}
@@ -160,7 +159,6 @@ const IndustryLanding = () => {
                   label="Last Name"
                   name="lastname"
                   autoComplete="lastname"
-                  autoFocus
                   required
                   fullWidth
                 />
@@ -172,7 +170,6 @@ const IndustryLanding = () => {
                   label="Email"
                   name="email"
                   autoComplete="email"
-                  autoFocus
                   required
                   fullWidth
                 />
@@ -185,7 +182,6 @@ const IndustryLanding = () => {
                   label="Company Name"
                   name="companyname"
                   autoComplete="companyname"
-                  autoFocus
                   required
                   fullWidth
                 />
@@ -198,7 +194,6 @@ const IndustryLanding = () => {
                   label="Contact Number"
                   name="contactnumber"
                   autoComplete="contactnumber"
-                  autoFocus
                   required
                   fullWidth
                 />
