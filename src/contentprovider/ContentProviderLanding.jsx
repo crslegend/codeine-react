@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  oot: {
+  root: {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
