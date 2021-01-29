@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RegisterPage = () => {
+const MemberRegisterPage = () => {
   const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
@@ -49,8 +50,8 @@ const RegisterPage = () => {
   const [registerDetails, setRegisterDetails] = useState({
     email: "",
     password: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
   });
 
   const handleEmailChange = (e) => {
@@ -70,20 +71,33 @@ const RegisterPage = () => {
   const handleFirstNameChange = (e) => {
     setRegisterDetails({
       ...registerDetails,
-      firstName: e.target.value,
+      first_name: e.target.value,
     });
   };
 
   const handleLastNameChange = (e) => {
     setRegisterDetails({
       ...registerDetails,
-      lastName: e.target.value,
+      last_name: e.target.value,
     });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    Service.client
+      .post("/auth/members", registerDetails)
+      .then((res) => {
+        console.log(res);
+        // history.push("/member");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/admin" className={classes.codeineLogo}>
             <Typography variant="h4">
@@ -94,7 +108,7 @@ const RegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="First Name"
-            value={registerDetails && registerDetails.firstName}
+            value={registerDetails && registerDetails.first_name}
             onChange={handleFirstNameChange}
             type="text"
             required
@@ -103,7 +117,7 @@ const RegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="Last Name"
-            value={registerDetails && registerDetails.lastName}
+            value={registerDetails && registerDetails.last_name}
             onChange={handleLastNameChange}
             type="text"
             required
@@ -159,4 +173,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default MemberRegisterPage;

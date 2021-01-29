@@ -7,7 +7,8 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,8 +42,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginPage = () => {
+const AdminLoginPage = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [loading, setLoading] = useState(false);
 
@@ -65,9 +67,23 @@ const LoginPage = () => {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // call admin login ednpoint
+    Service.client
+      .post("/api/token/", loginDetails)
+      .then((res) => {
+        console.log(res);
+        // history.push("/member");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/admin" className={classes.codeineLogo}>
             <Typography variant="h4">
@@ -105,23 +121,10 @@ const LoginPage = () => {
               "Login"
             )}
           </Button>
-
-          <Typography variant="body1">
-            Do not have an account? Click{" "}
-            <span>
-              <Link
-                to="/admin/register"
-                style={{ textDecoration: "none", color: "#437FC7" }}
-              >
-                here
-              </Link>
-            </span>{" "}
-            to register.
-          </Typography>
         </Paper>
       </form>
     </div>
   );
 };
 
-export default LoginPage;
+export default AdminLoginPage;
