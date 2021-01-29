@@ -1,8 +1,13 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
+import FirstSection from "./components/FirstSection";
+import SecondSection from "./components/SecondSection";
+import ThirdSection from "./components/ThirdSection";
+import FourthSection from "./components/FourthSection";
+import Footer from "./components/Footer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +67,12 @@ const ContentProviderLanding = () => {
   return (
     <div className={classes.root}>
       <Navbar navbarItems={contentProviderNavbar} />
+      <FirstSection />
+      <SecondSection />
+      <ThirdSection />
+      <div style={{ backgroundColor: "#fff", height: 50 }} />
+      <FourthSection />
+      <Footer />
     </div>
   );
 };
