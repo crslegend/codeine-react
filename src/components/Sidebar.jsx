@@ -46,7 +46,15 @@ const Sidebar = ({ head, list }) => {
         >
           {head}
         </div>
-        <List style={{ marginTop: "20px" }}>{list}</List>
+        <List
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {list}
+        </List>
       </div>
     </Drawer>
   );

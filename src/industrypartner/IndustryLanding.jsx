@@ -67,7 +67,7 @@ const IndustryLanding = () => {
   const industryNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
             Members
           </Typography>
