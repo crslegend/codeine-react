@@ -44,13 +44,6 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
-  logoButton: {
-    width: 100,
-    "&:hover,&:focus": {
-      color: "inherit",
-      background: "transparent",
-    },
-  },
 }));
 
 const MemberLandingPage = () => {
@@ -124,11 +117,10 @@ const MemberLandingPage = () => {
           paddingTop: "10px",
           paddingBottom: "10px",
           paddingLeft: "10px",
+          width: 100,
         }}
       >
-        <Button className={classes.logoButton}>
-          <img src={logo} width="120%" />
-        </Button>
+        <img src={logo} width="120%" />
       </Link>
     </Fragment>
   );

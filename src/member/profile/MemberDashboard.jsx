@@ -7,6 +7,8 @@ import Sidebar from "../../components/Sidebar";
 import { Dashboard } from "@material-ui/icons";
 import Service from "../../AxiosService";
 
+import logo from "../../assets/logo2.png";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
@@ -119,9 +121,25 @@ const MemberLanding = () => {
     </Fragment>
   );
 
+  const navLogo = (
+    <Fragment>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} width="120%" />
+      </Link>
+    </Fragment>
+  );
+
   return (
     <div className={classes.root}>
-      <Navbar navbarItems={memberNavbar} />
+      <Navbar logo={navLogo} navbarItems={memberNavbar} />
       <Sidebar head={sidebarHead} list={sidebarList} />
     </div>
   );
