@@ -26,13 +26,12 @@ const styles = makeStyles((theme) => ({
   },
   bannerslogan1: {
     color: "#E5E5E5",
-    fontWeight: 700,
+    fontWeight: 600,
   },
   bannerslogan2: {
     color: "#E5E5E5",
     paddingTop: "1vh",
     fontWeight: 700,
-    fontSize: "60px",
     [theme.breakpoints.down("md")]: {
       fontSize: "45px",
       lineHeight: "60px",
@@ -52,11 +51,8 @@ const styles = makeStyles((theme) => ({
   bannerbutton: {
     backgroundColor: "#FFFFFF",
     color: "#437FC7",
-    marginLeft: "1vw",
-    width: "220px",
-    height: "60px",
-    fontWeight: 700,
-    fontSize: "20px",
+    width: 150,
+    fontWeight: 600,
     "&:hover": {
       backgroundColor: "#164D8F",
       color: "#FFFFFF",
@@ -95,16 +91,16 @@ const MemberLandingBody = () => {
         <Grid container className={classes.banner}>
           <Grid item xs={1} />
           <Grid item xs={11} sm={5} md={6} lg={7}>
-            <Typography variant="subtitle1" className={classes.bannerslogan1}>
+            <Typography variant="h5" className={classes.bannerslogan1}>
               HUSTLE ON
             </Typography>
-            <Typography className={classes.bannerslogan2}>
+            <Typography variant="h1" className={classes.bannerslogan2}>
               Coding made addictive!
             </Typography>
-            <Typography variant="h3" className={classes.bannersentence1}>
+            <Typography variant="h5" className={classes.bannersentence1}>
               Kickstart your coding journey with Codeine. Join the
             </Typography>
-            <Typography variant="h3" className={classes.bannersentence2}>
+            <Typography variant="h5" className={classes.bannersentence2}>
               millions who are learning to code!
             </Typography>
             <Button variant="fill" className={classes.bannerbutton}>

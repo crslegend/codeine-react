@@ -24,7 +24,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     color: "#437FC7",
-    fontSize: "42px",
     lineHeight: "50px",
     [theme.breakpoints.down("sm")]: {
       fontSize: "32px",
@@ -51,8 +50,12 @@ const FeaturedCourses = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography className={classes.heading}>FEATURED</Typography>
-          <Typography className={classes.heading}>COURSES</Typography>
+          <Typography variant="h1" className={classes.heading}>
+            FEATURED
+          </Typography>
+          <Typography variant="h1" className={classes.heading}>
+            COURSES
+          </Typography>
           <Grid container>
             <Grid item xs={4}>
               <Card className={classes.cardroot}>
@@ -63,7 +66,7 @@ const FeaturedCourses = () => {
                 />
                 <CardContent>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -72,7 +75,7 @@ const FeaturedCourses = () => {
                     Title of course
                   </Typography>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -81,7 +84,7 @@ const FeaturedCourses = () => {
                   >
                     $55.00
                   </Typography>
-                  <Typography variant="h5">Content Provider</Typography>
+                  <Typography variant="h6">Content Provider</Typography>
                   <Grid
                     container
                     style={{
@@ -138,7 +141,7 @@ const FeaturedCourses = () => {
                 />
                 <CardContent>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -147,7 +150,7 @@ const FeaturedCourses = () => {
                     Title of course
                   </Typography>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -156,7 +159,7 @@ const FeaturedCourses = () => {
                   >
                     $55.00
                   </Typography>
-                  <Typography variant="h5">Content Provider</Typography>
+                  <Typography variant="h6">Content Provider</Typography>
                   <Grid
                     container
                     style={{
@@ -213,7 +216,7 @@ const FeaturedCourses = () => {
                 />
                 <CardContent height="150" width="150">
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -222,7 +225,7 @@ const FeaturedCourses = () => {
                     Title of course
                   </Typography>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     style={{
                       fontWeight: "600",
                       display: "inline-block",
@@ -231,7 +234,7 @@ const FeaturedCourses = () => {
                   >
                     $55.00
                   </Typography>
-                  <Typography variant="h5">Content Provider</Typography>
+                  <Typography variant="h6">Content Provider</Typography>
                   <Grid
                     container
                     style={{

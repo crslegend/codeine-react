@@ -118,7 +118,14 @@ const MemberLandingPage = () => {
 
   const navLogo = (
     <Fragment>
-      <Link to="/" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+        }}
+      >
         <Button className={classes.logoButton}>
           <img src={logo} width="120%" />
         </Button>

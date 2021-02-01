@@ -14,7 +14,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     color: "#437FC7",
-    fontSize: "42px",
     lineHeight: "50px",
     [theme.breakpoints.down("sm")]: {
       fontSize: "32px",
@@ -44,8 +43,12 @@ const FeaturedArticles = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography className={classes.heading}>FEATURED</Typography>
-          <Typography className={classes.heading}>ARTICLES</Typography>
+          <Typography variant="h1" className={classes.heading}>
+            FEATURED
+          </Typography>
+          <Typography variant="h1" className={classes.heading}>
+            ARTICLES
+          </Typography>
           <Grid container>
             <Grid item xs={4}>
               <Card elevation={0} className={classes.cardroot}>
