@@ -131,6 +131,7 @@ const MemberLanding = () => {
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
+        style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
         <Dashboard className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
