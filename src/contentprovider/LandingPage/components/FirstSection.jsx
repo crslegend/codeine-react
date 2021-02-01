@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     fontWeight: 600,
     "&:hover": {
-      backgroundColor: "#E3E3E3",
+      backgroundColor: "#164D8F",
+      color: "#FFFFFF",
     },
   },
 }));
@@ -70,7 +71,10 @@ const FirstSection = () => {
           <br />
           teaching people around the world.
         </Typography>
-        <Button className={classes.startButton} style={{ marginTop: "40px" }}>
+        <Button
+          className={classes.startButton}
+          style={{ marginTop: "40px", marginBottom: "40px" }}
+        >
           Start Now
         </Button>
       </div>

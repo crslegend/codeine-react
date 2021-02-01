@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     width: "100%",
     padding: 10,
+    color: "#6e6e6e",
     borderLeft: "5px solid #fff",
     "&:hover": {
       backgroundColor: "#F4F4F4",
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
+    "& p": {
+      fontWeight: 600,
+    },
     "&:hover": {
       borderLeft: "5px solid #437FC7",
     },
@@ -103,13 +107,13 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem
         component={NavLink}
-        to="/member"
+        to="/"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
+        <Typography variant="body1">Dashboard</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -119,7 +123,17 @@ const MemberLanding = () => {
         button
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
+        <Typography variant="body1">Dashboard</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/industry"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <Dashboard className={classes.listIcon} />
+        <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
     </Fragment>
   );
@@ -127,6 +141,7 @@ const MemberLanding = () => {
   return (
     <div className={classes.root}>
       <Navbar navbarItems={memberNavbar} />
+      <Sidebar head={sidebarHead} list={sidebarList} />
     </div>
   );
 };
