@@ -83,7 +83,7 @@ const Footer = () => {
             width: 100,
           }}
         >
-          <img src={logo} width="5%" />
+          <img src={logo} width="5%" alt="codeine-logo" />
         </Link>
         <Typography variant="body1" className={classes.copyright}>
           &copy; Codeine 2021
