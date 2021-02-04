@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
     top: "50%",
     left: "50%",
     transform: "translateX(-50%) translateY(-50%)",
-    paddingTop: "30px",
-    paddingBottom: "30px",
+    padding: "20px 30px",
   },
   button: {
     marginTop: "20px",
@@ -159,7 +158,7 @@ const MemberRegisterPage = () => {
             Already have an account? Click{" "}
             <span>
               <Link
-                to="/admin/login"
+                to="/member/login"
                 style={{ textDecoration: "none", color: "#437FC7" }}
               >
                 here

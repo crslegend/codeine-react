@@ -44,13 +44,6 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
-  logoButton: {
-    width: 100,
-    "&:hover,&:focus": {
-      color: "inherit",
-      background: "transparent",
-    },
-  },
 }));
 
 const MemberLandingPage = () => {
@@ -75,7 +68,7 @@ const MemberLandingPage = () => {
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/member/login" style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
@@ -87,7 +80,7 @@ const MemberLandingPage = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           component={Link}
-          to="/"
+          to="/member/register"
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
@@ -118,10 +111,16 @@ const MemberLandingPage = () => {
 
   const navLogo = (
     <Fragment>
-      <Link to="/" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
-        <Button className={classes.logoButton}>
-          <img src={logo} width="120%" />
-        </Button>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} width="120%" />
       </Link>
     </Fragment>
   );

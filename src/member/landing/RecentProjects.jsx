@@ -22,7 +22,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     color: "#437FC7",
-    fontSize: "42px",
     lineHeight: "50px",
     [theme.breakpoints.down("sm")]: {
       fontSize: "32px",
@@ -49,7 +48,7 @@ const RecentProjects = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography className={classes.heading}>
+          <Typography variant="h1" className={classes.heading}>
             RECENTLY LAUNCHED PROJECTS
           </Typography>
           <Grid container>

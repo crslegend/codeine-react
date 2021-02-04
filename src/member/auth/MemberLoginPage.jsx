@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
+import logo from "../../assets/logo2.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
     fontDisplay: "swap",
   },
   codeineLogo: {
-    textDecoration: "none",
-    color: theme.palette.primary.main,
-    paddingRight: "20px",
-    paddingBottom: "20px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: "10px",
+    width: "25%",
   },
   paper: {
     display: "flex",
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminLoginPage = () => {
+const MemberLoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -75,7 +77,8 @@ const AdminLoginPage = () => {
       .post("/api/token/", loginDetails)
       .then((res) => {
         console.log(res);
-        // history.push("/member");
+        Service.storeCredentials(res.data);
+        history.push("/member");
       })
       .catch((err) => console.log(err));
   };
@@ -84,10 +87,8 @@ const AdminLoginPage = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/admin" className={classes.codeineLogo}>
-            <Typography variant="h4">
-              <strong>codeine</strong>
-            </Typography>
+          <Link to="/" className={classes.codeineLogo}>
+            <img src={logo} alt="logo" width="90%" />
           </Link>
           <TextField
             variant="outlined"
@@ -120,10 +121,23 @@ const AdminLoginPage = () => {
               "Login"
             )}
           </Button>
+
+          <Typography variant="body1">
+            Do not have an account? Click{" "}
+            <span>
+              <Link
+                to="/member/login"
+                style={{ textDecoration: "none", color: "#437FC7" }}
+              >
+                here
+              </Link>
+            </span>{" "}
+            to register.
+          </Typography>
         </Paper>
       </form>
     </div>
   );
 };
 
-export default AdminLoginPage;
+export default MemberLoginPage;

@@ -1,10 +1,13 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useHistory } from "react-router-dom";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../../components/Sidebar";
 import { Dashboard } from "@material-ui/icons";
+import Service from "../../AxiosService";
+
+import logo from "../../assets/logo2.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     width: "100%",
     padding: 10,
+    color: "#6e6e6e",
     borderLeft: "5px solid #fff",
     "&:hover": {
       backgroundColor: "#F4F4F4",
@@ -32,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
+    "& p": {
+      fontWeight: 600,
+    },
     "&:hover": {
       borderLeft: "5px solid #437FC7",
     },
@@ -45,44 +52,23 @@ const useStyles = makeStyles((theme) => ({
 
 const MemberLanding = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/content-provider" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Content Providers
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/industry" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Industry Partners
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
-          component={Link}
-          to="/"
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
+          onClick={() => {
+            Service.removeCredentials();
+            history.push("/");
+          }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
+            Logout
           </Typography>
         </Button>
       </ListItem>
@@ -103,13 +89,13 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem
         component={NavLink}
-        to="/member"
+        to="/"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
+        <Typography variant="body1">Dashboard</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -119,14 +105,41 @@ const MemberLanding = () => {
         button
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Dashboard</Typography>
+        <Typography variant="body1">Dashboard</Typography>
       </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/industry"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+        style={{ position: "fixed", bottom: 5, width: "239px" }}
+      >
+        <Dashboard className={classes.listIcon} />
+        <Typography variant="body1">Helpdesk</Typography>
+      </ListItem>
+    </Fragment>
+  );
+
+  const navLogo = (
+    <Fragment>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} width="120%" alt=""/>
+      </Link>
     </Fragment>
   );
 
   return (
     <div className={classes.root}>
-      <Navbar navbarItems={memberNavbar} />
+      <Navbar logo={navLogo} navbarItems={memberNavbar} />
       <Sidebar head={sidebarHead} list={sidebarList} />
     </div>
   );

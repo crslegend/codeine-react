@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     fontDisplay: "swap",
   },
   headerBarBackground: {
-    height: "620px",
+    height: "580px",
     backgroundColor: "#397B9C",
     backgroundImage: `url(${headerbarimg})`,
     backgroundRepeat: "no-repeat",
@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
   headerBarText: {
     color: "white",
     paddingRight: theme.spacing(5),
-    fontSize: "48px",
   },
   appBar: {
     backgroundColor: "#397B9C",
@@ -68,7 +67,7 @@ const IndustryLanding = () => {
   const industryNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
             Members
           </Typography>
@@ -104,7 +103,11 @@ const IndustryLanding = () => {
         <Grid xs={12}>
           <Grid container justify="flex-end">
             <Grid xs={6}>
-              <Typography className={classes.headerBarText} align="center">
+              <Typography
+                variant="h1"
+                className={classes.headerBarText}
+                style={{ paddingTop: "90px" }}
+              >
                 <strong>
                   Find the perfect freelance services for your business.
                 </strong>
@@ -116,7 +119,7 @@ const IndustryLanding = () => {
           <Grid container justify="flex-end">
             <Grid xs={4}>
               <Typography
-                variant="h3"
+                variant="h2"
                 className={classes.headerBarText}
                 align="right"
               >

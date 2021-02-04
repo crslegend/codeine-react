@@ -26,7 +26,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     color: "#437FC7",
-    fontSize: "42px",
     lineHeight: "50px",
     [theme.breakpoints.down("sm")]: {
       fontSize: "32px",
@@ -49,7 +48,9 @@ const Categories = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography className={classes.heading}>CATEGORIES</Typography>
+          <Typography variant="h1" className={classes.heading}>
+            CATEGORIES
+          </Typography>
           <Grid
             container
             style={{

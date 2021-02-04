@@ -8,6 +8,7 @@ import SecondSection from "./components/SecondSection";
 import ThirdSection from "./components/ThirdSection";
 import FourthSection from "./components/FourthSection";
 import Footer from "./components/Footer";
+import logo from "../../assets/content-logo.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +25,7 @@ const ContentProviderLanding = () => {
   const contentProviderNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Members
           </Typography>
@@ -64,9 +65,25 @@ const ContentProviderLanding = () => {
     </Fragment>
   );
 
+  const navLogo = (
+    <Fragment>
+      <Link
+        to="/content-provider"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} width="140%" />
+      </Link>
+    </Fragment>
+  );
+
   return (
     <div className={classes.root}>
-      <Navbar navbarItems={contentProviderNavbar} />
+      <Navbar logo={navLogo} navbarItems={contentProviderNavbar} />
       <FirstSection />
       <SecondSection />
       <ThirdSection />

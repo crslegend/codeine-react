@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     // position: "absolute",
     position: "fixed",
-    zIndex: "unset",
+    zIndex: "100",
   },
   toolbar: {
     height: "65px",
