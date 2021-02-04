@@ -9,6 +9,7 @@ import ContentProviderLanding from "./contentprovider/LandingPage/ContentProvide
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import MemberDashboard from "./member/profile/MemberDashboard";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   return (
@@ -24,8 +25,8 @@ const App = () => {
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
-
       <Redirect from="/admin" to="/admin/login" />
+      <Route component={NotFound} />
     </Switch>
   );
 };
