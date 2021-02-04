@@ -49,8 +49,6 @@ const useStyles = makeStyles((theme) => ({
 const MemberLandingPage = () => {
   const classes = useStyles();
 
-  const [loggedIn, setLoggedIn] = useState(false);
-
   const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
@@ -94,21 +92,6 @@ const MemberLandingPage = () => {
     </Fragment>
   );
 
-  const memberLoggedInNavbar = (
-    <Fragment>
-      <Button
-        style={{
-          backgroundColor: "#437FC7",
-          textTransform: "capitalize",
-        }}
-      >
-        <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-          Log Out
-        </Typography>
-      </Button>
-    </Fragment>
-  );
-
   const navLogo = (
     <Fragment>
       <Link
@@ -127,11 +110,7 @@ const MemberLandingPage = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar
-        loggedIn={loggedIn}
-        logo={navLogo}
-        navbarItems={loggedIn ? memberLoggedInNavbar : memberNavbar}
-      />
+      <Navbar logo={navLogo} navbarItems={memberNavbar} />
       <MemberLandingBody />
       <Footer />
     </div>
