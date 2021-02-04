@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
+import { Link } from "react-router-dom";
 
 import background from "../../assets/background.jpg";
 
@@ -40,6 +41,13 @@ const styles = makeStyles((theme) => ({
     height: 0,
     paddingTop: "56.25%",
   },
+  link: {
+    textDecoration: "none",
+    fontWeight: 600,
+    color: "#437FC7",
+    align: "right",
+    fontSize: "24px",
+  },
 }));
 
 const FeaturedCourses = () => {
@@ -53,9 +61,26 @@ const FeaturedCourses = () => {
           <Typography variant="h1" className={classes.heading}>
             FEATURED
           </Typography>
-          <Typography variant="h1" className={classes.heading}>
+          <Typography
+            variant="h1"
+            style={{ display: "inline-block" }}
+            className={classes.heading}
+          >
             COURSES
           </Typography>
+          <div
+            style={{
+              display: "inline-block",
+              float: "right",
+              marginTop: "-25px",
+            }}
+          >
+            <Link to="/" className={classes.link}>
+              VIEW ALL
+              <br />
+              COURSES
+            </Link>
+          </div>
           <Grid container>
             <Grid item xs={4}>
               <Card className={classes.cardroot}>

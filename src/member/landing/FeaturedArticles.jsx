@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Card, CardContent } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -33,6 +34,13 @@ const styles = makeStyles((theme) => ({
     marginLeft: "1vw",
     lineHeight: "60px",
   },
+  link: {
+    textDecoration: "none",
+    fontWeight: 600,
+    color: "#437FC7",
+    align: "right",
+    fontSize: "24px",
+  },
 }));
 
 const FeaturedArticles = () => {
@@ -46,9 +54,26 @@ const FeaturedArticles = () => {
           <Typography variant="h1" className={classes.heading}>
             FEATURED
           </Typography>
-          <Typography variant="h1" className={classes.heading}>
+          <Typography
+            variant="h1"
+            style={{ display: "inline-block" }}
+            className={classes.heading}
+          >
             ARTICLES
           </Typography>
+          <div
+            style={{
+              display: "inline-block",
+              float: "right",
+              marginTop: "-25px",
+            }}
+          >
+            <Link to="/" className={classes.link}>
+              VIEW ALL
+              <br />
+              ARTICLES
+            </Link>
+          </div>
           <Grid container>
             <Grid item xs={4}>
               <Card elevation={0} className={classes.cardroot}>

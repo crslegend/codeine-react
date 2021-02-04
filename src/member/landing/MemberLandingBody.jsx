@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
 import FeaturedCourses from "./FeaturedCourses";
 import FeaturedArticles from "./FeaturedArticles";
+import CodeReview from "./CodeReview";
 import Categories from "./Categories";
 import RecentProjects from "./RecentProjects";
 
@@ -118,6 +119,7 @@ const MemberLandingBody = () => {
         </Grid>
         <FeaturedCourses />
         <FeaturedArticles />
+        <CodeReview />
         <Categories />
         <RecentProjects />
       </Grid>
