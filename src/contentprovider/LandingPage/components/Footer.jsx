@@ -1,7 +1,9 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
+
+import logo from "../../../assets/content-logo.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,32 +33,60 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     marginBottom: "10px",
   },
+  logo: {
+    backgroundColor: "#fff",
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
+    paddingBottom: "30px",
+    display: "flex-end",
+  },
+  copyright: {
+    float: "right",
+  },
 }));
 
 const Footer = () => {
   const classes = useStyles();
   return (
-    <div className={classes.container}>
-      <div className={classes.leftCol}>
-        <Link to="/" className={classes.footerLink}>
-          Members
-        </Link>
-        <Link to="/" className={classes.footerLink}>
-          Conent Providers
-        </Link>
-        <Link to="/" className={classes.footerLink}>
-          Industry Partners
-        </Link>
+    <Fragment>
+      <div className={classes.container}>
+        <div className={classes.leftCol}>
+          <Link to="/" className={classes.footerLink}>
+            Members
+          </Link>
+          <Link to="/" className={classes.footerLink}>
+            Conent Providers
+          </Link>
+          <Link to="/" className={classes.footerLink}>
+            Industry Partners
+          </Link>
+        </div>
+        <div className={classes.rightCol}>
+          <Link to="/" className={classes.footerLink}>
+            Articles
+          </Link>
+          <Link to="/" className={classes.footerLink}>
+            Help & Support
+          </Link>
+        </div>
       </div>
-      <div className={classes.rightCol}>
-        <Link to="/" className={classes.footerLink}>
-          Articles
+      <div className={classes.logo}>
+        <Link
+          to="/content-provider"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            width: 100,
+          }}
+        >
+          <img src={logo} width="5%" alt="content-provider-logo" />
         </Link>
-        <Link to="/" className={classes.footerLink}>
-          Help & Support
-        </Link>
+        <Typography variant="body1" className={classes.copyright}>
+          &copy; Codeine 2021
+        </Typography>
       </div>
-    </div>
+    </Fragment>
   );
 };
 

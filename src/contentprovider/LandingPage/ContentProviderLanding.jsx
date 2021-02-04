@@ -76,7 +76,11 @@ const ContentProviderLanding = () => {
           width: 100,
         }}
       >
-        <img src={logo} width="140%" />
+        <img
+          src={logo}
+          width="140%"
+          alt="codeine content provider navbar logo"
+        />
       </Link>
     </Fragment>
   );

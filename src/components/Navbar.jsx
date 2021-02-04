@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { AppBar, List, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, List, Toolbar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Navbar = ({ loggedIn, logo, navbarItems }) => {
+const Navbar = ({ logo, navbarItems }) => {
   const classes = useStyles();
 
   return (
