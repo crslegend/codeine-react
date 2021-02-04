@@ -6,6 +6,8 @@ import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import IndustryLanding from "./industrypartner/IndustryLanding";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
+import AdminRoutesPage from "./admin/AdminRoutesPage";
+import MemberDashboardPage from "./member/profile/MemberDashboard";
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
+      <Route exact path="/member/profile" component={MemberDashboardPage} />
+      <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
 
       <Redirect from="/admin" to="/admin/login" />
       <Redirect from="/" to="/member" />
