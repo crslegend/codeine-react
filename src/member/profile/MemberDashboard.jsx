@@ -132,7 +132,7 @@ const MemberLanding = () => {
           width: 100,
         }}
       >
-        <img src={logo} width="120%" />
+        <img src={logo} width="120%" alt=""/>
       </Link>
     </Fragment>
   );

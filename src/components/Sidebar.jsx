@@ -4,6 +4,9 @@ import { Drawer, List } from "@material-ui/core";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,

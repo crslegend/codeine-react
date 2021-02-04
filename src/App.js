@@ -7,6 +7,7 @@ import MemberLoginPage from "./member/auth/MemberLoginPage";
 import IndustryLanding from "./industrypartner/IndustryLanding";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
+import AdminRoutesPage from "./admin/AdminRoutesPage";
 import MemberDashboard from "./member/profile/MemberDashboard";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
@@ -25,6 +26,7 @@ const App = () => {
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
+      <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
       <Redirect from="/admin" to="/admin/login" />
       <Route component={NotFound} />
     </Switch>
