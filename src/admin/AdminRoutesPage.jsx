@@ -2,16 +2,16 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { Link, NavLink, BrowserRouter, Route, Switch } from "react-router-dom";
-import {
-  Avatar,
-  Button,
-  ListItem,
-  Typography,
-  Divider,
-} from "@material-ui/core";
+import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/logo2.png";
-import { Dashboard } from "@material-ui/icons";
+import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
+import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
+import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
+import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import AdminHumanResourcePage from "./HumanResourcePage";
 import ContentQualityPage from "./ContentQualityPage";
 import HelpdeskPage from "./HelpdeskPage";
@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     width: "100%",
     padding: 10,
+    color: "#6e6e6e",
     borderLeft: "5px solid #fff",
     "&:hover": {
       backgroundColor: "#F4F4F4",
@@ -46,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
+    "& p": {
+      fontWeight: 600,
+    },
     "&:hover": {
       borderLeft: "5px solid #437FC7",
     },
@@ -88,9 +92,7 @@ const AdminRoutesPage = () => {
   const navLogo = (
     <Fragment>
       <Link to="/" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
-        <Button className={classes.logoButton}>
-          <img src={logo} alt="" width="100px" />
-        </Button>
+        <img src={logo} alt="" width="100px" />
       </Link>
     </Fragment>
   );
@@ -114,8 +116,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Human Resource</Typography>
+        <SupervisorAccountOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Human Resource</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -124,8 +126,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Content Quality</Typography>
+        <WhatshotOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Content Quality</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -134,8 +136,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Helpdesk</Typography>
+        <PublicOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -144,8 +146,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Learners Achievement</Typography>
+        <SchoolOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Learners Achievement</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -154,8 +156,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Analytics</Typography>
+        <BrokenImageOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Analytics</Typography>
       </ListItem>
       <Divider />
       <ListItem
@@ -165,8 +167,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Profile</Typography>
+        <PersonOutlineOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Profile</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -175,8 +177,8 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="h5">Password</Typography>
+        <LockOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Password</Typography>
       </ListItem>
     </Fragment>
   );
