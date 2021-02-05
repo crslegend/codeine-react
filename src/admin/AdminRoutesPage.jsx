@@ -1,7 +1,14 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
-import { Link, NavLink, BrowserRouter, Route, Switch } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  BrowserRouter,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/logo2.png";
@@ -222,6 +229,7 @@ const AdminRoutesPage = () => {
               path="/admin/password"
               render={() => <PasswordPage />}
             />
+            <Redirect from="/admin" to="/admin/humanresource" />
           </Switch>
         </main>
       </div>
