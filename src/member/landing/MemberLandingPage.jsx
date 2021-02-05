@@ -110,7 +110,7 @@ const MemberLandingPage = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar logo={navLogo} navbarItems={memberNavbar} />
+      <Navbar logo={navLogo} bgColor="#fff" navbarItems={memberNavbar} />
       <MemberLandingBody />
       <Footer />
     </div>
