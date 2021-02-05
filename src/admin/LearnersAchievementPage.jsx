@@ -16,7 +16,7 @@ const AdminLearnersAchievementPage = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div>
       <Typography>AdminLearnersAchievementPage</Typography>
     </div>
   );

@@ -27,6 +27,8 @@ const App = () => {
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <Route path="/admin" component={AdminRoutesPage} />
+      <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
+
       <Route component={NotFound} />
     </Switch>
   );
