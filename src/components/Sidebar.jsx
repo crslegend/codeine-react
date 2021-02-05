@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    height: "calc(100vh - 70px)",
+    height: "calc(100vh - 65px)",
     bottom: 0,
-    position: "absolute",
+    position: "fixed",
   },
   drawerPaper: {
     width: drawerWidth,
