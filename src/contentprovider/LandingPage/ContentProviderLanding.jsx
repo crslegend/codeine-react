@@ -87,7 +87,11 @@ const ContentProviderLanding = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar logo={navLogo} navbarItems={contentProviderNavbar} />
+      <Navbar
+        logo={navLogo}
+        bgColor="#fff"
+        navbarItems={contentProviderNavbar}
+      />
       <FirstSection />
       <SecondSection />
       <ThirdSection />

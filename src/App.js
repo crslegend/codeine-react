@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
-import IndustryLanding from "./industrypartner/IndustryLanding";
+import IndustryLanding from "./industrypartner/landing/IndustryLanding";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";

@@ -4,7 +4,6 @@ import { AppBar, List, Toolbar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: "#fff",
     // position: "absolute",
     position: "fixed",
     zIndex: "1000",
@@ -29,11 +28,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Navbar = ({ logo, navbarItems }) => {
+const Navbar = ({ logo, bgColor, navbarItems }) => {
   const classes = useStyles();
 
   return (
-    <AppBar className={classes.appBar} elevation={1}>
+    <AppBar
+      className={classes.appBar}
+      style={{ backgroundColor: `${bgColor}` }}
+      elevation={0}
+    >
       <Toolbar className={classes.toolbar}>
         {logo}
         <List className={classes.list}>{navbarItems}</List>

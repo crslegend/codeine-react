@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -8,14 +8,11 @@ import {
   Typography,
   TextField,
   Grid,
-  Box,
-  AppBar,
-  List,
-  Toolbar,
 } from "@material-ui/core";
-import headerbarimg from "../assets/industryimage.png";
-import codeinelogowhite from "../assets/industrycodeinewhitelogo.svg";
-import codeinelogodefault from "../assets/industrycodeinedefaultlogo.svg";
+
+import Footer from "./Footer";
+import headerbarimg from "../../assets/industryimage.png";
+import logo from "../../assets/industrycodeinewhitelogo.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,34 +22,23 @@ const useStyles = makeStyles((theme) => ({
     fontDisplay: "swap",
   },
   headerBarBackground: {
+    marginTop: "65px",
     height: "580px",
     backgroundColor: "#397B9C",
     backgroundImage: `url(${headerbarimg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "690px",
+    backgroundPosition: "200px 10px",
   },
   headerBarText: {
     color: "white",
     paddingRight: theme.spacing(5),
   },
-  appBar: {
-    backgroundColor: "#397B9C",
-    position: "relative",
-    zIndex: "unset",
-  },
-  toolbar: {
-    minHeight: "65px",
-    flex: "1",
-    alignItems: "center",
-    justifyContent: "space-between",
+  form: {
+    minHeight: "55vh",
     display: "flex",
-    flexWrap: "nowrap",
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(7),
-  },
-  codeineLogo: {
-    textDecoration: "none",
-    color: "#fff",
+    flexDirection: "column",
+    fontDisplay: "swap",
   },
   list: {
     display: "flex",
@@ -82,18 +68,42 @@ const IndustryLanding = () => {
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="outlined"
           component={Link}
           to="/"
           style={{
-            backgroundColor: "#437FC7",
+            backgroundColor: "transparent",
+            borderColor: "#fff",
             textTransform: "capitalize",
           }}
         >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+          <Typography
+            variant="h6"
+            style={{
+              fontSize: "15px",
+              color: "#fff",
+            }}
+          >
             Log In
           </Typography>
         </Button>
       </ListItem>
+    </Fragment>
+  );
+
+  const navLogo = (
+    <Fragment>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} alt="codeine" height="35px" />
+      </Link>
     </Fragment>
   );
 
@@ -139,9 +149,9 @@ const IndustryLanding = () => {
         </Grid> */}
       </Grid>
       <Grid container>
-        <Grid container justify="center">
+        <Grid container justify="center" style={{ marginTop: "10vh" }}>
           <Grid xs={4}>
-            <form className={classes.root} noValidate autoComplete="off">
+            <form className={classes.form} noValidate autoComplete="off">
               <div>
                 <TextField
                   margin="normal"
@@ -207,6 +217,7 @@ const IndustryLanding = () => {
                   backgroundColor: "#437FC7",
                   textTransform: "capitalize",
                   justify: "center",
+                  marginTop: "5vh",
                 }}
               >
                 <Typography variant="h6" style={{ color: "#fff" }}>
@@ -222,19 +233,9 @@ const IndustryLanding = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} elevation={0}>
-        <Toolbar className={classes.toolbar}>
-          <Link to="/" className={classes.codeineLogo}>
-            <img
-              src={codeinelogowhite}
-              alt="codeine"
-              style={{ height: "40px" }}
-            />
-          </Link>
-          <List className={classes.list}>{industryNavbar}</List>
-        </Toolbar>
-      </AppBar>
+      <Navbar logo={navLogo} navbarItems={industryNavbar} bgColor="#397B9C" />
       <IndustryPage />
+      <Footer />
     </div>
   );
 };
