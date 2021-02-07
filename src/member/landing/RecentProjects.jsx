@@ -7,6 +7,7 @@ import {
   CardMedia,
   CardContent,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 import background from "../../assets/background.jpg";
 
@@ -38,6 +39,13 @@ const styles = makeStyles((theme) => ({
     height: 0,
     paddingTop: "56.25%",
   },
+  link: {
+    textDecoration: "none",
+    fontWeight: 600,
+    color: "#437FC7",
+    align: "right",
+    fontSize: "24px",
+  },
 }));
 
 const RecentProjects = () => {
@@ -49,8 +57,28 @@ const RecentProjects = () => {
         <Grid item xs={1} />
         <Grid item xs={10}>
           <Typography variant="h1" className={classes.heading}>
-            RECENTLY LAUNCHED PROJECTS
+            RECENTLY LAUNCHED
           </Typography>
+          <Typography
+            variant="h1"
+            style={{ display: "inline-block" }}
+            className={classes.heading}
+          >
+            PROJECTS
+          </Typography>
+          <div
+            style={{
+              display: "inline-block",
+              float: "right",
+              marginTop: "-25px",
+            }}
+          >
+            <Link to="/" className={classes.link}>
+              VIEW ALL
+              <br />
+              PROJECTS
+            </Link>
+          </div>
           <Grid container>
             <Grid item xs={4}>
               <Card className={classes.cardroot}>

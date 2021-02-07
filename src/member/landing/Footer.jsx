@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
+import logo from "../../assets/logo3.png";
+
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "100%",
@@ -11,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     paddingTop: "50px",
     paddingBottom: "50px",
+
     paddingLeft: theme.spacing(15),
   },
   leftCol: {
@@ -34,10 +37,14 @@ const useStyles = makeStyles((theme) => ({
   },
   logo: {
     backgroundColor: "#437FC7",
-    justify: "space-between",
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
+    paddingBottom: "30px",
+    display: "flex-end",
   },
   copyright: {
     color: "#FFFFFF",
+    float: "right",
   },
 }));
 
@@ -67,6 +74,17 @@ const Footer = () => {
         </div>
       </div>
       <div className={classes.logo}>
+        <Link
+          to="/"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            width: 100,
+          }}
+        >
+          <img src={logo} width="5%" alt="codeine-logo" />
+        </Link>
         <Typography variant="body1" className={classes.copyright}>
           &copy; Codeine 2021
         </Typography>
