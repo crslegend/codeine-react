@@ -2,11 +2,11 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 
-const PrivateRoute = ({ render, path, ...rest }) => {
+const PrivateRoute = ({ render, path, user, ...rest }) => {
   return Cookies.get("t1") ? (
     <Route path={path} render={render} {...rest} />
   ) : (
-    <Redirect to={`${path}/login`} />
+    <Redirect to={`/${user}/login`} />
   );
 };
 

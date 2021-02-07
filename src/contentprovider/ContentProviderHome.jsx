@@ -52,9 +52,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   avatar: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    fontSize: "60px",
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+    fontSize: "30px",
   },
 }));
 
@@ -121,7 +121,7 @@ const ContentProviderHome = () => {
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
-        style={{ position: "fixed", bottom: 5, width: "239px" }}
+        // style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
         <Dashboard className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
@@ -148,7 +148,7 @@ const ContentProviderHome = () => {
   return (
     <BrowserRouter>
       <div className={classes.root}>
-        <Navbar logo={navLogo} navbarItems={loggedInNavbar} />
+        <Navbar logo={navLogo} navbarItems={loggedInNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
         <div>
           <Switch>

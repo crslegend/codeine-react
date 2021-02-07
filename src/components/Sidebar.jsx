@@ -10,13 +10,13 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    height: "calc(100vh - 65px)",
+    height: "calc(100vh - 69px)",
     bottom: 0,
     position: "fixed",
   },
   drawerPaper: {
     width: drawerWidth,
-    height: "calc(100vh - 70px)",
+    height: "calc(100vh - 67px)",
     bottom: 0,
     position: "absolute",
     // backgroundColor: theme.palette.primary.main,

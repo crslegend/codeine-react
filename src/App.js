@@ -27,6 +27,7 @@ const App = () => {
         exact
         path="/content-provider/dashboard"
         component={ContentProviderHome}
+        user="content-provider"
       />
       <Route
         exact
@@ -39,7 +40,12 @@ const App = () => {
         component={ContentProviderRegisterPage}
       />
       <Route exact path="/" component={MemberLandingPage} />
-      <PrivateRoute exact path="/member" render={() => <MemberDashboard />} />
+      <PrivateRoute
+        exact
+        path="/member"
+        render={() => <MemberDashboard />}
+        user="member"
+      />
       <Route exact path="/member/login" component={MemberLoginPage} />
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
