@@ -1,12 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
+
+import Calendar from "./Calendar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
-    paddingTop: "100px",
-    marginLeft: "300px",
+    paddingTop: "10px",
+    marginLeft: "50px",
   },
 }));
 
@@ -15,7 +17,10 @@ const Consultation = () => {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h1"> Upcoming schedule at a glance</Typography>
+      <Typography variant="h1" style={{ marginBottom: "50px" }}>
+        Upcoming schedule at a glance
+      </Typography>
+      <Calendar />
     </div>
   );
 };
