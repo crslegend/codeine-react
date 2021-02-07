@@ -14,18 +14,20 @@ import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderHome";
 import ContentProviderLoginPage from "./contentprovider/auth/ContentProviderLoginPage";
 import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderRegisterPage";
+import LandingPageRoute from "./components/LandingPageRoute";
 
 const App = () => {
   return (
     <Switch>
-      <Route
+      <LandingPageRoute
         exact
         path="/content-provider"
-        component={ContentProviderLanding}
+        render={() => <ContentProviderLanding />}
+        user="content-provider"
       />
       <PrivateRoute
         path="/content-provider/home"
-        component={ContentProviderHome}
+        render={() => <ContentProviderHome />}
         user="content-provider"
       />
       <Route

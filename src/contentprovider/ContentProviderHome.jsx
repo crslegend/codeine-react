@@ -148,7 +148,7 @@ const ContentProviderHome = () => {
   const navLogo = (
     <Fragment>
       <Link
-        to="/"
+        to="/content-provider/home/dashboard"
         style={{
           paddingTop: "10px",
           paddingBottom: "10px",
