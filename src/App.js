@@ -11,6 +11,9 @@ import AdminRoutesPage from "./admin/AdminRoutesPage";
 import MemberDashboard from "./member/profile/MemberDashboard";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
+import ContentProviderHome from "./contentprovider/ContentProviderHome";
+import ContentProviderLoginPage from "./contentprovider/auth/ContentProviderLoginPage";
+import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderRegisterPage";
 
 const App = () => {
   return (
@@ -19,6 +22,21 @@ const App = () => {
         exact
         path="/content-provider"
         component={ContentProviderLanding}
+      />
+      <PrivateRoute
+        exact
+        path="/content-provider/dashboard"
+        component={ContentProviderHome}
+      />
+      <Route
+        exact
+        path="/content-provider/login"
+        component={ContentProviderLoginPage}
+      />
+      <Route
+        exact
+        path="/content-provider/register"
+        component={ContentProviderRegisterPage}
       />
       <Route exact path="/" component={MemberLandingPage} />
       <PrivateRoute exact path="/member" render={() => <MemberDashboard />} />
