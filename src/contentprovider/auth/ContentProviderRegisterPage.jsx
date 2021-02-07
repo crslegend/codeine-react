@@ -48,7 +48,7 @@ const ContentProviderRegisterPage = () => {
   // const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-  const [pageNum, setPageNum] = useState(2);
+  const [pageNum, setPageNum] = useState(1);
 
   const [awaitApproval, setAwaitApproval] = useState(false);
 
@@ -125,6 +125,7 @@ const ContentProviderRegisterPage = () => {
       .post("/auth/contentProviders", registerDetails)
       .then((res) => {
         console.log(res);
+        setLoading(false);
         setAwaitApproval(true);
       })
       .catch((err) => {
