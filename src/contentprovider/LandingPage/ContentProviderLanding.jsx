@@ -39,7 +39,7 @@ const ContentProviderLanding = () => {
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/content-provider/login" style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
@@ -51,7 +51,7 @@ const ContentProviderLanding = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           component={Link}
-          to="/"
+          to="/content-provider/register"
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
@@ -87,7 +87,11 @@ const ContentProviderLanding = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar logo={navLogo} navbarItems={contentProviderNavbar} />
+      <Navbar
+        logo={navLogo}
+        bgColor="#fff"
+        navbarItems={contentProviderNavbar}
+      />
       <FirstSection />
       <SecondSection />
       <ThirdSection />
