@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 
 import logo from "../assets/content-logo.png";
 import Consultation from "./consultation/Consultation";
+import ViewAllCourses from "./course/ViewAllCourses";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,7 +63,9 @@ const useStyles = makeStyles((theme) => ({
   mainPanel: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    paddingTop: theme.spacing(12),
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
     width: "calc(100% - 240px)",
     marginLeft: "240px",
   },
@@ -195,7 +198,7 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/content-provider/home/content"
-              render={() => <div></div>}
+              render={() => <ViewAllCourses />}
             />
             <PrivateRoute
               exact
