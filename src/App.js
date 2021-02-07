@@ -30,15 +30,17 @@ const App = () => {
         render={() => <ContentProviderHome />}
         user="content-provider"
       />
-      <Route
+      <LandingPageRoute
         exact
         path="/content-provider/login"
-        component={ContentProviderLoginPage}
+        render={() => <ContentProviderLoginPage />}
+        user="content-provider"
       />
-      <Route
+      <LandingPageRoute
         exact
         path="/content-provider/register"
-        component={ContentProviderRegisterPage}
+        render={() => <ContentProviderRegisterPage />}
+        user="content-provider"
       />
       <Route exact path="/" component={MemberLandingPage} />
       <PrivateRoute
