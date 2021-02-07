@@ -78,9 +78,12 @@ const ContentProviderLoginPage = () => {
       .then((res) => {
         console.log(res);
         Service.storeCredentials(res.data);
-        history.push("/member");
+        history.push("/content-provider/dashboard");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
 
   return (
