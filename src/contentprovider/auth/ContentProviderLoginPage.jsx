@@ -91,7 +91,7 @@ const ContentProviderLoginPage = () => {
       .then((res) => {
         console.log(res);
         Service.storeCredentials(res.data);
-        history.push("/content-provider/dashboard");
+        history.push("/content-provider/home/dashboard");
       })
       .catch((err) => {
         setLoading(false);

@@ -24,8 +24,7 @@ const App = () => {
         component={ContentProviderLanding}
       />
       <PrivateRoute
-        exact
-        path="/content-provider/dashboard"
+        path="/content-provider/home"
         component={ContentProviderHome}
         user="content-provider"
       />
@@ -52,7 +51,6 @@ const App = () => {
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <Route path="/admin" component={AdminRoutesPage} />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
-
       <Route component={NotFound} />
     </Switch>
   );

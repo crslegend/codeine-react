@@ -5,6 +5,7 @@ import {
   BrowserRouter,
   Link,
   NavLink,
+  Redirect,
   Switch,
   useHistory,
 } from "react-router-dom";
@@ -58,6 +59,13 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(10),
     fontSize: "30px",
   },
+  mainPanel: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+    width: "calc(100% - 240px)",
+    marginLeft: "240px",
+  },
 }));
 
 const ContentProviderHome = () => {
@@ -105,7 +113,7 @@ const ContentProviderHome = () => {
     <Fragment>
       <ListItem
         component={NavLink}
-        to="/content-provider/dashboard"
+        to="/content-provider/home/dashboard"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -115,7 +123,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/content-provider/content"
+        to="/content-provider/home/content"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -125,7 +133,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/content-provider/consultation"
+        to="/content-provider/home/consultation"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -177,22 +185,26 @@ const ContentProviderHome = () => {
       <div className={classes.root}>
         <Navbar logo={navLogo} navbarItems={loggedInNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
-        <div>
+        <div className={classes.mainPanel}>
           <Switch>
             <PrivateRoute
               exact
-              path="/content-provider/dashboard"
+              path="/content-provider/home/dashboard"
               render={() => <div></div>}
             />
             <PrivateRoute
               exact
-              path="/content-provider/content"
+              path="/content-provider/home/content"
               render={() => <div></div>}
             />
             <PrivateRoute
               exact
-              path="/content-provider/consultation"
+              path="/content-provider/home/consultation"
               render={() => <Consultation />}
+            />
+            <Redirect
+              from="/content-provider/home"
+              to="/content-provider/home/dashboard"
             />
           </Switch>
         </div>
