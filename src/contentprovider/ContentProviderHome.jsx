@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import logo from "../assets/content-logo.png";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
+import CourseKanbanBoard from "./course/CourseKanbanBoard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -199,6 +200,11 @@ const ContentProviderHome = () => {
               exact
               path="/content-provider/home/content"
               render={() => <ViewAllCourses />}
+            />
+            <PrivateRoute
+              exact
+              path="/content-provider/home/content/new"
+              render={() => <CourseKanbanBoard />}
             />
             <PrivateRoute
               exact
