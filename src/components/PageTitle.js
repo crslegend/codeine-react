@@ -7,7 +7,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "20px",
+    // marginBottom: "20px",
     height: "80px",
   },
   title: {
