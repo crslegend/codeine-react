@@ -11,6 +11,8 @@ import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
 import logo from "../../assets/content-logo.png";
 
+import Toast from "../../components/Toast.js";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
@@ -54,6 +56,17 @@ const ContentProviderLoginPage = () => {
     password: "",
   });
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const handleEmailChange = (e) => {
     setLoginDetails({
       ...loginDetails,
@@ -83,11 +96,18 @@ const ContentProviderLoginPage = () => {
       .catch((err) => {
         setLoading(false);
         console.log(err);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Incorrect email address or password. Please try again!",
+          severity: "error",
+        });
       });
   };
 
   return (
     <div>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/content-provider" className={classes.codeineLogo}>
