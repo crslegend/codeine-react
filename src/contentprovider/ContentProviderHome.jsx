@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import {
@@ -7,15 +7,17 @@ import {
   NavLink,
   Switch,
   useHistory,
-  Route,
-  Redirect,
 } from "react-router-dom";
+import PrivateRoute from "../components/PrivateRoute";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { Dashboard } from "@material-ui/icons";
 import Service from "../AxiosService";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 import logo from "../assets/content-logo.png";
+import Consultation from "./consultation/Consultation";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +64,8 @@ const ContentProviderHome = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [user, setUser] = useState();
+
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
@@ -86,10 +90,14 @@ const ContentProviderHome = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>P</Avatar>
+        <Avatar className={classes.avatar}>
+          {user && user.user.first_name.charAt(0)}
+        </Avatar>
       </div>
-      <Typography variant="h6">Name here</Typography>
-      <Typography variant="body1">Position here</Typography>
+      <Typography variant="h6">
+        {user && user.user.first_name} {user && user.user.last_name}
+      </Typography>
+      <Typography variant="body1">{user && user.job_title}</Typography>
     </Fragment>
   );
 
@@ -107,7 +115,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/content-provider/managecontent"
+        to="/content-provider/content"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -117,14 +125,14 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/industry"
+        to="/content-provider/consultation"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
         // style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="body1">Helpdesk</Typography>
+        <Typography variant="body1">Consultation</Typography>
       </ListItem>
     </Fragment>
   );
@@ -145,6 +153,25 @@ const ContentProviderHome = () => {
     </Fragment>
   );
 
+  const getUserDetails = () => {
+    if (Cookies.get("t1")) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/contentProviders/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+          setUser(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
+  console.log(user);
+
   return (
     <BrowserRouter>
       <div className={classes.root}>
@@ -152,10 +179,20 @@ const ContentProviderHome = () => {
         <Sidebar head={sidebarHead} list={sidebarList} />
         <div>
           <Switch>
-            <Route
+            <PrivateRoute
               exact
               path="/content-provider/dashboard"
               render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/content-provider/content"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/content-provider/consultation"
+              render={() => <Consultation />}
             />
           </Switch>
         </div>
