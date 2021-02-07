@@ -12,7 +12,7 @@ import {
 import PrivateRoute from "../components/PrivateRoute";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
-import { Dashboard } from "@material-ui/icons";
+import { Dashboard, Timeline } from "@material-ui/icons";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -142,7 +142,7 @@ const ContentProviderHome = () => {
         button
         // style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
-        <Dashboard className={classes.listIcon} />
+        <Timeline className={classes.listIcon} />
         <Typography variant="body1">Consultation</Typography>
       </ListItem>
     </Fragment>
