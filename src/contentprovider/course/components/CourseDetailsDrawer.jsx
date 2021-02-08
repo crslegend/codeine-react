@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Edit, Folder } from "@material-ui/icons";
+import { Folder } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,15 +30,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CourseKanbanBoard = () => {
+const CourseDetailsDrawer = ({
+  drawerOpen,
+  setDrawerOpen,
+  coursePicAvatar,
+  setCoursePicAvatar,
+}) => {
   const classes = useStyles();
 
-  const [drawerOpen, setDrawerOpen] = useState(true);
   const [drawerPageNum, setDrawerPageNum] = useState(1);
 
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
-  const [coursePicAvatar, setCoursePicAvatar] = useState();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -49,6 +52,11 @@ const CourseKanbanBoard = () => {
     }
 
     setDrawerOpen(false);
+  };
+
+  const handleUpdateCourseDetails = () => {
+    setDrawerOpen(false);
+    setDrawerPageNum(1);
   };
 
   const drawerPage1 = (
@@ -138,6 +146,20 @@ const CourseKanbanBoard = () => {
   const drawerPage2 = (
     <Fragment>
       <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="preview">
+          <Typography variant="body2">
+            Introduction Preview Video URL
+          </Typography>
+        </label>
+        <TextField
+          id="preview"
+          variant="outlined"
+          margin="dense"
+          fullWidth
+          placeholder="eg. URL of video hosted on youtube"
+        />
+      </div>
+      <div style={{ marginBottom: "30px" }}>
         <label htmlFor="points">
           <Typography variant="body2">Experience Points</Typography>
         </label>
@@ -159,7 +181,7 @@ const CourseKanbanBoard = () => {
         <Button
           variant="contained"
           color="primary"
-          // onClick={() => setDrawerPageNum(2)}
+          onClick={() => handleUpdateCourseDetails()}
         >
           Update
         </Button>
@@ -169,11 +191,6 @@ const CourseKanbanBoard = () => {
 
   return (
     <Fragment>
-      <div>
-        <Button startIcon={<Edit />} onClick={() => setDrawerOpen(true)}>
-          Edit Course Details
-        </Button>
-      </div>
       <div>
         <Drawer
           anchor="right"
@@ -247,4 +264,4 @@ const CourseKanbanBoard = () => {
   );
 };
 
-export default CourseKanbanBoard;
+export default CourseDetailsDrawer;
