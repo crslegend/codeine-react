@@ -3,12 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Drawer,
   IconButton,
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Edit, Folder } from "@material-ui/icons";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -30,6 +34,11 @@ const CourseKanbanBoard = () => {
   const classes = useStyles();
 
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerPageNum, setDrawerPageNum] = useState(1);
+
+  const [coursePicDialog, setCoursePicDialog] = useState(false);
+  const [coursePic, setCoursePic] = useState();
+  const [coursePicAvatar, setCoursePicAvatar] = useState();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -41,6 +50,7 @@ const CourseKanbanBoard = () => {
 
     setDrawerOpen(false);
   };
+  console.log(coursePicAvatar);
 
   return (
     <Fragment>
@@ -64,8 +74,17 @@ const CourseKanbanBoard = () => {
                 justifyContent: "center",
               }}
             >
-              <IconButton>
-                <Avatar className={classes.avatar} />
+              <IconButton onClick={() => setCoursePicDialog(true)}>
+                {coursePicAvatar ? (
+                  <Avatar
+                    className={classes.avatar}
+                    src={coursePicAvatar[0].data}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    <Folder fontSize="large" />
+                  </Avatar>
+                )}
               </IconButton>
             </div>
             <div style={{ marginBottom: "30px" }}>
@@ -134,6 +153,63 @@ const CourseKanbanBoard = () => {
           </div>
         </Drawer>
       </div>
+
+      <Dialog
+        disableEscapeKeyDown
+        open={coursePicDialog}
+        onClose={() => setCoursePicDialog(false)}
+        PaperProps={{
+          style: {
+            minWidth: "400px",
+            maxWidth: "400px",
+          },
+        }}
+      >
+        <DialogContent>
+          <DropzoneAreaBase
+            dropzoneText="Drag and drop an image or click here&nbsp;"
+            acceptedFiles={["image/*"]}
+            filesLimit={1}
+            maxFileSize={5000000}
+            fileObjects={coursePic}
+            onAdd={(newPhoto) => {
+              // console.log("onAdd", newPhoto);
+              setCoursePic(newPhoto);
+              // setValidatePhoto(false);
+            }}
+            onDelete={(deletePhotoObj) => {
+              console.log("onDelete", deletePhotoObj);
+              setCoursePic();
+            }}
+            previewGridProps={{
+              item: {
+                xs: "auto",
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setCoursePic(coursePicAvatar);
+              setCoursePicDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setCoursePicAvatar(coursePic && coursePic);
+              setCoursePicDialog(false);
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
