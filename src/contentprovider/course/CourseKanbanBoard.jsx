@@ -50,7 +50,122 @@ const CourseKanbanBoard = () => {
 
     setDrawerOpen(false);
   };
-  console.log(coursePicAvatar);
+
+  const drawerPage1 = (
+    <Fragment>
+      <div
+        style={{
+          marginBottom: "10px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <IconButton onClick={() => setCoursePicDialog(true)}>
+          {coursePicAvatar ? (
+            <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
+          ) : (
+            <Avatar className={classes.avatar}>
+              <Folder fontSize="large" />
+            </Avatar>
+          )}
+        </IconButton>
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="title">
+          <Typography variant="body2">Course Title</Typography>
+        </label>
+        <TextField
+          id="title"
+          variant="outlined"
+          placeholder="Enter course title"
+          margin="dense"
+          fullWidth
+        />
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="description">
+          <Typography variant="body2">Course Description</Typography>
+        </label>
+        <TextField
+          id="description"
+          variant="outlined"
+          placeholder="Enter course description"
+          margin="dense"
+          fullWidth
+          multiline
+          rows={2}
+        />
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="requirements">
+          <Typography variant="body2">Course Requirements</Typography>
+        </label>
+        <TextField
+          id="requirements"
+          variant="outlined"
+          placeholder="eg. Node.JS, Java EE"
+          margin="dense"
+          fullWidth
+        />
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="objectives">
+          <Typography variant="body2">Course Learning Objectives</Typography>
+        </label>
+        <TextField
+          id="objectives"
+          variant="outlined"
+          placeholder="Enter learning objectives"
+          margin="dense"
+          fullWidth
+          multiline
+          rows={2}
+        />
+      </div>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ float: "right" }}
+          onClick={() => setDrawerPageNum(2)}
+        >
+          Next
+        </Button>
+      </div>
+    </Fragment>
+  );
+
+  const drawerPage2 = (
+    <Fragment>
+      <div style={{ marginBottom: "30px" }}>
+        <label htmlFor="points">
+          <Typography variant="body2">Experience Points</Typography>
+        </label>
+        <TextField
+          id="points"
+          variant="outlined"
+          margin="dense"
+          fullWidth
+          type="number"
+          InputProps={{
+            inputProps: { min: 0 },
+          }}
+        />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Button variant="contained" onClick={() => setDrawerPageNum(1)}>
+          Back
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          // onClick={() => setDrawerPageNum(2)}
+        >
+          Update
+        </Button>
+      </div>
+    </Fragment>
+  );
 
   return (
     <Fragment>
@@ -67,89 +182,7 @@ const CourseKanbanBoard = () => {
           classes={{ paper: classes.drawer }}
         >
           <div className={classes.insideDrawer}>
-            <div
-              style={{
-                marginBottom: "10px",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <IconButton onClick={() => setCoursePicDialog(true)}>
-                {coursePicAvatar ? (
-                  <Avatar
-                    className={classes.avatar}
-                    src={coursePicAvatar[0].data}
-                  />
-                ) : (
-                  <Avatar className={classes.avatar}>
-                    <Folder fontSize="large" />
-                  </Avatar>
-                )}
-              </IconButton>
-            </div>
-            <div style={{ marginBottom: "30px" }}>
-              <label htmlFor="title">
-                <Typography variant="body2">Course Title</Typography>
-              </label>
-              <TextField
-                id="title"
-                variant="outlined"
-                placeholder="Enter course title"
-                margin="dense"
-                fullWidth
-              />
-            </div>
-            <div style={{ marginBottom: "30px" }}>
-              <label htmlFor="title">
-                <Typography variant="body2">Course Description</Typography>
-              </label>
-              <TextField
-                id="title"
-                variant="outlined"
-                placeholder="Enter course description"
-                margin="dense"
-                fullWidth
-                multiline
-                rows={2}
-              />
-            </div>
-            <div style={{ marginBottom: "30px" }}>
-              <label htmlFor="title">
-                <Typography variant="body2">Course Requirements</Typography>
-              </label>
-              <TextField
-                id="title"
-                variant="outlined"
-                placeholder="eg. Node.JS, Java EE"
-                margin="dense"
-                fullWidth
-              />
-            </div>
-            <div style={{ marginBottom: "30px" }}>
-              <label htmlFor="title">
-                <Typography variant="body2">
-                  Course Learning Objectives
-                </Typography>
-              </label>
-              <TextField
-                id="title"
-                variant="outlined"
-                placeholder="Enter learning objectives"
-                margin="dense"
-                fullWidth
-                multiline
-                rows={2}
-              />
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ float: "right" }}
-              >
-                Next
-              </Button>
-            </div>
+            {drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}
           </div>
         </Drawer>
       </div>
