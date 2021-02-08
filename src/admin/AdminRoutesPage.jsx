@@ -193,7 +193,12 @@ const AdminRoutesPage = () => {
   return (
     <BrowserRouter>
       <div className={classes.root}>
-        <Navbar loggedIn={loggedIn} logo={navLogo} navbarItems={memberNavbar} />
+        <Navbar
+          loggedIn={loggedIn}
+          bgColor="#fff"
+          logo={navLogo}
+          navbarItems={memberNavbar}
+        />
         <SideBar head={sidebarHead} list={sidebarList} />
         <main className={classes.content}>
           <div className={classes.toolbar} />
