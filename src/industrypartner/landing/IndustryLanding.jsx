@@ -12,7 +12,7 @@ import {
 
 import Footer from "./Footer";
 import headerbarimg from "../../assets/industryimage.png";
-import logo from "../../assets/industrycodeinewhitelogo.svg";
+import logo from "../../assets/CodeineLogos/PartnerWhite.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/content-logo.png";
+import logo from "../../assets/CodeineLogos/Partner.svg";
 
 import Toast from "../../components/Toast.js";
 

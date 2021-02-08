@@ -17,7 +17,7 @@ import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
-import logo from "../assets/content-logo.png";
+import logo from "../assets/CodeineLogos/Partner.svg";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 

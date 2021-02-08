@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
 import SideBar from "../components/Sidebar";
-import logo from "../assets/logo2.png";
+import logo from "../assets/CodeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
@@ -19,13 +19,13 @@ import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import AdminHumanResourcePage from "./HumanResourcePage";
-import ContentQualityPage from "./ContentQualityPage";
-import HelpdeskPage from "./HelpdeskPage";
-import LearnersAchievementPage from "./LearnersAchievementPage";
-import AnalyticsPage from "./AnalyticsPage";
-import ProfilePage from "./ProfilePage";
-import PasswordPage from "./PasswordPage";
+import AdminHumanResourcePage from "./HumanResource/HumanResourcePage";
+import ContentQualityPage from "./ContentQuality/ContentQualityPage";
+import HelpdeskPage from "./Helpdesk/HelpdeskPage";
+import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPage";
+import AnalyticsPage from "./Analytics/AnalyticsPage";
+import ProfilePage from "./Profile/ProfilePage";
+import PasswordPage from "./Password/PasswordPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -193,7 +193,12 @@ const AdminRoutesPage = () => {
   return (
     <BrowserRouter>
       <div className={classes.root}>
-        <Navbar loggedIn={loggedIn} logo={navLogo} navbarItems={memberNavbar} />
+        <Navbar
+          loggedIn={loggedIn}
+          bgColor="#fff"
+          logo={navLogo}
+          navbarItems={memberNavbar}
+        />
         <SideBar head={sidebarHead} list={sidebarList} />
         <main className={classes.content}>
           <div className={classes.toolbar} />
