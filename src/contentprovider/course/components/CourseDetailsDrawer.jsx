@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Folder } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
+import { ToggleButton } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -28,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(15),
     height: theme.spacing(15),
   },
+  languageButtons: {
+    width: 80,
+    marginRight: "15px",
+  },
 }));
 
 const CourseDetailsDrawer = ({
@@ -42,6 +47,21 @@ const CourseDetailsDrawer = ({
 
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
+
+  const [languages, setLanguages] = useState({
+    ENG: false,
+    MAN: false,
+    FRE: false,
+  });
+
+  const [categories, setCategories] = useState({
+    SEC: false,
+    DB: false,
+    FE: false,
+    BE: false,
+    UI: false,
+    ML: false,
+  });
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -145,6 +165,109 @@ const CourseDetailsDrawer = ({
 
   const drawerPage2 = (
     <Fragment>
+      <div style={{ marginBottom: "30px" }}>
+        <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+          Course Language
+        </Typography>
+        <div>
+          <ToggleButton
+            size="small"
+            selected={languages && languages.ENG}
+            onChange={() => {
+              setLanguages({ ...languages, ENG: !languages.ENG });
+            }}
+            className={classes.languageButtons}
+          >
+            English
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={languages && languages.MAN}
+            onChange={() => {
+              setLanguages({ ...languages, MAN: !languages.MAN });
+            }}
+            className={classes.languageButtons}
+          >
+            中文
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={languages && languages.FRE}
+            onChange={() => {
+              setLanguages({ ...languages, FRE: !languages.FRE });
+            }}
+            className={classes.languageButtons}
+          >
+            français
+          </ToggleButton>
+        </div>
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+          Category
+        </Typography>
+        <div>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.SEC}
+            onChange={() => {
+              setCategories({ ...categories, SEC: !categories.SEC });
+            }}
+            className={classes.languageButtons}
+          >
+            Security
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.DB}
+            onChange={() => {
+              setCategories({ ...categories, DB: !categories.DB });
+            }}
+            // className={classes.languageButtons}
+          >
+            Database Administration
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.FE}
+            onChange={() => {
+              setCategories({ ...categories, FE: !categories.FE });
+            }}
+            className={classes.languageButtons}
+          >
+            Frontend
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.BE}
+            onChange={() => {
+              setCategories({ ...categories, BE: !categories.BE });
+            }}
+            className={classes.languageButtons}
+          >
+            Backend
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.UI}
+            onChange={() => {
+              setCategories({ ...categories, UI: !categories.UI });
+            }}
+            className={classes.languageButtons}
+          >
+            UI/UX
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            selected={categories && categories.ML}
+            onChange={() => {
+              setCategories({ ...categories, ML: !categories.ML });
+            }}
+          >
+            Machine Learning
+          </ToggleButton>
+        </div>
+      </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="preview">
           <Typography variant="body2">
