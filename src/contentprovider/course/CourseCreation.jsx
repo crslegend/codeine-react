@@ -6,6 +6,7 @@ import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
 
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
+import CourseKanbanBoard from "./components/CourseKanbanBoard";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -242,6 +243,7 @@ const CourseCreation = () => {
           Edit Course Details
         </Button>
       </div>
+      <CourseKanbanBoard />
       <CourseDetailsDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
