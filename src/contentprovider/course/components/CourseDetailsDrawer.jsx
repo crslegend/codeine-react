@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
   insideDrawer: {
     display: "flex",
     flexDirection: "column",
-    padding: theme.spacing(7),
+    paddingTop: theme.spacing(5),
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
     minHeight: "100vh",
   },
   avatar: {
@@ -45,28 +47,22 @@ const CourseDetailsDrawer = ({
   setDrawerOpen,
   coursePicAvatar,
   setCoursePicAvatar,
+  courseDetails,
+  setCourseDetails,
+  languages,
+  setLanguages,
+  categories,
+  setCategories,
+  handleSaveCourseDetails,
+  drawerPageNum,
+  setDrawerPageNum,
+  codeLanguage,
+  setCodeLanguage,
 }) => {
   const classes = useStyles();
 
-  const [drawerPageNum, setDrawerPageNum] = useState(1);
-
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
-
-  const [languages, setLanguages] = useState({
-    ENG: false,
-    MAN: false,
-    FRE: false,
-  });
-
-  const [categories, setCategories] = useState({
-    SEC: false,
-    DB: false,
-    FE: false,
-    BE: false,
-    UI: false,
-    ML: false,
-  });
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -76,11 +72,6 @@ const CourseDetailsDrawer = ({
       return;
     }
 
-    setDrawerOpen(false);
-    setDrawerPageNum(1);
-  };
-
-  const handleUpdateCourseDetails = () => {
     setDrawerOpen(false);
     setDrawerPageNum(1);
   };
@@ -114,6 +105,14 @@ const CourseDetailsDrawer = ({
           placeholder="Enter course title"
           margin="dense"
           fullWidth
+          value={courseDetails && courseDetails.title}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              title: e.target.value,
+            })
+          }
+          required
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -128,6 +127,14 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={2}
+          value={courseDetails && courseDetails.description}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              description: e.target.value,
+            })
+          }
+          required
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -140,6 +147,14 @@ const CourseDetailsDrawer = ({
           placeholder="eg. Node.JS, Java EE"
           margin="dense"
           fullWidth
+          value={courseDetails && courseDetails.requirements}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              requirements: e.target.value,
+            })
+          }
+          required
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -154,6 +169,14 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={2}
+          value={courseDetails && courseDetails.learning_objectives}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              learning_objectives: e.target.value,
+            })
+          }
+          required
         />
       </div>
       <div>
@@ -177,6 +200,7 @@ const CourseDetailsDrawer = ({
         </Typography>
         <div>
           <ToggleButton
+            value=""
             size="small"
             selected={languages && languages.ENG}
             onChange={() => {
@@ -187,6 +211,7 @@ const CourseDetailsDrawer = ({
             English
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={languages && languages.MAN}
             onChange={() => {
@@ -197,6 +222,7 @@ const CourseDetailsDrawer = ({
             中文
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={languages && languages.FRE}
             onChange={() => {
@@ -214,6 +240,7 @@ const CourseDetailsDrawer = ({
         </Typography>
         <div>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.SEC}
             onChange={() => {
@@ -224,6 +251,7 @@ const CourseDetailsDrawer = ({
             Security
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.DB}
             onChange={() => {
@@ -234,6 +262,7 @@ const CourseDetailsDrawer = ({
             Database Administration
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.FE}
             onChange={() => {
@@ -244,6 +273,7 @@ const CourseDetailsDrawer = ({
             Frontend
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.BE}
             onChange={() => {
@@ -254,6 +284,7 @@ const CourseDetailsDrawer = ({
             Backend
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.UI}
             onChange={() => {
@@ -264,6 +295,7 @@ const CourseDetailsDrawer = ({
             UI/UX
           </ToggleButton>
           <ToggleButton
+            value=""
             size="small"
             selected={categories && categories.ML}
             onChange={() => {
@@ -272,6 +304,101 @@ const CourseDetailsDrawer = ({
             className={`${classes.categoryButtons}`}
           >
             Machine Learning
+          </ToggleButton>
+        </div>
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+          Coding Language/Framework
+        </Typography>
+        <div>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.PY}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, PY: !codeLanguage.PY });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            Python
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.JAVA}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, JAVA: !codeLanguage.JAVA });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            Java
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.JS}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, JS: !codeLanguage.JS });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            Javascript
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.CPP}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, CPP: !codeLanguage.CPP });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            C++
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.CS}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, CS: !codeLanguage.CS });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            C#
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.HTML}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, HTML: !codeLanguage.HTML });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            HTML
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.CSS}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, CSS: !codeLanguage.CSS });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            CSS
+          </ToggleButton>
+          <ToggleButton
+            value=""
+            size="small"
+            selected={codeLanguage && codeLanguage.RUBY}
+            onChange={() => {
+              setCodeLanguage({ ...codeLanguage, RUBY: !codeLanguage.RUBY });
+            }}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
+          >
+            Ruby
           </ToggleButton>
         </div>
       </div>
@@ -287,6 +414,13 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           placeholder="eg. URL of video hosted on youtube"
+          value={courseDetails && courseDetails.introduction_video_url}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              introduction_video_url: e.target.value,
+            })
+          }
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -302,18 +436,31 @@ const CourseDetailsDrawer = ({
           InputProps={{
             inputProps: { min: 0 },
           }}
+          value={courseDetails && courseDetails.exp_points}
+          onChange={(e) =>
+            setCourseDetails({
+              ...courseDetails,
+              exp_points: e.target.value,
+            })
+          }
         />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingBottom: "20px",
+        }}
+      >
         <Button variant="contained" onClick={() => setDrawerPageNum(1)}>
           Back
         </Button>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleUpdateCourseDetails()}
+          onClick={() => handleSaveCourseDetails()}
         >
-          Update
+          Save
         </Button>
       </div>
     </Fragment>
