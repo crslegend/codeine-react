@@ -32,6 +32,11 @@ const useStyles = makeStyles((theme) => ({
   languageButtons: {
     width: 80,
     marginRight: "15px",
+    height: 30,
+  },
+  categoryButtons: {
+    marginBottom: "10px",
+    height: 30,
   },
 }));
 
@@ -72,6 +77,7 @@ const CourseDetailsDrawer = ({
     }
 
     setDrawerOpen(false);
+    setDrawerPageNum(1);
   };
 
   const handleUpdateCourseDetails = () => {
@@ -213,7 +219,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, SEC: !categories.SEC });
             }}
-            className={classes.languageButtons}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
           >
             Security
           </ToggleButton>
@@ -223,7 +229,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, DB: !categories.DB });
             }}
-            // className={classes.languageButtons}
+            className={`${classes.categoryButtons}`}
           >
             Database Administration
           </ToggleButton>
@@ -233,7 +239,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, FE: !categories.FE });
             }}
-            className={classes.languageButtons}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
           >
             Frontend
           </ToggleButton>
@@ -243,7 +249,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, BE: !categories.BE });
             }}
-            className={classes.languageButtons}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
           >
             Backend
           </ToggleButton>
@@ -253,7 +259,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, UI: !categories.UI });
             }}
-            className={classes.languageButtons}
+            className={`${classes.languageButtons} ${classes.categoryButtons}`}
           >
             UI/UX
           </ToggleButton>
@@ -263,6 +269,7 @@ const CourseDetailsDrawer = ({
             onChange={() => {
               setCategories({ ...categories, ML: !categories.ML });
             }}
+            className={`${classes.categoryButtons}`}
           >
             Machine Learning
           </ToggleButton>
