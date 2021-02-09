@@ -210,15 +210,29 @@ const CourseCreation = () => {
     formData.append("price", data.price);
     formData.append("exp_points", data.exp_points);
 
-    Service.client
-      .post(`/courses/`, formData)
-      .then((res) => {
-        console.log(res);
-        setDrawerOpen(false);
-        setDrawerPageNum(1);
-      })
-      .catch((err) => console.log(err));
+    // Service.client
+    //   .post(`/courses`, formData)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setDrawerOpen(false);
+    //     setDrawerPageNum(1);
+    //     localStorage.setItem("courseId", res.data.id);
+    //   })
+    //   .catch((err) => console.log(err));
   };
+
+  // useEffect(() => {
+  //   const courseId = localStorage.getItem("courseId");
+  //   console.log(courseId);
+  //   if (courseId) {
+  //     Service.client
+  //       .get(`/courses/${courseId}`)
+  //       .then((res) => {
+  //         console.log(res);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }, []);
 
   return (
     <Fragment>
