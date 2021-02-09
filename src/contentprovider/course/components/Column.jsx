@@ -8,12 +8,17 @@ const useStyles = makeStyles((theme) => ({
     margin: 8,
     border: "1px solid lightgrey",
     borderRadius: 2,
+    width: 220,
+    display: "flex",
+    flexDirection: "column",
   },
   title: {
     padding: 8,
   },
   taskList: {
     padding: 8,
+    flexGrow: 1,
+    minHeight: "100px",
   },
 }));
 

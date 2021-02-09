@@ -16,11 +16,25 @@ const data = {
       title: "To do",
       taskIds: ["task-1", "task-2", "task-3", "task-4"],
     },
+    "column-2": {
+      id: "column-2",
+      title: "In progress",
+      taskIds: [],
+    },
+    "column-3": {
+      id: "column-3",
+      title: "Done",
+      taskIds: [],
+    },
   },
   // Facilitate reordering of the columns
-  columnOrder: ["column-1"],
+  columnOrder: ["column-1", "column-2", "column-3"],
 };
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: "flex",
+  },
+}));
 
 const CourseKanbanBoard = () => {
   const classes = useStyles();
@@ -41,39 +55,67 @@ const CourseKanbanBoard = () => {
       return;
     }
 
-    const column = state.columns[source.droppableId];
-    const newTaskIds = Array.from(column.taskIds);
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
+    const startColumn = state.columns[source.droppableId];
+    const endColumn = state.columns[destination.droppableId];
 
-    const newColumn = {
-      ...column,
-      taskIds: newTaskIds,
-    };
+    if (startColumn === endColumn) {
+      const newTaskIds = Array.from(startColumn.taskIds);
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
 
-    const newState = {
-      ...state,
-      columns: {
-        ...state.columns,
-        [newColumn.id]: newColumn,
-      },
-    };
+      const newColumn = {
+        ...startColumn,
+        taskIds: newTaskIds,
+      };
 
-    setState(newState);
+      const newState = {
+        ...state,
+        columns: {
+          ...state.columns,
+          [newColumn.id]: newColumn,
+        },
+      };
+      setState(newState);
+    } else {
+      // moving from one list to another
+      const startTaskIds = Array.from(startColumn.taskIds);
+      startTaskIds.splice(source.index, 1);
+      const newStart = {
+        ...startColumn,
+        taskIds: startTaskIds,
+      };
+
+      const finishTaskIds = Array.from(endColumn.taskIds);
+      finishTaskIds.splice(destination.index, 0, draggableId);
+      const newFinish = {
+        ...endColumn,
+        taskIds: finishTaskIds,
+      };
+
+      const newState = {
+        ...state,
+        columns: {
+          ...state.columns,
+          [newStart.id]: newStart,
+          [newFinish.id]: newFinish,
+        },
+      };
+      setState(newState);
+    }
   };
 
   return (
-    state &&
-    state.columnOrder.map((columnId, index) => {
-      const column = state.columns[columnId];
-      const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <div className={classes.container}>
+        {state &&
+          state.columnOrder.map((columnId, index) => {
+            const column = state.columns[columnId];
+            const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
 
-      return (
-        <DragDropContext onDragEnd={handleDragEnd} key={index}>
-          <Column key={column.id} column={column} tasks={tasks} />
-        </DragDropContext>
-      );
-    })
+            return <Column key={column.id} column={column} tasks={tasks} />;
+          })}
+      </div>
+    </DragDropContext>
   );
 };
 
