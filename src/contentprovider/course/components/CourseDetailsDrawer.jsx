@@ -97,7 +97,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="title">
-          <Typography variant="body2">Course Title</Typography>
+          <Typography variant="body2">Course Title (Required)</Typography>
         </label>
         <TextField
           id="title"
@@ -117,7 +117,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="description">
-          <Typography variant="body2">Course Description</Typography>
+          <Typography variant="body2">Course Description (Required)</Typography>
         </label>
         <TextField
           id="description"
@@ -139,7 +139,9 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="requirements">
-          <Typography variant="body2">Course Requirements</Typography>
+          <Typography variant="body2">
+            Course Requirements (Required)
+          </Typography>
         </label>
         <TextField
           id="requirements"
@@ -159,7 +161,9 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="objectives">
-          <Typography variant="body2">Course Learning Objectives</Typography>
+          <Typography variant="body2">
+            Course Learning Objectives (Required)
+          </Typography>
         </label>
         <TextField
           id="objectives"
@@ -196,7 +200,7 @@ const CourseDetailsDrawer = ({
     <Fragment>
       <div style={{ marginBottom: "30px" }}>
         <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-          Course Language
+          Course Language (Choost at least 1)
         </Typography>
         <div>
           <ToggleButton
@@ -236,7 +240,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-          Category
+          Category (Choost at least 1)
         </Typography>
         <div>
           <ToggleButton
@@ -309,7 +313,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-          Coding Language/Framework
+          Coding Language/Framework (Choost at least 1)
         </Typography>
         <div>
           <ToggleButton

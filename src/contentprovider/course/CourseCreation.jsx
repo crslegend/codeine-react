@@ -4,12 +4,24 @@ import { Button, TextField, Typography } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
 
+import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({}));
 
 const CourseCreation = () => {
   const classes = useStyles();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [drawerPageNum, setDrawerPageNum] = useState(1);
@@ -54,8 +66,105 @@ const CourseCreation = () => {
   // console.log(courseDetails);
 
   const handleSaveCourseDetails = () => {
-    setDrawerOpen(false);
-    setDrawerPageNum(1);
+    if (!coursePicAvatar) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a picture for your course!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (
+      courseDetails.title === "" ||
+      courseDetails.description === "" ||
+      courseDetails.learning_objectives.length === 0 ||
+      courseDetails.requirements.length === 0
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter required fields!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    let neverChooseOne = true;
+    for (const property in languages) {
+      if (languages[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 course language",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in categories) {
+      if (categories[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 category",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in codeLanguage) {
+      if (codeLanguage[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message:
+          "Please select at least 1 coding language/framework for your course",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
 
     let data = {
       ...courseDetails,
@@ -105,12 +214,15 @@ const CourseCreation = () => {
       .post(`/courses/`, formData)
       .then((res) => {
         console.log(res);
+        setDrawerOpen(false);
+        setDrawerPageNum(1);
       })
       .catch((err) => console.log(err));
   };
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div>
         <Button startIcon={<Edit />} onClick={() => setDrawerOpen(true)}>
           Edit Course Details
