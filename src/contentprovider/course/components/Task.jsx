@@ -9,6 +9,14 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
     marginBottom: "8px",
     backgroundColor: "#fff",
+    display: "flex",
+  },
+  handle: {
+    width: 20,
+    height: 20,
+    backgroundColor: "orange",
+    borderRadius: "4px",
+    marginRight: "10px",
   },
 }));
 
@@ -22,9 +30,9 @@ const Task = ({ task, index }) => {
           <div
             className={classes.container}
             {...provided.draggableProps}
-            {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
+            <div className={classes.handle} {...provided.dragHandleProps}></div>
             {task.content}
           </div>
         );
