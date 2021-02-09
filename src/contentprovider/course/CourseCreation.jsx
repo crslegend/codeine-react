@@ -238,7 +238,7 @@ const CourseCreation = () => {
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <div>
+      <div style={{ marginBottom: "20px" }}>
         <Button startIcon={<Edit />} onClick={() => setDrawerOpen(true)}>
           Edit Course Details
         </Button>
