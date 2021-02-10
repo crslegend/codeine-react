@@ -1,14 +1,31 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, TextField, Typography } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import { Add, Edit } from "@material-ui/icons";
 import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
 
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  buttonSection: {
+    marginBottom: "20px",
+    display: "flex",
+    justifyContent: "space-around",
+  },
+  dialogButtons: {
+    width: 100,
+  },
+}));
 
 const CourseCreation = () => {
   const classes = useStyles();
@@ -22,6 +39,13 @@ const CourseCreation = () => {
       horizontal: "center",
     },
     autoHideDuration: 3000,
+  });
+
+  const [chapterDialog, setChapterDialog] = useState(false);
+  const [numOfChapters, setNumOfChapters] = useState(0);
+  const [chapterDetails, setChapterDetails] = useState({
+    title: "",
+    overview: "",
   });
 
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -235,7 +259,7 @@ const CourseCreation = () => {
     }
   };
 
-  useEffect(() => {
+  const getCourse = () => {
     const id = localStorage.getItem("courseId");
     setCourseId(id);
     if (id) {
@@ -255,6 +279,8 @@ const CourseCreation = () => {
             data: res.data.thumbnail,
           };
           setCoursePicAvatar([obj]);
+
+          setNumOfChapters(res.data.chapters.length);
 
           let newLanguages = { ...languages };
           for (let i = 0; i < res.data.languages.length; i++) {
@@ -285,14 +311,48 @@ const CourseCreation = () => {
         })
         .catch((err) => console.log(err));
     }
+  };
+
+  const handleSaveChapter = (e) => {
+    e.preventDefault();
+    const data = {
+      ...chapterDetails,
+      order: numOfChapters,
+    };
+
+    Service.client
+      .post(`/courses/${courseId}/chapters`, data)
+      .then((res) => {
+        console.log(res);
+        setChapterDialog(false);
+        getCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getCourse();
   }, []);
 
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <div style={{ marginBottom: "20px" }}>
-        <Button startIcon={<Edit />} onClick={() => setDrawerOpen(true)}>
+      <div className={classes.buttonSection}>
+        <Button
+          variant="contained"
+          startIcon={<Edit />}
+          onClick={() => setDrawerOpen(true)}
+        >
           Edit Course Details
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => setChapterDialog(true)}
+        >
+          Add New Chapter
         </Button>
       </div>
       <CourseKanbanBoard />
@@ -314,6 +374,89 @@ const CourseCreation = () => {
         setCodeLanguage={setCodeLanguage}
         courseId={courseId}
       />
+      <Dialog
+        open={chapterDialog}
+        onClose={() => {
+          setChapterDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <form onSubmit={handleSaveChapter}>
+          <DialogTitle>Create a New Chapter</DialogTitle>
+          <DialogContent>
+            <div style={{ marginBottom: "20px" }}>
+              <label htmlFor="title">
+                <Typography variant="body2">Chapter Title</Typography>
+              </label>
+              <TextField
+                id="title"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                placeholder="Enter Chapter Title"
+                value={chapterDetails && chapterDetails.title}
+                onChange={(e) => {
+                  setChapterDetails({
+                    ...chapterDetails,
+                    title: e.target.value,
+                  });
+                }}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="title">
+                <Typography variant="body2">Chapter Overview</Typography>
+              </label>
+              <TextField
+                id="title"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                multiline
+                rows={2}
+                placeholder="Enter Chapter Overview"
+                value={chapterDetails && chapterDetails.overview}
+                onChange={(e) => {
+                  setChapterDetails({
+                    ...chapterDetails,
+                    overview: e.target.value,
+                  });
+                }}
+                required
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              className={classes.dialogButtons}
+              onClick={() => {
+                setChapterDialog(false);
+                setChapterDetails({
+                  title: "",
+                  overview: "",
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.dialogButtons}
+              type="submit"
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Fragment>
   );
 };
