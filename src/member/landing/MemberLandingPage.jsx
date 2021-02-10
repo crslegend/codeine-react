@@ -7,7 +7,7 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
 
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
