@@ -58,6 +58,7 @@ const CourseDetailsDrawer = ({
   setDrawerPageNum,
   codeLanguage,
   setCodeLanguage,
+  courseId,
 }) => {
   const classes = useStyles();
 
@@ -523,7 +524,9 @@ const CourseDetailsDrawer = ({
           <Button
             variant="contained"
             onClick={() => {
-              setCoursePic(coursePicAvatar);
+              if (!courseId) {
+                setCoursePic(coursePicAvatar);
+              }
               setCoursePicDialog(false);
             }}
           >

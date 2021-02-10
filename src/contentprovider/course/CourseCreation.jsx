@@ -64,6 +64,8 @@ const CourseCreation = () => {
     RUBY: false,
   });
 
+  const [courseId, setCourseId] = useState();
+
   // console.log(courseDetails);
 
   const handleSaveCourseDetails = () => {
@@ -173,7 +175,7 @@ const CourseCreation = () => {
       languages: [],
       categories: [],
       price: 20,
-      thumbnail: coursePicAvatar[0].data,
+      thumbnail: coursePicAvatar[0].file,
     };
 
     for (const property in languages) {
@@ -211,29 +213,79 @@ const CourseCreation = () => {
     formData.append("price", data.price);
     formData.append("exp_points", data.exp_points);
 
-    // Service.client
-    //   .post(`/courses`, formData)
-    //   .then((res) => {
-    //     console.log(res);
-    //     setDrawerOpen(false);
-    //     setDrawerPageNum(1);
-    //     localStorage.setItem("courseId", res.data.id);
-    //   })
-    //   .catch((err) => console.log(err));
+    if (courseId) {
+      Service.client
+        .put(`/courses/${courseId}`, formData)
+        .then((res) => {
+          console.log(res);
+          setDrawerOpen(false);
+          setDrawerPageNum(1);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/courses`, formData)
+        .then((res) => {
+          console.log(res);
+          setDrawerOpen(false);
+          setDrawerPageNum(1);
+          localStorage.setItem("courseId", res.data.id);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
-  // useEffect(() => {
-  //   const courseId = localStorage.getItem("courseId");
-  //   console.log(courseId);
-  //   if (courseId) {
-  //     Service.client
-  //       .get(`/courses/${courseId}`)
-  //       .then((res) => {
-  //         console.log(res);
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const id = localStorage.getItem("courseId");
+    setCourseId(id);
+    if (id) {
+      Service.client
+        .get(`/courses/${id}`)
+        .then((res) => {
+          console.log(res);
+          setCourseDetails({
+            title: res.data.title,
+            description: res.data.description,
+            learning_objectives: res.data.description,
+            requirements: res.data.requirements,
+            introduction_video_url: res.data.introduction_video_url,
+            exp_points: res.data.exp_points,
+          });
+          const obj = {
+            data: res.data.thumbnail,
+          };
+          setCoursePicAvatar([obj]);
+
+          let newLanguages = { ...languages };
+          for (let i = 0; i < res.data.languages.length; i++) {
+            newLanguages = {
+              ...newLanguages,
+              [res.data.languages[i]]: true,
+            };
+          }
+          setLanguages(newLanguages);
+
+          let newCategories = { ...categories };
+          for (let i = 0; i < res.data.categories.length; i++) {
+            newCategories = {
+              ...newCategories,
+              [res.data.categories[i]]: true,
+            };
+          }
+          setCategories(newCategories);
+
+          let newCodeLanguages = { ...codeLanguage };
+          for (let i = 0; i < res.data.coding_languages.length; i++) {
+            newCodeLanguages = {
+              ...newCodeLanguages,
+              [res.data.coding_languages[i]]: true,
+            };
+          }
+          setCodeLanguage(newCodeLanguages);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
 
   return (
     <Fragment>
@@ -260,6 +312,7 @@ const CourseCreation = () => {
         setDrawerPageNum={setDrawerPageNum}
         codeLanguage={codeLanguage}
         setCodeLanguage={setCodeLanguage}
+        courseId={courseId}
       />
     </Fragment>
   );
