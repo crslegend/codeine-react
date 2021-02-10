@@ -1,12 +1,41 @@
 import React, { Fragment, useState } from "react";
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+import SearchBar from "material-ui-search-bar";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+
+const styles = makeStyles((theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  tabs: {
+    backgroundColor: "white",
+    elavation: "none",
+  },
+  tabPanel: {
+    padding: "0px",
+  },
+}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -20,7 +49,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box p={0}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -112,41 +141,98 @@ const rows = [
   },
 ];
 
-const useStyles = makeStyles((theme) => ({}));
-
 const AdminHumanResourcePage = () => {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const classes = styles();
+  const [value, setValue] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = (e) => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <div className={classes.root}>
+    <Fragment className={classes.root}>
       <AppBar position="static">
         <Tabs
           value={value}
+          background="#fff"
+          indicatorColor="primary"
+          textColor="primary"
           onChange={handleChange}
           aria-label="simple tabs example"
+          classes={{
+            root: classes.tabs,
+          }}
         >
-          <Tab label="Content Provider" {...a11yProps(0)} />
-          <Tab label="Industry Partners" {...a11yProps(1)} />
-          <Tab label="Members" {...a11yProps(2)} />
+          <Tab label="Partners" {...a11yProps(0)} />
+          <Tab label="Members" {...a11yProps(1)} />
+          <Tab label="Admin" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         <div style={{ height: "600px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+            }}
+            placeholder="Search content provider"
+            value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValue("")}
+          />
+
           <DataGrid
             rows={rows}
             columns={columns.map((column) => ({
               ...column,
-              disableClickEventBubbling: true,
+              //disableClickEventBubbling: true,
             }))}
             pageSize={10}
-            checkboxSelection
+            //checkboxSelection
+            onRowClick={handleClickOpen}
           />
         </div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">
+            Hello
+            <IconButton
+              aria-label="close"
+              className={classes.closeButton}
+              onClick={handleClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              To subscribe to this website, please enter your email address
+              here. We will send updates occasionally.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleClose} color="primary">
+              Approve
+            </Button>
+          </DialogActions>
+        </Dialog>
       </TabPanel>
       <TabPanel value={value} index={1}>
         Item Two
@@ -154,7 +240,7 @@ const AdminHumanResourcePage = () => {
       <TabPanel value={value} index={2}>
         Item Three
       </TabPanel>
-    </div>
+    </Fragment>
   );
 };
 

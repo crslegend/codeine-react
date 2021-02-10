@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/content-logo.png";
+import logo from "../../assets/CodeineLogos/Partner.svg";
 
 import Toast from "../../components/Toast.js";
 
@@ -91,7 +91,7 @@ const ContentProviderLoginPage = () => {
       .then((res) => {
         console.log(res);
         Service.storeCredentials(res.data);
-        history.push("/content-provider/home/dashboard");
+        history.push("/partner/home/dashboard");
       })
       .catch((err) => {
         setLoading(false);
@@ -110,7 +110,7 @@ const ContentProviderLoginPage = () => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/content-provider" className={classes.codeineLogo}>
+          <Link to="/partner" className={classes.codeineLogo}>
             <img src={logo} alt="logo" width="90%" />
           </Link>
           <TextField
@@ -149,7 +149,7 @@ const ContentProviderLoginPage = () => {
             Do not have an account? Click{" "}
             <span>
               <Link
-                to="/content-provider/register"
+                to="/partner/register"
                 style={{ textDecoration: "none", color: "#437FC7" }}
               >
                 here
