@@ -21,26 +21,26 @@ const App = () => {
     <Switch>
       <LandingPageRoute
         exact
-        path="/content-provider"
+        path="/partner"
         render={() => <ContentProviderLanding />}
-        user="content-provider"
+        user="partner"
       />
       <PrivateRoute
-        path="/content-provider/home"
+        path="/partner/home"
         render={() => <ContentProviderHome />}
-        user="content-provider"
+        user="partner"
       />
       <LandingPageRoute
         exact
-        path="/content-provider/login"
+        path="/partner/login"
         render={() => <ContentProviderLoginPage />}
-        user="content-provider"
+        user="partner"
       />
       <LandingPageRoute
         exact
-        path="/content-provider/register"
+        path="/partner/register"
         render={() => <ContentProviderRegisterPage />}
-        user="content-provider"
+        user="partner"
       />
       <Route exact path="/" component={MemberLandingPage} />
       <PrivateRoute

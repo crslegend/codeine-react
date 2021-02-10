@@ -87,7 +87,7 @@ const ContentProviderHome = () => {
           }}
           onClick={() => {
             Service.removeCredentials();
-            history.push("/content-provider");
+            history.push("/partner");
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
@@ -102,13 +102,17 @@ const ContentProviderHome = () => {
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
         <Avatar className={classes.avatar}>
-          {user && user.user.first_name.charAt(0)}
+          {user && user.first_name.charAt(0)}
         </Avatar>
       </div>
       <Typography variant="h6">
-        {user && user.user.first_name} {user && user.user.last_name}
+        {user && user.first_name} {user && user.last_name}
       </Typography>
-      <Typography variant="body1">{user && user.job_title}</Typography>
+      {user && user.partner.organization && (
+        <Typography variant="body1">
+          {user.partner.organization.organization_name}
+        </Typography>
+      )}
     </Fragment>
   );
 
@@ -116,7 +120,7 @@ const ContentProviderHome = () => {
     <Fragment>
       <ListItem
         component={NavLink}
-        to="/content-provider/home/dashboard"
+        to="/partner/home/dashboard"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -126,7 +130,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/content-provider/home/content"
+        to="/partner/home/content"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -136,7 +140,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/content-provider/home/consultation"
+        to="/partner/home/consultation"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -151,7 +155,7 @@ const ContentProviderHome = () => {
   const navLogo = (
     <Fragment>
       <Link
-        to="/content-provider/home/dashboard"
+        to="/partner/home/dashboard"
         style={{
           paddingTop: "10px",
           paddingBottom: "10px",
@@ -167,10 +171,11 @@ const ContentProviderHome = () => {
   const getUserDetails = () => {
     if (Cookies.get("t1")) {
       const decoded = jwt_decode(Cookies.get("t1"));
+      console.log(decoded);
       Service.client
-        .get(`/auth/contentProviders/${decoded.user_id}`)
+        .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           setUser(res.data);
         })
         .catch((err) => console.log(err));
@@ -192,23 +197,20 @@ const ContentProviderHome = () => {
           <Switch>
             <PrivateRoute
               exact
-              path="/content-provider/home/dashboard"
+              path="/partner/home/dashboard"
               render={() => <div></div>}
             />
             <PrivateRoute
               exact
-              path="/content-provider/home/content"
+              path="/partner/home/content"
               render={() => <ViewAllCourses />}
             />
             <PrivateRoute
               exact
-              path="/content-provider/home/consultation"
+              path="/partner/home/consultation"
               render={() => <Consultation />}
             />
-            <Redirect
-              from="/content-provider/home"
-              to="/content-provider/home/dashboard"
-            />
+            <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>
         </div>
       </div>
