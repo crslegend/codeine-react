@@ -103,13 +103,17 @@ const ContentProviderHome = () => {
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
         <Avatar className={classes.avatar}>
-          {user && user.user.first_name.charAt(0)}
+          {user && user.first_name.charAt(0)}
         </Avatar>
       </div>
       <Typography variant="h6">
-        {user && user.user.first_name} {user && user.user.last_name}
+        {user && user.first_name} {user && user.last_name}
       </Typography>
-      <Typography variant="body1">{user && user.job_title}</Typography>
+      {user && user.partner.organization && (
+        <Typography variant="body1">
+          {user.partner.organization.organization_name}
+        </Typography>
+      )}
     </Fragment>
   );
 
@@ -168,10 +172,11 @@ const ContentProviderHome = () => {
   const getUserDetails = () => {
     if (Cookies.get("t1")) {
       const decoded = jwt_decode(Cookies.get("t1"));
+      console.log(decoded);
       Service.client
-        .get(`/auth/contentProviders/${decoded.user_id}`)
+        .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           setUser(res.data);
         })
         .catch((err) => console.log(err));
