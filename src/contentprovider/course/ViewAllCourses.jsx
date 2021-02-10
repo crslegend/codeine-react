@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
 import PageTitle from "../../components/PageTitle";
 import { Add } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = useStyles();
-  const history = useHistory();
+  // const history = useHistory();
 
   return (
     <Fragment>
@@ -34,7 +34,8 @@ const ViewAllCourses = () => {
           variant="contained"
           startIcon={<Add />}
           className={classes.addButton}
-          onClick={() => history.push("/content-provider/home/content/new")}
+          component={Link}
+          to="/partner/home/content/new"
         >
           Create New Course
         </Button>
