@@ -61,7 +61,7 @@ const Footer = () => {
             Partners for Personal
           </Link>
           <Link to="/" className={classes.footerLink}>
-            Industry Partners
+            Partners for Enterprise
           </Link>
         </div>
         <div className={classes.rightCol}>
