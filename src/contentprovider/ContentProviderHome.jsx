@@ -172,11 +172,11 @@ const ContentProviderHome = () => {
   const getUserDetails = () => {
     if (Cookies.get("t1")) {
       const decoded = jwt_decode(Cookies.get("t1"));
-      console.log(decoded);
+      // console.log(decoded);
       Service.client
         .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setUser(res.data);
         })
         .catch((err) => console.log(err));
@@ -187,7 +187,7 @@ const ContentProviderHome = () => {
     getUserDetails();
   }, []);
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <BrowserRouter>
