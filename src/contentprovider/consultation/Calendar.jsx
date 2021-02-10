@@ -47,6 +47,10 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     onFieldChange({ confirmed: nextValue });
   };
 
+  const onRejectChange = (nextValue) => {
+    onFieldChange({ rejected: nextValue });
+  };
+
   return (
     <AppointmentForm.BasicLayout
       appointmentData={appointmentData}
@@ -65,7 +69,7 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
       />
       <AppointmentForm.Label
         style={{ marginTop: "10px" }}
-        text="Price"
+        text="Member"
         type="title"
       />
       <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
@@ -75,6 +79,13 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
         value={appointmentData.confirmed}
         onValueChange={onConfirmChange}
         label="Confirm Consultation"
+      />
+
+      <AppointmentForm.BooleanEditor
+        style={{ marginTop: "10px" }}
+        value={appointmentData.rejected}
+        onValueChange={onRejectChange}
+        label="Reject Consultation"
       />
     </AppointmentForm.BasicLayout>
   );
