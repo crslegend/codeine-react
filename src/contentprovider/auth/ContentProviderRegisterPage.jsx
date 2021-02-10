@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   Paper,
   TextField,
   Typography,
@@ -57,10 +59,10 @@ const ContentProviderRegisterPage = () => {
     password: "",
     first_name: "",
     last_name: "",
-    company_name: "",
-    job_title: "",
-    bio: "",
   });
+
+  const [enterprise, setEnterprise] = useState(false);
+  const [company, setCompany] = useState();
 
   const handleEmailChange = (e) => {
     setRegisterDetails({
@@ -91,24 +93,7 @@ const ContentProviderRegisterPage = () => {
   };
 
   const handleCompanyChange = (e) => {
-    setRegisterDetails({
-      ...registerDetails,
-      company_name: e.target.value,
-    });
-  };
-
-  const handleJobTitleChange = (e) => {
-    setRegisterDetails({
-      ...registerDetails,
-      job_title: e.target.value,
-    });
-  };
-
-  const handleBioChange = (e) => {
-    setRegisterDetails({
-      ...registerDetails,
-      bio: e.target.value,
-    });
+    setCompany(e.target.value);
   };
 
   const handlePageChange = (e) => {
@@ -120,18 +105,33 @@ const ContentProviderRegisterPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    // call admin login ednpoint
-    Service.client
-      .post("/auth/contentProviders", registerDetails)
-      .then((res) => {
-        console.log(res);
-        setLoading(false);
-        setAwaitApproval(true);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
+    // call admin register ednpoint
+    if (company) {
+      const data = { ...registerDetails, organization_name: company };
+      Service.client
+        .post("/auth/partners", data)
+        .then((res) => {
+          console.log(res);
+          setLoading(false);
+          setAwaitApproval(true);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    } else {
+      Service.client
+        .post("/auth/partners", registerDetails)
+        .then((res) => {
+          console.log(res);
+          setLoading(false);
+          setAwaitApproval(true);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    }
   };
 
   if (awaitApproval) {
@@ -185,26 +185,7 @@ const ContentProviderRegisterPage = () => {
               type="password"
               required
             />
-            <TextField
-              variant="outlined"
-              margin="dense"
-              placeholder="First Name"
-              value={registerDetails && registerDetails.first_name}
-              onChange={handleNameChange}
-              type="text"
-              required
-              name="first"
-            />
-            <TextField
-              variant="outlined"
-              margin="dense"
-              placeholder="Last Name"
-              value={registerDetails && registerDetails.last_name}
-              onChange={handleNameChange}
-              type="text"
-              required
-              name="last"
-            />
+
             <Button
               disabled={loading}
               variant="contained"
@@ -212,11 +193,7 @@ const ContentProviderRegisterPage = () => {
               className={classes.button}
               type="submit"
             >
-              {loading ? (
-                <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
-              ) : (
-                "Next Step"
-              )}
+              Next Step
             </Button>
 
             <Typography variant="body1">
@@ -247,31 +224,43 @@ const ContentProviderRegisterPage = () => {
           <TextField
             variant="outlined"
             margin="dense"
-            placeholder="Company"
-            value={registerDetails && registerDetails.company_name}
-            onChange={handleCompanyChange}
+            placeholder="First Name"
+            value={registerDetails && registerDetails.first_name}
+            onChange={handleNameChange}
             type="text"
             required
+            name="first"
           />
           <TextField
             variant="outlined"
             margin="dense"
-            placeholder="Job Title"
-            value={registerDetails && registerDetails.job_title}
-            onChange={handleJobTitleChange}
+            placeholder="Last Name"
+            value={registerDetails && registerDetails.last_name}
+            onChange={handleNameChange}
             type="text"
             required
+            name="last"
           />
-          <TextField
-            variant="outlined"
-            margin="dense"
-            placeholder="Bio"
-            value={registerDetails && registerDetails.bio}
-            onChange={handleBioChange}
-            type="text"
-            required
-            multiline
-            rows={3}
+          {enterprise && (
+            <TextField
+              variant="outlined"
+              margin="dense"
+              placeholder="Company"
+              value={registerDetails && registerDetails.company_name}
+              onChange={handleCompanyChange}
+              type="text"
+              required={enterprise}
+            />
+          )}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={enterprise}
+                onChange={() => setEnterprise(!enterprise)}
+                color="primary"
+              />
+            }
+            label="Register as Enterprise"
           />
           <div>
             <Button
