@@ -44,11 +44,11 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     onFieldChange({ meeting_link: nextValue });
   };
   const onConfirmChange = (nextValue) => {
-    onFieldChange({ confirmed: nextValue });
+    onFieldChange({ confirmed: nextValue, rejected: !nextValue });
   };
 
   const onRejectChange = (nextValue) => {
-    onFieldChange({ rejected: nextValue });
+    onFieldChange({ rejected: nextValue, confirmed: !nextValue });
   };
 
   return (
