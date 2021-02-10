@@ -57,8 +57,8 @@ const Footer = () => {
           <Link to="/" className={classes.footerLink}>
             Members
           </Link>
-          <Link to="/" className={classes.footerLink}>
-            Content Providers
+          <Link to="/partner" className={classes.footerLink}>
+            Partners for Personal
           </Link>
           <Link to="/" className={classes.footerLink}>
             Industry Partners

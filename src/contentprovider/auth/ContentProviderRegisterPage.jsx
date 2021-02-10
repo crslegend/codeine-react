@@ -138,7 +138,7 @@ const ContentProviderRegisterPage = () => {
     return (
       <div>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/content-provider" className={classes.codeineLogo}>
+          <Link to="/partner" className={classes.codeineLogo}>
             <img src={logo} alt="logo" width="90%" />
           </Link>
           <Typography
@@ -164,7 +164,7 @@ const ContentProviderRegisterPage = () => {
       <div>
         <form onSubmit={handlePageChange}>
           <Paper elevation={3} className={classes.paper}>
-            <Link to="/content-provider" className={classes.codeineLogo}>
+            <Link to="/partner" className={classes.codeineLogo}>
               <img src={logo} alt="logo" width="90%" />
             </Link>
             <TextField
@@ -223,7 +223,7 @@ const ContentProviderRegisterPage = () => {
               Already have an account? Click{" "}
               <span>
                 <Link
-                  to="/content-provider/login"
+                  to="/partner/login"
                   style={{ textDecoration: "none", color: "#437FC7" }}
                 >
                   here
@@ -241,7 +241,7 @@ const ContentProviderRegisterPage = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/content-provider" className={classes.codeineLogo}>
+          <Link to="/partner" className={classes.codeineLogo}>
             <img src={logo} alt="logo" width="90%" />
           </Link>
           <TextField
@@ -302,7 +302,7 @@ const ContentProviderRegisterPage = () => {
             Already have an account? Click{" "}
             <span>
               <Link
-                to="/content-provider/login"
+                to="/partner/login"
                 style={{ textDecoration: "none", color: "#437FC7" }}
               >
                 here

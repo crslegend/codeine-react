@@ -34,12 +34,12 @@ const ContentProviderLanding = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/industry" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Industry Partners
+            Partners for Enterprise
           </Typography>
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/content-provider/login" style={{ textDecoration: "none" }}>
+        <Link to="/partner/login" style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
@@ -51,7 +51,7 @@ const ContentProviderLanding = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           component={Link}
-          to="/content-provider/register"
+          to="/partner/register"
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
@@ -68,7 +68,7 @@ const ContentProviderLanding = () => {
   const navLogo = (
     <Fragment>
       <Link
-        to="/content-provider"
+        to="/partner"
         style={{
           paddingTop: "10px",
           paddingBottom: "10px",
@@ -76,11 +76,7 @@ const ContentProviderLanding = () => {
           width: 100,
         }}
       >
-        <img
-          src={logo}
-          width="140%"
-          alt="codeine content provider navbar logo"
-        />
+        <img src={logo} width="140%" alt="codeine partner navbar logo" />
       </Link>
     </Fragment>
   );
