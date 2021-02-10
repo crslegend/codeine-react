@@ -47,6 +47,11 @@ const CourseCreation = () => {
     title: "",
     overview: "",
   });
+  const [allChapters, setAllChapters] = useState({
+    columns: {},
+    tasks: {},
+    columnOrder: [],
+  });
 
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [drawerPageNum, setDrawerPageNum] = useState(1);
@@ -281,6 +286,25 @@ const CourseCreation = () => {
           setCoursePicAvatar([obj]);
 
           setNumOfChapters(res.data.chapters.length);
+          setAllChapters(res.data.chapters);
+
+          // setting the right data for the kanban board
+          let columnOrder = [];
+          res.data.chapters.forEach((chapter) => columnOrder.push(chapter.id));
+
+          let columns = {};
+          res.data.chapters.forEach((chapter) => {
+            columns = {
+              ...columns,
+              [chapter.id]: chapter,
+            };
+          });
+          // console.log(columns);
+          setAllChapters({
+            ...allChapters,
+            columnOrder: columnOrder,
+            columns: columns,
+          });
 
           let newLanguages = { ...languages };
           for (let i = 0; i < res.data.languages.length; i++) {
@@ -355,7 +379,11 @@ const CourseCreation = () => {
           Add New Chapter
         </Button>
       </div>
-      <CourseKanbanBoard />
+      <CourseKanbanBoard
+        coruseId={courseId}
+        state={allChapters}
+        setState={setAllChapters}
+      />
       <CourseDetailsDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}

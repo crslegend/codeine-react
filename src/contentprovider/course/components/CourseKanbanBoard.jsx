@@ -39,6 +39,7 @@ const data = {
   },
   // Facilitate reordering of the columns
   columnOrder: ["column-1", "column-2", "column-3", "column-4", "column-5"],
+  // columnOrder: [],
 };
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -46,10 +47,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CourseKanbanBoard = () => {
+const CourseKanbanBoard = ({ courseId, state, setState }) => {
   const classes = useStyles();
-
-  const [state, setState] = useState(data);
+  console.log(state);
+  // const [state, setState] = useState(data);
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
@@ -138,18 +139,20 @@ const CourseKanbanBoard = () => {
               ref={provided.innerRef}
             >
               {state &&
+                state.columnOrder &&
                 state.columnOrder.map((columnId, index) => {
                   const column = state.columns[columnId];
-                  const tasks = column.taskIds.map(
-                    (taskId) => state.tasks[taskId]
-                  );
+                  const tasks =
+                    column.taskIds &&
+                    column.taskIds.map((taskId) => state.tasks[taskId]);
 
                   return (
                     <Column
                       key={column.id}
                       column={column}
-                      tasks={tasks}
+                      tasks={tasks && tasks}
                       index={index}
+                      courseId={courseId}
                     />
                   );
                 })}
