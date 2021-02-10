@@ -12,7 +12,7 @@ import {
 
 import Footer from "./Footer";
 import headerbarimg from "../../assets/industryimage.png";
-import logo from "../../assets/industrycodeinewhitelogo.svg";
+import logo from "../../assets/CodeineLogos/PartnerWhite.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,9 +60,9 @@ const IndustryLanding = () => {
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/content-provider" style={{ textDecoration: "none" }}>
+        <Link to="/partner" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Content Providers
+            Partners for Personal
           </Typography>
         </Link>
       </ListItem>
@@ -218,6 +218,7 @@ const IndustryLanding = () => {
                   textTransform: "capitalize",
                   justify: "center",
                   marginTop: "5vh",
+                  marginBottom: "10px",
                 }}
               >
                 <Typography variant="h6" style={{ color: "#fff" }}>

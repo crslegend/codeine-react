@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import logo from "../../assets/industrycodeinewhitelogo.svg";
+import logo from "../../assets/CodeineLogos/PartnerWhite.svg";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -57,11 +57,11 @@ const Footer = () => {
           <Link to="/" className={classes.footerLink}>
             Members
           </Link>
-          <Link to="/" className={classes.footerLink}>
-            Content Providers
+          <Link to="/partner" className={classes.footerLink}>
+            Partners for Personal
           </Link>
           <Link to="/" className={classes.footerLink}>
-            Industry Partners
+            Partners for Enterprise
           </Link>
         </div>
         <div className={classes.rightCol}>
@@ -83,7 +83,7 @@ const Footer = () => {
             width: 100,
           }}
         >
-          <img src={logo} width="5%" alt="codeine-logo" />
+          <img src={logo} width="100px" alt="codeine-logo" />
         </Link>
         <Typography variant="body1" className={classes.copyright}>
           &copy; Codeine 2021

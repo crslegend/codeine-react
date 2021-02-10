@@ -7,7 +7,7 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
 
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,16 +52,16 @@ const MemberLandingPage = () => {
   const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/content-provider" style={{ textDecoration: "none" }}>
+        <Link to="/partner" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Content Providers
+            Partners for Personal
           </Typography>
         </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/industry" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Industry Partners
+            Partners for Enterprise
           </Typography>
         </Link>
       </ListItem>

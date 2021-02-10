@@ -7,7 +7,7 @@ import Sidebar from "../../components/Sidebar";
 import { Dashboard } from "@material-ui/icons";
 import Service from "../../AxiosService";
 
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -132,7 +132,7 @@ const MemberLanding = () => {
           width: 100,
         }}
       >
-        <img src={logo} width="120%" alt=""/>
+        <img src={logo} width="120%" alt="" />
       </Link>
     </Fragment>
   );
