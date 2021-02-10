@@ -74,8 +74,8 @@ const AdminLoginPage = () => {
     Service.client
       .post("/api/token/", loginDetails)
       .then((res) => {
-        console.log(res);
-        // history.push("/member");
+        // console.log(res);
+        history.push("/admin/humanresource");
       })
       .catch((err) => console.log(err));
   };
