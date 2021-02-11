@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
-import Paper from "@material-ui/core/Paper";
+import { Paper, Snackbar, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import {
   ViewState,
   EditingState,
@@ -7,29 +8,31 @@ import {
 } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
+  WeekView,
+  ViewSwitcher,
   MonthView,
   Appointments,
-  Resources,
   Toolbar,
   TodayButton,
   DateNavigator,
   AppointmentForm,
   AppointmentTooltip,
   DragDropProvider,
+  ConfirmationDialog,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { appointments, resourcesData } from "./Data";
-
-const resources = [
-  {
-    fieldName: "courseId",
-    title: "Course",
-    instances: resourcesData,
-  },
-];
+import { appointments } from "./Data";
 
 const messages = {
   moreInformationLabel: "",
 };
+
+const views = [
+  {
+    type: "month",
+    name: "Auto Mode",
+    maxAppointmentsPerCell: "2",
+  },
+];
 
 const TextEditor = (props) => {
   // eslint-disable-next-line react/destructuring-assignment
@@ -92,9 +95,19 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
 };
 
 const Calendar = () => {
-  const [consultations, setConsultations] = useState([]);
+  const [consultations, setConsultations] = useState(appointments);
   const [addedAppointment, setAddedAppointment] = React.useState({});
+  const [currentViewName, setCurrentViewName] = useState("month");
   const currentDate = new Date();
+
+  const [editingOptions, setEditingOptions] = React.useState({
+    allowDeleting: true,
+    allowUpdating: true,
+    allowDragging: true,
+  });
+  const [createAlertOpen, setCreateAlertOpen] = useState(false);
+
+  const { allowDeleting, allowUpdating, allowDragging } = editingOptions;
 
   /*useEffect(() => {
     Service.client
@@ -118,6 +131,17 @@ const Calendar = () => {
         setData(null);
       });
   }, []);*/
+
+  const handleCreateAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setCreateAlertOpen(false);
+  };
+
+  const handleCurrentViewChange = (newViewName) => {
+    setCurrentViewName(newViewName);
+  };
 
   const onCommitChanges = React.useCallback(
     ({ added, changed, deleted }) => {
@@ -147,21 +171,52 @@ const Calendar = () => {
   );
 
   const onAddedAppointmentChange = React.useCallback((appointment) => {
-    setAddedAppointment(appointment);
+    if (appointment.startDate < currentDate) {
+      return (
+        <Snackbar
+          open={createAlertOpen}
+          autoHideDuration={4000}
+          onClose={handleCreateAlertClose}
+        >
+          <Alert
+            onClose={handleCreateAlertClose}
+            elevation={6}
+            severity="error"
+          >
+            <Typography variant="body1">
+              Please enter all address fields or select an address from the
+              dropdown!
+            </Typography>
+          </Alert>
+        </Snackbar>
+      );
+    } else {
+      setAddedAppointment(appointment);
+    }
   });
+
+  const allowDrag = React.useCallback(() => allowDragging && allowUpdating, [
+    allowDragging,
+    allowUpdating,
+  ]);
 
   return (
     <Fragment>
       <Paper>
-        <Scheduler data={appointments}>
-          <ViewState defaultCurrentDate={currentDate} />
+        <Scheduler data={consultations} height="700">
+          <ViewState
+            defaultCurrentDate={currentDate}
+            currentViewName={currentViewName}
+            onCurrentViewNameChange={handleCurrentViewChange}
+          />
           <EditingState
             onCommitChanges={onCommitChanges}
             addedAppointment={addedAppointment}
             onAddedAppointmentChange={onAddedAppointmentChange}
           />
           <IntegratedEditing />
-          <MonthView />
+          <WeekView name="week" />
+          <MonthView name="month" />
           <Toolbar />
           <DateNavigator />
           <TodayButton />
@@ -172,8 +227,9 @@ const Calendar = () => {
             textEditorComponent={TextEditor}
             messages={messages}
           />
-          <Resources data={resources} />
-          <DragDropProvider />
+          <DragDropProvider allowDrag={allowDrag} />
+          <ViewSwitcher />
+          <ConfirmationDialog />
         </Scheduler>
       </Paper>
     </Fragment>
