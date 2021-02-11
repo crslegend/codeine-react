@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Task = ({ task, index }) => {
   const classes = useStyles();
+  console.log(task);
 
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -33,7 +34,7 @@ const Task = ({ task, index }) => {
             ref={provided.innerRef}
           >
             <div className={classes.handle} {...provided.dragHandleProps}></div>
-            {task.content}
+            {task.title}
           </div>
         );
       }}

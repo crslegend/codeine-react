@@ -173,11 +173,28 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
           },
           autoHideDuration: 3000,
         });
+        return;
       }
+
+      Service.client
+        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
+        .then((res) => {
+          console.log(res);
+          setCourseMaterialDialog(false);
+          setMaterialType();
+          setChapterIdForCourseMaterial();
+          setVideo({
+            title: "",
+            description: "",
+            video_url: "",
+          });
+          getCourse();
+        })
+        .catch((err) => console.log(err));
     }
   };
 
-  console.log(column);
+  // console.log(column);
 
   return (
     <Fragment>

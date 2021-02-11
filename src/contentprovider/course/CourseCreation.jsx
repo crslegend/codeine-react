@@ -286,17 +286,35 @@ const CourseCreation = () => {
           setCoursePicAvatar([obj]);
 
           setNumOfChapters(res.data.chapters.length);
-          setAllChapters(res.data.chapters);
+          // setAllChapters(res.data.chapters);
 
           // setting the right data for the kanban board
           let columnOrder = [];
           res.data.chapters.forEach((chapter) => columnOrder.push(chapter.id));
 
           let columns = {};
+          let tasksObj = {};
           res.data.chapters.forEach((chapter) => {
             columns = {
               ...columns,
               [chapter.id]: chapter,
+            };
+            let taskIdsArr = [];
+            chapter.course_materials.forEach((courseMaterial) => {
+              taskIdsArr.push(courseMaterial.id);
+              tasksObj = {
+                ...tasksObj,
+                [courseMaterial.id]: courseMaterial,
+              };
+            });
+            // console.log(tasksObj);
+
+            columns = {
+              ...columns,
+              [chapter.id]: {
+                ...columns[chapter.id],
+                taskIds: taskIdsArr,
+              },
             };
           });
           // console.log(columns);
@@ -304,6 +322,7 @@ const CourseCreation = () => {
             ...allChapters,
             columnOrder: columnOrder,
             columns: columns,
+            tasks: tasksObj,
           });
 
           let newLanguages = { ...languages };
