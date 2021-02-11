@@ -2,7 +2,15 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import { Delete, DragIndicator, Edit } from "@material-ui/icons";
+import {
+  Add,
+  Assignment,
+  AttachFile,
+  Delete,
+  DragIndicator,
+  Edit,
+  Movie,
+} from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -30,11 +38,17 @@ const useStyles = makeStyles((theme) => ({
   columnHeader: {
     display: "flex",
     flexDirection: "row",
+    // justifyContent: "space-between",
     alignItems: "center",
     padding: "5px",
   },
   title: {
     cursor: "pointer",
+    display: "inline-block",
+    width: 170,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   taskList: {
     padding: 8,
@@ -44,15 +58,23 @@ const useStyles = makeStyles((theme) => ({
   handle: {
     width: 20,
     marginRight: "10px",
+    paddingTop: "5px",
   },
   dialogButtons: {
     width: 100,
+  },
+  courseMaterialButton: {
+    marginBottom: "5px",
+    textTransform: "capitalize",
+    width: 150,
+    color: theme.palette.primary.main,
+    backgroundColor: "#fff",
   },
 }));
 
 const Column = ({ column, tasks, index, courseId, getCourse }) => {
   const classes = useStyles();
-  console.log(courseId);
+  // console.log(courseId);
 
   const [chapterDetailsDialog, setChapterDetailsDialog] = useState(false);
 
@@ -61,6 +83,13 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
 
   const [deleteChapterDialog, setDeleteChapterDialog] = useState(false);
   const [deleteChapterId, setDeleteChapterId] = useState(false);
+
+  const [courseMaterialDialog, setCourseMaterialDialog] = useState(false);
+  const [materialType, setMaterialType] = useState();
+  const [file, setFile] = useState();
+  const [video, setVideo] = useState();
+  const [quiz, setQuiz] = useState();
+  const [chapterIdForCouseMaterial, setChapterIdForCourseMaterial] = useState();
 
   const handleUpdateChapterDetails = (e) => {
     e.preventDefault();
@@ -88,7 +117,10 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleCreateCourseMaterial = () => {};
+
   console.log(column);
+  console.log(materialType);
 
   return (
     <Fragment>
@@ -117,6 +149,51 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                 >
                   {column.title}
                 </LinkMui>
+                {/* <IconButton size="small">
+                  <Add />
+                </IconButton> */}
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  startIcon={<AttachFile />}
+                  className={classes.courseMaterialButton}
+                  onClick={() => {
+                    setMaterialType("file");
+                    setCourseMaterialDialog(true);
+                  }}
+                >
+                  Add File
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<Movie />}
+                  className={classes.courseMaterialButton}
+                  onClick={() => {
+                    setMaterialType("video");
+                    setCourseMaterialDialog(true);
+                  }}
+                >
+                  Add Video
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<Assignment />}
+                  className={classes.courseMaterialButton}
+                  onClick={() => {
+                    setMaterialType("quiz");
+                    setCourseMaterialDialog(true);
+                  }}
+                >
+                  Add Quiz
+                </Button>
               </div>
 
               <Droppable droppableId={column.id} type="task">
@@ -272,6 +349,49 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
             Confirm
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={courseMaterialDialog}
+        onClose={() => {
+          setCourseMaterialDialog(false);
+          setMaterialType();
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <form onSubmit={handleCreateCourseMaterial}>
+          <DialogTitle>Add Course Material</DialogTitle>
+          <DialogContent>
+            {(() => {
+              if (courseMaterialDialog) {
+                if (materialType === "file") {
+                } else if (materialType === "video") {
+                  return (
+                    <Fragment>
+                      <label htmlFor="title">
+                        <Typography variant="body2">Title of Video</Typography>
+                      </label>
+                      <TextField
+                        id="title"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={""}
+                        onChange={(e) => {}}
+                        required
+                      />
+                    </Fragment>
+                  );
+                } else if (materialType === "quiz") {
+                }
+              }
+            })()}
+          </DialogContent>
+        </form>
       </Dialog>
     </Fragment>
   );
