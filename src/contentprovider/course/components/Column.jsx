@@ -93,7 +93,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
   return (
     <Fragment>
       <Draggable draggableId={column.id} index={index}>
-        {(provided) => {
+        {(provided, snapshot) => {
           return (
             <div
               className={classes.container}
@@ -126,6 +126,11 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                       className={classes.taskList}
                       ref={provided.innerRef}
                       {...provided.droppableProps}
+                      style={{
+                        backgroundColor: snapshot.isDragging
+                          ? "#e0e0e0"
+                          : "#fff",
+                      }}
                     >
                       {tasks &&
                         tasks.map((task, index) => (
