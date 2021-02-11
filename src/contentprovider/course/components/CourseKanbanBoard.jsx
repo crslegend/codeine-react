@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Column from "./Column";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
+import Service from "../../../AxiosService";
+
 const data = {
   tasks: {
     "task-1": { id: "task-1", content: "Take out the garbage" },
@@ -76,6 +78,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
         columnOrder: newColumnOrder,
       };
       setState(newState);
+      handleUpdateChaptersOrdering(courseId, newColumnOrder);
       return;
     }
 
@@ -126,6 +129,15 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       };
       setState(newState);
     }
+  };
+
+  const handleUpdateChaptersOrdering = (courseId, newColumnOrder) => {
+    Service.client
+      .patch(`/courses/${courseId}/orderChapters`, newColumnOrder)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
