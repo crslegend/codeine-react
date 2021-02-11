@@ -128,7 +128,13 @@ const ViewAllCourses = () => {
                 <Button className={classes.popoverButtons}>
                   Reply Comments
                 </Button>
-                <Button className={classes.popoverButtons}>Edit Course</Button>
+                <Button
+                  className={classes.popoverButtons}
+                  component={Link}
+                  to={allCourses && `/partner/home/content/${allCourses.id}`}
+                >
+                  Edit Course
+                </Button>
                 <Button className={classes.popoverButtons}>
                   <span style={{ color: "red" }}>Delete Course</span>
                 </Button>

@@ -212,6 +212,12 @@ const ContentProviderHome = () => {
               render={() => <CourseCreation />}
             />
             <PrivateRoute
+              path="/partner/home/content/:id"
+              strict
+              sensitive
+              render={(match) => <CourseCreation match={match} />}
+            />
+            <PrivateRoute
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}

@@ -15,6 +15,7 @@ import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CourseCreation = () => {
   const classes = useStyles();
+  const { id } = useParams();
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -265,11 +267,19 @@ const CourseCreation = () => {
   };
 
   const getCourse = () => {
-    const id = localStorage.getItem("courseId");
-    setCourseId(id);
+    let chosenId = "";
     if (id) {
+      setCourseId(id);
+      chosenId = id;
+    } else {
+      const idFromLocal = localStorage.getItem("courseId");
+      setCourseId(idFromLocal);
+      chosenId = idFromLocal;
+    }
+
+    if (chosenId) {
       Service.client
-        .get(`/courses/${id}`)
+        .get(`/courses/${chosenId}`)
         .then((res) => {
           console.log(res);
           setCourseDetails({
