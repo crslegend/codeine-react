@@ -22,6 +22,8 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import validator from "validator";
+import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
 
@@ -76,6 +78,17 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
   const classes = useStyles();
   // console.log(courseId);
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [chapterDetailsDialog, setChapterDetailsDialog] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
@@ -121,12 +134,54 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
       .catch((err) => console.log(err));
   };
 
-  const handleCreateCourseMaterial = () => {};
+  const handleCreateCourseMaterial = () => {
+    if (materialType === "video") {
+      // check for empty fields
+      if (
+        video.title === "" ||
+        video.description === "" ||
+        video.video_url === ""
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please fill up all fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      // check if video URL is a valid URL
+      if (
+        !validator.isURL(video.video_url, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+          allow_underscores: true,
+        })
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please enter a valid URL!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      }
+    }
+  };
 
   console.log(column);
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={column.id} index={index}>
         {(provided, snapshot) => {
           return (
@@ -435,7 +490,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                           });
                         }}
                         required
-                        placeholder="Youtube Video URL"
+                        placeholder="https://www.google.com"
                         style={{ marginBottom: "15px" }}
                       />
                     </Fragment>
