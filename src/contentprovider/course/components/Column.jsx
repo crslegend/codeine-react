@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Column = ({ column, tasks, index, courseId }) => {
+const Column = ({ column, tasks, index, courseId, getCourse }) => {
   const classes = useStyles();
   console.log(courseId);
 
@@ -59,15 +59,31 @@ const Column = ({ column, tasks, index, courseId }) => {
   const [editMode, setEditMode] = useState(false);
   const [editChapter, setEditChapter] = useState();
 
+  const [deleteChapterDialog, setDeleteChapterDialog] = useState(false);
+  const [deleteChapterId, setDeleteChapterId] = useState(false);
+
   const handleUpdateChapterDetails = (e) => {
     e.preventDefault();
     Service.client
-      .put(`/courses/${courseId}/chapters/${column.id}`)
+      .put(`/courses/${courseId}/chapters/${column.id}`, editChapter)
       .then((res) => {
         console.log(res);
         setChapterDetailsDialog(false);
         setEditMode(false);
         setEditChapter();
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteChapter = () => {
+    setDeleteChapterDialog(false);
+    Service.client
+      .delete(`/courses/${courseId}/chapters/${deleteChapterId}`)
+      .then((res) => {
+        console.log(res);
+        setDeleteChapterId();
+        getCourse();
       })
       .catch((err) => console.log(err));
   };
@@ -90,6 +106,7 @@ const Column = ({ column, tasks, index, courseId }) => {
                 </div>
                 <LinkMui
                   className={classes.title}
+                  style={{ textDecoration: "none" }}
                   onClick={() => {
                     setEditChapter({
                       title: column.title,
@@ -141,7 +158,13 @@ const Column = ({ column, tasks, index, courseId }) => {
               <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
               </IconButton>
-              <IconButton size="small">
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setDeleteChapterId(column.id);
+                  setDeleteChapterDialog(true);
+                }}
+              >
                 <Delete />
               </IconButton>
             </div>
@@ -206,6 +229,44 @@ const Column = ({ column, tasks, index, courseId }) => {
             </Button>
           </DialogActions>
         </form>
+      </Dialog>
+
+      <Dialog
+        open={deleteChapterDialog}
+        onClose={() => {
+          setDeleteChapterId();
+          setDeleteChapterDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete this chapter?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteChapterId();
+              setDeleteChapterDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              handleDeleteChapter();
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );

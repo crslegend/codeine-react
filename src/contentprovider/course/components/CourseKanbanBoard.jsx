@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CourseKanbanBoard = ({ courseId, state, setState }) => {
+const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
   const classes = useStyles();
   console.log(state);
   // const [state, setState] = useState(data);
@@ -153,6 +153,7 @@ const CourseKanbanBoard = ({ courseId, state, setState }) => {
                       tasks={tasks && tasks}
                       index={index}
                       courseId={courseId}
+                      getCourse={getCourse}
                     />
                   );
                 })}

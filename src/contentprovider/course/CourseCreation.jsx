@@ -380,9 +380,10 @@ const CourseCreation = () => {
         </Button>
       </div>
       <CourseKanbanBoard
-        coruseId={courseId}
+        courseId={courseId}
         state={allChapters}
         setState={setAllChapters}
+        getCourse={getCourse}
       />
       <CourseDetailsDrawer
         drawerOpen={drawerOpen}
