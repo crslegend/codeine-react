@@ -192,52 +192,42 @@ const AdminRoutesPage = () => {
 
   return (
     <BrowserRouter>
-      <div className={classes.root}>
-        <Navbar
-          loggedIn={loggedIn}
-          bgColor="#fff"
-          logo={navLogo}
-          navbarItems={memberNavbar}
-        />
-        <SideBar head={sidebarHead} list={sidebarList} />
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Switch>
-            <Route
-              exact
-              path="/admin/humanresource"
-              render={() => <AdminHumanResourcePage />}
-            />
-            <Route
-              exact
-              path="/admin/contentquality"
-              render={() => <ContentQualityPage />}
-            />
-            <Route
-              exact
-              path="/admin/helpdesk"
-              render={() => <HelpdeskPage />}
-            />
-            <Route
-              exact
-              path="/admin/learnersachievement"
-              render={() => <LearnersAchievementPage />}
-            />
-            <Route
-              exact
-              path="/admin/analytics"
-              render={() => <AnalyticsPage />}
-            />
-            <Route exact path="/admin/profile" render={() => <ProfilePage />} />
-            <Route
-              exact
-              path="/admin/password"
-              render={() => <PasswordPage />}
-            />
-            <Redirect from="/admin" to="/admin/humanresource" />
-          </Switch>
-        </main>
-      </div>
+      <Navbar
+        loggedIn={loggedIn}
+        bgColor="#fff"
+        logo={navLogo}
+        navbarItems={memberNavbar}
+      />
+      <SideBar head={sidebarHead} list={sidebarList} />
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <Switch>
+          <Route
+            exact
+            path="/admin/humanresource"
+            render={() => <AdminHumanResourcePage />}
+          />
+          <Route
+            exact
+            path="/admin/contentquality"
+            render={() => <ContentQualityPage />}
+          />
+          <Route exact path="/admin/helpdesk" render={() => <HelpdeskPage />} />
+          <Route
+            exact
+            path="/admin/learnersachievement"
+            render={() => <LearnersAchievementPage />}
+          />
+          <Route
+            exact
+            path="/admin/analytics"
+            render={() => <AnalyticsPage />}
+          />
+          <Route exact path="/admin/profile" render={() => <ProfilePage />} />
+          <Route exact path="/admin/password" render={() => <PasswordPage />} />
+          <Redirect from="/admin" to="/admin/humanresource" />
+        </Switch>
+      </main>
     </BrowserRouter>
   );
 };

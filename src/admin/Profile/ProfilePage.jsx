@@ -26,24 +26,13 @@ const AdminProfilePage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [loginDetails, setLoginDetails] = useState({
+  const [profileDetails, setProfileDetails] = useState({
+    firstname: "",
+    lastname: "",
     email: "",
-    password: "",
+    companyname: "",
+    contactnumber: "",
   });
-
-  const handleEmailChange = (e) => {
-    setLoginDetails({
-      ...loginDetails,
-      email: e.target.value,
-    });
-  };
-
-  const handlePasswordChange = (e) => {
-    setLoginDetails({
-      ...loginDetails,
-      password: e.target.value,
-    });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,8 +56,14 @@ const AdminProfilePage = () => {
                       autoComplete="FirstName"
                       required
                       fullWidth
-                      // value={loginDetails.email}
-                      // error={emailError}
+                      value={profileDetails.firstname}
+                      // error={firstNameError}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          firstname: event.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
@@ -80,6 +75,14 @@ const AdminProfilePage = () => {
                       autoComplete="lastname"
                       required
                       fullWidth
+                      value={profileDetails.lastname}
+                      // error={lastNameError}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          lastname: event.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
@@ -91,6 +94,14 @@ const AdminProfilePage = () => {
                       autoComplete="email"
                       required
                       fullWidth
+                      value={profileDetails.email}
+                      // error={emailError}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          email: event.target.value,
+                        })
+                      }
                     />
                   </div>
 
@@ -103,6 +114,14 @@ const AdminProfilePage = () => {
                       autoComplete="companyname"
                       required
                       fullWidth
+                      value={profileDetails.company}
+                      // error={companyError}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          company: event.target.value,
+                        })
+                      }
                     />
                   </div>
 
@@ -115,6 +134,14 @@ const AdminProfilePage = () => {
                       autoComplete="contactnumber"
                       required
                       fullWidth
+                      value={profileDetails.contactnumber}
+                      //error={contactnumberError}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          contactnumber: event.target.value,
+                        })
+                      }
                     />
                   </div>
 

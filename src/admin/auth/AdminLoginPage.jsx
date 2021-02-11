@@ -74,10 +74,19 @@ const AdminLoginPage = () => {
     Service.client
       .post("/api/token/", loginDetails)
       .then((res) => {
-        // console.log(res);
-        history.push("/admin/humanresource");
+        if (res.data.user.is_admin) {
+          Service.storeCredentials(res.data);
+          setLoading(false);
+          history.push("/admin/humanresource");
+        } else {
+          setLoading(false);
+          console.log("User is not admin");
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log("user does not exist = " + err);
+      });
   };
 
   return (
