@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   Card,
+  CardActionArea,
   CardActions,
   CardContent,
   CardMedia,
@@ -97,12 +98,14 @@ const ViewAllCourses = () => {
       </div>
       <div className={classes.courses}>
         <Card className={classes.card}>
-          <CardMedia
-            className={classes.media}
-            image={allCourses && allCourses.thumbnail}
-            title={allCourses && allCourses.title}
-          />
-          <CardContent>{allCourses && allCourses.title}</CardContent>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={allCourses && allCourses.thumbnail}
+              title={allCourses && allCourses.title}
+            />
+            <CardContent>{allCourses && allCourses.title}</CardContent>
+          </CardActionArea>
           <CardActions style={{ float: "right" }}>
             <IconButton onClick={handleClick} size="small">
               <MoreVert />
