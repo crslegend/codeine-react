@@ -87,7 +87,11 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
   const [courseMaterialDialog, setCourseMaterialDialog] = useState(false);
   const [materialType, setMaterialType] = useState();
   const [file, setFile] = useState();
-  const [video, setVideo] = useState();
+  const [video, setVideo] = useState({
+    title: "",
+    description: "",
+    video_url: "",
+  });
   const [quiz, setQuiz] = useState();
   const [chapterIdForCouseMaterial, setChapterIdForCourseMaterial] = useState();
 
@@ -120,7 +124,6 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
   const handleCreateCourseMaterial = () => {};
 
   console.log(column);
-  console.log(materialType);
 
   return (
     <Fragment>
@@ -168,6 +171,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                   onClick={() => {
                     setMaterialType("file");
                     setCourseMaterialDialog(true);
+                    setChapterIdForCourseMaterial(column.id);
                   }}
                 >
                   Add File
@@ -179,6 +183,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                   onClick={() => {
                     setMaterialType("video");
                     setCourseMaterialDialog(true);
+                    setChapterIdForCourseMaterial(column.id);
                   }}
                 >
                   Add Video
@@ -190,6 +195,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                   onClick={() => {
                     setMaterialType("quiz");
                     setCourseMaterialDialog(true);
+                    setChapterIdForCourseMaterial(column.id);
                   }}
                 >
                   Add Quiz
@@ -356,6 +362,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
         onClose={() => {
           setCourseMaterialDialog(false);
           setMaterialType();
+          setChapterIdForCourseMaterial();
         }}
         PaperProps={{
           style: {
@@ -380,9 +387,56 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                         variant="outlined"
                         fullWidth
                         margin="dense"
-                        value={""}
-                        onChange={(e) => {}}
+                        value={video && video.title}
+                        onChange={(e) => {
+                          setVideo({
+                            ...video,
+                            title: e.target.value,
+                          });
+                        }}
                         required
+                        placeholder="Enter Title"
+                        style={{ marginBottom: "15px" }}
+                      />
+                      <label htmlFor="description">
+                        <Typography variant="body2">
+                          Description of Video
+                        </Typography>
+                      </label>
+                      <TextField
+                        id="description"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={video && video.description}
+                        onChange={(e) => {
+                          setVideo({
+                            ...video,
+                            description: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Enter Description"
+                        style={{ marginBottom: "15px" }}
+                      />
+                      <label htmlFor="url">
+                        <Typography variant="body2">Video URL</Typography>
+                      </label>
+                      <TextField
+                        id="url"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={video && video.video_url}
+                        onChange={(e) => {
+                          setVideo({
+                            ...video,
+                            video_url: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Youtube Video URL"
+                        style={{ marginBottom: "15px" }}
                       />
                     </Fragment>
                   );
@@ -391,6 +445,34 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
               }
             })()}
           </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              className={classes.dialogButtons}
+              onClick={() => {
+                setCourseMaterialDialog(false);
+                setMaterialType();
+                setChapterIdForCourseMaterial();
+                setVideo({
+                  title: "",
+                  description: "",
+                  video_url: "",
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.dialogButtons}
+              onClick={() => {
+                handleCreateCourseMaterial();
+              }}
+            >
+              Create
+            </Button>
+          </DialogActions>
         </form>
       </Dialog>
     </Fragment>
