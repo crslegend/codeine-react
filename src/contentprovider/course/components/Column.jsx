@@ -285,7 +285,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={column.id} index={index}>
-        {(provided, snapshot) => {
+        {(provided) => {
           return (
             <div
               className={classes.container}
@@ -360,14 +360,14 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
               </div>
 
               <Droppable droppableId={column.id} type="task">
-                {(provided) => {
+                {(provided, snapshot) => {
                   return (
                     <div
                       className={classes.taskList}
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       style={{
-                        backgroundColor: snapshot.isDragging
+                        backgroundColor: snapshot.isDraggingOver
                           ? "#e0e0e0"
                           : "#fff",
                       }}

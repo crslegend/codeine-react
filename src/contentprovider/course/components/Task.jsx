@@ -38,6 +38,17 @@ const useStyles = makeStyles((theme) => ({
       "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
     alignItems: "center",
   },
+  containerDragging: {
+    border: "2px solid blue",
+    borderRadius: "10px",
+    padding: 8,
+    marginBottom: "8px",
+    backgroundColor: "#e0e0e0",
+    display: "flex",
+    boxShadow:
+      "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    alignItems: "center",
+  },
   handle: {
     marginRight: "10px",
   },
@@ -234,10 +245,15 @@ const Task = ({ task, index, getCourse }) => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={task.id} index={index}>
-        {(provided) => {
+        {(provided, snapshot) => {
+          console.log(snapshot);
           return (
             <div
-              className={classes.container}
+              className={
+                snapshot.isDragging
+                  ? classes.containerDragging
+                  : classes.container
+              }
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
