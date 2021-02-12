@@ -74,6 +74,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: "#fff",
   },
+  dropzoneContainer: {
+    minHeight: "190px",
+    "@global": {
+      ".MuiDropzoneArea-root": {
+        minHeight: "190px",
+      },
+    },
+  },
 }));
 
 const Column = ({ column, tasks, index, courseId, getCourse }) => {
@@ -245,7 +253,11 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
       const formData = new FormData();
       formData.append("title", file.title);
       formData.append("description", file.description);
-      formData.append("zip_file", zipFile[0].file);
+
+      if (zipFile) {
+        formData.append("zip_file", zipFile[0].file);
+      }
+
       formData.append("google_drive_url", file.google_drive_url);
 
       Service.client
@@ -581,6 +593,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                       </label>
                       <DropzoneAreaBase
                         dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                        dropzoneClass={classes.dropzoneContainer}
                         filesLimit={1}
                         maxFileSize={5000000000}
                         fileObjects={zipFile}

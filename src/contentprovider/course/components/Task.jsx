@@ -24,6 +24,7 @@ import validator from "validator";
 import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -51,6 +52,14 @@ const useStyles = makeStyles((theme) => ({
   dialogButtons: {
     width: 100,
   },
+  dropzoneContainer: {
+    minHeight: "190px",
+    "@global": {
+      ".MuiDropzoneArea-root": {
+        minHeight: "190px",
+      },
+    },
+  },
 }));
 
 const Task = ({ task, index, getCourse }) => {
@@ -74,6 +83,8 @@ const Task = ({ task, index, getCourse }) => {
   const [courseMaterialId, setCourseMaterialId] = useState();
 
   const [editFile, setEditFile] = useState();
+  const [zipFile, setZipFile] = useState();
+
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
 
@@ -132,6 +143,71 @@ const Task = ({ task, index, getCourse }) => {
           setEditVideo();
           setEditMode(false);
           setCourseMaterialId();
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    } else if (materialType === "file") {
+      if (
+        editFile.title === "" ||
+        editFile.description === "" ||
+        (editFile.google_drive_url === "" && editFile.zip_file === null)
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please fill up all required fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      // check if google drive URL is a valid URL
+      if (
+        editFile.google_drive_url &&
+        !validator.isURL(editFile.google_drive_url, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+          allow_underscores: true,
+        }) &&
+        !zipFile
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please enter a valid URL!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", editFile.title);
+      formData.append("description", editFile.description);
+
+      if (zipFile) {
+        formData.append("zip_file", zipFile[0].file);
+      } else {
+        formData.append("google_drive_url", editFile.google_drive_url);
+      }
+
+      Service.client
+        .put(`/materials/${courseMaterialId}/files`, formData)
+        .then((res) => {
+          console.log(res);
+          setCourseMaterialDialog(false);
+          setMaterialType();
+          setCourseMaterialId();
+          setEditMode(false);
+          setEditFile();
+          setZipFile();
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -237,6 +313,15 @@ const Task = ({ task, index, getCourse }) => {
                     });
                     setMaterialType("video");
                     setCourseMaterialId(task.id);
+                  } else if (task.material_type === "FILE") {
+                    setEditFile({
+                      title: task.title,
+                      description: task.description,
+                      google_drive_url: task.course_file.google_drive_url,
+                      zip_file: task.course_file.zip_file,
+                    });
+                    setMaterialType("file");
+                    setCourseMaterialId(task.id);
                   }
                 }}
               >
@@ -256,6 +341,7 @@ const Task = ({ task, index, getCourse }) => {
           setEditQuiz();
           setEditMode(false);
           setCourseMaterialId();
+          setZipFile();
         }}
         PaperProps={{
           style: {
@@ -281,6 +367,133 @@ const Task = ({ task, index, getCourse }) => {
         <DialogContent>
           {(() => {
             if (materialType === "file") {
+              return (
+                <Fragment>
+                  <label htmlFor="title">
+                    <Typography variant="body2">Title of File</Typography>
+                  </label>
+                  <TextField
+                    id="title"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editFile && editFile.title}
+                    onChange={(e) => {
+                      setEditFile({
+                        ...editFile,
+                        title: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="Enter Title"
+                    style={{ marginBottom: "15px" }}
+                    disabled={!editMode}
+                  />
+                  <label htmlFor="description">
+                    <Typography variant="body2">Description of File</Typography>
+                  </label>
+                  <TextField
+                    id="description"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editFile && editFile.description}
+                    onChange={(e) => {
+                      setEditFile({
+                        ...editFile,
+                        description: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="Enter Description"
+                    style={{ marginBottom: "25px" }}
+                    disabled={!editMode}
+                  />
+                  <div
+                    style={{
+                      display: "block",
+                      borderTop: "1px solid #000",
+                      marginBottom: "25px",
+                    }}
+                  />
+                  {editMode && (
+                    <Fragment>
+                      <Typography variant="body2" style={{ marginTop: "10px" }}>
+                        Upload a Zip File (to replace the current file)
+                      </Typography>
+                      <DropzoneAreaBase
+                        dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                        dropzoneClass={classes.dropzoneContainer}
+                        // dropzoneProps={{ disabled: true }}
+                        filesLimit={1}
+                        maxFileSize={5000000000}
+                        fileObjects={zipFile}
+                        useChipsForPreview={true}
+                        onAdd={(newFile) => {
+                          setZipFile(newFile);
+                        }}
+                        onDelete={(fileObj) => {
+                          setZipFile();
+                        }}
+                        previewGridProps={{
+                          item: {
+                            xs: "auto",
+                          },
+                        }}
+                      />
+                    </Fragment>
+                  )}
+
+                  {editFile && editFile.zip_file && (
+                    <div style={{ display: "flex" }}>
+                      <Typography
+                        variant="body2"
+                        style={{ marginTop: "5px", marginRight: "10px" }}
+                      >
+                        <LinkMui
+                          href={
+                            editFile.zip_file
+                              ? editFile.zip_file.replace("#", "")
+                              : "#"
+                          }
+                        >
+                          Uploaded File
+                        </LinkMui>
+                      </Typography>
+                    </div>
+                  )}
+                  <Typography
+                    variant="h6"
+                    style={{ textAlign: "center", marginTop: "10px" }}
+                  >
+                    OR
+                  </Typography>
+                  <label htmlFor="url">
+                    <Typography variant="body2">Google Drive URL</Typography>
+                  </label>
+                  <TextField
+                    id="url"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={
+                      editFile && editFile.google_drive_url !== null
+                        ? editFile.google_drive_url
+                        : ""
+                    }
+                    onChange={(e) => {
+                      setEditFile({
+                        ...editFile,
+                        google_drive_url: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="https://drive.google.com"
+                    style={{ marginBottom: "15px" }}
+                    disabled={!editMode}
+                  />
+                </Fragment>
+              );
             } else if (materialType === "video") {
               return (
                 <Fragment>
@@ -363,6 +576,7 @@ const Task = ({ task, index, getCourse }) => {
               setEditQuiz();
               setEditMode(false);
               setCourseMaterialId();
+              setZipFile();
             }}
           >
             Cancel
