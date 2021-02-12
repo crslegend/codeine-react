@@ -183,6 +183,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
           setCourseMaterialDialog(false);
           setMaterialType();
           setChapterIdForCourseMaterial();
+          setEditMode(false);
           setVideo({
             title: "",
             description: "",
@@ -289,7 +290,12 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                     >
                       {tasks &&
                         tasks.map((task, index) => (
-                          <Task key={task.id} task={task} index={index} />
+                          <Task
+                            key={task.id}
+                            task={task}
+                            index={index}
+                            getCourse={getCourse}
+                          />
                         ))}
                       {provided.placeholder}
                     </div>
@@ -304,6 +310,7 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
         open={chapterDetailsDialog}
         onClose={() => {
           setChapterDetailsDialog(false);
+          setEditMode(false);
         }}
         PaperProps={{
           style: {
