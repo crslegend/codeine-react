@@ -10,6 +10,7 @@ import {
   DragIndicator,
   Edit,
   Movie,
+  SentimentSatisfiedAltRounded,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
@@ -23,6 +24,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import validator from "validator";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
@@ -99,7 +101,14 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
 
   const [courseMaterialDialog, setCourseMaterialDialog] = useState(false);
   const [materialType, setMaterialType] = useState();
-  const [file, setFile] = useState();
+  const [file, setFile] = useState({
+    title: "",
+    description: "",
+    google_drive_url: "",
+  });
+  const [zipFile, setZipFile] = useState();
+  console.log(zipFile);
+
   const [video, setVideo] = useState({
     title: "",
     description: "",
@@ -188,6 +197,69 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
             title: "",
             description: "",
             video_url: "",
+          });
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    } else if (materialType === "file") {
+      if (
+        file.title === "" ||
+        file.description === "" ||
+        (file.google_drive_url === "" && !zipFile)
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please fill up all required fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      // check if google drive URL is a valid URL
+      if (
+        !validator.isURL(file.google_drive_url, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+          allow_underscores: true,
+        }) &&
+        !zipFile
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please enter a valid URL!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", file.title);
+      formData.append("description", file.description);
+      formData.append("zip_file", zipFile[0].file);
+      formData.append("google_drive_url", file.google_drive_url);
+
+      Service.client
+        .post(`/chapters/${chapterIdForCouseMaterial}/files`, formData)
+        .then((res) => {
+          console.log(res);
+          setCourseMaterialDialog(false);
+          setMaterialType();
+          setChapterIdForCourseMaterial();
+          setEditMode(false);
+          setFile({
+            title: "",
+            description: "",
+            google_drive_url: "",
           });
           getCourse();
         })
@@ -455,6 +527,105 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
             {(() => {
               if (courseMaterialDialog) {
                 if (materialType === "file") {
+                  return (
+                    <Fragment>
+                      <label htmlFor="title">
+                        <Typography variant="body2">Title of File</Typography>
+                      </label>
+                      <TextField
+                        id="title"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={file && file.title}
+                        onChange={(e) => {
+                          setFile({
+                            ...file,
+                            title: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Enter Title"
+                        style={{ marginBottom: "15px" }}
+                      />
+                      <label htmlFor="description">
+                        <Typography variant="body2">
+                          Description of File
+                        </Typography>
+                      </label>
+                      <TextField
+                        id="description"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={file && file.description}
+                        onChange={(e) => {
+                          setFile({
+                            ...file,
+                            description: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Enter Description"
+                        style={{ marginBottom: "25px" }}
+                      />
+                      <div
+                        style={{
+                          display: "block",
+                          borderTop: "1px solid #000",
+                          marginBottom: "25px",
+                        }}
+                      />
+                      <label htmlFor="url">
+                        <Typography variant="body2">Upload Zip File</Typography>
+                      </label>
+                      <DropzoneAreaBase
+                        dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                        filesLimit={1}
+                        maxFileSize={5000000000}
+                        fileObjects={zipFile}
+                        useChipsForPreview={true}
+                        onAdd={(newFile) => {
+                          setZipFile(newFile);
+                        }}
+                        onDelete={(fileObj) => {
+                          setZipFile();
+                        }}
+                        previewGridProps={{
+                          item: {
+                            xs: "auto",
+                          },
+                        }}
+                      />
+                      <Typography
+                        variant="h6"
+                        style={{ textAlign: "center", marginTop: "10px" }}
+                      >
+                        OR
+                      </Typography>
+                      <label htmlFor="url">
+                        <Typography variant="body2">
+                          Google Drive URL
+                        </Typography>
+                      </label>
+                      <TextField
+                        id="url"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={file && file.google_drive_url}
+                        onChange={(e) => {
+                          setFile({
+                            ...file,
+                            google_drive_url: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="https://drive.google.com"
+                        style={{ marginBottom: "15px" }}
+                      />
+                    </Fragment>
+                  );
                 } else if (materialType === "video") {
                   return (
                     <Fragment>
