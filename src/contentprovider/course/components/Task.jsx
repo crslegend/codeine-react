@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import {
+  Add,
   Assignment,
   AttachFile,
   Delete,
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     cursor: "pointer",
     display: "inline-block",
-    width: 170,
+    maxWidth: 170,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -222,6 +223,38 @@ const Task = ({ task, index, getCourse }) => {
           getCourse();
         })
         .catch((err) => console.log(err));
+    } else {
+      if (
+        editQuiz.title === "" ||
+        editQuiz.description === "" ||
+        editQuiz.passing_marks === "" ||
+        editQuiz.instructions === ""
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please fill up all required fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      Service.client
+        .put(`/materials/${courseMaterialId}/quizzes`, editQuiz)
+        .then((res) => {
+          console.log(res);
+          setCourseMaterialDialog(false);
+          setMaterialType();
+          setCourseMaterialId();
+          setEditMode(false);
+          setEditQuiz();
+          getCourse();
+        })
+        .catch((err) => console.log(err));
     }
   };
 
@@ -338,11 +371,29 @@ const Task = ({ task, index, getCourse }) => {
                     });
                     setMaterialType("file");
                     setCourseMaterialId(task.id);
+                  } else {
+                    setEditQuiz({
+                      title: task.title,
+                      description: task.description,
+                      passing_marks: task.quiz.passing_marks,
+                      instructions: task.quiz.instructions,
+                    });
+                    setMaterialType("quiz");
+                    setCourseMaterialId(task.id);
                   }
                 }}
               >
                 {task.title}
               </LinkMui>
+
+              {task.material_type === "QUIZ" && (
+                <IconButton
+                  size="small"
+                  style={{ marginLeft: "auto", order: 2 }}
+                >
+                  <Add />
+                </IconButton>
+              )}
             </div>
           );
         }}
@@ -578,6 +629,93 @@ const Task = ({ task, index, getCourse }) => {
                 </Fragment>
               );
             } else if (materialType === "quiz") {
+              return (
+                <Fragment>
+                  <label htmlFor="title">
+                    <Typography variant="body2">Title of Quiz</Typography>
+                  </label>
+                  <TextField
+                    id="title"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editQuiz && editQuiz.title}
+                    onChange={(e) => {
+                      setEditQuiz({
+                        ...editQuiz,
+                        title: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="Enter Title"
+                    style={{ marginBottom: "15px" }}
+                    disabled={!editMode}
+                  />
+                  <label htmlFor="description">
+                    <Typography variant="body2">Description of Quiz</Typography>
+                  </label>
+                  <TextField
+                    id="description"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editQuiz && editQuiz.description}
+                    onChange={(e) => {
+                      setEditQuiz({
+                        ...editQuiz,
+                        description: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="Enter Description"
+                    style={{ marginBottom: "15px" }}
+                    disabled={!editMode}
+                  />
+                  <label htmlFor="marks">
+                    <Typography variant="body2">Passing Marks</Typography>
+                  </label>
+                  <TextField
+                    id="marks"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editQuiz && editQuiz.passing_marks}
+                    onChange={(e) => {
+                      setEditQuiz({
+                        ...editQuiz,
+                        passing_marks: e.target.value,
+                      });
+                    }}
+                    InputProps={{
+                      inputProps: { min: 0 },
+                    }}
+                    required
+                    style={{ marginBottom: "15px" }}
+                    type="number"
+                    disabled={!editMode}
+                  />
+                  <label htmlFor="marks">
+                    <Typography variant="body2">Instructions</Typography>
+                  </label>
+                  <TextField
+                    id="marks"
+                    variant="outlined"
+                    fullWidth
+                    margin="dense"
+                    value={editQuiz && editQuiz.instructions}
+                    onChange={(e) => {
+                      setEditQuiz({
+                        ...editQuiz,
+                        instructions: e.target.value,
+                      });
+                    }}
+                    required
+                    placeholder="eg. Read the questions carefully"
+                    style={{ marginBottom: "15px" }}
+                    disabled={!editMode}
+                  />
+                </Fragment>
+              );
             }
           })()}
         </DialogContent>

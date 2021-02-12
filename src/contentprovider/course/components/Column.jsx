@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     cursor: "pointer",
     display: "inline-block",
-    width: 170,
+    maxWidth: 170,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -122,7 +122,12 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
     description: "",
     video_url: "",
   });
-  const [quiz, setQuiz] = useState();
+  const [quiz, setQuiz] = useState({
+    title: "",
+    description: "",
+    passing_marks: 0,
+    instructions: "",
+  });
   const [chapterIdForCouseMaterial, setChapterIdForCourseMaterial] = useState();
 
   const handleUpdateChapterDetails = (e) => {
@@ -272,6 +277,44 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
             title: "",
             description: "",
             google_drive_url: "",
+          });
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      // add quiz as course material
+      if (
+        quiz.title === "" ||
+        quiz.description === "" ||
+        quiz.passing_marks === "" ||
+        quiz.instructions === ""
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please fill up all fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      Service.client
+        .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
+        .then((res) => {
+          console.log(res);
+          setCourseMaterialDialog(false);
+          setMaterialType();
+          setChapterIdForCourseMaterial();
+          setEditMode(false);
+          setQuiz({
+            title: "",
+            description: "",
+            passing_marks: 0,
+            instructions: "",
           });
           getCourse();
         })
@@ -704,6 +747,91 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                     </Fragment>
                   );
                 } else if (materialType === "quiz") {
+                  return (
+                    <Fragment>
+                      <label htmlFor="title">
+                        <Typography variant="body2">Title of Quiz</Typography>
+                      </label>
+                      <TextField
+                        id="title"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={quiz && quiz.title}
+                        onChange={(e) => {
+                          setQuiz({
+                            ...quiz,
+                            title: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Enter Title"
+                        style={{ marginBottom: "15px" }}
+                      />
+                      <label htmlFor="description">
+                        <Typography variant="body2">
+                          Description of Quiz
+                        </Typography>
+                      </label>
+                      <TextField
+                        id="description"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={quiz && quiz.description}
+                        onChange={(e) => {
+                          setQuiz({
+                            ...quiz,
+                            description: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="Enter Description"
+                        style={{ marginBottom: "15px" }}
+                      />
+                      <label htmlFor="marks">
+                        <Typography variant="body2">Passing Marks</Typography>
+                      </label>
+                      <TextField
+                        id="marks"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={quiz && quiz.passing_marks}
+                        onChange={(e) => {
+                          setQuiz({
+                            ...quiz,
+                            passing_marks: e.target.value,
+                          });
+                        }}
+                        InputProps={{
+                          inputProps: { min: 0 },
+                        }}
+                        required
+                        style={{ marginBottom: "15px" }}
+                        type="number"
+                      />
+                      <label htmlFor="marks">
+                        <Typography variant="body2">Instructions</Typography>
+                      </label>
+                      <TextField
+                        id="marks"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={quiz && quiz.instructions}
+                        onChange={(e) => {
+                          setQuiz({
+                            ...quiz,
+                            instructions: e.target.value,
+                          });
+                        }}
+                        required
+                        placeholder="eg. Read the questions carefully"
+                        style={{ marginBottom: "15px" }}
+                      />
+                    </Fragment>
+                  );
                 }
               }
             })()}
