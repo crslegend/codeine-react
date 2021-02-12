@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Paper, Snackbar, Typography } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { Paper } from "@material-ui/core";
 import {
   ViewState,
   EditingState,
@@ -17,7 +16,6 @@ import {
   DateNavigator,
   AppointmentForm,
   AppointmentTooltip,
-  DragDropProvider,
   ConfirmationDialog,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { appointments } from "./Data";
@@ -103,11 +101,9 @@ const Calendar = () => {
   const [editingOptions, setEditingOptions] = React.useState({
     allowDeleting: true,
     allowUpdating: true,
-    allowDragging: true,
   });
-  const [createAlertOpen, setCreateAlertOpen] = useState(false);
 
-  const { allowDeleting, allowUpdating, allowDragging } = editingOptions;
+  const { allowDeleting, allowUpdating } = editingOptions;
 
   /*useEffect(() => {
     Service.client
@@ -131,13 +127,6 @@ const Calendar = () => {
         setData(null);
       });
   }, []);*/
-
-  const handleCreateAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setCreateAlertOpen(false);
-  };
 
   const handleCurrentViewChange = (newViewName) => {
     setCurrentViewName(newViewName);
@@ -170,35 +159,34 @@ const Calendar = () => {
     [setConsultations, consultations]
   );
 
-  const onAddedAppointmentChange = React.useCallback((appointment) => {
-    if (appointment.startDate < currentDate) {
-      return (
-        <Snackbar
-          open={createAlertOpen}
-          autoHideDuration={4000}
-          onClose={handleCreateAlertClose}
-        >
-          <Alert
-            onClose={handleCreateAlertClose}
-            elevation={6}
-            severity="error"
-          >
-            <Typography variant="body1">
-              Please enter all address fields or select an address from the
-              dropdown!
-            </Typography>
-          </Alert>
-        </Snackbar>
-      );
-    } else {
-      setAddedAppointment(appointment);
-    }
-  });
+  const weekview = React.useCallback(
+    React.memo(({ onDoubleClick, startDate, ...restProps }) => {
+      if (startDate < currentDate) {
+        return (
+          <WeekView.TimeTableCell {...restProps} onDoubleClick={undefined} />
+        );
+      } else {
+        return (
+          <WeekView.TimeTableCell
+            {...restProps}
+            onDoubleClick={onDoubleClick}
+          />
+        );
+      }
+    }),
+    [currentDate]
+  );
 
-  const allowDrag = React.useCallback(() => allowDragging && allowUpdating, [
-    allowDragging,
-    allowUpdating,
-  ]);
+  const monthview = React.useCallback(
+    React.memo(({ onDoubleClick, ...restProps }) => (
+      <MonthView.TimeTableCell {...restProps} onDoubleClick={undefined} />
+    )),
+    []
+  );
+
+  const onAddedAppointmentChange = React.useCallback((appointment) => {
+    setAddedAppointment(appointment);
+  });
 
   return (
     <Fragment>
@@ -215,8 +203,8 @@ const Calendar = () => {
             onAddedAppointmentChange={onAddedAppointmentChange}
           />
           <IntegratedEditing />
-          <WeekView name="week" />
-          <MonthView name="month" />
+          <WeekView name="week" timeTableCellComponent={weekview} />
+          <MonthView name="month" timeTableCellComponent={monthview} />
           <Toolbar />
           <DateNavigator />
           <TodayButton />
@@ -227,7 +215,6 @@ const Calendar = () => {
             textEditorComponent={TextEditor}
             messages={messages}
           />
-          <DragDropProvider allowDrag={allowDrag} />
           <ViewSwitcher />
           <ConfirmationDialog />
         </Scheduler>
