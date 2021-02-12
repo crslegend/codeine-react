@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
 import {
   Avatar,
@@ -26,6 +26,7 @@ import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
 import { DropzoneAreaBase } from "material-ui-dropzone";
+import SubTask from "./SubTask";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -35,9 +36,10 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "8px",
     backgroundColor: "#fff",
     display: "flex",
+    flexDirection: "column",
     boxShadow:
       "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
-    alignItems: "center",
+    // alignItems: "center",
   },
   containerDragging: {
     border: "2px solid blue",
@@ -71,6 +73,11 @@ const useStyles = makeStyles((theme) => ({
         minHeight: "190px",
       },
     },
+  },
+  subtaskList: {
+    padding: 8,
+    flexGrow: 1,
+    minHeight: "70px",
   },
 }));
 
@@ -279,7 +286,6 @@ const Task = ({ task, index, getCourse }) => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={task.id} index={index}>
         {(provided, snapshot) => {
-          console.log(snapshot);
           return (
             <div
               className={
@@ -290,109 +296,144 @@ const Task = ({ task, index, getCourse }) => {
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
-              {(() => {
-                if (task.material_type === "FILE") {
-                  return (
-                    <div
-                      {...provided.dragHandleProps}
-                      className={classes.handle}
-                    >
-                      <Avatar
-                        variant="rounded"
-                        style={{
-                          height: "30px",
-                          width: "30px",
-                          backgroundColor: "#000",
-                        }}
-                      >
-                        <AttachFile fontSize="small" />
-                      </Avatar>
-                    </div>
-                  );
-                } else if (task.material_type === "VIDEO") {
-                  return (
-                    <div
-                      {...provided.dragHandleProps}
-                      className={classes.handle}
-                    >
-                      <Avatar
-                        variant="rounded"
-                        style={{
-                          height: "30px",
-                          width: "30px",
-                          backgroundColor: "#000",
-                        }}
-                      >
-                        <Movie fontSize="small" />
-                      </Avatar>
-                    </div>
-                  );
-                } else if (task.material_type === "QUIZ") {
-                  return (
-                    <div
-                      {...provided.dragHandleProps}
-                      className={classes.handle}
-                    >
-                      <Avatar
-                        variant="rounded"
-                        style={{
-                          height: "30px",
-                          width: "30px",
-                          backgroundColor: "#000",
-                        }}
-                      >
-                        <Assignment fontSize="small" />
-                      </Avatar>
-                    </div>
-                  );
-                }
-              })()}
-
-              <LinkMui
-                className={classes.title}
-                style={{ textDecoration: "none" }}
-                onClick={() => {
-                  setCourseMaterialDialog(true);
-
-                  if (task.material_type === "VIDEO") {
-                    setEditVideo({
-                      title: task.title,
-                      description: task.description,
-                      video_url: task.video.video_url,
-                    });
-                    setMaterialType("video");
-                    setCourseMaterialId(task.id);
-                  } else if (task.material_type === "FILE") {
-                    setEditFile({
-                      title: task.title,
-                      description: task.description,
-                      google_drive_url: task.course_file.google_drive_url,
-                      zip_file: task.course_file.zip_file,
-                    });
-                    setMaterialType("file");
-                    setCourseMaterialId(task.id);
-                  } else {
-                    setEditQuiz({
-                      title: task.title,
-                      description: task.description,
-                      passing_marks: task.quiz.passing_marks,
-                      instructions: task.quiz.instructions,
-                    });
-                    setMaterialType("quiz");
-                    setCourseMaterialId(task.id);
-                  }
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                {task.title}
-              </LinkMui>
+                {(() => {
+                  if (task.material_type === "FILE") {
+                    return (
+                      <div
+                        {...provided.dragHandleProps}
+                        className={classes.handle}
+                      >
+                        <Avatar
+                          variant="rounded"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            backgroundColor: "#000",
+                          }}
+                        >
+                          <AttachFile fontSize="small" />
+                        </Avatar>
+                      </div>
+                    );
+                  } else if (task.material_type === "VIDEO") {
+                    return (
+                      <div
+                        {...provided.dragHandleProps}
+                        className={classes.handle}
+                      >
+                        <Avatar
+                          variant="rounded"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            backgroundColor: "#000",
+                          }}
+                        >
+                          <Movie fontSize="small" />
+                        </Avatar>
+                      </div>
+                    );
+                  } else if (task.material_type === "QUIZ") {
+                    return (
+                      <div
+                        {...provided.dragHandleProps}
+                        className={classes.handle}
+                      >
+                        <Avatar
+                          variant="rounded"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            backgroundColor: "#000",
+                          }}
+                        >
+                          <Assignment fontSize="small" />
+                        </Avatar>
+                      </div>
+                    );
+                  }
+                })()}
+
+                <LinkMui
+                  className={classes.title}
+                  style={{ textDecoration: "none" }}
+                  onClick={() => {
+                    setCourseMaterialDialog(true);
+
+                    if (task.material_type === "VIDEO") {
+                      setEditVideo({
+                        title: task.title,
+                        description: task.description,
+                        video_url: task.video.video_url,
+                      });
+                      setMaterialType("video");
+                      setCourseMaterialId(task.id);
+                    } else if (task.material_type === "FILE") {
+                      setEditFile({
+                        title: task.title,
+                        description: task.description,
+                        google_drive_url: task.course_file.google_drive_url,
+                        zip_file: task.course_file.zip_file,
+                      });
+                      setMaterialType("file");
+                      setCourseMaterialId(task.id);
+                    } else {
+                      setEditQuiz({
+                        title: task.title,
+                        description: task.description,
+                        passing_marks: task.quiz.passing_marks,
+                        instructions: task.quiz.instructions,
+                      });
+                      setMaterialType("quiz");
+                      setCourseMaterialId(task.id);
+                    }
+                  }}
+                >
+                  {task.title}
+                </LinkMui>
+
+                {task.material_type === "QUIZ" && (
+                  <IconButton
+                    size="small"
+                    style={{ marginLeft: "auto", order: 2 }}
+                  >
+                    <Add />
+                  </IconButton>
+                )}
+              </div>
 
               {task.material_type === "QUIZ" && (
-                <IconButton
-                  size="small"
-                  style={{ marginLeft: "auto", order: 2 }}
-                >
-                  <Add />
-                </IconButton>
+                <Droppable droppableId={task.id} type="subtask">
+                  {(provided) => {
+                    return (
+                      <div
+                        className={classes.subtaskList}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {task &&
+                          task.quiz.questions &&
+                          task.quiz.questions.map((subtask, index) => (
+                            <SubTask
+                              key={subtask.id}
+                              task={task}
+                              subtask={subtask}
+                              index={index}
+                              getCourse={getCourse}
+                            />
+                          ))}
+                        {provided.placeholder}
+                      </div>
+                    );
+                  }}
+                </Droppable>
               )}
             </div>
           );
