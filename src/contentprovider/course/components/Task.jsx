@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Draggable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -12,7 +13,13 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Delete, Edit } from "@material-ui/icons";
+import {
+  Assignment,
+  AttachFile,
+  Delete,
+  Edit,
+  Movie,
+} from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
@@ -28,12 +35,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     boxShadow:
       "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    alignItems: "center",
   },
   handle: {
-    width: 20,
-    height: 20,
-    backgroundColor: "orange",
-    borderRadius: "4px",
     marginRight: "10px",
   },
   title: {
@@ -161,10 +165,64 @@ const Task = ({ task, index, getCourse }) => {
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
-              <div
-                className={classes.handle}
-                {...provided.dragHandleProps}
-              ></div>
+              {(() => {
+                if (task.material_type === "FILE") {
+                  return (
+                    <div
+                      {...provided.dragHandleProps}
+                      className={classes.handle}
+                    >
+                      <Avatar
+                        variant="rounded"
+                        style={{
+                          height: "30px",
+                          width: "30px",
+                          backgroundColor: "#000",
+                        }}
+                      >
+                        <AttachFile fontSize="small" />
+                      </Avatar>
+                    </div>
+                  );
+                } else if (task.material_type === "VIDEO") {
+                  return (
+                    <div
+                      {...provided.dragHandleProps}
+                      className={classes.handle}
+                    >
+                      <Avatar
+                        variant="rounded"
+                        style={{
+                          height: "30px",
+                          width: "30px",
+                          backgroundColor: "#000",
+                        }}
+                      >
+                        <Movie fontSize="small" />
+                      </Avatar>
+                    </div>
+                  );
+                } else if (task.material_type === "QUIZ") {
+                  return (
+                    <div
+                      {...provided.dragHandleProps}
+                      className={classes.handle}
+                    >
+                      <Avatar
+                        variant="rounded"
+                        style={{
+                          height: "30px",
+                          width: "30px",
+                          backgroundColor: "#000",
+                        }}
+                      >
+                        <Assignment fontSize="small" />
+                      </Avatar>
+                    </div>
+                  );
+                }
+              })()}
+
               <LinkMui
                 className={classes.title}
                 style={{ textDecoration: "none" }}
