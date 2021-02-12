@@ -48,6 +48,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
     <Fragment>
       <Draggable draggableId={subtask.id} index={index}>
         {(provided, snapshot) => {
+          console.log(subtask);
           return (
             <div
               className={
@@ -58,7 +59,18 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
-              QUESTION
+              <div {...provided.dragHandleProps}>
+                <Avatar
+                  variant="rounded"
+                  style={{
+                    height: "25px",
+                    width: "25px",
+                    backgroundColor: "#000",
+                  }}
+                >
+                  {index + 1}
+                </Avatar>
+              </div>
             </div>
           );
         }}

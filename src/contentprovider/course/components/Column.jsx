@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Column = ({ column, tasks, index, courseId, getCourse }) => {
+const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
   const classes = useStyles();
   // console.log(courseId);
 
@@ -416,14 +416,28 @@ const Column = ({ column, tasks, index, courseId, getCourse }) => {
                       }}
                     >
                       {tasks &&
-                        tasks.map((task, index) => (
-                          <Task
-                            key={task.id}
-                            task={task}
-                            index={index}
-                            getCourse={getCourse}
-                          />
-                        ))}
+                        tasks.map((task, index) => {
+                          let subtasks = [];
+                          if (task.material_type === "QUIZ") {
+                            console.log(task);
+
+                            subtasks =
+                              task.subtaskIds &&
+                              task.subtaskIds.map(
+                                (subtaskId) => state.subtasks[subtaskId]
+                              );
+                          }
+
+                          return (
+                            <Task
+                              key={task.id}
+                              task={task}
+                              index={index}
+                              getCourse={getCourse}
+                              subtasks={subtasks}
+                            />
+                          );
+                        })}
                       {provided.placeholder}
                     </div>
                   );

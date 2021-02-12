@@ -53,6 +53,7 @@ const CourseCreation = () => {
     columns: {},
     tasks: {},
     columnOrder: [],
+    subtasks: {},
   });
 
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -304,20 +305,44 @@ const CourseCreation = () => {
 
           let columns = {};
           let tasksObj = {};
+          let subtasksObj = {};
           res.data.chapters.forEach((chapter) => {
             columns = {
               ...columns,
               [chapter.id]: chapter,
             };
             let taskIdsArr = [];
+            let subtaskIdsArr = [];
+
+            // console.log(chapter);
             chapter.course_materials.forEach((courseMaterial) => {
               taskIdsArr.push(courseMaterial.id);
               tasksObj = {
                 ...tasksObj,
                 [courseMaterial.id]: courseMaterial,
               };
+
+              courseMaterial.quiz &&
+                courseMaterial.quiz.questions.forEach((question) => {
+                  subtaskIdsArr.push(question.id);
+                  subtasksObj = {
+                    ...subtasksObj,
+                    [question.id]: question,
+                  };
+                });
+
+              if (subtaskIdsArr.length > 0) {
+                tasksObj = {
+                  ...tasksObj,
+                  [courseMaterial.id]: {
+                    ...tasksObj[courseMaterial.id],
+                    subtaskIds: subtaskIdsArr,
+                  },
+                };
+              }
             });
-            // console.log(tasksObj);
+
+            console.log(tasksObj);
 
             columns = {
               ...columns,
@@ -333,6 +358,7 @@ const CourseCreation = () => {
             columnOrder: columnOrder,
             columns: columns,
             tasks: tasksObj,
+            subtasks: subtasksObj,
           });
 
           let newLanguages = { ...languages };

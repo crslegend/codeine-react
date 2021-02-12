@@ -183,6 +183,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
                       index={index}
                       courseId={courseId}
                       getCourse={getCourse}
+                      state={state}
                     />
                   );
                 })}

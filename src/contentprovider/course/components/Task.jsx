@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Task = ({ task, index, getCourse }) => {
+const Task = ({ task, index, getCourse, subtasks }) => {
   const classes = useStyles();
   console.log(task);
 
@@ -418,17 +418,18 @@ const Task = ({ task, index, getCourse }) => {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                       >
-                        {task &&
-                          task.quiz.questions &&
-                          task.quiz.questions.map((subtask, index) => (
-                            <SubTask
-                              key={subtask.id}
-                              task={task}
-                              subtask={subtask}
-                              index={index}
-                              getCourse={getCourse}
-                            />
-                          ))}
+                        {subtasks &&
+                          subtasks.map((subtask, index) => {
+                            return (
+                              <SubTask
+                                key={subtask.id}
+                                task={task}
+                                subtask={subtask}
+                                index={index}
+                                getCourse={getCourse}
+                              />
+                            );
+                          })}
                         {provided.placeholder}
                       </div>
                     );
