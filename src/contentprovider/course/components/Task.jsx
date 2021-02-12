@@ -73,6 +73,10 @@ const Task = ({ task, index, getCourse }) => {
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
 
+  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
+    false
+  );
+
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
@@ -130,7 +134,21 @@ const Task = ({ task, index, getCourse }) => {
     }
   };
 
-  const handleDeleteCourseMaterial = () => {};
+  const handleDeleteCourseMaterial = () => {
+    Service.client
+      .delete(`/materials/${courseMaterialId}`)
+      .then((res) => {
+        console.log(res);
+        setCourseMaterialDialog(false);
+        setDeleteCourseMaterialDialog(false);
+        setMaterialType();
+        setEditVideo();
+        setEditMode(false);
+        setCourseMaterialId();
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Fragment>
@@ -196,7 +214,7 @@ const Task = ({ task, index, getCourse }) => {
             </IconButton>
             <IconButton
               size="small"
-              onClick={() => handleDeleteCourseMaterial()}
+              onClick={() => setDeleteCourseMaterialDialog(true)}
             >
               <Delete />
             </IconButton>
@@ -299,6 +317,40 @@ const Task = ({ task, index, getCourse }) => {
             onClick={() => handleUpdateCourseMaterial()}
           >
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteCourseMaterialDialog}
+        onClose={() => setDeleteCourseMaterialDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete this course material?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteCourseMaterialDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              handleDeleteCourseMaterial();
+            }}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
