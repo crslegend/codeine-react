@@ -103,6 +103,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
         },
       };
       setState(newState);
+      handleUpdateCourseMaterialOrderingInSameChapter(newColumn.id, newTaskIds);
     } else {
       // moving from one list to another
       const startTaskIds = Array.from(startColumn.taskIds);
@@ -136,9 +137,25 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       .patch(`/courses/${courseId}/orderChapters`, newColumnOrder)
       .then((res) => {
         console.log(res);
+        getCourse();
       })
       .catch((err) => console.log(err));
   };
+
+  const handleUpdateCourseMaterialOrderingInSameChapter = (
+    chapterId,
+    newTaskIds
+  ) => {
+    Service.client
+      .patch(`/chapters/${chapterId}/orderMaterials`, newTaskIds)
+      .then((res) => {
+        console.log(res);
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUpdateCourseMaterialOrderingInDifferentChapter = () => {};
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
