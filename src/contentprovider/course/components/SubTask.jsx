@@ -2,20 +2,10 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Draggable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
-import {
-  Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 import Toast from "../../../components/Toast";
 
-import Service from "../../../AxiosService";
+// import Service from "../../../AxiosService";
 import QuestionDialog from "./QuestionDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -156,6 +146,10 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
         correctAnswer={correctAnswer}
         setCorrectAnswer={setCorrectAnswer}
         getCourse={getCourse}
+        sbOpen={sbOpen}
+        setSbOpen={setSbOpen}
+        snackbar={snackbar}
+        setSnackbar={setSnackbar}
       />
     </Fragment>
   );

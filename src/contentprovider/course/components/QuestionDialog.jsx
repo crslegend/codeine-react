@@ -166,12 +166,69 @@ const QuestionDialog = ({
       .catch((err) => console.log(err));
   };
 
+  const validateMCQQuestion = () => {
+    if (!question.mcq.marks) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter the marks awarded for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+
+    if (correctAnswer === "") {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please choose the correct answer for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const validateMRQQuestion = () => {};
+
+  const validateShortAnswer = () => {};
+
   const handleUpdateQuestion = () => {
+    if (question.title === "" || !question.title) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
     let data = {
       title: question.title,
     };
 
     if (questionType === "mcq") {
+      const validation = validateMCQQuestion();
+      if (!validation) {
+        return;
+      }
+
       data = {
         ...data,
         marks: parseInt(question.mcq.marks),
@@ -213,35 +270,13 @@ const QuestionDialog = ({
         },
         autoHideDuration: 3000,
       });
+      return;
     }
 
     if (questionType === "mcq") {
-      if (!question.mcq.marks) {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Please enter the marks awarded for this question",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-      }
-
-      if (correctAnswer === "") {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Please choose the correct answer for this question",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
+      const validation = validateMCQQuestion();
+      if (!validation) {
+        return;
       }
 
       let data = {
