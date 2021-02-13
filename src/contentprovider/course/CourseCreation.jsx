@@ -34,7 +34,7 @@ const CourseCreation = () => {
   const classes = useStyles();
   const { id } = useParams();
 
-  const [pageNum, setPageNum] = useState(1);
+  const [pageNum, setPageNum] = useState(2);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -414,7 +414,7 @@ const CourseCreation = () => {
   };
 
   const setToNextPage = () => {
-    handleSaveCourseDetails();
+    // handleSaveCourseDetails();
 
     for (const column in allChapters.columns) {
       if (allChapters.columns[column].course_materials.length === 0) {
