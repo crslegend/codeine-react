@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     width: 100,
   },
   formControl: {
-    paddingTop: "13px",
+    marginTop: 0,
+    paddingTop: "15px",
     paddingBottom: "10px",
     "& label": {
       paddingLeft: "7px",
@@ -47,6 +48,8 @@ const QuestionDialog = ({
   setEditMode,
   editQuestionDialog,
   setEditQuestionDialog,
+  addQuestionDialog,
+  setAddQuestionDialog,
   quizId,
   setQuizId,
   question,
@@ -72,10 +75,20 @@ const QuestionDialog = ({
   };
 
   const handleQuestionTypeChange = (e) => {
-    setQuestionType({
-      title: question.title,
+    setQuestionType(e.target.value);
+    setQuestion({
+      title: question && question.title,
+      [e.target.value]: {},
     });
-    setOptions([]);
+
+    if (e.target.value === "mcq" || e.target.value === "mrq") {
+      const arr = [""];
+      setOptions(arr);
+      setCorrectAnswer(arr);
+    } else if (e.target.value === "shortanswer") {
+      setOptions([]);
+      setCorrectAnswer("");
+    }
   };
 
   const handleMarksChange = (e) => {
@@ -96,7 +109,7 @@ const QuestionDialog = ({
             marks: e.target.value,
           },
         });
-      } else {
+      } else if (question.shortanswer) {
         setQuestion({
           ...question,
           shortanswer: {
@@ -106,6 +119,22 @@ const QuestionDialog = ({
         });
       }
     }
+  };
+
+  const handleOptionInputChange = (e, index) => {
+    const values = [...options];
+    values[index] = e.target.value;
+    setOptions(values);
+  };
+
+  const handleAddOption = () => {
+    const values = [...options];
+    values.push("");
+    setOptions(values);
+  };
+
+  const handleDeleteOption = (index) => {
+    setOptions(options.filter((option) => options.indexOf(option) !== index));
   };
 
   const handleDeleteQuestion = () => {
@@ -165,10 +194,16 @@ const QuestionDialog = ({
   return (
     <Fragment>
       <Dialog
-        open={editQuestionDialog}
+        open={editQuestionDialog || addQuestionDialog}
         onClose={() => {
-          setEditMode(false);
-          setEditQuestionDialog(false);
+          if (editQuestionDialog) {
+            setEditMode(false);
+            setEditQuestionDialog(false);
+          }
+          if (addQuestionDialog) {
+            setAddQuestionDialog(false);
+          }
+
           setQuizId();
           setQuestion();
           setQuestionType();
@@ -181,20 +216,24 @@ const QuestionDialog = ({
           },
         }}
       >
-        <DialogTitle>
-          Question {question && question.order}
-          <div style={{ float: "right" }}>
-            <IconButton size="small" onClick={() => setEditMode(true)}>
-              <Edit />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => setDeleteQuestionDialog(true)}
-            >
-              <Delete />
-            </IconButton>
-          </div>
-        </DialogTitle>
+        {editQuestionDialog && (
+          <DialogTitle>
+            Question {question && question.order}
+            <div style={{ float: "right" }}>
+              <IconButton size="small" onClick={() => setEditMode(true)}>
+                <Edit />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => setDeleteQuestionDialog(true)}
+              >
+                <Delete />
+              </IconButton>
+            </div>
+          </DialogTitle>
+        )}
+        {addQuestionDialog && <DialogTitle>Add New Question</DialogTitle>}
+
         <DialogContent>
           <FormControl fullWidth margin="dense" className={classes.formControl}>
             <InputLabel>Question Type</InputLabel>
@@ -205,7 +244,7 @@ const QuestionDialog = ({
               onChange={(e) => {
                 handleQuestionTypeChange(e);
               }}
-              disabled={!editMode}
+              disabled={!editMode && editQuestionDialog}
             >
               <MenuItem value="">
                 <em>Select a question type</em>
@@ -230,36 +269,42 @@ const QuestionDialog = ({
             onChange={(e) => {
               handleQuestionInputChange(e);
             }}
-            disabled={!editMode}
+            disabled={!editMode && editQuestionDialog}
           />
-
-          <label htmlFor="question">
-            <Typography variant="body1" style={{ marginTop: "10px" }}>
-              Marks
-            </Typography>
-          </label>
-          <TextField
-            id="question"
-            type="number"
-            autoComplete="off"
-            variant="outlined"
-            margin="dense"
-            fullWidth
-            value={(() => {
-              if (question) {
-                if (question.mcq) {
-                  return question.mcq.marks;
-                } else if (question.mrq) {
-                  return question.mrq.marks;
-                } else if (question.shortanswer) {
-                  return question.shortanswer.marks;
-                }
-              }
-            })()}
-            onChange={(e) => handleMarksChange(e)}
-            disabled={!editMode}
-            style={{ marginBottom: "10px" }}
-          />
+          {questionType && (
+            <Fragment>
+              <label htmlFor="question">
+                <Typography variant="body1" style={{ marginTop: "10px" }}>
+                  Marks
+                </Typography>
+              </label>
+              <TextField
+                id="question"
+                type="number"
+                autoComplete="off"
+                variant="outlined"
+                margin="dense"
+                fullWidth
+                value={(() => {
+                  if (question) {
+                    if (question.mcq) {
+                      return question.mcq.marks;
+                    } else if (question.mrq) {
+                      return question.mrq.marks;
+                    } else if (question.shortanswer) {
+                      return question.shortanswer.marks;
+                    }
+                  }
+                })()}
+                onChange={(e) => handleMarksChange(e)}
+                disabled={!editMode && editQuestionDialog}
+                style={{ marginBottom: "10px" }}
+                InputProps={{
+                  inputProps: { min: 0 },
+                }}
+              />
+            </Fragment>
+          )}
 
           {options && correctAnswer && questionType === "mcq" && (
             <FormControl
@@ -271,7 +316,7 @@ const QuestionDialog = ({
               <Select
                 value={correctAnswer}
                 onChange={(e) => setCorrectAnswer(e.target.value)}
-                disabled={!editMode}
+                disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
               >
@@ -293,7 +338,7 @@ const QuestionDialog = ({
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 value={correctAnswer}
-                disabled={!editMode}
+                disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
               >
@@ -309,7 +354,7 @@ const QuestionDialog = ({
 
           {options &&
             options.map((option, index) => {
-              if (questionType === "mcq") {
+              if (questionType === "mcq" || questionType === "mrq") {
                 return (
                   <Fragment>
                     <div
@@ -319,21 +364,22 @@ const QuestionDialog = ({
                         alignItems: "center",
                       }}
                     >
-                      <div style={{ marginBottom: "10px" }}>
-                        <TextField
-                          value={option}
-                          placeholder="Enter option"
-                          disabled={!editMode}
-                        />
-                      </div>
+                      <TextField
+                        value={option}
+                        placeholder="Enter option"
+                        disabled={!editMode && editQuestionDialog}
+                        style={{ marginBottom: "10px" }}
+                        onChange={(e) => handleOptionInputChange(e, index)}
+                      />
+
                       {options && options.length > 1 && (
                         <IconButton
                           size="small"
                           style={{ marginLeft: "25px" }}
                           onClick={() => {
-                            //   handleDeleteOption(i);
+                            handleDeleteOption(index);
                           }}
-                          disabled={!editMode}
+                          disabled={!editMode && editQuestionDialog}
                         >
                           <Clear />
                         </IconButton>
@@ -343,9 +389,9 @@ const QuestionDialog = ({
                           size="small"
                           style={{ marginLeft: "5px" }}
                           onClick={() => {
-                            // handleAddOption();
+                            handleAddOption();
                           }}
-                          disabled={!editMode}
+                          disabled={!editMode && editQuestionDialog}
                         >
                           <Add />
                         </IconButton>
@@ -361,8 +407,14 @@ const QuestionDialog = ({
             variant="contained"
             className={classes.dialogButtons}
             onClick={() => {
-              setEditMode(false);
-              setEditQuestionDialog(false);
+              if (editQuestionDialog) {
+                setEditMode(false);
+                setEditQuestionDialog(false);
+              }
+              if (addQuestionDialog) {
+                setAddQuestionDialog(false);
+              }
+
               setQuizId();
               setQuestion();
               setQuestionType();
@@ -376,11 +428,12 @@ const QuestionDialog = ({
             variant="contained"
             color="primary"
             className={classes.dialogButtons}
-            disabled={!editMode}
+            disabled={!editMode && editQuestionDialog}
             onClick={() => {
-              if (editMode) {
+              if (editQuestionDialog) {
                 handleUpdateQuestion();
               } else {
+                handleAddQuestion();
               }
             }}
           >

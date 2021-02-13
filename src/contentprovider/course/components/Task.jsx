@@ -27,6 +27,7 @@ import Toast from "../../../components/Toast";
 import Service from "../../../AxiosService";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import SubTask from "./SubTask";
+import QuestionDialog from "./QuestionDialog";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -110,6 +111,15 @@ const Task = ({ task, index, getCourse, subtasks }) => {
   const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
     false
   );
+
+  const [addQuestionDialog, setAddQuestionDialog] = useState(false);
+
+  const [questionType, setQuestionType] = useState("");
+  const [question, setQuestion] = useState();
+  const [options, setOptions] = useState([]);
+  const [correctAnswer, setCorrectAnswer] = useState();
+
+  const [quizId, setQuizId] = useState();
 
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
@@ -403,6 +413,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                   <IconButton
                     size="small"
                     style={{ marginLeft: "auto", order: 2 }}
+                    onClick={() => setAddQuestionDialog(true)}
                   >
                     <Add />
                   </IconButton>
@@ -822,6 +833,22 @@ const Task = ({ task, index, getCourse, subtasks }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <QuestionDialog
+        addQuestionDialog={addQuestionDialog}
+        setAddQuestionDialog={setAddQuestionDialog}
+        quizId={quizId}
+        setQuizId={setQuizId}
+        question={question}
+        setQuestion={setQuestion}
+        questionType={questionType}
+        setQuestionType={setQuestionType}
+        options={options}
+        setOptions={setOptions}
+        correctAnswer={correctAnswer}
+        setCorrectAnswer={setCorrectAnswer}
+        getCourse={getCourse}
+      />
     </Fragment>
   );
 };
