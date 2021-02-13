@@ -610,13 +610,13 @@ const QuestionDialog = ({
           />
           {questionType && (
             <Fragment>
-              <label htmlFor="question">
+              <label htmlFor="marks">
                 <Typography variant="body1" style={{ marginTop: "10px" }}>
                   Marks
                 </Typography>
               </label>
               <TextField
-                id="question"
+                id="marks"
                 type="number"
                 autoComplete="off"
                 variant="outlined"

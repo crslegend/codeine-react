@@ -102,6 +102,12 @@ const CourseCreation = () => {
 
   const [courseId, setCourseId] = useState();
 
+  const [finalQuizDialog, setFinalQuizDialog] = useState(false);
+  const [finalQuiz, setFinalQuiz] = useState({
+    instructions: "",
+    passing_marks: 0,
+  });
+  const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
   const handleSaveCourseDetails = () => {
@@ -389,6 +395,17 @@ const CourseCreation = () => {
             };
           }
           setCodeLanguage(newCodeLanguages);
+
+          // setting final assessment details
+          if (res.data.assessment) {
+            setFinalQuiz({
+              id: res.data.assessment.id,
+              instructions: res.data.assessment.instructions,
+              passing_marks: res.data.assessment.passing_marks,
+            });
+          } else {
+            setFinalQuizDialog(true);
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -456,6 +473,55 @@ const CourseCreation = () => {
     setPageNum(pageNum + 1);
   };
 
+  const handleSaveFinalQuizDetails = () => {
+    if (finalQuiz.instructions === "" || finalQuiz.marks === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please fill up all fields",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (editMode) {
+      const data = {
+        instructions: finalQuiz.instructions,
+        passing_marks: finalQuiz.passing_marks,
+      };
+
+      Service.client
+        .put(`/courses/${courseId}/assessments/${finalQuiz.id}`, data)
+        .then((res) => {
+          console.log(res);
+          setFinalQuizDialog(false);
+          setFinalQuiz({
+            instructions: "",
+            passing_marks: 0,
+          });
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/courses/${courseId}/assessments`, finalQuiz)
+        .then((res) => {
+          console.log(res);
+          setFinalQuizDialog(false);
+          setFinalQuiz({
+            instructions: "",
+            passing_marks: 0,
+          });
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
     getCourse();
   }, []);
@@ -518,6 +584,17 @@ const CourseCreation = () => {
                     >
                       Edit Course Details
                     </Button>
+                    <Button
+                      variant="contained"
+                      startIcon={<Edit />}
+                      onClick={() => {
+                        setFinalQuizDialog(true);
+                        setEditMode(true);
+                      }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Edit Final Quiz Details
+                    </Button>
                   </div>
                 </div>
                 <QuizKanbanBoard />
@@ -541,6 +618,87 @@ const CourseCreation = () => {
                     Next
                   </Button>
                 </div>
+
+                <Dialog
+                  open={finalQuizDialog}
+                  onClose={() => {
+                    setFinalQuizDialog(false);
+                  }}
+                  PaperProps={{
+                    style: {
+                      width: "400px",
+                    },
+                  }}
+                >
+                  <DialogTitle>Final Quiz</DialogTitle>
+                  <DialogContent>
+                    <label htmlFor="instructions">
+                      <Typography variant="body1">Instructions</Typography>
+                    </label>
+                    <TextField
+                      id="instructions"
+                      placeholder="Enter instructions"
+                      type="text"
+                      autoComplete="off"
+                      variant="outlined"
+                      margin="dense"
+                      fullWidth
+                      value={finalQuiz && finalQuiz.instructions}
+                      onChange={(e) => {
+                        setFinalQuiz({
+                          ...finalQuiz,
+                          instructions: e.target.value,
+                        });
+                      }}
+                    />
+                    <label htmlFor="marks">
+                      <Typography variant="body1" style={{ marginTop: "10px" }}>
+                        Marks
+                      </Typography>
+                    </label>
+                    <TextField
+                      id="marks"
+                      type="number"
+                      autoComplete="off"
+                      variant="outlined"
+                      margin="dense"
+                      fullWidth
+                      value={finalQuiz && finalQuiz.passing_marks}
+                      onChange={(e) =>
+                        setFinalQuiz({
+                          ...finalQuiz,
+                          passing_marks: e.target.value,
+                        })
+                      }
+                      style={{ marginBottom: "10px" }}
+                      InputProps={{
+                        inputProps: { min: 0 },
+                      }}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      variant="contained"
+                      className={classes.dialogButtons}
+                      onClick={() => {
+                        setFinalQuizDialog(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.dialogButtons}
+                      // disabled={!editMode && editQuestionDialog}
+                      onClick={() => {
+                        handleSaveFinalQuizDetails();
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </Fragment>
             );
           } else if (pageNum === 3) {
