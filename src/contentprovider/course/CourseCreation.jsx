@@ -414,6 +414,45 @@ const CourseCreation = () => {
   };
 
   const setToNextPage = () => {
+    handleSaveCourseDetails();
+
+    for (const column in allChapters.columns) {
+      if (allChapters.columns[column].course_materials.length === 0) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Every chapter should have a course material",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+
+      for (const material in allChapters.columns[column].course_materials) {
+        if (
+          allChapters.columns[column].course_materials[material]
+            .material_type === "QUIZ" &&
+          allChapters.columns[column].course_materials[material].quiz.questions
+            .length === 0
+        ) {
+          setSbOpen(true);
+          setSnackbar({
+            message: "Every quiz should have at least 1 question",
+            severity: "error",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
+          return;
+        }
+      }
+    }
+
     setPageNum(pageNum + 1);
   };
 
