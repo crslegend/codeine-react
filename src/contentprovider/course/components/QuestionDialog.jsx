@@ -150,7 +150,7 @@ const QuestionDialog = ({
     setOptions(options.filter((option) => options.indexOf(option) !== index));
   };
 
-  console.log(correctAnswer);
+  //   console.log(correctAnswer);
 
   const handleDeleteQuestion = () => {
     Service.client
@@ -244,6 +244,21 @@ const QuestionDialog = ({
       setSnackbar({
         ...snackbar,
         message: "Please enter question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (options.includes("")) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter all options for the questions",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
