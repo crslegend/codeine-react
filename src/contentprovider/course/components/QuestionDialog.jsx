@@ -8,14 +8,10 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormControlLabel,
   IconButton,
-  Input,
   InputLabel,
   ListItemText,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   TextField,
   Typography,
@@ -68,7 +64,7 @@ const QuestionDialog = ({
   setSnackbar,
 }) => {
   const classes = useStyles();
-  console.log(correctAnswer);
+  //   console.log(question);
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -585,7 +581,7 @@ const QuestionDialog = ({
               onChange={(e) => {
                 handleQuestionTypeChange(e);
               }}
-              disabled={!editMode && editQuestionDialog}
+              disabled={editQuestionDialog}
             >
               <MenuItem value="">
                 <em>Select a question type</em>
@@ -629,11 +625,13 @@ const QuestionDialog = ({
                 value={(() => {
                   if (question) {
                     if (question.mcq) {
-                      return question.mcq.marks;
+                      return question.mcq.marks ? question.mcq.marks : "";
                     } else if (question.mrq) {
-                      return question.mrq.marks;
+                      return question.mrq.marks ? question.mrq.marks : "";
                     } else if (question.shortanswer) {
-                      return question.shortanswer.marks;
+                      return question.shortanswer.marks
+                        ? question.shortanswer.marks
+                        : "";
                     }
                   }
                 })()}
