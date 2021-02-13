@@ -10,6 +10,7 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
+  Input,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -61,6 +62,10 @@ const QuestionDialog = ({
   correctAnswer,
   setCorrectAnswer,
   getCourse,
+  sbOpen,
+  setSbOpen,
+  snackbar,
+  setSnackbar,
 }) => {
   const classes = useStyles();
   console.log(question);
@@ -84,7 +89,7 @@ const QuestionDialog = ({
     if (e.target.value === "mcq" || e.target.value === "mrq") {
       const arr = [""];
       setOptions(arr);
-      setCorrectAnswer(arr);
+      setCorrectAnswer([]);
     } else if (e.target.value === "shortanswer") {
       setOptions([]);
       setCorrectAnswer("");
@@ -136,6 +141,12 @@ const QuestionDialog = ({
   const handleDeleteOption = (index) => {
     setOptions(options.filter((option) => options.indexOf(option) !== index));
   };
+
+  const handleSelectMultiSelectAnswers = (e) => {
+    setCorrectAnswer(e.target.value);
+  };
+
+  console.log(correctAnswer);
 
   const handleDeleteQuestion = () => {
     Service.client
@@ -189,7 +200,103 @@ const QuestionDialog = ({
       });
   };
 
-  const handleAddQuestion = () => {};
+  const handleAddQuestion = () => {
+    if (question.title === "" || !question.title) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+    }
+
+    if (questionType === "mcq") {
+      if (!question.mcq.marks) {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Please enter the marks awarded for this question",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      }
+
+      if (correctAnswer === "") {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Please choose the correct answer for this question",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      }
+
+      let data = {
+        title: question.title,
+        marks: question.mcq.marks,
+        options: options,
+        correct_answer: correctAnswer,
+      };
+      //   console.log(data);
+
+      Service.client
+        .post(`/quiz/${quizId}/questions`, data, { params: { type: "mcq" } })
+        .then((res) => {
+          console.log(res);
+          setAddQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    }
+
+    if (questionType === "mrq") {
+      if (!question.mrq.marks) {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Please enter the marks awarded for this question",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      }
+
+      if (correctAnswer.length === 0) {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Please choose the correct answer(s) for this question",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      }
+    }
+  };
 
   return (
     <Fragment>
@@ -337,14 +444,19 @@ const QuestionDialog = ({
             >
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
+                multiple
                 value={correctAnswer}
+                onChange={(e) => handleSelectMultiSelectAnswers(e)}
                 disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
+                renderValue={(selected) => selected.join(", ")}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
-                    <Checkbox checked={correctAnswer.includes(option)} />
+                    <Checkbox
+                      checked={correctAnswer.includes(option) && option !== ""}
+                    />
                     <ListItemText primary={option} />
                   </MenuItem>
                 ))}
@@ -432,7 +544,7 @@ const QuestionDialog = ({
             onClick={() => {
               if (editQuestionDialog) {
                 handleUpdateQuestion();
-              } else {
+              } else if (addQuestionDialog) {
                 handleAddQuestion();
               }
             }}

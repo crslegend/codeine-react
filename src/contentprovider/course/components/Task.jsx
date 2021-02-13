@@ -413,7 +413,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                   <IconButton
                     size="small"
                     style={{ marginLeft: "auto", order: 2 }}
-                    onClick={() => setAddQuestionDialog(true)}
+                    onClick={() => {
+                      setQuizId(task.quiz.id);
+                      setAddQuestionDialog(true);
+                    }}
                   >
                     <Add />
                   </IconButton>
@@ -848,6 +851,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         correctAnswer={correctAnswer}
         setCorrectAnswer={setCorrectAnswer}
         getCourse={getCourse}
+        sbOpen={sbOpen}
+        setSbOpen={setSbOpen}
+        snackbar={snackbar}
+        setSnackbar={setSnackbar}
       />
     </Fragment>
   );
