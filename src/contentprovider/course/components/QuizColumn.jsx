@@ -34,15 +34,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const QuizColumn = ({
-  column,
-  getCourse,
-  tasks,
-  questionsOrder,
-  setQuestionsOrder,
-}) => {
+const QuizColumn = ({ column, getCourse, tasks }) => {
   const classes = useStyles();
-  console.log(column);
+  //   console.log(tasks);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -102,15 +96,8 @@ const QuizColumn = ({
                   backgroundColor: snapshot.isDraggingOver ? "#e0e0e0" : "#fff",
                 }}
               >
-                {questionsOrder &&
-                  questionsOrder.map((questionId, index) => {
-                    let subtask = {};
-                    for (const qId in tasks) {
-                      if (tasks[qId].id === questionId) {
-                        subtask = tasks[qId];
-                      }
-                    }
-
+                {tasks &&
+                  tasks.map((task, index) => {
                     const newTask = {
                       ...column,
                       quiz: column.id,
@@ -118,9 +105,9 @@ const QuizColumn = ({
 
                     return (
                       <SubTask
-                        key={questionId}
+                        key={task.id}
                         task={newTask}
-                        subtask={subtask}
+                        subtask={task}
                         index={index}
                         getCourse={getCourse}
                       />

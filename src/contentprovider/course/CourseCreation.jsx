@@ -108,7 +108,6 @@ const CourseCreation = () => {
     passing_marks: 0,
   });
   const [finalQuizQuestions, setFinalQuizQuestions] = useState([]);
-  const [questionsOrder, setQuestionsOrder] = useState([]);
   const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
@@ -405,16 +404,35 @@ const CourseCreation = () => {
               instructions: res.data.assessment.instructions,
               passing_marks: res.data.assessment.passing_marks,
             });
-            setFinalQuizQuestions(res.data.assessment.questions);
+
+            let data = {
+              tasks: {},
+              taskIds: [],
+            };
+            for (let i = 0; i < res.data.assessment.questions.length; i++) {
+              data = {
+                ...data,
+                tasks: {
+                  ...data.tasks,
+                  [res.data.assessment.questions[i].id]:
+                    res.data.assessment.questions[i],
+                },
+              };
+            }
 
             let arr = [];
             if (res.data.assessment.questions.length > 0) {
               res.data.assessment.questions.forEach((question) =>
                 arr.push(question.id)
               );
-
-              setQuestionsOrder(arr);
+              data = {
+                ...data,
+                taskIds: arr,
+              };
             }
+            // console.log(data);
+            // setFinalQuizQuestions(res.data.assessment.questions);
+            setFinalQuizQuestions(data);
           } else {
             setFinalQuizDialog(true);
           }
@@ -614,8 +632,6 @@ const CourseCreation = () => {
                   getCourse={getCourse}
                   finalQuizQuestions={finalQuizQuestions}
                   setFinalQuizQuestions={setFinalQuizQuestions}
-                  questionsOrder={questionsOrder}
-                  setQuestionsOrder={setQuestionsOrder}
                 />
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}

@@ -22,8 +22,6 @@ const QuizKanbanBoard = ({
   getCourse,
   finalQuizQuestions,
   setFinalQuizQuestions,
-  questionsOrder,
-  setQuestionsOrder,
 }) => {
   const classes = useStyles();
 
@@ -39,6 +37,36 @@ const QuizKanbanBoard = ({
     ) {
       return;
     }
+
+    const newOrder = Array.from(finalQuizQuestions.taskIds);
+    newOrder.splice(source.index, 1);
+    newOrder.splice(destination.index, 0, draggableId);
+
+    setFinalQuizQuestions({
+      ...finalQuizQuestions,
+      taskIds: newOrder,
+    });
+    handleUpdateQuestionOrdering(finalQuiz.id, newOrder);
+  };
+
+  const handleUpdateQuestionOrdering = (quizId, newOrder) => {
+    Service.client
+      .patch(`/quiz/${quizId}/orderQuestions`, newOrder)
+      .then((res) => {
+        console.log(res);
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleFormatTasks = (questions) => {
+    // console.log(questions);
+    const tasks =
+      questions &&
+      questions.taskIds &&
+      questions.taskIds.map((taskId) => questions.tasks[taskId]);
+    // console.log(tasks);
+    return tasks;
   };
 
   return (
@@ -48,9 +76,7 @@ const QuizKanbanBoard = ({
           key={finalQuiz && finalQuiz.id}
           column={finalQuiz && finalQuiz}
           getCourse={getCourse}
-          tasks={finalQuizQuestions}
-          questionsOrder={questionsOrder}
-          setQuestionsOrder={setQuestionsOrder}
+          tasks={handleFormatTasks(finalQuizQuestions)}
         />
       </DragDropContext>
     </Fragment>
