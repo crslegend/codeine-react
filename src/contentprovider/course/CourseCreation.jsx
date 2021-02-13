@@ -107,6 +107,8 @@ const CourseCreation = () => {
     instructions: "",
     passing_marks: 0,
   });
+  const [finalQuizQuestions, setFinalQuizQuestions] = useState([]);
+  const [questionsOrder, setQuestionsOrder] = useState([]);
   const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
@@ -403,6 +405,16 @@ const CourseCreation = () => {
               instructions: res.data.assessment.instructions,
               passing_marks: res.data.assessment.passing_marks,
             });
+            setFinalQuizQuestions(res.data.assessment.questions);
+
+            let arr = [];
+            if (res.data.assessment.questions.length > 0) {
+              res.data.assessment.questions.forEach((question) =>
+                arr.push(question.id)
+              );
+
+              setQuestionsOrder(arr);
+            }
           } else {
             setFinalQuizDialog(true);
           }
@@ -597,7 +609,14 @@ const CourseCreation = () => {
                     </Button>
                   </div>
                 </div>
-                <QuizKanbanBoard />
+                <QuizKanbanBoard
+                  finalQuiz={finalQuiz}
+                  getCourse={getCourse}
+                  finalQuizQuestions={finalQuizQuestions}
+                  setFinalQuizQuestions={setFinalQuizQuestions}
+                  questionsOrder={questionsOrder}
+                  setQuestionsOrder={setQuestionsOrder}
+                />
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
