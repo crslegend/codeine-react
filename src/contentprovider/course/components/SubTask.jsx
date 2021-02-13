@@ -77,7 +77,6 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={subtask.id} index={index}>
         {(provided, snapshot) => {
-          console.log(subtask);
           return (
             <div
               className={

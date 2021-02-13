@@ -331,18 +331,16 @@ const CourseCreation = () => {
                   };
                 });
 
-              if (subtaskIdsArr.length > 0) {
-                tasksObj = {
-                  ...tasksObj,
-                  [courseMaterial.id]: {
-                    ...tasksObj[courseMaterial.id],
-                    subtaskIds: subtaskIdsArr,
-                  },
-                };
-              }
+              tasksObj = {
+                ...tasksObj,
+                [courseMaterial.id]: {
+                  ...tasksObj[courseMaterial.id],
+                  subtaskIds: subtaskIdsArr,
+                },
+              };
             });
 
-            console.log(tasksObj);
+            // console.log(tasksObj);
 
             columns = {
               ...columns,

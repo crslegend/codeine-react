@@ -115,7 +115,6 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
     google_drive_url: "",
   });
   const [zipFile, setZipFile] = useState();
-  console.log(zipFile);
 
   const [video, setVideo] = useState({
     title: "",
@@ -419,8 +418,6 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         tasks.map((task, index) => {
                           let subtasks = [];
                           if (task.material_type === "QUIZ") {
-                            console.log(task);
-
                             subtasks =
                               task.subtaskIds &&
                               task.subtaskIds.map(

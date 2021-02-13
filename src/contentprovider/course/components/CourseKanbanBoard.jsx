@@ -82,6 +82,31 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       return;
     }
 
+    if (type === "subtask") {
+      console.log(state);
+
+      const affectedTask = state.tasks[source.droppableId];
+      const newSubtaskIds = Array.from(affectedTask.subtaskIds);
+
+      newSubtaskIds.splice(source.index, 1);
+      newSubtaskIds.splice(destination.index, 0, draggableId);
+
+      const newState = {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [source.droppableId]: {
+            ...state.tasks[source.droppableId],
+            subtaskIds: newSubtaskIds,
+          },
+        },
+      };
+
+      setState(newState);
+      handleUpdateQuestionOrdering(affectedTask.quiz.id, newSubtaskIds);
+      return;
+    }
+
     const startColumn = state.columns[source.droppableId];
     const endColumn = state.columns[destination.droppableId];
 
@@ -156,6 +181,16 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
   };
 
   const handleUpdateCourseMaterialOrderingInDifferentChapter = () => {};
+
+  const handleUpdateQuestionOrdering = (quizId, newSubtaskIds) => {
+    Service.client
+      .patch(`/quiz/${quizId}/orderQuestions`, newSubtaskIds)
+      .then((res) => {
+        console.log(res);
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
