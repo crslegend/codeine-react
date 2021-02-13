@@ -111,7 +111,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                     setCorrectAnswer(subtask.mcq.correct_answer);
                   } else if (subtask.mrq) {
                     setQuestionType("mrq");
-                    setOptions(subtask.mcq.options);
+                    setOptions(subtask.mrq.options);
                     setCorrectAnswer(subtask.mrq.correct_answer);
                   } else {
                     setQuestionType("shortanswer");

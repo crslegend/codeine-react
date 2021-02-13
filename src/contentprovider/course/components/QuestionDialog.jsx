@@ -132,6 +132,10 @@ const QuestionDialog = ({
     setOptions(values);
   };
 
+  const handleSelectMultiSelectAnswers = (e) => {
+    setCorrectAnswer(e.target.value);
+  };
+
   const handleAddOption = () => {
     const values = [...options];
     values.push("");
@@ -139,11 +143,11 @@ const QuestionDialog = ({
   };
 
   const handleDeleteOption = (index) => {
+    if (questionType === "mrq") {
+      const value = options[index];
+      setCorrectAnswer(correctAnswer.filter((answer) => answer !== value));
+    }
     setOptions(options.filter((option) => options.indexOf(option) !== index));
-  };
-
-  const handleSelectMultiSelectAnswers = (e) => {
-    setCorrectAnswer(e.target.value);
   };
 
   console.log(correctAnswer);
@@ -199,7 +203,38 @@ const QuestionDialog = ({
     return true;
   };
 
-  const validateMRQQuestion = () => {};
+  const validateMRQQuestion = () => {
+    if (!question.mrq.marks) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter the marks awarded for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+
+    if (correctAnswer.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please choose the correct answer(s) for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
 
   const validateShortAnswer = () => {};
 
@@ -235,10 +270,43 @@ const QuestionDialog = ({
         options: options,
         correct_answer: correctAnswer,
       };
-      console.log(data);
+      //   console.log(data);
       Service.client
         .put(`/quiz/${quizId}/questions/${question.id}`, data, {
           params: { type: "mcq" },
+        })
+        .then((res) => {
+          console.log(res);
+          setEditMode(false);
+          setEditQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    if (questionType === "mrq") {
+      const validation = validateMRQQuestion();
+      if (!validation) {
+        return;
+      }
+
+      data = {
+        ...data,
+        marks: question.mrq.marks,
+        options: options,
+        correct_answer: correctAnswer,
+      };
+
+      Service.client
+        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+          params: { type: "mrq" },
         })
         .then((res) => {
           console.log(res);
@@ -303,33 +371,34 @@ const QuestionDialog = ({
     }
 
     if (questionType === "mrq") {
-      if (!question.mrq.marks) {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Please enter the marks awarded for this question",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
+      const validation = validateMRQQuestion();
+      if (!validation) {
+        return;
       }
 
-      if (correctAnswer.length === 0) {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Please choose the correct answer(s) for this question",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-      }
+      let data = {
+        title: question.title,
+        marks: question.mrq.marks,
+        options: options,
+        correct_answer: correctAnswer,
+      };
+
+      Service.client
+        .post(`/quiz/${quizId}/questions`, data, { params: { type: "mrq" } })
+        .then((res) => {
+          console.log(res);
+          setAddQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => console.log(err));
+    }
+
+    if (questionType === "shortanswer") {
     }
   };
 
@@ -485,7 +554,9 @@ const QuestionDialog = ({
                 disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
-                renderValue={(selected) => selected.join(", ")}
+                renderValue={(selected) => {
+                  return selected.join(", ");
+                }}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
