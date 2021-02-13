@@ -175,29 +175,29 @@ const QuestionDialog = ({
       data = {
         ...data,
         marks: parseInt(question.mcq.marks),
-        options: question.mcq.options,
-        correct_answer: question.mcq.correct_answer,
+        options: options,
+        correct_answer: correctAnswer,
       };
+      console.log(data);
+      Service.client
+        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+          params: { type: "mcq" },
+        })
+        .then((res) => {
+          console.log(res);
+          setEditMode(false);
+          setEditQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-    console.log(data);
-    Service.client
-      .put(`/quiz/${quizId}/questions/${question.id}`, data, {
-        params: { type: "mcq" },
-      })
-      .then((res) => {
-        console.log(res);
-        setEditMode(false);
-        setEditQuestionDialog(false);
-        setQuizId();
-        setQuestion();
-        setQuestionType();
-        setOptions();
-        setCorrectAnswer();
-        getCourse();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const handleAddQuestion = () => {
