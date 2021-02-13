@@ -63,7 +63,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
   const [editMode, setEditMode] = useState(false);
 
   const [editQuestionDialog, setEditQuestionDialog] = useState(false);
-  const [editQuestion, setEditQuestion] = useState(false);
+  // const [editQuestion, setEditQuestion] = useState(false);
 
   const [questionType, setQuestionType] = useState("");
   const [question, setQuestion] = useState();

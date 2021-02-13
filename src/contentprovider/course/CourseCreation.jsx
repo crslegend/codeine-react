@@ -11,17 +11,19 @@ import {
 } from "@material-ui/core";
 import { Add, Edit } from "@material-ui/icons";
 import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
+import PageTitle from "../../components/PageTitle";
 
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 import { useParams } from "react-router-dom";
+import QuizKanbanBoard from "./components/QuizKanbanBoard";
 
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
-    marginBottom: "20px",
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   dialogButtons: {
     width: 100,
@@ -31,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
 const CourseCreation = () => {
   const classes = useStyles();
   const { id } = useParams();
+
+  const [pageNum, setPageNum] = useState(1);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -409,6 +413,10 @@ const CourseCreation = () => {
       });
   };
 
+  const setToNextPage = () => {
+    setPageNum(pageNum + 1);
+  };
+
   useEffect(() => {
     getCourse();
   }, []);
@@ -416,28 +424,91 @@ const CourseCreation = () => {
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <div className={classes.buttonSection}>
-        <Button
-          variant="contained"
-          startIcon={<Edit />}
-          onClick={() => setDrawerOpen(true)}
-        >
-          Edit Course Details
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => setChapterDialog(true)}
-        >
-          Add New Chapter
-        </Button>
-      </div>
-      <CourseKanbanBoard
-        courseId={courseId}
-        state={allChapters}
-        setState={setAllChapters}
-        getCourse={getCourse}
-      />
+      {(() => {
+        if (pageNum) {
+          if (pageNum === 1) {
+            return (
+              <Fragment>
+                <div className={classes.buttonSection}>
+                  <PageTitle title="Course and Chapter" />
+                  <div>
+                    <Button
+                      variant="contained"
+                      startIcon={<Edit />}
+                      onClick={() => setDrawerOpen(true)}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Edit Course Details
+                    </Button>
+                    <Button
+                      variant="contained"
+                      startIcon={<Add />}
+                      onClick={() => setChapterDialog(true)}
+                    >
+                      Add New Chapter
+                    </Button>
+                  </div>
+                </div>
+                <CourseKanbanBoard
+                  courseId={courseId}
+                  state={allChapters}
+                  setState={setAllChapters}
+                  getCourse={getCourse}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setToNextPage()}
+                  style={{ float: "right" }}
+                >
+                  Next
+                </Button>
+              </Fragment>
+            );
+          } else if (pageNum === 2) {
+            return (
+              <Fragment>
+                <div className={classes.buttonSection}>
+                  <PageTitle title="Final Quiz" />
+                  <div>
+                    <Button
+                      variant="contained"
+                      startIcon={<Edit />}
+                      onClick={() => setDrawerOpen(true)}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Edit Course Details
+                    </Button>
+                  </div>
+                </div>
+                <QuizKanbanBoard />
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setPageNum(1)}
+                    style={{ float: "right" }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setToNextPage()}
+                    style={{ float: "right" }}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </Fragment>
+            );
+          } else if (pageNum === 3) {
+          }
+        }
+      })()}
+
       <CourseDetailsDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
