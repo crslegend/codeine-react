@@ -16,6 +16,7 @@ import {
 import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
+import QuestionDialog from "./QuestionDialog";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -40,12 +41,48 @@ const useStyles = makeStyles((theme) => ({
       "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
     alignItems: "center",
   },
+  handle: {
+    marginRight: "10px",
+  },
+  title: {
+    cursor: "pointer",
+    display: "inline-block",
+    maxWidth: 150,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
 }));
 
 const SubTask = ({ task, subtask, getCourse, index }) => {
   const classes = useStyles();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
+  const [editMode, setEditMode] = useState(false);
+
+  const [editQuestionDialog, setEditQuestionDialog] = useState(false);
+  const [editQuestion, setEditQuestion] = useState(false);
+
+  const [questionType, setQuestionType] = useState("");
+  const [question, setQuestion] = useState();
+  const [options, setOptions] = useState([]);
+  const [correctAnswer, setCorrectAnswer] = useState();
+
+  const [quizId, setQuizId] = useState();
+
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Draggable draggableId={subtask.id} index={index}>
         {(provided, snapshot) => {
           console.log(subtask);
@@ -59,7 +96,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
-              <div {...provided.dragHandleProps}>
+              <div {...provided.dragHandleProps} className={classes.handle}>
                 <Avatar
                   variant="rounded"
                   style={{
@@ -71,10 +108,50 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                   {index + 1}
                 </Avatar>
               </div>
+
+              <LinkMui
+                className={classes.title}
+                style={{ textDecoration: "none" }}
+                onClick={() => {
+                  if (subtask.mcq) {
+                    setQuestionType("mcq");
+                    setOptions(subtask.mcq.options);
+                  } else if (subtask.mrq) {
+                    setQuestionType("mrq");
+                    setOptions(subtask.mcq.options);
+                  } else {
+                    setQuestionType("shortanswer");
+                  }
+
+                  setCorrectAnswer(subtask.correct_answer);
+                  setQuestion(subtask);
+                  setQuizId(task.quiz.id);
+                  setEditQuestionDialog(true);
+                }}
+              >
+                {subtask.title}
+              </LinkMui>
             </div>
           );
         }}
       </Draggable>
+
+      <QuestionDialog
+        editMode={editMode}
+        setEditMode={setEditMode}
+        editQuestionDialog={editQuestionDialog}
+        setEditQuestionDialog={setEditQuestionDialog}
+        quizId={quizId}
+        setQuizId={setQuizId}
+        question={question}
+        setQuestion={setQuestion}
+        questionType={questionType}
+        setQuestionType={setQuestionType}
+        options={options}
+        setOptions={setOptions}
+        correctAnswer={correctAnswer}
+        setCorrectAnswer={setCorrectAnswer}
+      />
     </Fragment>
   );
 };
