@@ -68,7 +68,7 @@ const QuestionDialog = ({
   setSnackbar,
 }) => {
   const classes = useStyles();
-  console.log(question);
+  console.log(correctAnswer);
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -136,6 +136,10 @@ const QuestionDialog = ({
     setCorrectAnswer(e.target.value);
   };
 
+  const handleShortAnswerInput = (e) => {
+    setCorrectAnswer(e.target.value);
+  };
+
   const handleAddOption = () => {
     const values = [...options];
     values.push("");
@@ -186,7 +190,7 @@ const QuestionDialog = ({
       return false;
     }
 
-    if (correctAnswer === "") {
+    if (correctAnswer.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -236,7 +240,38 @@ const QuestionDialog = ({
     return true;
   };
 
-  const validateShortAnswer = () => {};
+  const validateShortAnswer = () => {
+    if (!question.shortanswer.marks) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter the marks awarded for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+
+    if (correctAnswer === "" || !correctAnswer) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter keywords for this question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleUpdateQuestion = () => {
     if (question.title === "" || !question.title) {
@@ -254,7 +289,7 @@ const QuestionDialog = ({
       return;
     }
 
-    if (options.includes("")) {
+    if (questionType !== "shortanswer" && options && options.includes("")) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -338,6 +373,41 @@ const QuestionDialog = ({
           console.log(err);
         });
     }
+
+    if (questionType === "shortanswer") {
+      const validation = validateShortAnswer();
+      if (!validation) {
+        return;
+      }
+
+      const arr = correctAnswer.split(",");
+
+      let data = {
+        title: question.title,
+        marks: question.shortanswer.marks,
+        options: [],
+        keywords: arr,
+      };
+
+      Service.client
+        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+          params: { type: "shortanswer" },
+        })
+        .then((res) => {
+          console.log(res);
+          setEditMode(false);
+          setEditQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const handleAddQuestion = () => {
@@ -346,6 +416,21 @@ const QuestionDialog = ({
       setSnackbar({
         ...snackbar,
         message: "Please enter question",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (questionType !== "shortanswer" && options && options.includes("")) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter all options for the questions",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -414,6 +499,36 @@ const QuestionDialog = ({
     }
 
     if (questionType === "shortanswer") {
+      const validation = validateShortAnswer();
+      if (!validation) {
+        return;
+      }
+
+      const arr = correctAnswer.split(",");
+
+      let data = {
+        title: question.title,
+        marks: question.shortanswer.marks,
+        options: [],
+        keywords: arr,
+      };
+      //   console.log(data);
+
+      Service.client
+        .post(`/quiz/${quizId}/questions`, data, {
+          params: { type: "shortanswer" },
+        })
+        .then((res) => {
+          console.log(res);
+          setAddQuestionDialog(false);
+          setQuizId();
+          setQuestion();
+          setQuestionType();
+          setOptions();
+          setCorrectAnswer();
+          getCourse();
+        })
+        .catch((err) => console.log(err));
     }
   };
 
@@ -583,6 +698,28 @@ const QuestionDialog = ({
                 ))}
               </Select>
             </FormControl>
+          )}
+
+          {questionType === "shortanswer" && (
+            <Fragment>
+              <label htmlFor="shortanswer">
+                <Typography variant="body1">Keywords as Answers</Typography>
+              </label>
+              <TextField
+                id="shortanswer"
+                placeholder="Enter keywords (separated by commas)"
+                type="text"
+                autoComplete="off"
+                variant="outlined"
+                margin="dense"
+                fullWidth
+                value={correctAnswer && correctAnswer}
+                onChange={(e) => {
+                  handleShortAnswerInput(e);
+                }}
+                disabled={!editMode && editQuestionDialog}
+              />
+            </Fragment>
           )}
 
           {options &&

@@ -115,7 +115,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                     setCorrectAnswer(subtask.mrq.correct_answer);
                   } else {
                     setQuestionType("shortanswer");
-                    setCorrectAnswer(subtask.shortanswer.correct_answer);
+                    setCorrectAnswer(subtask.shortanswer.keywords.join(","));
                   }
 
                   setQuestion(subtask);
