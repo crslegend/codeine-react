@@ -68,6 +68,8 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
     autoHideDuration: 3000,
   });
 
+  // console.log(task);
+
   const [editMode, setEditMode] = useState(false);
 
   const [editQuestionDialog, setEditQuestionDialog] = useState(false);
@@ -116,14 +118,16 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                   if (subtask.mcq) {
                     setQuestionType("mcq");
                     setOptions(subtask.mcq.options);
+                    setCorrectAnswer(subtask.mcq.correct_answer);
                   } else if (subtask.mrq) {
                     setQuestionType("mrq");
                     setOptions(subtask.mcq.options);
+                    setCorrectAnswer(subtask.mrq.correct_answer);
                   } else {
                     setQuestionType("shortanswer");
+                    setCorrectAnswer(subtask.shortanswer.correct_answer);
                   }
 
-                  setCorrectAnswer(subtask.correct_answer);
                   setQuestion(subtask);
                   setQuizId(task.quiz.id);
                   setEditQuestionDialog(true);
@@ -151,6 +155,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
         setOptions={setOptions}
         correctAnswer={correctAnswer}
         setCorrectAnswer={setCorrectAnswer}
+        getCourse={getCourse}
       />
     </Fragment>
   );

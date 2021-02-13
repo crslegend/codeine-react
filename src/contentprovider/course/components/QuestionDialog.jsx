@@ -2,14 +2,19 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
+  ListItemText,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   TextField,
   Typography,
@@ -23,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     width: 100,
   },
   formControl: {
-    paddingTop: "15px",
+    paddingTop: "13px",
+    paddingBottom: "10px",
     "& label": {
       paddingLeft: "7px",
       paddingRight: "7px",
@@ -51,22 +57,110 @@ const QuestionDialog = ({
   setOptions,
   correctAnswer,
   setCorrectAnswer,
+  getCourse,
 }) => {
   const classes = useStyles();
-  console.log(options);
+  console.log(question);
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
   const handleQuestionInputChange = (e) => {
-    setQuestion(e.target.value);
+    setQuestion({
+      ...question,
+      title: e.target.value,
+    });
   };
 
   const handleQuestionTypeChange = (e) => {
-    setQuestionType(e.target.value);
+    setQuestionType({
+      title: question.title,
+    });
     setOptions([]);
   };
 
-  const handleDeleteQuestion = () => {};
+  const handleMarksChange = (e) => {
+    if (question) {
+      if (question.mcq) {
+        setQuestion({
+          ...question,
+          mcq: {
+            ...question.mcq,
+            marks: e.target.value,
+          },
+        });
+      } else if (question.mrq) {
+        setQuestion({
+          ...question,
+          mrq: {
+            ...question.mrq,
+            marks: e.target.value,
+          },
+        });
+      } else {
+        setQuestion({
+          ...question,
+          shortanswer: {
+            ...question.shortanswer,
+            marks: e.target.value,
+          },
+        });
+      }
+    }
+  };
+
+  const handleDeleteQuestion = () => {
+    Service.client
+      .delete(`/quiz/${quizId}/questions/${question.id}`)
+      .then((res) => {
+        console.log(res);
+        setEditMode(false);
+        setDeleteQuestionDialog(false);
+        setEditQuestionDialog(false);
+        setQuizId();
+        setQuestion();
+        setQuestionType();
+        setOptions();
+        setCorrectAnswer();
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUpdateQuestion = () => {
+    let data = {
+      title: question.title,
+    };
+
+    if (questionType === "mcq") {
+      data = {
+        ...data,
+        marks: parseInt(question.mcq.marks),
+        options: question.mcq.options,
+        correct_answer: question.mcq.correct_answer,
+      };
+    }
+    console.log(data);
+    Service.client
+      .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+        params: { type: "mcq" },
+      })
+      .then((res) => {
+        console.log(res);
+        setEditMode(false);
+        setEditQuestionDialog(false);
+        setQuizId();
+        setQuestion();
+        setQuestionType();
+        setOptions();
+        setCorrectAnswer();
+        getCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleAddQuestion = () => {};
 
   return (
     <Fragment>
@@ -122,9 +216,7 @@ const QuestionDialog = ({
             </Select>
           </FormControl>
           <label htmlFor="question">
-            <Typography variant="body1" style={{ marginTop: "10px" }}>
-              Question
-            </Typography>
+            <Typography variant="body1">Question</Typography>
           </label>
           <TextField
             id="question"
@@ -139,8 +231,81 @@ const QuestionDialog = ({
               handleQuestionInputChange(e);
             }}
             disabled={!editMode}
-            style={{ marginBottom: "20px" }}
           />
+
+          <label htmlFor="question">
+            <Typography variant="body1" style={{ marginTop: "10px" }}>
+              Marks
+            </Typography>
+          </label>
+          <TextField
+            id="question"
+            type="number"
+            autoComplete="off"
+            variant="outlined"
+            margin="dense"
+            fullWidth
+            value={(() => {
+              if (question) {
+                if (question.mcq) {
+                  return question.mcq.marks;
+                } else if (question.mrq) {
+                  return question.mrq.marks;
+                } else if (question.shortanswer) {
+                  return question.shortanswer.marks;
+                }
+              }
+            })()}
+            onChange={(e) => handleMarksChange(e)}
+            disabled={!editMode}
+            style={{ marginBottom: "10px" }}
+          />
+
+          {options && correctAnswer && questionType === "mcq" && (
+            <FormControl
+              fullWidth
+              margin="dense"
+              className={classes.formControl}
+            >
+              <InputLabel>Select Correct Answer</InputLabel>
+              <Select
+                value={correctAnswer}
+                onChange={(e) => setCorrectAnswer(e.target.value)}
+                disabled={!editMode}
+                label="Select Correct Answer"
+                variant="outlined"
+              >
+                {options.map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+
+          {options && correctAnswer && questionType === "mrq" && (
+            <FormControl
+              fullWidth
+              margin="dense"
+              className={classes.formControl}
+            >
+              <InputLabel>Select Correct Answer</InputLabel>
+              <Select
+                value={correctAnswer}
+                disabled={!editMode}
+                label="Select Correct Answer"
+                variant="outlined"
+              >
+                {options.map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    <Checkbox checked={correctAnswer.includes(option)} />
+                    <ListItemText primary={option} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
           {options &&
             options.map((option, index) => {
@@ -148,12 +313,13 @@ const QuestionDialog = ({
                 return (
                   <Fragment>
                     <div
+                      key={index}
                       style={{
                         display: "flex",
                         alignItems: "center",
                       }}
                     >
-                      <div key={index} style={{ marginBottom: "10px" }}>
+                      <div style={{ marginBottom: "10px" }}>
                         <TextField
                           value={option}
                           placeholder="Enter option"
@@ -167,6 +333,7 @@ const QuestionDialog = ({
                           onClick={() => {
                             //   handleDeleteOption(i);
                           }}
+                          disabled={!editMode}
                         >
                           <Clear />
                         </IconButton>
@@ -178,6 +345,7 @@ const QuestionDialog = ({
                           onClick={() => {
                             // handleAddOption();
                           }}
+                          disabled={!editMode}
                         >
                           <Add />
                         </IconButton>
@@ -209,7 +377,12 @@ const QuestionDialog = ({
             color="primary"
             className={classes.dialogButtons}
             disabled={!editMode}
-            // onClick={() => handleUpdateCourseMaterial()}
+            onClick={() => {
+              if (editMode) {
+                handleUpdateQuestion();
+              } else {
+              }
+            }}
           >
             Save
           </Button>
