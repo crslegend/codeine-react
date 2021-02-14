@@ -1,12 +1,11 @@
-//import { pink, purple, teal } from "@material-ui/core/colors";
-
 export const appointments = [
   {
     id: 0,
     title: "Website Re-Design Plan",
     startDate: new Date(2021, 1, 20, 9, 30),
     endDate: new Date(2021, 1, 20, 11, 30),
-    member: 3,
+    rejected: "true",
+    member: 1,
   },
   {
     id: 1,
@@ -57,22 +56,3 @@ export const appointments = [
     meeting_link: "fff",
   },
 ];
-
-// export const resourcesData = [
-//   {
-//     text: "React 101",
-//     id: 1,
-//     color: teal,
-//   },
-//   {
-//     text: "React with React hooks",
-//     id: 2,
-//     color: pink,
-//   },
-//   {
-//     text: "React with Django",
-//     id: 3,
-//     color: purple,
-//   },
-//   { text: "No preference" },
-// ];

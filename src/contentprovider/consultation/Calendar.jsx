@@ -40,70 +40,84 @@ const TextEditor = (props) => {
   return <AppointmentForm.TextEditor {...props} />;
 };
 
-const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-  const onLinkChange = (nextValue) => {
-    onFieldChange({ meeting_link: nextValue });
-  };
-  const onConfirmChange = (nextValue) => {
-    onFieldChange({ confirmed: nextValue, rejected: !nextValue });
-  };
-
-  const onRejectChange = (nextValue) => {
-    onFieldChange({ rejected: nextValue, confirmed: !nextValue });
-  };
-
-  return (
-    <AppointmentForm.BasicLayout
-      appointmentData={appointmentData}
-      onFieldChange={onFieldChange}
-      {...restProps}
-    >
-      <AppointmentForm.Label
-        style={{ marginTop: "10px" }}
-        text="Conference Link"
-        type="title"
-      />
-      <AppointmentForm.TextEditor
-        value={appointmentData.meeting_link}
-        onValueChange={onLinkChange}
-        placeholder="Enter conference link"
-      />
-      <AppointmentForm.Label
-        style={{ marginTop: "10px" }}
-        text="Member"
-        type="title"
-      />
-      <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
-
-      <AppointmentForm.BooleanEditor
-        style={{ marginTop: "10px" }}
-        value={appointmentData.confirmed}
-        onValueChange={onConfirmChange}
-        label="Confirm Consultation"
-      />
-
-      <AppointmentForm.BooleanEditor
-        style={{ marginTop: "10px" }}
-        value={appointmentData.rejected}
-        onValueChange={onRejectChange}
-        label="Reject Consultation"
-      />
-    </AppointmentForm.BasicLayout>
-  );
-};
-
 const Calendar = () => {
   const [consultations, setConsultations] = useState(appointments);
-  const [addedAppointment, setAddedAppointment] = React.useState({});
-  const [currentViewName, setCurrentViewName] = useState("month");
+  const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
 
-  const [editingOptions, setEditingOptions] = React.useState({
-    allowDeleting: true,
-    allowUpdating: true,
-  });
+  const [allowDeleting, setAllowDeleting] = useState(true);
+  const [allowUpdating, setAllowUpdating] = useState(true);
 
-  const { allowDeleting, allowUpdating } = editingOptions;
+  const BasicLayout = ({
+    onFieldChange,
+    appointmentData,
+    readOnly,
+    ...restProps
+  }) => {
+    const onLinkChange = (nextValue) => {
+      onFieldChange({ meeting_link: nextValue });
+    };
+    const onConfirmChange = (nextValue) => {
+      onFieldChange({ confirmed: nextValue, rejected: !nextValue });
+    };
+
+    const onRejectChange = (nextValue) => {
+      onFieldChange({ rejected: nextValue, confirmed: !nextValue });
+    };
+
+    if (appointmentData.member !== undefined) {
+      setAllowDeleting(false);
+    } else {
+      setAllowDeleting(true);
+    }
+
+    if (appointmentData.endDate < currentDate) {
+      setAllowUpdating(false);
+    } else {
+      setAllowUpdating(true);
+    }
+
+    return (
+      <AppointmentForm.BasicLayout
+        appointmentData={appointmentData}
+        onFieldChange={onFieldChange}
+        readOnly={!allowDeleting}
+        {...restProps}
+      >
+        <AppointmentForm.Label
+          style={{ marginTop: "10px" }}
+          text="Conference Link"
+          type="title"
+        />
+        <AppointmentForm.TextEditor
+          value={appointmentData.meeting_link}
+          onValueChange={onLinkChange}
+          readOnly={!allowUpdating}
+          placeholder="Enter conference link"
+        />
+        <AppointmentForm.Label
+          style={{ marginTop: "10px" }}
+          text="Member"
+          type="title"
+        />
+        <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
+        <AppointmentForm.BooleanEditor
+          style={{ marginTop: "10px" }}
+          value={appointmentData.confirmed}
+          onValueChange={onConfirmChange}
+          readOnly={allowDeleting || !allowUpdating}
+          label="Confirm Consultation"
+        />
+        <AppointmentForm.BooleanEditor
+          style={{ marginTop: "10px" }}
+          value={appointmentData.rejected}
+          onValueChange={onRejectChange}
+          readOnly={allowDeleting || !allowUpdating}
+          label="Reject Consultation"
+        />
+      </AppointmentForm.BasicLayout>
+    );
+  };
 
   /*useEffect(() => {
     Service.client
@@ -133,14 +147,7 @@ const Calendar = () => {
   };
 
   const onCommitChanges = React.useCallback(
-    ({ added, changed, deleted }) => {
-      if (added) {
-        const startingAddedId =
-          consultations.length > 0
-            ? consultations[consultations.length - 1].id + 1
-            : 0;
-        setConsultations([...consultations, { id: startingAddedId, ...added }]);
-      }
+    ({ changed, deleted }) => {
       if (changed) {
         setConsultations(
           consultations.map((appointment) =>
@@ -160,21 +167,10 @@ const Calendar = () => {
   );
 
   const weekview = React.useCallback(
-    React.memo(({ onDoubleClick, startDate, ...restProps }) => {
-      if (startDate < currentDate) {
-        return (
-          <WeekView.TimeTableCell {...restProps} onDoubleClick={undefined} />
-        );
-      } else {
-        return (
-          <WeekView.TimeTableCell
-            {...restProps}
-            onDoubleClick={onDoubleClick}
-          />
-        );
-      }
-    }),
-    [currentDate]
+    React.memo(({ onDoubleClick, startDate, ...restProps }) => (
+      <WeekView.TimeTableCell {...restProps} onDoubleClick={undefined} />
+    )),
+    []
   );
 
   const monthview = React.useCallback(
@@ -184,9 +180,30 @@ const Calendar = () => {
     []
   );
 
-  const onAddedAppointmentChange = React.useCallback((appointment) => {
-    setAddedAppointment(appointment);
-  });
+  const CommandButton = React.useCallback(
+    ({ id, ...restProps }) => {
+      if (id === "deleteButton") {
+        return (
+          <AppointmentForm.CommandButton
+            id={id}
+            {...restProps}
+            disabled={!allowDeleting}
+          />
+        );
+      }
+      if (id === "saveButton") {
+        return (
+          <AppointmentForm.CommandButton
+            id={id}
+            {...restProps}
+            disabled={!allowUpdating}
+          />
+        );
+      }
+      return <AppointmentForm.CommandButton id={id} {...restProps} />;
+    },
+    [allowDeleting, allowUpdating]
+  );
 
   return (
     <Fragment>
@@ -197,11 +214,7 @@ const Calendar = () => {
             currentViewName={currentViewName}
             onCurrentViewNameChange={handleCurrentViewChange}
           />
-          <EditingState
-            onCommitChanges={onCommitChanges}
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={onAddedAppointmentChange}
-          />
+          <EditingState onCommitChanges={onCommitChanges} />
           <IntegratedEditing />
           <WeekView name="week" timeTableCellComponent={weekview} />
           <MonthView name="month" timeTableCellComponent={monthview} />
@@ -211,6 +224,7 @@ const Calendar = () => {
           <Appointments />
           <AppointmentTooltip showOpenButton />
           <AppointmentForm
+            commandButtonComponent={CommandButton}
             basicLayoutComponent={BasicLayout}
             textEditorComponent={TextEditor}
             messages={messages}
