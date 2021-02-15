@@ -19,12 +19,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    fontDisplay: "swap",
-  },
   dropzone: {
     "@global": {
       ".MuiDropzoneArea-text.MuiTypography-h5": {
@@ -32,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "16px",
       },
     },
+  },
+  paper: {
+    height: "calc(100vh - 115px)",
   },
 }));
 
@@ -132,7 +129,7 @@ const AdminProfilePage = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Paper elevation={3} className={classes.paper}>
+        <Paper elevation={0} className={classes.paper}>
           <Grid container>
             <Grid container>
               <Grid xs={6}>

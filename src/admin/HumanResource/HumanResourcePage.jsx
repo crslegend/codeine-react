@@ -20,6 +20,7 @@ import Service from "../../AxiosService";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import jwt_decode from "jwt-decode";
+import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -40,6 +41,7 @@ const styles = makeStyles((theme) => ({
   appbar: {
     backgroundColor: "#00000000",
     boxShadow: "none",
+    marginBottom: "20px",
   },
   tabPanel: {
     padding: "0px",
@@ -81,6 +83,18 @@ function a11yProps(index) {
 
 const AdminHumanResourcePage = () => {
   const classes = styles();
+
+  //Toast message
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   // Tabs variable
   const [value, setValue] = useState(0);
@@ -167,9 +181,26 @@ const AdminHumanResourcePage = () => {
         console.log(res.data);
         setAllMemberList(res.data);
       });
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Member is deactivated",
+        severity: "success",
+      });
       getMemberData();
       console.log("member is deactivated");
     } else {
+      Service.client.get(`/auth/members/${memberid}/activate`).then((res) => {
+        console.log(res.data);
+        setAllMemberList(res.data);
+      });
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Member is activated",
+        severity: "success",
+      });
+      getMemberData();
       console.log("member is activated");
     }
   };
@@ -262,12 +293,25 @@ const AdminHumanResourcePage = () => {
   const handlePartnerStatus = (status, partnerid) => {
     if (status) {
       Service.client.get(`/auth/partners/${partnerid}/activate`).then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Partner is deactivated",
+          severity: "success",
+        });
         console.log(res.data);
         setAllPartnerList(res.data);
       });
       getPartnerData();
       console.log("Partner is deactivated");
     } else {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Partner is activated",
+        severity: "success",
+      });
+      getPartnerData();
       console.log("Partner is activated");
     }
   };
@@ -344,9 +388,22 @@ const AdminHumanResourcePage = () => {
       //   console.log(res.data);
       //   setAllAdminList(res.data);
       // });
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Admin is deactivated",
+        severity: "success",
+      });
       getAdminData();
       console.log("Admin is deactivated");
     } else {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Admin is activated",
+        severity: "success",
+      });
+      getAdminData();
       console.log("Admin is activated");
     }
   };
@@ -365,6 +422,7 @@ const AdminHumanResourcePage = () => {
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <AppBar
         position="static"
         classes={{
@@ -373,9 +431,8 @@ const AdminHumanResourcePage = () => {
       >
         <Tabs
           value={value}
-          background="#fff"
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           onChange={handleChange}
           aria-label="simple tabs example"
           classes={{
@@ -390,33 +447,32 @@ const AdminHumanResourcePage = () => {
 
       {/* Members Tab */}
       <TabPanel value={value} index={0}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search members..."
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValue("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+              elavation: "0px",
+            }}
+            placeholder="Search members..."
+            value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValue("")}
+          />
 
-            <DataGrid
-              rows={memberRows}
-              columns={memberColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenMember(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={memberRows}
+            columns={memberColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenMember(e)}
+          />
+        </div>
 
         <Dialog
           open={openMemberDialog}
@@ -478,33 +534,31 @@ const AdminHumanResourcePage = () => {
 
       {/* Partners Tab */}
       <TabPanel value={value} index={1}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search partners..."
-              value={searchValuePartner}
-              onChange={(newValue) => setSearchValuePartner(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValuePartner("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+            }}
+            placeholder="Search partners..."
+            value={searchValuePartner}
+            onChange={(newValue) => setSearchValuePartner(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValuePartner("")}
+          />
 
-            <DataGrid
-              rows={partnerRows}
-              columns={partnerColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenPartner(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={partnerRows}
+            columns={partnerColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenPartner(e)}
+          />
+        </div>
         <Dialog
           open={openPartnerDialog}
           onClose={handleClosePartner}
@@ -563,7 +617,7 @@ const AdminHumanResourcePage = () => {
                   ></img>
                 </Grid>
               </Grid>
-              <be />
+              <br />
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -579,33 +633,31 @@ const AdminHumanResourcePage = () => {
 
       {/* Admin Tab */}
       <TabPanel value={value} index={2}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search admin..."
-              value={searchValueAdmin}
-              onChange={(newValue) => setSearchValueAdmin(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValueAdmin("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+            }}
+            placeholder="Search admin..."
+            value={searchValueAdmin}
+            onChange={(newValue) => setSearchValueAdmin(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValueAdmin("")}
+          />
 
-            <DataGrid
-              rows={adminRows}
-              columns={adminColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenAdmin(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={adminRows}
+            columns={adminColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenAdmin(e)}
+          />
+        </div>
         <Dialog
           open={openPartnerDialog}
           onClose={handleCloseAdmin}

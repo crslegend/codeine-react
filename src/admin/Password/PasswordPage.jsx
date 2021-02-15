@@ -11,11 +11,8 @@ import {
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    fontDisplay: "swap",
+  paper: {
+    height: "calc(100vh - 115px)",
   },
 }));
 
@@ -51,7 +48,7 @@ const AdminPasswordPage = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Paper elevation={3} className={classes.paper}>
+        <Paper elevation={0} className={classes.paper}>
           <Grid container>
             <Grid container>
               <Grid xs={6}>
