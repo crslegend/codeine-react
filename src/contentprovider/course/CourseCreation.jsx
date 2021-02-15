@@ -276,6 +276,16 @@ const CourseCreation = () => {
           setDrawerPageNum(1);
           setCoursePicAvatar();
           getCourse();
+          setSbOpen(true);
+          setSnackbar({
+            message: "Course details saved!",
+            severity: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
         })
         .catch((err) => console.log(err));
     } else {
@@ -288,6 +298,16 @@ const CourseCreation = () => {
           localStorage.setItem("courseId", res.data.id);
           setCoursePicAvatar();
           getCourse();
+          setSbOpen(true);
+          setSnackbar({
+            message: "Course details saved!",
+            severity: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
         })
         .catch((err) => console.log(err));
     }
@@ -470,6 +490,20 @@ const CourseCreation = () => {
         console.log(res);
         setChapterDialog(false);
         getCourse();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Chapter created!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        setChapterDetails({
+          title: "",
+          overview: "",
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -478,6 +512,34 @@ const CourseCreation = () => {
 
   const setToNextPage = () => {
     // handleSaveCourseDetails();
+
+    if (!courseId) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please fill in course details first!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (allChapters.columnOrder.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Every course should have at least 1 chapter",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
 
     for (const column in allChapters.columns) {
       if (allChapters.columns[column].course_materials.length === 0) {
