@@ -126,7 +126,7 @@ const MemberLoginPage = () => {
             Do not have an account? Click{" "}
             <span>
               <Link
-                to="/member/login"
+                to="/member/register"
                 style={{ textDecoration: "none", color: "#437FC7" }}
               >
                 here
