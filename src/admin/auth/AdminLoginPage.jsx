@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
+import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +48,17 @@ const AdminLoginPage = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [loginDetails, setLoginDetails] = useState({
     email: "",
     password: "",
@@ -80,10 +92,21 @@ const AdminLoginPage = () => {
           history.push("/admin/humanresource");
         } else {
           setLoading(false);
-          console.log("User is not admin");
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "You are not an admin! Unauthorised access!",
+            severity: "error",
+          });
         }
       })
       .catch((err) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Incorrect email address or password. Please try again!",
+          severity: "error",
+        });
         setLoading(false);
         console.log("user does not exist = " + err);
       });
@@ -91,6 +114,7 @@ const AdminLoginPage = () => {
 
   return (
     <div>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/admin" className={classes.codeineLogo}>

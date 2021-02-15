@@ -10,7 +10,6 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
 import logo from "../../assets/CodeineLogos/Partner.svg";
-
 import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
