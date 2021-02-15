@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Service from "../../AxiosService";
+import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
     fontDisplay: "swap",
   },
   codeineLogo: {
-    textDecoration: "none",
-    color: theme.palette.primary.main,
-    paddingRight: "20px",
-    paddingBottom: "20px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: "10px",
+    width: "25%",
   },
   paper: {
     display: "flex",
@@ -98,10 +100,8 @@ const MemberRegisterPage = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/admin" className={classes.codeineLogo}>
-            <Typography variant="h4">
-              <strong>codeine</strong>
-            </Typography>
+          <Link to="/" className={classes.codeineLogo}>
+            <img src={logo} alt="logo" width="90%" />
           </Link>
           <TextField
             variant="outlined"
