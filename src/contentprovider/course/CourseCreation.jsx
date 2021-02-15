@@ -576,6 +576,20 @@ const CourseCreation = () => {
           return;
         }
       }
+
+      if (finalQuizQuestions.taskIds.length === 0) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Final quiz should have at least 1 question",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
     }
 
     setPageNum(pageNum + 1);
