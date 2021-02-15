@@ -18,6 +18,8 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
 import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import jwt_decode from "jwt-decode";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -33,8 +35,11 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.grey[500],
   },
   tabs: {
-    backgroundColor: "white",
-    elavation: "none",
+    backgroundColor: "#00000000",
+  },
+  appbar: {
+    backgroundColor: "#00000000",
+    boxShadow: "none",
   },
   tabPanel: {
     padding: "0px",
@@ -76,32 +81,59 @@ function a11yProps(index) {
 
 const AdminHumanResourcePage = () => {
   const classes = styles();
+
+  // Tabs variable
   const [value, setValue] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
-  const [open, setOpen] = useState(false);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
 
   useEffect(() => {
-    Service.client.get(`/auth/members`).then((res) => {
-      console.log(res.data);
-      setAllMemberList(res.data);
-    });
+    getMemberData();
+    getPartnerData();
+    getAdminData();
   }, []);
 
+  // Member data
   const [allMembersList, setAllMemberList] = useState([]);
+  const [selectedMember, setSelectedMember] = useState({
+    id: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    is_active: "",
+    date_joined: "",
+    profile_photo: "",
+  });
 
-  const columns = [
-    { field: "id", headerName: "ID", width: 130 },
+  const memberColumns = [
+    { field: "id", headerName: "ID", width: 300 },
     { field: "first_name", headerName: "First name", width: 130 },
     { field: "last_name", headerName: "Last name", width: 130 },
     {
       field: "email",
       headerName: "Email",
-      width: 90,
+      width: 200,
     },
     {
       field: "date_joined",
       headerName: "Date Joined",
-      width: 160,
+      width: 200,
     },
     {
       field: "is_active",
@@ -110,23 +142,235 @@ const AdminHumanResourcePage = () => {
     },
   ];
 
-  const rows = allMembersList;
+  const memberRows = allMembersList;
 
-  const handleClickOpen = (e) => {
-    setOpen(true);
+  for (var h = 0; h < allMembersList.length; h++) {
+    memberRows[h].date_joined = formatDate(allMembersList[h].date_joined);
+  }
+
+  const getMemberData = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      Service.client
+        .get(`/auth/members`)
+        .then((res) => {
+          setAllMemberList(res.data);
+        })
+        .catch((err) => {
+          //setProfile(null);
+        });
+    }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleMemberStatus = (status, memberid) => {
+    if (status) {
+      Service.client.get(`/auth/members/${memberid}/activate`).then((res) => {
+        console.log(res.data);
+        setAllMemberList(res.data);
+      });
+      getMemberData();
+      console.log("member is deactivated");
+    } else {
+      console.log("member is activated");
+    }
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const [searchValue, setSearchValue] = useState("");
+  const [openMemberDialog, setOpenMemberDialog] = useState(false);
+
+  const handleClickOpenMember = (e) => {
+    setSelectedMember(e.row);
+    setOpenMemberDialog(true);
+  };
+
+  const handleCloseMember = () => {
+    setOpenMemberDialog(false);
+  };
+
+  // Partner
+  const [allPartnerList, setAllPartnerList] = useState([]);
+  const [selectedPartner, setSelectedPartner] = useState({
+    id: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    is_active: "",
+    date_joined: "",
+    profile_photo: "",
+    partner: {
+      job_title: "",
+      bio: "",
+      organization: {
+        organization_name: "",
+        organization_photo: "",
+      },
+    },
+  });
+
+  const partnerColumns = [
+    { field: "id", headerName: "ID", width: 300 },
+    { field: "first_name", headerName: "First name", width: 130 },
+    { field: "last_name", headerName: "Last name", width: 130 },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 200,
+    },
+    {
+      field: "date_joined",
+      headerName: "Date Joined",
+      width: 200,
+    },
+    {
+      field: "is_active",
+      headerName: "Is Active",
+      width: 160,
+    },
+    {
+      field: "job_title",
+      headerName: "Job Title",
+      width: 160,
+    },
+    {
+      field: "organization_name",
+      headerName: "Organisation",
+      width: 160,
+    },
+  ];
+
+  const partnerRows = allPartnerList;
+
+  for (var i = 0; i < allPartnerList.length; i++) {
+    partnerRows[i].date_joined = formatDate(allPartnerList[i].date_joined);
+    partnerRows[i].organization_name =
+      allPartnerList[i].partner.organization.organization_name;
+    partnerRows[i].job_title = allPartnerList[i].partner.job_title;
+  }
+
+  const getPartnerData = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      Service.client
+        .get(`/auth/partners`)
+        .then((res) => {
+          setAllPartnerList(res.data);
+        })
+        .catch((err) => {
+          //setProfile(null);
+        });
+    }
+  };
+
+  const handlePartnerStatus = (status, partnerid) => {
+    if (status) {
+      Service.client.get(`/auth/partners/${partnerid}/activate`).then((res) => {
+        console.log(res.data);
+        setAllPartnerList(res.data);
+      });
+      getPartnerData();
+      console.log("Partner is deactivated");
+    } else {
+      console.log("Partner is activated");
+    }
+  };
+
+  const [searchValuePartner, setSearchValuePartner] = useState("");
+  const [openPartnerDialog, setOpenPartnerDialog] = useState(false);
+
+  const handleClickOpenPartner = (e) => {
+    setSelectedPartner(e.row);
+    setOpenPartnerDialog(true);
+  };
+
+  const handleClosePartner = () => {
+    setOpenPartnerDialog(false);
+  };
+
+  // Admin
+  const [allAdminList, setAllAdminList] = useState([]);
+  const [selectedAdmin, setSelectedAdmin] = useState({
+    id: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    is_active: "",
+    date_joined: "",
+    profile_photo: "",
+  });
+
+  const adminColumns = [
+    { field: "id", headerName: "ID", width: 300 },
+    { field: "first_name", headerName: "First name", width: 130 },
+    { field: "last_name", headerName: "Last name", width: 130 },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 200,
+    },
+    {
+      field: "date_joined",
+      headerName: "Date Joined",
+      width: 200,
+    },
+    {
+      field: "is_active",
+      headerName: "Is Active",
+      width: 160,
+    },
+  ];
+
+  const adminRows = allAdminList;
+
+  for (var j = 0; j < allAdminList.length; j++) {
+    adminRows[j].date_joined = formatDate(allAdminList[j].date_joined);
+  }
+
+  const getAdminData = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      // console.log(`profile useeffect userid = ${userid}`);
+      Service.client
+        .get(`/auth/partners`)
+        .then((res) => {
+          setSelectedAdmin(res.data);
+        })
+        .catch((err) => {
+          //setProfile(null);
+        });
+    }
+  };
+
+  const handleAdminStatus = (status, adminid) => {
+    if (status) {
+      // Service.client.get(`/auth/partners/${adminid}/activate`).then((res) => {
+      //   console.log(res.data);
+      //   setAllAdminList(res.data);
+      // });
+      getAdminData();
+      console.log("Admin is deactivated");
+    } else {
+      console.log("Admin is activated");
+    }
+  };
+
+  const [searchValueAdmin, setSearchValueAdmin] = useState("");
+  const [openAdminDialog, setOpenAdminDialog] = useState(false);
+
+  const handleClickOpenAdmin = (e) => {
+    setSelectedPartner(e.row);
+    setOpenPartnerDialog(true);
+  };
+
+  const handleCloseAdmin = () => {
+    setOpenPartnerDialog(false);
   };
 
   return (
     <Fragment>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        classes={{
+          root: classes.appbar,
+        }}
+      >
         <Tabs
           value={value}
           background="#fff"
@@ -138,13 +382,13 @@ const AdminHumanResourcePage = () => {
             root: classes.tabs,
           }}
         >
-          <Tab label="Partners" {...a11yProps(0)} />
-          <Tab label="Members" {...a11yProps(1)} />
+          <Tab label="Members" {...a11yProps(0)} />
+          <Tab label="Partners" {...a11yProps(1)} />
           <Tab label="Admin" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
 
-      {/* Partners Tab */}
+      {/* Members Tab */}
       <TabPanel value={value} index={0}>
         <Paper className={classes.root}>
           <div style={{ height: "700px", width: "100%" }}>
@@ -153,7 +397,7 @@ const AdminHumanResourcePage = () => {
                 width: "50%",
                 marginBottom: "20px",
               }}
-              placeholder="Search content provider..."
+              placeholder="Search members..."
               value={searchValue}
               onChange={(newValue) => setSearchValue(newValue)}
               //onRequestSearch={getSearchResults}
@@ -161,98 +405,261 @@ const AdminHumanResourcePage = () => {
             />
 
             <DataGrid
-              rows={rows}
-              columns={columns.map((column) => ({
+              rows={memberRows}
+              columns={memberColumns.map((column) => ({
                 ...column,
                 //disableClickEventBubbling: true,
               }))}
-              //dataSource={allMembersList}
               pageSize={10}
-              //checkboxSelection
-              onRowClick={handleClickOpen}
+              checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenMember(e)}
             />
           </div>
         </Paper>
 
         <Dialog
-          open={open}
-          onClose={handleClose}
+          open={openMemberDialog}
+          onClose={handleCloseMember}
           aria-labelledby="form-dialog-title"
+          maxWidth="sm"
+          fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
-            Hello
+            Member Detail
             <IconButton
               aria-label="close"
               className={classes.closeButton}
-              onClick={handleClose}
+              onClick={handleCloseMember}
             >
               <CloseIcon />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To subscribe to this website, please enter your email address
-              here. We will send updates occasionally.
+              <Grid container>
+                <Grid item xs={3}>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                </Grid>
+                <Grid item xs={7}>
+                  {selectedMember.id} <br />
+                  {selectedMember.first_name} <br />
+                  {selectedMember.last_name} <br />
+                  {selectedMember.email} <br />
+                  {selectedMember.is_active === true
+                    ? "Active"
+                    : "Inactive"}{" "}
+                  <br />
+                  {formatDate(selectedMember.date_joined)} <br />
+                </Grid>
+                <Grid item xs={2}>
+                  <img src={selectedMember.profile_photo} alt=""></img>
+                </Grid>
+              </Grid>
+              <be /> <br />
+              <Typography variant="h6">Achievements</Typography>
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleClose} color="primary">
-              Approve
+            <Button
+              onClick={() => handleMemberStatus(selectedMember.is_active)}
+              color="secondary"
+            >
+              {selectedMember.is_active === true ? "Deactivate" : "Activate"}
             </Button>
           </DialogActions>
         </Dialog>
       </TabPanel>
 
-      {/* Members Tab */}
+      {/* Partners Tab */}
       <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
+        <Paper className={classes.root}>
+          <div style={{ height: "700px", width: "100%" }}>
+            <SearchBar
+              style={{
+                width: "50%",
+                marginBottom: "20px",
+              }}
+              placeholder="Search partners..."
+              value={searchValuePartner}
+              onChange={(newValue) => setSearchValuePartner(newValue)}
+              //onRequestSearch={getSearchResults}
+              onCancelSearch={() => setSearchValuePartner("")}
+            />
 
-      {/* Admin Tab */}
-      <TabPanel value={value} index={2}>
-        <div style={{ height: "600px", width: "100%" }}>
-          <SearchBar
-            style={{
-              width: "50%",
-              marginBottom: "20px",
-            }}
-            placeholder="Search admin..."
-            value={searchValue}
-            onChange={(newValue) => setSearchValue(newValue)}
-            //onRequestSearch={getSearchResults}
-            onCancelSearch={() => setSearchValue("")}
-          />
-        </div>
+            <DataGrid
+              rows={partnerRows}
+              columns={partnerColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenPartner(e)}
+            />
+          </div>
+        </Paper>
         <Dialog
-          open={open}
-          onClose={handleClose}
+          open={openPartnerDialog}
+          onClose={handleClosePartner}
           aria-labelledby="form-dialog-title"
+          maxWidth="sm"
+          fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
-            Hello
+            Partner Detail
             <IconButton
               aria-label="close"
               className={classes.closeButton}
-              onClick={handleClose}
+              onClick={handleClosePartner}
             >
               <CloseIcon />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To subscribe to this website, please enter your email address
-              here. We will send updates occasionally.
+              <Grid container>
+                <Grid item xs={3}>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                  Job Title <br />
+                  Bio <br />
+                  Organisation <br />
+                </Grid>
+                <Grid item xs={7}>
+                  {selectedPartner.id} <br />
+                  {selectedPartner.first_name} <br />
+                  {selectedPartner.last_name} <br />
+                  {selectedPartner.email} <br />
+                  {selectedPartner.is_active === true
+                    ? "Active"
+                    : "Inactive"}{" "}
+                  <br />
+                  {formatDate(selectedPartner.date_joined)} <br />
+                  {selectedPartner.partner.job_title} <br />
+                  {selectedPartner.partner.bio} <br />
+                  {selectedPartner.partner.organization.organization_name}{" "}
+                  <br />
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="h6">Profile Pic</Typography>
+                  <img src={selectedPartner.profile_photo} alt=""></img>
+                  <Typography variant="h6">Company Logo</Typography>
+                  <img
+                    src={
+                      selectedPartner.partner.organization.organization_photo
+                    }
+                    alt=""
+                  ></img>
+                </Grid>
+              </Grid>
+              <be />
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Cancel
+            <Button
+              onClick={() => handlePartnerStatus(selectedPartner.is_active)}
+              color="secondary"
+            >
+              {selectedPartner.is_active === true ? "Deactivate" : "Activate"}
             </Button>
-            <Button onClick={handleClose} color="primary">
-              Approve
+          </DialogActions>
+        </Dialog>
+      </TabPanel>
+
+      {/* Admin Tab */}
+      <TabPanel value={value} index={2}>
+        <Paper className={classes.root}>
+          <div style={{ height: "700px", width: "100%" }}>
+            <SearchBar
+              style={{
+                width: "50%",
+                marginBottom: "20px",
+              }}
+              placeholder="Search admin..."
+              value={searchValueAdmin}
+              onChange={(newValue) => setSearchValueAdmin(newValue)}
+              //onRequestSearch={getSearchResults}
+              onCancelSearch={() => setSearchValueAdmin("")}
+            />
+
+            <DataGrid
+              rows={adminRows}
+              columns={adminColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenAdmin(e)}
+            />
+          </div>
+        </Paper>
+        <Dialog
+          open={openPartnerDialog}
+          onClose={handleCloseAdmin}
+          aria-labelledby="form-dialog-title"
+          maxWidth="sm"
+          fullWidth={true}
+        >
+          <DialogTitle id="form-dialog-title">
+            Admin Detail
+            <IconButton
+              aria-label="close"
+              className={classes.closeButton}
+              onClick={handleCloseAdmin}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <Grid container>
+                <Grid item xs={3}>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                </Grid>
+                <Grid item xs={7}>
+                  {selectedAdmin.id} <br />
+                  {selectedAdmin.first_name} <br />
+                  {selectedAdmin.last_name} <br />
+                  {selectedAdmin.email} <br />
+                  {selectedAdmin.is_active === true
+                    ? "Active"
+                    : "Inactive"}{" "}
+                  <br />
+                  {formatDate(selectedAdmin.date_joined)} <br />
+                  <br />
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="h6">Profile Pic</Typography>
+                  <img src={selectedAdmin.profile_photo} alt=""></img>
+                </Grid>
+              </Grid>
+              <be />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => handleAdminStatus(selectedAdmin.is_active)}
+              color="secondary"
+            >
+              {selectedAdmin.is_active === true ? "Deactivate" : "Activate"}
             </Button>
           </DialogActions>
         </Dialog>

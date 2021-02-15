@@ -5,6 +5,12 @@ const theme = createMuiTheme({
     primary: {
       main: "#437FC7",
     },
+    secondary: {
+      main: "#164D8F",
+    },
+    red: {
+      main: "#C74343",
+    },
   },
   typography: {
     fontFamily: "Sen",

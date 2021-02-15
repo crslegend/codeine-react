@@ -53,7 +53,7 @@ const AdminPasswordPage = () => {
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Grid container>
-            <Grid container style={{ marginTop: "10vh" }}>
+            <Grid container>
               <Grid xs={6}>
                 <form className={classes.form} noValidate autoComplete="off">
                   <div>
