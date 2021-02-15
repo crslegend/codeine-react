@@ -1,13 +1,16 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
 
 import logo from "../../assets/CodeineLogos/Member.svg";
+
+import Service from "../../AxiosService";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,6 +51,19 @@ const useStyles = makeStyles((theme) => ({
 
 const MemberLandingPage = () => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
 
   const memberNavbar = (
     <Fragment>
@@ -92,6 +108,38 @@ const MemberLandingPage = () => {
     </Fragment>
   );
 
+  const loggedInNavbar = (
+    <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Link to="/member/home" style={{ textDecoration: "none" }}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            View Dashboard
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          style={{
+            backgroundColor: "#437FC7",
+            textTransform: "capitalize",
+          }}
+          onClick={() => {
+            Service.removeCredentials();
+            setLoggedIn(false);
+            history.push("/");
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Logout
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
   const navLogo = (
     <Fragment>
       <Link
@@ -110,7 +158,11 @@ const MemberLandingPage = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar logo={navLogo} bgColor="#fff" navbarItems={memberNavbar} />
+      <Navbar
+        logo={navLogo}
+        bgColor="#fff"
+        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
+      />
       <MemberLandingBody />
       <Footer />
     </div>

@@ -89,6 +89,16 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem
         component={NavLink}
+        to="/member/home"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <Dashboard className={classes.listIcon} />
+        <Typography variant="body1">Dashboard</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -99,21 +109,10 @@ const MemberLanding = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/industry"
+        to="/"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
-      >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="body1">Dashboard</Typography>
-      </ListItem>
-      <ListItem
-        component={NavLink}
-        to="/industry"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-        style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
         <Dashboard className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
@@ -139,7 +138,7 @@ const MemberLanding = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar logo={navLogo} navbarItems={memberNavbar} />
+      <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
       <Sidebar head={sidebarHead} list={sidebarList} />
     </div>
   );

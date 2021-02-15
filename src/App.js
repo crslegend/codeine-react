@@ -44,8 +44,7 @@ const App = () => {
       />
       <Route exact path="/" component={MemberLandingPage} />
       <PrivateRoute
-        exact
-        path="/member"
+        path="/member/home"
         render={() => <MemberDashboard />}
         user="member"
       />
