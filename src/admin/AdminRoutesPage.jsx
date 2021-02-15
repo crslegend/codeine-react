@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import {
   Link,
@@ -10,6 +11,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/CodeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
@@ -26,6 +28,8 @@ import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPa
 import AnalyticsPage from "./Analytics/AnalyticsPage";
 import ProfilePage from "./Profile/ProfilePage";
 import PasswordPage from "./Password/PasswordPage";
+import Service from "../AxiosService";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "#fff",
     padding: theme.spacing(3),
     width: "calc(100% - 240px)",
     marginLeft: "240px",
@@ -80,25 +84,59 @@ const useStyles = makeStyles((theme) => ({
 const AdminRoutesPage = () => {
   const classes = useStyles();
   const [loggedIn] = useState(false);
+  const history = useHistory();
+
+  const [profile, setProfile] = useState({
+    first_name: "Admin",
+    email: "Admin panel",
+    profile_photo: "",
+  });
+
+  const getOwnData = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      // console.log(`profile useeffect userid = ${userid}`);
+      Service.client
+        .get(`/auth/members/${userid}`)
+        .then((res) => {
+          setProfile(res.data);
+        })
+        .catch((err) => {
+          //setProfile([]);
+        });
+    }
+  };
+
+  useEffect(() => {
+    getOwnData();
+  }, []);
 
   const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/admin/login" style={{ textDecoration: "none" }}>
+        <Button
+          onClick={() => {
+            Service.removeCredentials();
+            history.push("/admin/login");
+          }}
+        >
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
           >
             Log Out
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
     </Fragment>
   );
 
   const navLogo = (
     <Fragment>
-      <Link to="/" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+      <Link
+        to="/admin/humanresource"
+        style={{ paddingTop: "10px", paddingBottom: "10px" }}
+      >
         <img src={logo} alt="" width="100px" />
       </Link>
     </Fragment>
@@ -107,10 +145,10 @@ const AdminRoutesPage = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>P</Avatar>
+        <Avatar className={classes.avatar}>{profile.email.charAt(0)}</Avatar>
       </div>
-      <Typography variant="h6">Name here</Typography>
-      <Typography variant="body1">Position here</Typography>
+      <Typography variant="h6">{profile.first_name}</Typography>
+      <Typography variant="body1">{profile.email}</Typography>
     </Fragment>
   );
 
@@ -192,52 +230,42 @@ const AdminRoutesPage = () => {
 
   return (
     <BrowserRouter>
-      <div className={classes.root}>
-        <Navbar
-          loggedIn={loggedIn}
-          bgColor="#fff"
-          logo={navLogo}
-          navbarItems={memberNavbar}
-        />
-        <SideBar head={sidebarHead} list={sidebarList} />
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Switch>
-            <Route
-              exact
-              path="/admin/humanresource"
-              render={() => <AdminHumanResourcePage />}
-            />
-            <Route
-              exact
-              path="/admin/contentquality"
-              render={() => <ContentQualityPage />}
-            />
-            <Route
-              exact
-              path="/admin/helpdesk"
-              render={() => <HelpdeskPage />}
-            />
-            <Route
-              exact
-              path="/admin/learnersachievement"
-              render={() => <LearnersAchievementPage />}
-            />
-            <Route
-              exact
-              path="/admin/analytics"
-              render={() => <AnalyticsPage />}
-            />
-            <Route exact path="/admin/profile" render={() => <ProfilePage />} />
-            <Route
-              exact
-              path="/admin/password"
-              render={() => <PasswordPage />}
-            />
-            <Redirect from="/admin" to="/admin/humanresource" />
-          </Switch>
-        </main>
-      </div>
+      <Navbar
+        loggedIn={loggedIn}
+        bgColor="#fff"
+        logo={navLogo}
+        navbarItems={memberNavbar}
+      />
+      <SideBar head={sidebarHead} list={sidebarList} />
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <Switch>
+          <Route
+            exact
+            path="/admin/humanresource"
+            render={() => <AdminHumanResourcePage />}
+          />
+          <Route
+            exact
+            path="/admin/contentquality"
+            render={() => <ContentQualityPage />}
+          />
+          <Route exact path="/admin/helpdesk" render={() => <HelpdeskPage />} />
+          <Route
+            exact
+            path="/admin/learnersachievement"
+            render={() => <LearnersAchievementPage />}
+          />
+          <Route
+            exact
+            path="/admin/analytics"
+            render={() => <AnalyticsPage />}
+          />
+          <Route exact path="/admin/profile" render={() => <ProfilePage />} />
+          <Route exact path="/admin/password" render={() => <PasswordPage />} />
+          <Redirect from="/admin" to="/admin/humanresource" />
+        </Switch>
+      </main>
     </BrowserRouter>
   );
 };

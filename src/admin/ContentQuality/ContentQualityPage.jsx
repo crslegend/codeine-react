@@ -66,18 +66,14 @@ const AdminContentQualityPage = () => {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="Content Provider" {...a11yProps(0)} />
-          <Tab label="Industry Partners" {...a11yProps(1)} />
-          <Tab label="Members" {...a11yProps(2)} />
+          <Tab label="Courses" {...a11yProps(0)} />
+          <Tab label="Articles" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         AdminContentQualityPage
       </TabPanel>
       <TabPanel value={value} index={1}>
-        AdminContentQualityPage
-      </TabPanel>
-      <TabPanel value={value} index={2}>
         AdminContentQualityPage
       </TabPanel>
     </div>
