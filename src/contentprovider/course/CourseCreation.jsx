@@ -6,6 +6,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -16,7 +19,7 @@ import PageTitle from "../../components/PageTitle";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,8 +36,9 @@ const useStyles = makeStyles((theme) => ({
 const CourseCreation = () => {
   const classes = useStyles();
   const { id } = useParams();
+  const history = useHistory();
 
-  const [pageNum, setPageNum] = useState(2);
+  const [pageNum, setPageNum] = useState(1);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -99,6 +103,8 @@ const CourseCreation = () => {
     CSS: false,
     RUBY: false,
   });
+
+  const [isPublished, setIsPublished] = useState();
 
   const [courseId, setCourseId] = useState();
 
@@ -315,6 +321,7 @@ const CourseCreation = () => {
             data: res.data.thumbnail,
           };
           setCoursePicAvatar([obj]);
+          setIsPublished(res.data.is_published.toString());
 
           setNumOfChapters(res.data.chapters.length);
           // setAllChapters(res.data.chapters);
@@ -510,6 +517,28 @@ const CourseCreation = () => {
     }
 
     setPageNum(pageNum + 1);
+  };
+
+  const handleLastPageSave = () => {
+    if (isPublished === "true") {
+      // to check whether partner paid
+
+      Service.client
+        .patch(`/courses/${courseId}/publish`)
+        .then((res) => {
+          localStorage.removeItem("courseId");
+          history.push(`/partner/home/content`);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .patch(`/courses/${courseId}/unpublish`)
+        .then((res) => {
+          localStorage.removeItem("courseId");
+          history.push(`/partner/home/content`);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const handleSaveFinalQuizDetails = () => {
@@ -746,6 +775,53 @@ const CourseCreation = () => {
               </Fragment>
             );
           } else if (pageNum === 3) {
+            return (
+              <Fragment>
+                <PageTitle title="Visibility of Course" />
+                <label>
+                  <Typography style={{ marginBottom: "10px" }}>
+                    Select option below to publish course or not
+                  </Typography>
+                </label>
+
+                <RadioGroup
+                  value={isPublished}
+                  onChange={(e) => setIsPublished(e.target.value)}
+                  style={{ marginBottom: "30px" }}
+                >
+                  <FormControlLabel
+                    value="false"
+                    control={<Radio color="primary" />}
+                    label="Save but do not publish on Codeine yet"
+                  />
+                  <FormControlLabel
+                    value="true"
+                    control={<Radio color="primary" />}
+                    label="Save and publish on Codeine"
+                  />
+                </RadioGroup>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setPageNum(2)}
+                    style={{ float: "right" }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleLastPageSave()}
+                    style={{ float: "right" }}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </Fragment>
+            );
           }
         }
       })()}
