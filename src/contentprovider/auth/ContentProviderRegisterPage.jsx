@@ -111,7 +111,7 @@ const ContentProviderRegisterPage = () => {
       Service.client
         .post("/auth/partners", data)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setLoading(false);
           setAwaitApproval(true);
         })
@@ -123,7 +123,7 @@ const ContentProviderRegisterPage = () => {
       Service.client
         .post("/auth/partners", registerDetails)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setLoading(false);
           setAwaitApproval(true);
         })

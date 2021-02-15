@@ -48,6 +48,8 @@ const MemberRegisterPage = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [awaitActivate, setAwaitActivate] = useState(false);
+
   const [registerDetails, setRegisterDetails] = useState({
     email: "",
     password: "",
@@ -90,11 +92,39 @@ const MemberRegisterPage = () => {
     Service.client
       .post("/auth/members", registerDetails)
       .then((res) => {
-        console.log(res);
-        // history.push("/member");
+        // console.log(res);
+        setLoading(false);
+        setAwaitActivate(true);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
+
+  if (awaitActivate) {
+    return (
+      <div>
+        <Paper elevation={3} className={classes.paper}>
+          <Link to="/" className={classes.codeineLogo}>
+            <img src={logo} alt="logo" width="90%" />
+          </Link>
+          <Typography
+            variant="h5"
+            style={{ paddingTop: "20px", fontWeight: 600, textAlign: "center" }}
+          >
+            Thank you for registering with Codeine!
+          </Typography>
+          <Typography
+            variant="body1"
+            style={{ paddingTop: "10px", textAlign: "center" }}
+          >
+            Please check your email to activate your account.
+          </Typography>
+        </Paper>
+      </div>
+    );
+  }
 
   return (
     <div>

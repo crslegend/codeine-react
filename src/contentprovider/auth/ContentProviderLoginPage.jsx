@@ -89,7 +89,7 @@ const ContentProviderLoginPage = () => {
     Service.client
       .post("/api/token/", loginDetails)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         Service.storeCredentials(res.data);
         history.push("/partner/home/dashboard");
       })
