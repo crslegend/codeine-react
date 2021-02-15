@@ -40,6 +40,7 @@ const styles = makeStyles((theme) => ({
   appbar: {
     backgroundColor: "#00000000",
     boxShadow: "none",
+    marginBottom: "20px",
   },
   tabPanel: {
     padding: "0px",
@@ -373,9 +374,8 @@ const AdminHumanResourcePage = () => {
       >
         <Tabs
           value={value}
-          background="#fff"
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           onChange={handleChange}
           aria-label="simple tabs example"
           classes={{
@@ -390,33 +390,32 @@ const AdminHumanResourcePage = () => {
 
       {/* Members Tab */}
       <TabPanel value={value} index={0}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search members..."
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValue("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+              elavation: "0px",
+            }}
+            placeholder="Search members..."
+            value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValue("")}
+          />
 
-            <DataGrid
-              rows={memberRows}
-              columns={memberColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenMember(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={memberRows}
+            columns={memberColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenMember(e)}
+          />
+        </div>
 
         <Dialog
           open={openMemberDialog}
@@ -478,33 +477,31 @@ const AdminHumanResourcePage = () => {
 
       {/* Partners Tab */}
       <TabPanel value={value} index={1}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search partners..."
-              value={searchValuePartner}
-              onChange={(newValue) => setSearchValuePartner(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValuePartner("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+            }}
+            placeholder="Search partners..."
+            value={searchValuePartner}
+            onChange={(newValue) => setSearchValuePartner(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValuePartner("")}
+          />
 
-            <DataGrid
-              rows={partnerRows}
-              columns={partnerColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenPartner(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={partnerRows}
+            columns={partnerColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenPartner(e)}
+          />
+        </div>
         <Dialog
           open={openPartnerDialog}
           onClose={handleClosePartner}
@@ -563,7 +560,7 @@ const AdminHumanResourcePage = () => {
                   ></img>
                 </Grid>
               </Grid>
-              <be />
+              <br />
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -579,33 +576,31 @@ const AdminHumanResourcePage = () => {
 
       {/* Admin Tab */}
       <TabPanel value={value} index={2}>
-        <Paper className={classes.root}>
-          <div style={{ height: "700px", width: "100%" }}>
-            <SearchBar
-              style={{
-                width: "50%",
-                marginBottom: "20px",
-              }}
-              placeholder="Search admin..."
-              value={searchValueAdmin}
-              onChange={(newValue) => setSearchValueAdmin(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValueAdmin("")}
-            />
+        <div style={{ height: "700px", width: "100%" }}>
+          <SearchBar
+            style={{
+              width: "50%",
+              marginBottom: "20px",
+            }}
+            placeholder="Search admin..."
+            value={searchValueAdmin}
+            onChange={(newValue) => setSearchValueAdmin(newValue)}
+            //onRequestSearch={getSearchResults}
+            onCancelSearch={() => setSearchValueAdmin("")}
+          />
 
-            <DataGrid
-              rows={adminRows}
-              columns={adminColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenAdmin(e)}
-            />
-          </div>
-        </Paper>
+          <DataGrid
+            rows={adminRows}
+            columns={adminColumns.map((column) => ({
+              ...column,
+              //disableClickEventBubbling: true,
+            }))}
+            pageSize={10}
+            checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(e) => handleClickOpenAdmin(e)}
+          />
+        </div>
         <Dialog
           open={openPartnerDialog}
           onClose={handleCloseAdmin}

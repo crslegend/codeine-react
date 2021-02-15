@@ -8,6 +8,33 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
 
+
+const styles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+  container: {
+    maxHeight: 580,
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  tabs: {
+    backgroundColor: "#00000000",
+  },
+  appbar: {
+    backgroundColor: "#00000000",
+    boxShadow: "none",
+    marginBottom: "20px",
+  },
+  tabPanel: {
+    padding: "0px",
+  },
+}));
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -41,17 +68,9 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    fontDisplay: "swap",
-  },
-}));
 
 const AdminContentQualityPage = () => {
-  const classes = useStyles();
+  const classes = styles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -60,9 +79,19 @@ const AdminContentQualityPage = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        classes={{
+          root: classes.appbar,
+        }}
+      >
         <Tabs
           value={value}
+          indicatorColor="secondary"
+          textColor="secondary"
+          classes={{
+            root: classes.tabs,
+          }}
           onChange={handleChange}
           aria-label="simple tabs example"
         >
