@@ -112,6 +112,7 @@ const CourseCreation = () => {
   // console.log(courseDetails);
 
   const handleSaveCourseDetails = () => {
+    console.log(coursePicAvatar);
     if (!coursePicAvatar) {
       setSbOpen(true);
       setSnackbar({
@@ -250,7 +251,7 @@ const CourseCreation = () => {
     formData.append("requirements", JSON.stringify(data.requirements));
     formData.append("introduction_video_url", data.requirements);
 
-    if (data.thumbnail) {
+    if (!courseId && data.thumbnail) {
       formData.append("thumbnail", data.thumbnail);
     }
 
