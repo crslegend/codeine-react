@@ -249,7 +249,11 @@ const CourseCreation = () => {
     );
     formData.append("requirements", JSON.stringify(data.requirements));
     formData.append("introduction_video_url", data.requirements);
-    formData.append("thumbnail", data.thumbnail);
+
+    if (data.thumbnail) {
+      formData.append("thumbnail", data.thumbnail);
+    }
+
     formData.append("coding_languages", JSON.stringify(data.coding_languages));
     formData.append("languages", JSON.stringify(data.languages));
     formData.append("categories", JSON.stringify(data.categories));
@@ -263,6 +267,8 @@ const CourseCreation = () => {
           console.log(res);
           setDrawerOpen(false);
           setDrawerPageNum(1);
+          setCoursePicAvatar();
+          getCourse();
         })
         .catch((err) => console.log(err));
     } else {
@@ -273,6 +279,8 @@ const CourseCreation = () => {
           setDrawerOpen(false);
           setDrawerPageNum(1);
           localStorage.setItem("courseId", res.data.id);
+          setCoursePicAvatar();
+          getCourse();
         })
         .catch((err) => console.log(err));
     }

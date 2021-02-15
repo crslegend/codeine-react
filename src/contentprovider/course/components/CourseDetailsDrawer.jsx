@@ -524,9 +524,7 @@ const CourseDetailsDrawer = ({
           <Button
             variant="contained"
             onClick={() => {
-              if (!courseId) {
-                setCoursePic(coursePicAvatar);
-              }
+              setCoursePic();
               setCoursePicDialog(false);
             }}
           >
@@ -537,8 +535,10 @@ const CourseDetailsDrawer = ({
             color="primary"
             onClick={() => {
               setCoursePicAvatar(coursePic && coursePic);
+              setCoursePic();
               setCoursePicDialog(false);
             }}
+            disabled={!coursePic}
           >
             Save
           </Button>

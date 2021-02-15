@@ -223,7 +223,8 @@ const Task = ({ task, index, getCourse, subtasks }) => {
 
       if (zipFile) {
         formData.append("zip_file", zipFile[0].file);
-      } else {
+      }
+      if (editFile.google_drive_url) {
         formData.append("google_drive_url", editFile.google_drive_url);
       }
 
