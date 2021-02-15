@@ -16,11 +16,14 @@
     "axios": "^0.21.1",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.1.2",
+    "material-ui-dropzone": "^3.5.0",
     "material-ui-search-bar": "^1.0.0",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "validator": "^13.5.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
