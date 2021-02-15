@@ -10,6 +10,7 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import Service from "../../AxiosService";
 import logo from "../../assets/CodeineLogos/Member.svg";
+import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +48,17 @@ const MemberLoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [loading, setLoading] = useState(false);
 
   const [loginDetails, setLoginDetails] = useState({
@@ -78,14 +90,24 @@ const MemberLoginPage = () => {
       .then((res) => {
         console.log(res);
         Service.storeCredentials(res.data);
-        history.push("/member");
+        history.push("/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Incorrect email address or password. Please try again!",
+          severity: "error",
+        });
+      });
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <Paper elevation={3} className={classes.paper}>
           <Link to="/" className={classes.codeineLogo}>
             <img src={logo} alt="logo" width="90%" />
