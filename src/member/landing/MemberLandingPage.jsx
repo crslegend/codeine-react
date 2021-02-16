@@ -47,6 +47,12 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
+  navHome: {
+    textDecoration: "none",
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+    },
+  },
 }));
 
 const MemberLandingPage = () => {
@@ -111,14 +117,21 @@ const MemberLandingPage = () => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/home" style={{ textDecoration: "none" }}>
+        <Button
+          onClick={() => {
+            history.push("/member/home");
+          }}
+          style={{
+            textTransform: "capitalize",
+          }}
+        >
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
           >
-            View Dashboard
+            Dashboard
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button

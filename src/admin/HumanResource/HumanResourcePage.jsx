@@ -607,7 +607,8 @@ const AdminHumanResourcePage = () => {
                   {formatDate(selectedPartner.date_joined)} <br />
                   {selectedPartner.partner.job_title} <br />
                   {selectedPartner.partner.bio} <br />
-                  {selectedPartner.partner.organization.organization_name}{" "}
+                  {selectedPartner.partner.organization &&
+                    selectedPartner.partner.organization.organization_name}{" "}
                   <br />
                 </Grid>
                 <Grid item xs={2}>
@@ -616,6 +617,7 @@ const AdminHumanResourcePage = () => {
                   <Typography variant="h6">Company Logo</Typography>
                   <img
                     src={
+                      selectedPartner.partner.organization &&
                       selectedPartner.partner.organization.organization_photo
                     }
                     alt=""

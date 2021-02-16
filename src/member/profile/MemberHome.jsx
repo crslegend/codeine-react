@@ -80,6 +80,23 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          onClick={() => {
+            history.push("/");
+          }}
+          style={{
+            textTransform: "capitalize",
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Home
+          </Typography>
+        </Button>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
@@ -149,7 +166,7 @@ const MemberLanding = () => {
   const navLogo = (
     <Fragment>
       <Link
-        to="/"
+        to="/member/home"
         style={{
           paddingTop: "10px",
           paddingBottom: "10px",
@@ -189,7 +206,7 @@ const MemberLanding = () => {
           <Switch>
             <PrivateRoute
               exact
-              path="/partner/home/dashboard"
+              path="/member/home/dashboard"
               render={() => <div></div>}
             />
             <PrivateRoute
@@ -197,7 +214,7 @@ const MemberLanding = () => {
               path="/member/home/consultation"
               render={() => <Consultation />}
             />
-            <Redirect from="/partner/home" to="/partner/home/dashboard" />
+            <Redirect from="/member/home" to="/member/home/dashboard" />
           </Switch>
         </div>
       </div>
