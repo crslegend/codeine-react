@@ -21,7 +21,6 @@ import {
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
 import logo from "../../assets/CodeineLogos/Member.svg";
-import SearchBar from "material-ui-search-bar";
 import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
@@ -327,9 +326,30 @@ const ViewCourseDetails = () => {
               <Typography variant="body2" style={{ paddingBottom: "5px" }}>
                 {course &&
                   (course.chapters.length === 1
-                    ? "1 Chapter"
-                    : `${course.chapters.length} Chapters`)}
+                    ? "1 Chapter (excluding Course Overview)"
+                    : `${course.chapters.length} Chapters (excluding Course Overview)`)}
               </Typography>
+              <Accordion
+                expanded={expanded === `overview`}
+                onChange={handleChange(`overview`)}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMore />}
+                  id={`overview`}
+                  style={{ backgroundColor: "#F4F4F4" }}
+                >
+                  <Typography>Course Overview</Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <iframe
+                    width="420"
+                    height="345"
+                    src={course && course.introduction_video_url}
+                  />
+                </AccordionDetails>
+              </Accordion>
               {course &&
                 course.chapters.length > 0 &&
                 course.chapters.map((chapter, index) => {
