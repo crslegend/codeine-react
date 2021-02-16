@@ -21,6 +21,7 @@ import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
+import validator from "validator";
 
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
@@ -152,6 +153,27 @@ const CourseCreation = () => {
       return;
     }
 
+    // check if intro video URL is a valid URL
+    if (
+      !validator.isURL(courseDetails.introduction_video_url, {
+        protocols: ["http", "https"],
+        require_protocol: true,
+        allow_underscores: true,
+      })
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter a valid URL!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
     let neverChooseOne = true;
     for (const property in languages) {
       if (languages[property]) {
@@ -219,6 +241,9 @@ const CourseCreation = () => {
       return;
     }
 
+    const requirementsArr = courseDetails.requirements.split(", ");
+    const learnObjectivesArr = courseDetails.learning_objectives.split(", ");
+
     let data = {
       ...courseDetails,
       coding_languages: [],
@@ -226,6 +251,8 @@ const CourseCreation = () => {
       categories: [],
       price: 20,
       thumbnail: coursePicAvatar[0].file,
+      requirements: requirementsArr,
+      learning_objectives: learnObjectivesArr,
     };
 
     for (const property in languages) {
@@ -255,7 +282,7 @@ const CourseCreation = () => {
       JSON.stringify(data.learning_objectives)
     );
     formData.append("requirements", JSON.stringify(data.requirements));
-    formData.append("introduction_video_url", data.requirements);
+    formData.append("introduction_video_url", data.introduction_video_url);
 
     if (!courseId && data.thumbnail) {
       formData.append("thumbnail", data.thumbnail);
