@@ -3,6 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
   Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
   FormControl,
   InputLabel,
   ListItem,
@@ -10,6 +14,7 @@ import {
   Select,
   Typography,
 } from "@material-ui/core";
+import Pagination from "@material-ui/lab/Pagination";
 import { Link, useHistory } from "react-router-dom";
 import Footer from "../landing/Footer";
 import logo from "../../assets/CodeineLogos/Member.svg";
@@ -62,6 +67,21 @@ const styles = makeStyles((theme) => ({
     paddingTop: theme.spacing(3),
     paddingLeft: theme.spacing(10),
   },
+  cards: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(10),
+    paddingRight: theme.spacing(10),
+  },
+  cardRoot: {
+    width: 200,
+    marginRight: "40px",
+  },
+  cardMedia: {
+    height: 0,
+    paddingTop: "56.25%",
+  },
   searchSection: {
     display: "flex",
     alignItems: "center",
@@ -91,6 +111,13 @@ const ViewAllCourses = () => {
 
   const [sortMethod, setSortMethod] = useState("");
 
+  const [allCourses, setAllCourses] = useState([]);
+  const itemsPerPage = 4;
+  const [page, setPage] = useState(1);
+  const [noOfPages, setNumPages] = useState(
+    Math.ceil(allCourses.length / itemsPerPage)
+  );
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -101,10 +128,12 @@ const ViewAllCourses = () => {
     Service.client
       .get(`/courses`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
+        setAllCourses(res.data.results);
       })
       .catch((err) => console.log(err));
   };
+  console.log(allCourses);
 
   const onSortChange = () => {};
 
@@ -120,6 +149,16 @@ const ViewAllCourses = () => {
     checkIfLoggedIn();
     getAllCourses();
   }, []);
+
+  //   const getPartnerById = (id) => {
+  //     console.log(id);
+  //     Service.client
+  //       .get(`/auth/partners/${id}`)
+  //       .then((res) => {
+  //         console.log(res);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   };
 
   const memberNavbar = (
     <Fragment>
@@ -252,6 +291,30 @@ const ViewAllCourses = () => {
               <MenuItem value="Z-A">(Z-A) Alphabetically</MenuItem>
             </Select>
           </FormControl>
+        </div>
+        <div className={classes.cards}>
+          {allCourses &&
+            allCourses.length > 0 &&
+            allCourses.map((course, index) => {
+              return (
+                <Card key={index} className={classes.cardRoot}>
+                  <CardActionArea>
+                    <CardMedia
+                      className={classes.cardMedia}
+                      image={course.thumbnail && course.thumbnail}
+                      title={course && course.title}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">{course.title}</Typography>
+                      <br />
+                      <Typography variant="body2">
+                        Insert partner name here
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              );
+            })}
         </div>
       </div>
       <Footer />
