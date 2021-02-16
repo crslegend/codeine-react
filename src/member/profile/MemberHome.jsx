@@ -1,12 +1,23 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
-import { Link, NavLink, useHistory } from "react-router-dom";
+import {
+  BrowserRouter,
+  Switch,
+  Link,
+  NavLink,
+  useHistory,
+  Redirect,
+} from "react-router-dom";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import PrivateRoute from "../../components/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
-import { Dashboard } from "@material-ui/icons";
+import { Dashboard, Timeline } from "@material-ui/icons";
 import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
+import Consultation from "./Consultation";
 import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,11 +59,22 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
+  mainPanel: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    paddingTop: theme.spacing(12),
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(7),
+    width: "calc(100% - 240px)",
+    marginLeft: "240px",
+  },
 }));
 
 const MemberLanding = () => {
   const classes = useStyles();
   const history = useHistory();
+
+  const [user, setUser] = useState();
 
   const memberNavbar = (
     <Fragment>
@@ -78,10 +100,14 @@ const MemberLanding = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>P</Avatar>
+        <Avatar className={classes.avatar}>
+          {user && user.first_name.charAt(0)}
+        </Avatar>
       </div>
-      <Typography variant="h6">Name here</Typography>
-      <Typography variant="body1">Position here</Typography>
+      <Typography variant="h6">
+        {user && user.first_name} {user && user.last_name}
+      </Typography>
+      <Typography variant="body1">Student</Typography>
     </Fragment>
   );
 
@@ -89,7 +115,7 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem
         component={NavLink}
-        to="/member/home"
+        to="/member/home/dashboard"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -99,23 +125,23 @@ const MemberLanding = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/"
+        to="/member/home/course"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
         <Dashboard className={classes.listIcon} />
-        <Typography variant="body1">Dashboard</Typography>
+        <Typography variant="body1">Courses</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/"
+        to="/member/home/consultation"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
-        <Typography variant="body1">Helpdesk</Typography>
+        <Timeline className={classes.listIcon} />
+        <Typography variant="body1">Consultations</Typography>
       </ListItem>
     </Fragment>
   );
@@ -136,11 +162,46 @@ const MemberLanding = () => {
     </Fragment>
   );
 
+  const getUserDetails = () => {
+    if (Cookies.get("t1")) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      // console.log(decoded);
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+          setUser(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
   return (
-    <div className={classes.root}>
-      <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
-      <Sidebar head={sidebarHead} list={sidebarList} />
-    </div>
+    <BrowserRouter>
+      <div className={classes.root}>
+        <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
+        <Sidebar head={sidebarHead} list={sidebarList} />
+        <div className={classes.mainPanel}>
+          <Switch>
+            <PrivateRoute
+              exact
+              path="/partner/home/dashboard"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/consultation"
+              render={() => <Consultation />}
+            />
+            <Redirect from="/partner/home" to="/partner/home/dashboard" />
+          </Switch>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 };
 
