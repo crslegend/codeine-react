@@ -96,7 +96,7 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
-  description: {
+  descriptionSection: {
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
@@ -270,7 +270,11 @@ const ViewCourseDetails = () => {
             <Typography variant="h6" style={{ paddingBottom: "30px" }}>
               Experience Points: {course && course.exp_points}
             </Typography>
-            <Rating name="read-only" readOnly value={course && course.rating} />
+            <Rating
+              name="read-only"
+              readOnly
+              value={course && course.rating ? course.rating : 0}
+            />
             <Typography variant="body1" style={{ paddingBottom: "10px" }}>
               Published on: {formatDate(course && course.published_date)}
             </Typography>
@@ -474,14 +478,16 @@ const ViewCourseDetails = () => {
                   );
                 })}
             </div>
-            <div className={classes.description}>
+            <div className={classes.descriptionSection}>
               <Typography
                 variant="h5"
                 style={{ fontWeight: 600, paddingBottom: "10px" }}
               >
                 Description
               </Typography>
-              <Typography variant="body1">{course.description}</Typography>
+              <Typography variant="body1">
+                {course && course.description}
+              </Typography>
             </div>
             <div className={classes.reviews}>REVIEWS HERE</div>
           </div>
