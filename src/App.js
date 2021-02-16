@@ -52,7 +52,7 @@ const App = () => {
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
-      <Route path="/admin" component={AdminRoutesPage} />
+      <PrivateRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
       <Route component={NotFound} />
     </Switch>
