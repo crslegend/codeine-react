@@ -10,6 +10,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Chip,
   FormControl,
   IconButton,
   InputLabel,
@@ -75,7 +76,7 @@ const styles = makeStyles((theme) => ({
     paddingTop: "65px",
     minHeight: "calc(100vh - 10px)",
     paddingLeft: theme.spacing(15),
-    paddingRight: theme.spacing(15),
+    paddingRight: theme.spacing(10),
   },
   courseSection: {
     display: "flex",
@@ -101,6 +102,13 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
   },
   reviews: {},
+  cardOnRight: {
+    width: 400,
+    margin: "auto",
+    padding: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
+  },
 }));
 
 const ViewCourseDetails = () => {
@@ -498,13 +506,159 @@ const ViewCourseDetails = () => {
             <div className={classes.reviews}>REVIEWS HERE</div>
           </div>
           <div style={{ flexGrow: 1 }}>
-            <div style={{ maxWidth: 400, margin: "auto" }}>
+            <div
+              style={{ maxWidth: 400, margin: "auto", marginBottom: "20px" }}
+            >
               <img
                 src={course && course.thumbnail}
                 alt={course && course.title}
                 style={{ width: "100%", borderRadius: "5px" }}
               />
             </div>
+
+            <Card className={classes.cardOnRight}>
+              <Button
+                variant="contained"
+                style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
+                color="primary"
+              >
+                Enroll
+              </Button>
+              <Button
+                variant="contained"
+                style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
+                color="primary"
+              >
+                Continue Course
+              </Button>
+
+              <div style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
+                <Typography variant="body1" style={{ marginBottom: "10px" }}>
+                  Categories this course falls under:
+                </Typography>
+                {course &&
+                  course.categories.length > 0 &&
+                  course.categories.map((category, index) => {
+                    if (category === "FE") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Frontend"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (category === "BE") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Backend"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (category === "UI") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="UI/UX"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (category === "DB") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Database Administration"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (category === "ML") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Machine Learning"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Security"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    }
+                  })}
+
+                <Typography
+                  variant="body1"
+                  style={{ marginBottom: "10px", marginTop: "20px" }}
+                >
+                  Coding Languages/Frameworks:
+                </Typography>
+                {course &&
+                  course.coding_languages.length > 0 &&
+                  course.coding_languages.map((language, index) => {
+                    if (language === "PY") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Python"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (language === "JAVA") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Java"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (language === "JS") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Javascript"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (language === "CPP") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="C++"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (language === "CS") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="C#"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else if (language === "RUBY") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Ruby"
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <Chip
+                          key={index}
+                          label={language}
+                          style={{ marginRight: "10px", marginBottom: "10px" }}
+                        />
+                      );
+                    }
+                  })}
+              </div>
+            </Card>
           </div>
         </div>
       </div>
