@@ -272,6 +272,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
           setMaterialType();
           setChapterIdForCourseMaterial();
           setEditMode(false);
+          setZipFile();
           setFile({
             title: "",
             description: "",
