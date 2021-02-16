@@ -314,7 +314,11 @@ const ViewAllCourses = () => {
             allCourses.map((course, index) => {
               return (
                 <Card key={index} className={classes.cardRoot}>
-                  <CardActionArea>
+                  <CardActionArea
+                    onClick={() => {
+                      history.push(`/courses/${course.id}`);
+                    }}
+                  >
                     <CardMedia
                       className={classes.cardMedia}
                       image={course.thumbnail && course.thumbnail}
