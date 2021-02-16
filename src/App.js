@@ -17,6 +17,7 @@ import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderR
 import LandingPageRoute from "./components/LandingPageRoute";
 import ViewAllCourses from "./member/course/ViewAllCourses";
 import ViewCourseDetails from "./member/course/ViewCourseDetails";
+import EnrollCourse from "./member/course/EnrollCourse";
 
 const App = () => {
   return (
@@ -52,6 +53,13 @@ const App = () => {
         strict
         sensitive
         component={ViewCourseDetails}
+      />
+      <Route
+        exact
+        path="/courses/enroll/:id"
+        strict
+        sensitive
+        component={EnrollCourse}
       />
       <PrivateRoute
         path="/member/home"
