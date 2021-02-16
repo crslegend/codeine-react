@@ -6,10 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   Checkbox,
   Chip,
   FormControl,
@@ -17,6 +13,7 @@ import {
   InputLabel,
   ListItem,
   MenuItem,
+  Paper,
   Select,
   Typography,
 } from "@material-ui/core";
@@ -27,6 +24,7 @@ import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 import {
+  Announcement,
   ArrowBack,
   Assignment,
   AttachFile,
@@ -57,8 +55,9 @@ const styles = makeStyles((theme) => ({
     marginTop: "15px",
   },
   content: {
-    height: 400,
-    backgroundColor: "#000",
+    minHeight: 400,
+    padding: theme.spacing(3),
+    // backgroundColor: "#000",
   },
   courseContent: {
     marginTop: theme.spacing(5),
@@ -93,6 +92,8 @@ const EnrollCourse = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+
+  const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -138,6 +139,11 @@ const EnrollCourse = () => {
     return "";
   };
 
+  const handleChosenCourseMaterial = (material) => {
+    console.log(material);
+    setChosenCourseMaterial(material);
+  };
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -161,7 +167,77 @@ const EnrollCourse = () => {
         </div>
         <div className={classes.courseSection}>
           <div style={{ width: "45%" }}>
-            <div className={classes.content}></div>
+            <Paper className={classes.content} elevation={3}>
+              {(() => {
+                if (!chosenCourseMaterial) {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: 300,
+                      }}
+                    >
+                      <Announcement fontSize="large" />
+                      <Typography variant="body1">
+                        Choose a course material on the right to start
+                      </Typography>
+                    </div>
+                  );
+                } else if (chosenCourseMaterial.material_type === "FILE") {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: 300,
+                      }}
+                    >
+                      <Paper
+                        elevation={3}
+                        style={{
+                          marginBottom: "20px",
+                          width: "60%",
+                          padding: "10px",
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          style={{ paddingBottom: "15px" }}
+                        >
+                          <span style={{ fontWeight: 600 }}>Title</span>
+                          <br /> {chosenCourseMaterial.title}
+                        </Typography>
+                        <Typography variant="body1">
+                          <span style={{ fontWeight: 600 }}>Description</span>
+                          <br />
+                          {chosenCourseMaterial.description}
+                        </Typography>
+                      </Paper>
+                      <Typography variant="body1">
+                        You can access the file here:
+                      </Typography>
+                      <LinkMui
+                        href={
+                          chosenCourseMaterial.course_file.zip_file
+                            ? chosenCourseMaterial.course_file.zip_file
+                            : chosenCourseMaterial.course_file.google_drive_url
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: "20px" }}
+                      >
+                        File
+                      </LinkMui>
+                    </div>
+                  );
+                }
+              })()}
+            </Paper>
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "45%" }}>
@@ -239,7 +315,12 @@ const EnrollCourse = () => {
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
                                 />
-                                <LinkMui className={classes.linkMui}>
+                                <LinkMui
+                                  className={classes.linkMui}
+                                  onClick={() =>
+                                    handleChosenCourseMaterial(material)
+                                  }
+                                >
                                   {material.title}
                                 </LinkMui>
                               </div>
@@ -259,7 +340,12 @@ const EnrollCourse = () => {
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
                                 />
-                                <LinkMui className={classes.linkMui}>
+                                <LinkMui
+                                  className={classes.linkMui}
+                                  onClick={() =>
+                                    handleChosenCourseMaterial(material)
+                                  }
+                                >
                                   {material.title}
                                 </LinkMui>
                               </div>
@@ -279,7 +365,12 @@ const EnrollCourse = () => {
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
                                 />
-                                <LinkMui className={classes.linkMui}>
+                                <LinkMui
+                                  className={classes.linkMui}
+                                  onClick={() =>
+                                    handleChosenCourseMaterial(material)
+                                  }
+                                >
                                   {material.title}
                                 </LinkMui>
                               </div>
