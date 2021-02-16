@@ -273,7 +273,7 @@ const ViewCourseDetails = () => {
             <Rating
               name="read-only"
               readOnly
-              value={course && course.rating ? course.rating : 0}
+              value={course && course.rating ? parseFloat(course.rating) : 0}
             />
             <Typography variant="body1" style={{ paddingBottom: "10px" }}>
               Published on: {formatDate(course && course.published_date)}
@@ -285,19 +285,19 @@ const ViewCourseDetails = () => {
                 course.languages.map((language, index) => {
                   if (index + 1 !== course.languages.length) {
                     if (language === "ENG") {
-                      return <Typography>English, </Typography>;
+                      return <Typography key={index}>English, </Typography>;
                     } else if (language === "MAN") {
-                      return <Typography>中文, </Typography>;
+                      return <Typography key={index}>中文, </Typography>;
                     } else {
-                      return <Typography>Français, </Typography>;
+                      return <Typography key={index}>Français, </Typography>;
                     }
                   } else {
                     if (language === "ENG") {
-                      return <Typography>English</Typography>;
+                      return <Typography key={index}>English</Typography>;
                     } else if (language === "MAN") {
-                      return <Typography>中文</Typography>;
+                      return <Typography key={index}>中文</Typography>;
                     } else {
-                      return <Typography>Français</Typography>;
+                      return <Typography key={index}>Français</Typography>;
                     }
                   }
                 })}
@@ -311,9 +311,10 @@ const ViewCourseDetails = () => {
               </Typography>
               {course &&
                 course.learning_objectives.length > 0 &&
-                course.learning_objectives.map((objective) => {
+                course.learning_objectives.map((objective, index) => {
                   return (
                     <div
+                      key={index}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -370,6 +371,7 @@ const ViewCourseDetails = () => {
                     <Accordion
                       expanded={expanded === `${index}`}
                       onChange={handleChange(`${index}`)}
+                      key={index}
                     >
                       <AccordionSummary
                         expandIcon={<ExpandMore />}
@@ -396,10 +398,11 @@ const ViewCourseDetails = () => {
                         </Typography>
                         {chapter.course_materials &&
                           chapter.course_materials.length > 0 &&
-                          chapter.course_materials.map((material) => {
+                          chapter.course_materials.map((material, index) => {
                             if (material.material_type === "FILE") {
                               return (
                                 <div
+                                  key={index}
                                   style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -416,6 +419,7 @@ const ViewCourseDetails = () => {
                             } else if (material.material_type === "VIDEO") {
                               return (
                                 <div
+                                  key={index}
                                   style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -432,6 +436,7 @@ const ViewCourseDetails = () => {
                             } else if (material.material_type === "QUIZ") {
                               return (
                                 <div
+                                  key={index}
                                   style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -461,9 +466,10 @@ const ViewCourseDetails = () => {
               </Typography>
               {course &&
                 course.requirements.length > 0 &&
-                course.requirements.map((requirement) => {
+                course.requirements.map((requirement, index) => {
                   return (
                     <div
+                      key={index}
                       style={{
                         display: "flex",
                         alignItems: "center",
