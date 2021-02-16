@@ -273,8 +273,13 @@ const AdminHumanResourcePage = () => {
   for (var i = 0; i < allPartnerList.length; i++) {
     partnerRows[i].date_joined = formatDate(allPartnerList[i].date_joined);
     partnerRows[i].organization_name =
-      allPartnerList[i].partner.organization.organization_name;
-    partnerRows[i].job_title = allPartnerList[i].partner.job_title;
+      allPartnerList[i].partner.organization &&
+      allPartnerList[i].partner.organization.organization_name
+        ? allPartnerList[i].partner.organization.organization_name
+        : "-";
+    partnerRows[i].job_title = allPartnerList[i].partner.job_title
+      ? allPartnerList[i].partner.job_title
+      : "-";
   }
 
   const getPartnerData = () => {
