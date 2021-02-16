@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -21,8 +21,6 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
-import logo from "../../assets/CodeineLogos/Member.svg";
-import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
@@ -36,6 +34,7 @@ import {
   Movie,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
+import components from "./components/NavbarComponents";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -148,97 +147,6 @@ const ViewCourseDetails = () => {
     getCourse();
   }, []);
 
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Personal
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/industry" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Enterprise
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          component={Link}
-          to="/member/register"
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const loggedInNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/home" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            View Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const navLogo = (
-    <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" />
-      </Link>
-    </Fragment>
-  );
-
   const formatDate = (date) => {
     const options = {
       weekday: "long",
@@ -258,9 +166,17 @@ const ViewCourseDetails = () => {
   return (
     <div className={classes.root}>
       <Navbar
-        logo={navLogo}
+        logo={components.navLogo}
         bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
+        navbarItems={
+          loggedIn && loggedIn
+            ? components.loggedInNavbar(() => {
+                Service.removeCredentials();
+                setLoggedIn(false);
+                history.push("/");
+              })
+            : components.memberNavbar
+        }
       />
       <div className={classes.mainSection}>
         <div style={{ marginTop: "20px" }}>
