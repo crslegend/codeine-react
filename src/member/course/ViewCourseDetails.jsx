@@ -105,6 +105,7 @@ const styles = makeStyles((theme) => ({
   cardOnRight: {
     width: 400,
     margin: "auto",
+    marginTop: "25px",
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
@@ -658,6 +659,12 @@ const ViewCourseDetails = () => {
                     }
                   })}
               </div>
+            </Card>
+
+            <Card className={classes.cardOnRight}>
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                Instructor
+              </Typography>
             </Card>
           </div>
         </div>
