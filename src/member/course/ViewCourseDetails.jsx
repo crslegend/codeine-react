@@ -43,34 +43,6 @@ const styles = makeStyles((theme) => ({
     flexDirection: "column",
     fontDisplay: "swap",
   },
-  listItem: {
-    width: "100%",
-    padding: 10,
-    borderLeft: "5px solid #fff",
-    "&:hover": {
-      backgroundColor: "#F4F4F4",
-      borderLeft: "5px solid #F4F4F4",
-    },
-  },
-  listIcon: {
-    marginLeft: "15px",
-    marginRight: "20px",
-  },
-  activeLink: {
-    width: "100%",
-    padding: 10,
-    color: theme.palette.primary.main,
-    backgroundColor: "#F4F4F4",
-    borderLeft: "5px solid",
-    "&:hover": {
-      borderLeft: "5px solid #437FC7",
-    },
-  },
-  avatar: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    fontSize: "60px",
-  },
   mainSection: {
     paddingTop: "65px",
     minHeight: "calc(100vh - 10px)",
@@ -445,6 +417,8 @@ const ViewCourseDetails = () => {
                 variant="contained"
                 style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
                 color="primary"
+                component={Link}
+                to={`/courses/enroll/${id}`}
               >
                 Continue Course
               </Button>

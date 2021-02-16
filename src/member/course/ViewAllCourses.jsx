@@ -24,40 +24,14 @@ import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 
+import components from "./components/NavbarComponents";
+
 const styles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
-  },
-  listItem: {
-    width: "100%",
-    padding: 10,
-    borderLeft: "5px solid #fff",
-    "&:hover": {
-      backgroundColor: "#F4F4F4",
-      borderLeft: "5px solid #F4F4F4",
-    },
-  },
-  listIcon: {
-    marginLeft: "15px",
-    marginRight: "20px",
-  },
-  activeLink: {
-    width: "100%",
-    padding: 10,
-    color: theme.palette.primary.main,
-    backgroundColor: "#F4F4F4",
-    borderLeft: "5px solid",
-    "&:hover": {
-      borderLeft: "5px solid #437FC7",
-    },
-  },
-  avatar: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    fontSize: "60px",
   },
   courses: {
     paddingTop: "65px",
@@ -176,103 +150,20 @@ const ViewAllCourses = () => {
   //       .catch((err) => console.log(err));
   //   };
 
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Personal
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/industry" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Enterprise
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          component={Link}
-          to="/member/register"
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const loggedInNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/home" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            View Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          style={{
-            backgroundColor: "#437FC7",
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const navLogo = (
-    <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" />
-      </Link>
-    </Fragment>
-  );
-
   return (
     <div className={classes.root}>
       <Navbar
-        logo={navLogo}
+        logo={components.navLogo}
         bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
+        navbarItems={
+          loggedIn && loggedIn
+            ? components.loggedInNavbar(() => {
+                Service.removeCredentials();
+                setLoggedIn(false);
+                history.push("/");
+              })
+            : components.memberNavbar
+        }
       />
       <div className={classes.courses}>
         <div className={classes.title}>
