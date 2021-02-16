@@ -62,17 +62,16 @@ const styles = makeStyles((theme) => ({
   courses: {
     paddingTop: "65px",
     minHeight: "calc(100vh - 130px)",
+    paddingLeft: theme.spacing(15),
+    paddingRight: theme.spacing(15),
   },
   title: {
     paddingTop: theme.spacing(3),
-    paddingLeft: theme.spacing(10),
   },
   cards: {
     display: "flex",
     flexDirection: "row",
     paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(10),
-    paddingRight: theme.spacing(10),
   },
   cardRoot: {
     width: 200,
@@ -86,7 +85,6 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(10),
     paddingBottom: theme.spacing(2),
   },
   searchBar: {
@@ -99,6 +97,19 @@ const styles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     minWidth: 120,
     maxHeight: 50,
+  },
+  paginationSection: {
+    float: "right",
+    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(5),
+  },
+  pagination: {
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+    [theme.breakpoints.down("sm")]: {
+      size: "small",
+    },
   },
 }));
 
@@ -130,6 +141,7 @@ const ViewAllCourses = () => {
       .then((res) => {
         // console.log(res);
         setAllCourses(res.data.results);
+        setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
   };
@@ -143,6 +155,10 @@ const ViewAllCourses = () => {
 
   const handleCancelSearch = () => {
     setSearchValue("");
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   useEffect(() => {
@@ -315,6 +331,21 @@ const ViewAllCourses = () => {
                 </Card>
               );
             })}
+        </div>
+        <div className={classes.paginationSection}>
+          {allCourses && allCourses.length > 0 && (
+            <Pagination
+              count={noOfPages}
+              page={page}
+              onChange={handlePageChange}
+              defaultPage={1}
+              color="primary"
+              size="medium"
+              showFirstButton
+              showLastButton
+              className={classes.pagination}
+            />
+          )}
         </div>
       </div>
       <Footer />
