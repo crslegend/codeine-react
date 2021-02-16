@@ -15,6 +15,7 @@ import ContentProviderHome from "./contentprovider/ContentProviderHome";
 import ContentProviderLoginPage from "./contentprovider/auth/ContentProviderLoginPage";
 import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderRegisterPage";
 import LandingPageRoute from "./components/LandingPageRoute";
+import ViewAllCourses from "./member/course/ViewAllCourses";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
         user="partner"
       />
       <Route exact path="/" component={MemberLandingPage} />
+      <Route exact path="/courses" component={ViewAllCourses} />
       <PrivateRoute
         path="/member/home"
         render={() => <MemberDashboard />}
