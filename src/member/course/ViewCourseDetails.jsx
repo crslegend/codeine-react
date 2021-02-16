@@ -92,6 +92,15 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
+  requirements: {
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
+  },
+  description: {
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
+  },
+  reviews: {},
 }));
 
 const ViewCourseDetails = () => {
@@ -251,7 +260,7 @@ const ViewCourseDetails = () => {
           </IconButton>
         </div>
         <div className={classes.courseSection}>
-          <div style={{ flexGrow: 4 }}>
+          <div style={{ flexGrow: 3 }}>
             <Typography
               variant="h3"
               style={{ fontWeight: 600, paddingBottom: "10px" }}
@@ -309,7 +318,7 @@ const ViewCourseDetails = () => {
                     >
                       <FiberManualRecord
                         fontSize="small"
-                        style={{ marginRight: "10px" }}
+                        style={{ marginRight: "10px", fontSize: "13px" }}
                       />
                       <Typography>{objective}</Typography>
                     </div>
@@ -439,6 +448,42 @@ const ViewCourseDetails = () => {
                   );
                 })}
             </div>
+            <div className={classes.requirement}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Requirements
+              </Typography>
+              {course &&
+                course.requirements.length > 0 &&
+                course.requirements.map((requirement) => {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <FiberManualRecord
+                        style={{ marginRight: "10px", fontSize: "13px" }}
+                      />
+                      <Typography>{requirement}</Typography>
+                    </div>
+                  );
+                })}
+            </div>
+            <div className={classes.description}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Description
+              </Typography>
+              <Typography variant="body1">{course.description}</Typography>
+            </div>
+            <div className={classes.reviews}>REVIEWS HERE</div>
           </div>
           <div style={{ flexGrow: 1 }}>
             <div style={{ maxWidth: 400, margin: "auto" }}>
