@@ -2,6 +2,9 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Card,
   CardActionArea,
@@ -15,7 +18,6 @@ import {
   Select,
   Typography,
 } from "@material-ui/core";
-import Pagination from "@material-ui/lab/Pagination";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
 import logo from "../../assets/CodeineLogos/Member.svg";
@@ -24,7 +26,15 @@ import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
-import { ArrowBack, Language } from "@material-ui/icons";
+import {
+  ArrowBack,
+  Assignment,
+  AttachFile,
+  ExpandMore,
+  FiberManualRecord,
+  Language,
+  Movie,
+} from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
 
 const styles = makeStyles((theme) => ({
@@ -76,8 +86,12 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(8),
     border: "1px solid",
     borderRadius: "5px",
-    minHeight: "200px",
+    minHeight: "100px",
     padding: theme.spacing(3),
+  },
+  courseContent: {
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
   },
 }));
 
@@ -88,6 +102,12 @@ const ViewCourseDetails = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -271,9 +291,133 @@ const ViewCourseDetails = () => {
                 })}
             </div>
             <div className={classes.learningObjectives}>
-              <Typography variant="h6" style={{ fontWeight: 600 }}>
+              <Typography
+                variant="h6"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
                 Learning Objectives
               </Typography>
+              {course &&
+                course.learning_objectives.length > 0 &&
+                course.learning_objectives.map((objective) => {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <FiberManualRecord
+                        fontSize="small"
+                        style={{ marginRight: "10px" }}
+                      />
+                      <Typography>{objective}</Typography>
+                    </div>
+                  );
+                })}
+            </div>
+            <div className={classes.courseContent}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Course Content
+              </Typography>
+              <Typography variant="body2" style={{ paddingBottom: "5px" }}>
+                {course &&
+                  (course.chapters.length === 1
+                    ? "1 Chapter"
+                    : `${course.chapters.length} Chapters`)}
+              </Typography>
+              {course &&
+                course.chapters.length > 0 &&
+                course.chapters.map((chapter, index) => {
+                  return (
+                    <Accordion
+                      expanded={expanded === `${index}`}
+                      onChange={handleChange(`${index}`)}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        id={`${index}`}
+                        style={{ backgroundColor: "#F4F4F4" }}
+                      >
+                        <Typography>{chapter.title}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          padding: "20px",
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          style={{ paddingBottom: "15px" }}
+                        >
+                          {chapter.course_materials &&
+                          chapter.course_materials.length === 1
+                            ? "1 Course Material"
+                            : `${chapter.course_materials.length} Course Materials`}
+                        </Typography>
+                        {chapter.course_materials &&
+                          chapter.course_materials.length > 0 &&
+                          chapter.course_materials.map((material) => {
+                            if (material.material_type === "FILE") {
+                              return (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginBottom: "15px",
+                                  }}
+                                >
+                                  <AttachFile
+                                    fontSize="small"
+                                    style={{ marginRight: "10px" }}
+                                  />
+                                  {material.title}
+                                </div>
+                              );
+                            } else if (material.material_type === "VIDEO") {
+                              return (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginBottom: "15px",
+                                  }}
+                                >
+                                  <Movie
+                                    fontSize="small"
+                                    style={{ marginRight: "10px" }}
+                                  />
+                                  {material.title}
+                                </div>
+                              );
+                            } else if (material.material_type === "QUIZ") {
+                              return (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginBottom: "15px",
+                                  }}
+                                >
+                                  <Assignment
+                                    fontSize="small"
+                                    style={{ marginRight: "10px" }}
+                                  />
+                                  {material.title}
+                                </div>
+                              );
+                            }
+                          })}
+                      </AccordionDetails>
+                    </Accordion>
+                  );
+                })}
             </div>
           </div>
           <div style={{ flexGrow: 1 }}>
