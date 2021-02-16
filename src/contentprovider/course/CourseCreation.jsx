@@ -577,7 +577,7 @@ const CourseCreation = () => {
         }
       }
 
-      if (finalQuizQuestions.taskIds.length === 0) {
+      if (pageNum === 2 && finalQuizQuestions.taskIds.length === 0) {
         setSbOpen(true);
         setSnackbar({
           message: "Final quiz should have at least 1 question",
