@@ -8,6 +8,10 @@ import {
   Button,
   Checkbox,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputLabel,
@@ -50,6 +54,18 @@ const styles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
   },
+  unenrollButton: {
+    marginRight: "45px",
+    height: 40,
+    backgroundColor: theme.palette.red.main,
+    color: "#fff",
+    "&:hover": {
+      color: "#000",
+    },
+  },
+  dialogButtons: {
+    width: 100,
+  },
   courseSection: {
     display: "flex",
     marginTop: "15px",
@@ -72,14 +88,6 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
   },
   reviews: {},
-  cardOnRight: {
-    width: 400,
-    margin: "auto",
-    marginTop: "25px",
-    padding: theme.spacing(4),
-    display: "flex",
-    flexDirection: "column",
-  },
   linkMui: {
     cursor: "pointer",
   },
@@ -96,6 +104,8 @@ const EnrollCourse = () => {
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
   const [expanded, setExpanded] = useState(false);
+
+  const [unenrollDialog, setUnenrollDialog] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -160,10 +170,23 @@ const EnrollCourse = () => {
         }
       />
       <div className={classes.mainSection}>
-        <div style={{ marginTop: "20px" }}>
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <IconButton onClick={() => history.push(`/courses/${id}`)}>
             <ArrowBack />
           </IconButton>
+          <Button
+            variant="contained"
+            className={classes.unenrollButton}
+            onClick={() => setUnenrollDialog(true)}
+          >
+            Unenroll
+          </Button>
         </div>
         <div className={classes.courseSection}>
           <div style={{ width: "45%" }}>
@@ -443,6 +466,43 @@ const EnrollCourse = () => {
         </div>
       </div>
       <Footer />
+
+      <Dialog
+        open={unenrollDialog}
+        onClose={() => setUnenrollDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Unenroll from this course?</DialogTitle>
+        <DialogContent>
+          You will not be able to access the course contents after unenrollment.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setUnenrollDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              // to call unenroll endpoint
+              history.push(`/courses/${id}`);
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
