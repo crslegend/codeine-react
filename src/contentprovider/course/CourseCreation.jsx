@@ -837,7 +837,7 @@ const CourseCreation = () => {
                     />
                     <label htmlFor="marks">
                       <Typography variant="body1" style={{ marginTop: "10px" }}>
-                        Marks
+                        Passing Marks
                       </Typography>
                     </label>
                     <TextField
