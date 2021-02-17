@@ -14,11 +14,12 @@ import {
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
 
 import Service from "../../../AxiosService";
-import { Add, Clear, Delete, Edit } from "@material-ui/icons";
+import { Add, Clear, Delete, Edit, Help } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   dialogButtons: {
@@ -700,9 +701,16 @@ const QuestionDialog = ({
 
           {questionType === "shortanswer" && (
             <Fragment>
-              <label htmlFor="shortanswer">
-                <Typography variant="body1">Keywords as Answers</Typography>
-              </label>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <label htmlFor="shortanswer">
+                  <Typography variant="body1">Keywords as Answers</Typography>
+                </label>
+                <Tooltip title="Separate the keywords with commas (eg. keyword 1,keyword 2)">
+                  <IconButton disableRipple size="small">
+                    <Help fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </div>
               <TextField
                 id="shortanswer"
                 placeholder="Enter keywords (separated by commas)"
