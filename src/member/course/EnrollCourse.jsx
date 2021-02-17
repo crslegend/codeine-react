@@ -235,6 +235,39 @@ const EnrollCourse = () => {
                       </LinkMui>
                     </div>
                   );
+                } else if (chosenCourseMaterial.material_type === "VIDEO") {
+                  return (
+                    <div>
+                      <iframe
+                        width="100%"
+                        height="345"
+                        src={
+                          chosenCourseMaterial &&
+                          chosenCourseMaterial.video.video_url
+                        }
+                      />
+                      <Paper
+                        elevation={3}
+                        style={{
+                          marginTop: "20px",
+                          padding: "10px",
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          style={{ paddingBottom: "15px" }}
+                        >
+                          <span style={{ fontWeight: 600 }}>Title</span>
+                          <br /> {chosenCourseMaterial.title}
+                        </Typography>
+                        <Typography variant="body1">
+                          <span style={{ fontWeight: 600 }}>Description</span>
+                          <br />
+                          {chosenCourseMaterial.description}
+                        </Typography>
+                      </Paper>
+                    </div>
+                  );
                 }
               })()}
             </Paper>
