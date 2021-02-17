@@ -241,8 +241,8 @@ const CourseCreation = () => {
       return;
     }
 
-    const requirementsArr = courseDetails.requirements.split(", ");
-    const learnObjectivesArr = courseDetails.learning_objectives.split(", ");
+    const requirementsArr = courseDetails.requirements.split(",");
+    const learnObjectivesArr = courseDetails.learning_objectives.split(",");
 
     let data = {
       ...courseDetails,
@@ -272,7 +272,7 @@ const CourseCreation = () => {
         data.coding_languages.push(property);
       }
     }
-    console.log(data);
+    // console.log(data);
 
     const formData = new FormData();
     formData.append("title", data.title);
@@ -359,8 +359,8 @@ const CourseCreation = () => {
           setCourseDetails({
             title: res.data.title,
             description: res.data.description,
-            learning_objectives: res.data.description,
-            requirements: res.data.requirements,
+            learning_objectives: res.data.learning_objectives.join(),
+            requirements: res.data.requirements.join(),
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
           });
