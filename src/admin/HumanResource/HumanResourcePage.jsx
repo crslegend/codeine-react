@@ -177,7 +177,7 @@ const AdminHumanResourcePage = () => {
 
   const handleMemberStatus = (status, memberid) => {
     if (status) {
-      Service.client.get(`/auth/members/${memberid}/activate`).then((res) => {
+      Service.client.get(`/auth/members/${memberid}/deactivate`).then((res) => {
         console.log(res.data);
         setAllMemberList(res.data);
       });
@@ -297,24 +297,30 @@ const AdminHumanResourcePage = () => {
 
   const handlePartnerStatus = (status, partnerid) => {
     if (status) {
+      Service.client
+        .get(`/auth/partners/${partnerid}/deactivate`)
+        .then((res) => {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Partner is deactivated",
+            severity: "success",
+          });
+          console.log(res.data);
+          setAllPartnerList(res.data);
+        });
+      getPartnerData();
+      console.log("Partner is deactivated");
+    } else {
       Service.client.get(`/auth/partners/${partnerid}/activate`).then((res) => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Partner is deactivated",
+          message: "Partner is activated",
           severity: "success",
         });
         console.log(res.data);
         setAllPartnerList(res.data);
-      });
-      getPartnerData();
-      console.log("Partner is deactivated");
-    } else {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Partner is activated",
-        severity: "success",
       });
       getPartnerData();
       console.log("Partner is activated");
