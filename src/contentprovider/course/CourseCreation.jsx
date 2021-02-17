@@ -32,6 +32,11 @@ const useStyles = makeStyles((theme) => ({
   dialogButtons: {
     width: 100,
   },
+  kanban: {
+    width: "100%",
+    overflow: "auto",
+    marginBottom: "20px",
+  },
 }));
 
 const CourseCreation = () => {
@@ -725,12 +730,15 @@ const CourseCreation = () => {
                     </Button>
                   </div>
                 </div>
-                <CourseKanbanBoard
-                  courseId={courseId}
-                  state={allChapters}
-                  setState={setAllChapters}
-                  getCourse={getCourse}
-                />
+                <div className={classes.kanban}>
+                  <CourseKanbanBoard
+                    courseId={courseId}
+                    state={allChapters}
+                    setState={setAllChapters}
+                    getCourse={getCourse}
+                  />
+                </div>
+
                 <Button
                   variant="contained"
                   color="primary"

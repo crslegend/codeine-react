@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 8,
     border: "1px solid lightgrey",
     borderRadius: 2,
-    width: 220,
+    width: 250,
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#fff",
