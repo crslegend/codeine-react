@@ -743,7 +743,7 @@ const CourseCreation = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => setToNextPage()}
-                  style={{ float: "right" }}
+                  style={{ float: "right", marginBottom: "20px" }}
                 >
                   Next
                 </Button>
