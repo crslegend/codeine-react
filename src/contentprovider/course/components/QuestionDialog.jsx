@@ -720,6 +720,14 @@ const QuestionDialog = ({
             </Fragment>
           )}
 
+          {questionType &&
+            questionType !== "shortanswer" &&
+            (editMode || addQuestionDialog) && (
+              <Typography style={{ fontSize: "12px", paddingBottom: "5px" }}>
+                Enter option(s) below in the field
+              </Typography>
+            )}
+
           {options &&
             options.map((option, index) => {
               if (questionType === "mcq" || questionType === "mrq") {
