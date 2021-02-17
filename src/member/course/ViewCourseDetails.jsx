@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -406,22 +406,48 @@ const ViewCourseDetails = () => {
             </div>
 
             <Card className={classes.cardOnRight}>
-              <Button
-                variant="contained"
-                style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
-                color="primary"
-              >
-                Enroll
-              </Button>
-              <Button
-                variant="contained"
-                style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
-                color="primary"
-                component={Link}
-                to={`/courses/enroll/${id}`}
-              >
-                Continue Course
-              </Button>
+              {!loggedIn ? (
+                <Button
+                  variant="contained"
+                  style={{ width: "90%", margin: "auto", marginBottom: "20px" }}
+                  color="primary"
+                  onClick={() =>
+                    history.push({
+                      pathname: "/member/login",
+                      state: { courseId: id },
+                    })
+                  }
+                >
+                  Login to View Course Content
+                </Button>
+              ) : (
+                <Fragment>
+                  <Button
+                    variant="contained"
+                    style={{
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "20px",
+                    }}
+                    color="primary"
+                  >
+                    Enroll
+                  </Button>
+                  <Button
+                    variant="contained"
+                    style={{
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "20px",
+                    }}
+                    color="primary"
+                    component={Link}
+                    to={`/courses/enroll/${id}`}
+                  >
+                    Continue Course
+                  </Button>
+                </Fragment>
+              )}
 
               <div style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
                 <Typography variant="body1" style={{ marginBottom: "10px" }}>
