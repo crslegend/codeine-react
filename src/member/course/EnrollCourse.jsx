@@ -34,6 +34,7 @@ import {
   AttachFile,
   ExpandMore,
   FiberManualRecord,
+  GetApp,
   Language,
   Movie,
 } from "@material-ui/icons";
@@ -192,110 +193,77 @@ const EnrollCourse = () => {
         </div>
         <div className={classes.courseSection}>
           <div style={{ width: "45%" }}>
-            <Paper className={classes.content} elevation={3}>
-              {(() => {
-                if (!chosenCourseMaterial) {
-                  return (
-                    <div
+            {(() => {
+              if (!chosenCourseMaterial) {
+                return (
+                  <Paper
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "20px",
+                    }}
+                  >
+                    <Announcement fontSize="large" />
+                    <Typography variant="body1">
+                      Choose a course material on the right to start
+                    </Typography>
+                  </Paper>
+                );
+              } else if (chosenCourseMaterial.material_type === "FILE") {
+                return (
+                  <Paper
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      padding: "30px",
+                    }}
+                  >
+                    <Typography
+                      variant="h4"
+                      style={{ fontWeight: 600, paddingBottom: "10px" }}
+                    >
+                      {chosenCourseMaterial.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {chosenCourseMaterial.description}
+                    </Typography>
+                  </Paper>
+                );
+              } else if (chosenCourseMaterial.material_type === "VIDEO") {
+                return (
+                  <div>
+                    <iframe
+                      width="100%"
+                      height="345"
+                      src={
+                        chosenCourseMaterial &&
+                        chosenCourseMaterial.video.video_url
+                      }
+                    />
+                    <Paper
+                      elevation={3}
                       style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 300,
+                        marginTop: "20px",
+                        padding: "30px",
                       }}
                     >
-                      <Announcement fontSize="large" />
-                      <Typography variant="body1">
-                        Choose a course material on the right to start
+                      <Typography
+                        variant="h4"
+                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                      >
+                        {chosenCourseMaterial.title}
                       </Typography>
-                    </div>
-                  );
-                } else if (chosenCourseMaterial.material_type === "FILE") {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 300,
-                      }}
-                    >
-                      <Paper
-                        elevation={3}
-                        style={{
-                          marginBottom: "20px",
-                          width: "60%",
-                          padding: "10px",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          style={{ paddingBottom: "15px" }}
-                        >
-                          <span style={{ fontWeight: 600 }}>Title</span>
-                          <br /> {chosenCourseMaterial.title}
-                        </Typography>
-                        <Typography variant="body1">
-                          <span style={{ fontWeight: 600 }}>Description</span>
-                          <br />
-                          {chosenCourseMaterial.description}
-                        </Typography>
-                      </Paper>
-                      <Typography variant="body1">
-                        You can access the file here:
+                      <Typography variant="body2">
+                        {chosenCourseMaterial.description}
                       </Typography>
-                      <LinkMui
-                        href={
-                          chosenCourseMaterial.course_file.zip_file
-                            ? chosenCourseMaterial.course_file.zip_file
-                            : chosenCourseMaterial.course_file.google_drive_url
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ fontSize: "20px" }}
-                      >
-                        File
-                      </LinkMui>
-                    </div>
-                  );
-                } else if (chosenCourseMaterial.material_type === "VIDEO") {
-                  return (
-                    <div>
-                      <iframe
-                        width="100%"
-                        height="345"
-                        src={
-                          chosenCourseMaterial &&
-                          chosenCourseMaterial.video.video_url
-                        }
-                      />
-                      <Paper
-                        elevation={3}
-                        style={{
-                          marginTop: "20px",
-                          padding: "10px",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          style={{ paddingBottom: "15px" }}
-                        >
-                          <span style={{ fontWeight: 600 }}>Title</span>
-                          <br /> {chosenCourseMaterial.title}
-                        </Typography>
-                        <Typography variant="body1">
-                          <span style={{ fontWeight: 600 }}>Description</span>
-                          <br />
-                          {chosenCourseMaterial.description}
-                        </Typography>
-                      </Paper>
-                    </div>
-                  );
-                }
-              })()}
-            </Paper>
+                    </Paper>
+                  </div>
+                );
+              }
+            })()}
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "45%" }}>
@@ -317,7 +285,6 @@ const EnrollCourse = () => {
                   padding: "20px",
                 }}
               >
-                <Checkbox />
                 <LinkMui className={classes.linkMui}>
                   Introduction Video
                 </LinkMui>
@@ -381,6 +348,21 @@ const EnrollCourse = () => {
                                 >
                                   {material.title}
                                 </LinkMui>
+                                <IconButton
+                                  size="small"
+                                  style={{ marginLeft: "auto", order: 2 }}
+                                  href={
+                                    chosenCourseMaterial.course_file.zip_file
+                                      ? chosenCourseMaterial.course_file
+                                          .zip_file
+                                      : chosenCourseMaterial.course_file
+                                          .google_drive_url
+                                  }
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <GetApp />
+                                </IconButton>
                               </div>
                             );
                           } else if (material.material_type === "VIDEO") {
@@ -457,7 +439,6 @@ const EnrollCourse = () => {
                   padding: "20px",
                 }}
               >
-                <Checkbox disabled />
                 <Assignment fontSize="small" style={{ marginRight: "5px" }} />
                 <LinkMui className={classes.linkMui}>
                   Attempt Final Quiz
