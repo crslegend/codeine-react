@@ -109,6 +109,7 @@ const EnrollCourse = () => {
   const [unenrollDialog, setUnenrollDialog] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
+    console.log(isExpanded);
     setExpanded(isExpanded ? panel : false);
   };
 
@@ -262,6 +263,8 @@ const EnrollCourse = () => {
                     </Paper>
                   </div>
                 );
+              } else if (chosenCourseMaterial.material_type === "QUIZ") {
+                return <div></div>;
               }
             })()}
           </div>
@@ -294,13 +297,15 @@ const EnrollCourse = () => {
               course.chapters.length > 0 &&
               course.chapters.map((chapter, index) => {
                 return (
-                  <Accordion
-                    expanded={expanded === `${index}`}
-                    key={index}
-                    onChange={handleChange(`${index}`)}
-                  >
+                  <Accordion expanded={expanded === `${index}`} key={index}>
                     <AccordionSummary
-                      expandIcon={<ExpandMore />}
+                      expandIcon={
+                        <ExpandMore
+                          onClick={() =>
+                            setExpanded(!expanded ? `${index}` : false)
+                          }
+                        />
+                      }
                       id={`${index}`}
                       style={{
                         backgroundColor: "#F4F4F4",
