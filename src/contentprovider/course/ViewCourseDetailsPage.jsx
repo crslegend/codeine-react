@@ -141,7 +141,7 @@ const ViewCourseDetailsPage = () => {
       .then((res) => {
         console.log(res);
         setDeleteCourseDialog(false);
-        history.push("/partner/home/content");
+        getCourse();
       })
       .catch((err) => console.log(err));
   };
