@@ -296,15 +296,25 @@ const EnrollCourse = () => {
                 return (
                   <Accordion
                     expanded={expanded === `${index}`}
-                    onChange={handleChange(`${index}`)}
                     key={index}
+                    onChange={handleChange(`${index}`)}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMore />}
                       id={`${index}`}
-                      style={{ backgroundColor: "#F4F4F4" }}
+                      style={{
+                        backgroundColor: "#F4F4F4",
+                      }}
                     >
-                      <Typography>{chapter.title}</Typography>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Checkbox />
+                        <Typography>{chapter.title}</Typography>
+                      </div>
                     </AccordionSummary>
                     <AccordionDetails
                       style={{
@@ -335,7 +345,6 @@ const EnrollCourse = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <Checkbox />
                                 <AttachFile
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
@@ -352,11 +361,9 @@ const EnrollCourse = () => {
                                   size="small"
                                   style={{ marginLeft: "auto", order: 2 }}
                                   href={
-                                    chosenCourseMaterial.course_file.zip_file
-                                      ? chosenCourseMaterial.course_file
-                                          .zip_file
-                                      : chosenCourseMaterial.course_file
-                                          .google_drive_url
+                                    material.course_file.zip_file
+                                      ? material.course_file.zip_file
+                                      : material.course_file.google_drive_url
                                   }
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -375,7 +382,6 @@ const EnrollCourse = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <Checkbox />
                                 <Movie
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
@@ -400,7 +406,6 @@ const EnrollCourse = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <Checkbox />
                                 <Assignment
                                   fontSize="small"
                                   style={{ marginRight: "5px" }}
