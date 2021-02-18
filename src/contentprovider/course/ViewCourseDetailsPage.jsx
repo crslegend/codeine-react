@@ -11,6 +11,10 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputLabel,
@@ -22,11 +26,12 @@ import {
 import { Link, useHistory, useParams } from "react-router-dom";
 
 import Service from "../../AxiosService";
-import Cookies from "js-cookie";
 import {
   ArrowBack,
   Assignment,
   AttachFile,
+  Delete,
+  Edit,
   ExpandMore,
   FiberManualRecord,
   Language,
@@ -79,6 +84,9 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  dialogButtons: {
+    width: 100,
+  },
 }));
 
 const ViewCourseDetailsPage = () => {
@@ -89,6 +97,8 @@ const ViewCourseDetailsPage = () => {
   const [course, setCourse] = useState();
 
   const [expanded, setExpanded] = useState(false);
+
+  const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -125,12 +135,42 @@ const ViewCourseDetailsPage = () => {
     return "";
   };
 
+  const handleDeleteCourse = (courseId) => {
+    Service.client
+      .delete(`/courses/${courseId}`)
+      .then((res) => {
+        console.log(res);
+        setDeleteCourseDialog(false);
+        history.push("/partner/home/content");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <Fragment>
-      <div style={{ marginTop: "20px" }}>
-        <IconButton onClick={() => history.push("/partner/home/content")}>
-          <ArrowBack />
-        </IconButton>
+      <div
+        style={{
+          marginTop: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <IconButton onClick={() => history.push("/partner/home/content")}>
+            <ArrowBack />
+          </IconButton>
+        </div>
+        <div style={{ marginRight: "50px" }}>
+          <IconButton
+            component={Link}
+            to={course && `/partner/home/content/${course.id}`}
+          >
+            <Edit />
+          </IconButton>
+          <IconButton onClick={() => setDeleteCourseDialog(true)}>
+            <Delete />
+          </IconButton>
+        </div>
       </div>
       <div className={classes.courseSection}>
         <div style={{ width: "50%" }}>
@@ -517,6 +557,42 @@ const ViewCourseDetailsPage = () => {
           </Card>
         </div>
       </div>
+
+      <Dialog
+        open={deleteCourseDialog}
+        onClose={() => {
+          setDeleteCourseDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Course?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteCourseDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              handleDeleteCourse(id);
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

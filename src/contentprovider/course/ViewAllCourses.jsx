@@ -8,6 +8,10 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Popover,
   Typography,
@@ -54,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
     width: 150,
     textTransform: "capitalize",
   },
+  dialogButtons: {
+    width: 100,
+  },
 }));
 
 const ViewAllCourses = () => {
@@ -62,6 +69,9 @@ const ViewAllCourses = () => {
 
   const [allCourses, setAllCourses] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
+  const [deleteCourseId, setDeleteCourseId] = useState();
 
   const getAllCourses = () => {
     let decoded;
@@ -83,6 +93,17 @@ const ViewAllCourses = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleDeleteCourse = (courseId) => {
+    Service.client
+      .delete(`/courses/${courseId}`)
+      .then((res) => {
+        console.log(res);
+        setDeleteCourseDialog(false);
+        setDeleteCourseId();
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -182,7 +203,13 @@ const ViewAllCourses = () => {
                         >
                           Edit Course
                         </Button>
-                        <Button className={classes.popoverButtons}>
+                        <Button
+                          className={classes.popoverButtons}
+                          onClick={() => {
+                            setDeleteCourseId(course.id);
+                            setDeleteCourseDialog(true);
+                          }}
+                        >
                           <span style={{ color: "red" }}>Delete Course</span>
                         </Button>
                       </div>
@@ -193,6 +220,44 @@ const ViewAllCourses = () => {
             );
           })}
       </div>
+
+      <Dialog
+        open={deleteCourseDialog}
+        onClose={() => {
+          setDeleteCourseId();
+          setDeleteCourseDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Course?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteCourseId();
+              setDeleteCourseDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              handleDeleteCourse(deleteCourseId);
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
