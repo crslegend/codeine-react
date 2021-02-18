@@ -146,6 +146,22 @@ const ViewCourseDetailsPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const publishedChip = (
+    <Chip
+      label="Published"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "green" }}
+    />
+  );
+  const unPublishedChip = <Chip label="Not Published" size="small" />;
+  const deletedChip = (
+    <Chip
+      label="Deleted"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
+
   return (
     <Fragment>
       <div
@@ -422,6 +438,25 @@ const ViewCourseDetailsPage = () => {
 
           <Card className={classes.cardOnRight}>
             <div style={{ width: "80%", margin: "auto" }}>
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, marginBottom: "10px" }}
+              >
+                Course Status:{" "}
+                <span>
+                  {(() => {
+                    if (course) {
+                      if (course.is_deleted) {
+                        return deletedChip;
+                      } else if (course.is_published) {
+                        return publishedChip;
+                      } else if (!course.is_published) {
+                        return unPublishedChip;
+                      }
+                    }
+                  })()}
+                </span>
+              </Typography>
               <Typography
                 variant="body1"
                 style={{ fontWeight: 600, marginBottom: "10px" }}

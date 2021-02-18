@@ -112,6 +112,22 @@ const ViewAllCourses = () => {
 
   console.log(allCourses);
 
+  const publishedChip = (
+    <Chip
+      label="Published"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "green" }}
+    />
+  );
+  const unPublishedChip = <Chip label="Not Published" size="small" />;
+  const deletedChip = (
+    <Chip
+      label="Deleted"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
+
   return (
     <Fragment>
       <div className={classes.titleSection}>
@@ -149,14 +165,15 @@ const ViewAllCourses = () => {
                     >
                       {course && course.title}
                     </Typography>
-                    <Chip
-                      label={
-                        course && course.is_published
-                          ? "Published"
-                          : "Not Published"
+                    {(() => {
+                      if (course.is_deleted) {
+                        return deletedChip;
+                      } else if (course.is_published) {
+                        return publishedChip;
+                      } else if (!course.is_published) {
+                        return unPublishedChip;
                       }
-                      size="small"
-                    />
+                    })()}
                   </CardContent>
                 </CardActionArea>
                 <CardActions
