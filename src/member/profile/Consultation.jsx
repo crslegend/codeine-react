@@ -32,9 +32,9 @@ const Consultation = () => {
 
   useEffect(() => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_member_id;
+      const userid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get("/consultations", { params: { member__user__id: userid } })
+        .get("/consultations", { params: { search: userid } })
         .then((res) => {
           setAllConsultations(res.data);
           console.log(res.data);
@@ -45,8 +45,11 @@ const Consultation = () => {
     }
   }, []);
 
+  console.log(allConsultations);
+
   const consultationColumns = [
-    { field: "meeting_url", headerName: "Meeting Link", width: 600 },
+    { field: "title", headerName: "Title", width: 200 },
+    { field: "meeting_link", headerName: "Meeting Link", width: 500 },
     { field: "start_time", headerName: "Date & Time", width: 200 },
     {
       field: "duration",
@@ -95,26 +98,12 @@ const Consultation = () => {
     return "";
   };
 
-  for (var h = 0; h < allConsultations.length; h++) {
+  /*for (var h = 0; h < allConsultations.length; h++) {
     consultationRows[h].start_time = formatDate(
       setAllConsultations[h].start_time
     );
-  }
+  }*/
 
-  /*
-  useEffect(() => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      Service.client
-        .get(`/auth/members`)
-        .then((res) => {
-          setAllMemberList(res.data);
-        })
-        .catch((err) => {
-          //setProfile(null);
-        });
-    }
-  }, []);
-*/
   return (
     <Fragment>
       <Box className={classes.heading}>

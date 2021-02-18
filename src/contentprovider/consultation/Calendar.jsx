@@ -20,7 +20,6 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
-import { consults } from "./Data";
 
 const messages = {
   moreInformationLabel: "",
@@ -93,45 +92,12 @@ const Calendar = () => {
     [dispatch]
   );
 
-  /*useEffect(() => {
-    setLoading(true);
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_partner_id;
-      Service.client
-        .get("/consultations", { params: { partner__user__id: userid } })
-        .then((res) => {
-          let i = 0;
-          res.data.forEach((item) => {
-            const slot = {
-              id: i,
-              title: !item.member
-                ? "Open"
-                : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
-              startDate: new Date(item.start_time),
-              endDate: new Date(item.end_time),
-              meeting_link: item.meeting_link,
-              rejected: item.is_rejected,
-              confirmed: item.is_confirmed,
-              member: item.member,
-            };
-            console.log(slot);
-            consultations.push(slot);
-            i += 1;
-          });
-          setLoading(false);
-        })
-        .catch((error) => {
-          setConsultations(null);
-        });
-    }
-  }, [consultations, setConsultations, setLoading]);*/
-
   useEffect(() => {
     setLoading(true);
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_partner_id;
+      const userid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get("/consultations", { params: { partner__user__id: userid } })
+        .get("/consultations", { params: { search: userid } })
         .then((res) => {
           setTimeout(() => {
             setConsultations(res.data);
@@ -163,14 +129,20 @@ const Calendar = () => {
       onFieldChange({ rejected: nextValue, confirmed: !nextValue });
     };
 
-    if (appointmentData.member !== undefined) {
-      setAllowDeleting(false);
-    } else {
+    if (
+      appointmentData.member === undefined ||
+      appointmentData.member === null
+    ) {
+      console.log("true");
       setAllowDeleting(true);
+    } else {
+      console.log("false");
+      setAllowDeleting(false);
     }
 
     if (appointmentData.endDate < currentDate) {
       setAllowUpdating(false);
+      setAllowDeleting(false);
     } else {
       setAllowUpdating(true);
     }
@@ -179,7 +151,7 @@ const Calendar = () => {
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
         onFieldChange={onFieldChange}
-        readOnly={!allowDeleting}
+        readOnly={!allowDeleting || !allowUpdating}
         {...restProps}
       >
         <AppointmentForm.Label
@@ -213,6 +185,7 @@ const Calendar = () => {
           readOnly={allowDeleting || !allowUpdating}
           label="Reject Consultation"
         />
+        {console.log(allowDeleting)}
       </AppointmentForm.BasicLayout>
     );
   };
