@@ -118,13 +118,15 @@ const EnrollCourse = () => {
   };
 
   const getCourse = () => {
-    Service.client
-      .get(`/courses/${id}`)
-      .then((res) => {
-        // console.log(res);
-        setCourse(res.data);
-      })
-      .catch((err) => console.log(err));
+    if (Cookies.get("t1")) {
+      Service.client
+        .get(`/privateCourses/${id}`)
+        .then((res) => {
+          // console.log(res);
+          setCourse(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
   };
   console.log(course);
 

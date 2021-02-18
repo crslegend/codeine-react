@@ -104,13 +104,23 @@ const ViewCourseDetails = () => {
   };
 
   const getCourse = () => {
-    Service.client
-      .get(`/courses/${id}`)
-      .then((res) => {
-        // console.log(res);
-        setCourse(res.data);
-      })
-      .catch((err) => console.log(err));
+    if (Cookies.get("t1")) {
+      Service.client
+        .get(`/privateCourses/${id}`)
+        .then((res) => {
+          // console.log(res);
+          setCourse(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .get(`/courses/${id}`)
+        .then((res) => {
+          // console.log(res);
+          setCourse(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
   };
   console.log(course);
 
@@ -133,6 +143,18 @@ const ViewCourseDetails = () => {
       return newDate;
     }
     return "";
+  };
+
+  const handleEnrollment = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .post(`/courses/${id}/enrollments`)
+        .then((res) => {
+          console.log(res);
+          history.push(`/courses/enroll/${id}`);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
@@ -420,33 +442,33 @@ const ViewCourseDetails = () => {
                 >
                   Login to View Course Content
                 </Button>
+              ) : course && !course.is_member_enrolled ? (
+                <Button
+                  variant="contained"
+                  style={{
+                    width: "80%",
+                    margin: "auto",
+                    marginBottom: "20px",
+                  }}
+                  color="primary"
+                  onClick={() => handleEnrollment()}
+                >
+                  Enroll
+                </Button>
               ) : (
-                <Fragment>
-                  <Button
-                    variant="contained"
-                    style={{
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "20px",
-                    }}
-                    color="primary"
-                  >
-                    Enroll
-                  </Button>
-                  <Button
-                    variant="contained"
-                    style={{
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "20px",
-                    }}
-                    color="primary"
-                    component={Link}
-                    to={`/courses/enroll/${id}`}
-                  >
-                    Continue Course
-                  </Button>
-                </Fragment>
+                <Button
+                  variant="contained"
+                  style={{
+                    width: "80%",
+                    margin: "auto",
+                    marginBottom: "20px",
+                  }}
+                  color="primary"
+                  component={Link}
+                  to={`/courses/enroll/${id}`}
+                >
+                  Continue Course
+                </Button>
               )}
 
               <div style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
