@@ -7,6 +7,7 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Chip,
   IconButton,
   Popover,
   Typography,
@@ -117,9 +118,20 @@ const ViewAllCourses = () => {
                     title={course && course.title}
                   />
                   <CardContent>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
+                    <Typography
+                      variant="body1"
+                      style={{ fontWeight: 600, paddingBottom: "10px" }}
+                    >
                       {course && course.title}
                     </Typography>
+                    <Chip
+                      label={
+                        course && course.is_published
+                          ? "Published"
+                          : "Not Published"
+                      }
+                      size="small"
+                    />
                   </CardContent>
                 </CardActionArea>
                 <CardActions
