@@ -37,6 +37,7 @@ const styles = makeStyles((theme) => ({
   },
   tabs: {
     backgroundColor: "#00000000",
+    fontWeight: "800",
   },
   appbar: {
     backgroundColor: "#00000000",
@@ -61,7 +62,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={0}>
-          <Typography>{children}</Typography>
+          <Typography component={"span"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -156,13 +157,19 @@ const AdminHumanResourcePage = () => {
     },
   ];
 
-  const memberRows = allMembersList;
+  let memberRows = allMembersList;
 
   for (var h = 0; h < allMembersList.length; h++) {
     memberRows[h].date_joined = formatDate(allMembersList[h].date_joined);
   }
 
   const getMemberData = () => {
+    memberRows = allMembersList;
+
+    for (var h = 0; h < allMembersList.length; h++) {
+      memberRows[h].date_joined = formatDate(allMembersList[h].date_joined);
+    }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
         .get(`/auth/members`)
@@ -175,11 +182,12 @@ const AdminHumanResourcePage = () => {
     }
   };
 
-  const handleMemberStatus = (status, memberid) => {
+  const handleMemberStatus = (e, status, memberid) => {
+    e.preventDefault();
     if (status) {
-      Service.client.get(`/auth/members/${memberid}/deactivate`).then((res) => {
-        console.log(res.data);
+      Service.client.delete(`/auth/members/${memberid}`).then((res) => {
         setAllMemberList(res.data);
+        getMemberData();
       });
       setSbOpen(true);
       setSnackbar({
@@ -187,12 +195,12 @@ const AdminHumanResourcePage = () => {
         message: "Member is deactivated",
         severity: "success",
       });
-      getMemberData();
+
       console.log("member is deactivated");
     } else {
-      Service.client.get(`/auth/members/${memberid}/activate`).then((res) => {
-        console.log(res.data);
+      Service.client.post(`/auth/members/${memberid}/activate`).then((res) => {
         setAllMemberList(res.data);
+        //getMemberData();
       });
       setSbOpen(true);
       setSnackbar({
@@ -200,7 +208,7 @@ const AdminHumanResourcePage = () => {
         message: "Member is activated",
         severity: "success",
       });
-      getMemberData();
+
       console.log("member is activated");
     }
   };
@@ -376,16 +384,20 @@ const AdminHumanResourcePage = () => {
 
   for (var j = 0; j < allAdminList.length; j++) {
     adminRows[j].date_joined = formatDate(allAdminList[j].date_joined);
+    adminRows[j].first_name = allAdminList[j].first_name
+      ? allAdminList[j].first_name
+      : "-";
+    adminRows[j].last_name = allAdminList[j].last_name
+      ? allAdminList[j].last_name
+      : "-";
   }
 
   const getAdminData = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      // console.log(`profile useeffect userid = ${userid}`);
       Service.client
-        .get(`/auth/partners`)
+        .get(`/auth/admins`)
         .then((res) => {
-          setSelectedAdmin(res.data);
+          setAllAdminList(res.data);
         })
         .catch((err) => {
           //setProfile(null);
@@ -489,7 +501,7 @@ const AdminHumanResourcePage = () => {
           open={openMemberDialog}
           onClose={handleCloseMember}
           aria-labelledby="form-dialog-title"
-          maxWidth="sm"
+          maxWidth="md"
           fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
@@ -503,41 +515,43 @@ const AdminHumanResourcePage = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              <Grid container>
-                <Grid item xs={3}>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                </Grid>
-                <Grid item xs={7}>
-                  {selectedMember.id} <br />
-                  {selectedMember.first_name} <br />
-                  {selectedMember.last_name} <br />
-                  {selectedMember.email} <br />
-                  {selectedMember.is_active === true
-                    ? "Active"
-                    : "Inactive"}{" "}
-                  <br />
-                  {formatDate(selectedMember.date_joined)} <br />
-                </Grid>
-                <Grid item xs={2}>
-                  <img src={selectedMember.profile_photo} alt=""></img>
-                </Grid>
+            <Grid container>
+              <Grid item xs={2}>
+                ID <br />
+                First Name <br />
+                Last Name <br />
+                Email <br />
+                Status <br />
+                Date Joined <br />
               </Grid>
-              <be /> <br />
-              <Typography variant="h6">Achievements</Typography>
-            </DialogContentText>
+              <Grid item xs={6}>
+                {selectedMember.id} <br />
+                {selectedMember.first_name} <br />
+                {selectedMember.last_name} <br />
+                {selectedMember.email} <br />
+                {selectedMember.is_active === true ? "Active" : "Inactive"}{" "}
+                <br />
+                {formatDate(selectedMember.date_joined)} <br />
+              </Grid>
+              <Grid item xs={4}>
+                <img src={selectedMember.profile_photo} alt=""></img>
+              </Grid>
+            </Grid>
+            <br /> <br />
+            <Typography variant="h6">Achievements</Typography>
           </DialogContent>
           <DialogActions>
             <Button
-              onClick={() => handleMemberStatus(selectedMember.is_active)}
+              onClick={(e) =>
+                handleMemberStatus(
+                  e,
+                  selectedMember.is_active,
+                  selectedMember.id
+                )
+              }
               color="secondary"
             >
-              {selectedMember.is_active === true ? "Deactivate" : "Activate"}
+              {selectedMember.is_active ? "Deactivate" : "Activate"}
             </Button>
           </DialogActions>
         </Dialog>
@@ -574,7 +588,7 @@ const AdminHumanResourcePage = () => {
           open={openPartnerDialog}
           onClose={handleClosePartner}
           aria-labelledby="form-dialog-title"
-          maxWidth="sm"
+          maxWidth="md"
           fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
@@ -588,48 +602,71 @@ const AdminHumanResourcePage = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              <Grid container>
-                <Grid item xs={3}>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                  Job Title <br />
-                  Bio <br />
-                  Organisation <br />
-                </Grid>
-                <Grid item xs={7}>
-                  {selectedPartner.id} <br />
-                  {selectedPartner.first_name} <br />
-                  {selectedPartner.last_name} <br />
-                  {selectedPartner.email} <br />
-                  {selectedPartner.is_active === true
-                    ? "Active"
-                    : "Inactive"}{" "}
-                  <br />
-                  {formatDate(selectedPartner.date_joined)} <br />
-                  {selectedPartner.partner.job_title} <br />
-                  {selectedPartner.partner.bio} <br />
-                  {selectedPartner.partner.organization.organization_name}{" "}
-                  <br />
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography variant="h6">Profile Pic</Typography>
-                  <img src={selectedPartner.profile_photo} alt=""></img>
-                  <Typography variant="h6">Company Logo</Typography>
-                  <img
-                    src={
-                      selectedPartner.partner.organization.organization_photo
-                    }
-                    alt=""
-                  ></img>
-                </Grid>
+            <Grid container>
+              <Grid item xs={2}>
+                ID <br />
+                First Name <br />
+                Last Name <br />
+                Email <br />
+                Status <br />
+                Date Joined <br />
+                {!selectedPartner ? (
+                  <Typography>
+                    Job Title <br />
+                    Bio <br />
+                    Organisation <br />
+                  </Typography>
+                ) : (
+                  ""
+                )}
               </Grid>
-              <br />
-            </DialogContentText>
+              <Grid item xs={6}>
+                {selectedPartner.id} <br />
+                {selectedPartner.first_name} <br />
+                {selectedPartner.last_name} <br />
+                {selectedPartner.email} <br />
+                {selectedPartner.is_active === true
+                  ? "Active"
+                  : "Inactive"}{" "}
+                <br />
+                {formatDate(selectedPartner.date_joined)} <br />
+                {!selectedPartner ? (
+                  <Typography>
+                    {selectedPartner.partner.job_title}
+                    <br />
+                    {selectedPartner.partner.bio} <br />
+                    {selectedPartner.partner.organization.organization_name}
+                    <br />
+                  </Typography>
+                ) : (
+                  ""
+                )}
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="h6">Profile Pic</Typography>
+                <img
+                  src={selectedPartner.profile_photo}
+                  alt=""
+                  width="200px"
+                ></img>
+
+                {!selectedPartner ? (
+                  <Fragment>
+                    <Typography variant="h6">Company Logo</Typography>
+                    <img
+                      src={
+                        selectedPartner.partner.organization.organization_photo
+                      }
+                      alt=""
+                      width="200px"
+                    ></img>
+                  </Fragment>
+                ) : (
+                  ""
+                )}
+              </Grid>
+            </Grid>
+            <br />
           </DialogContent>
           <DialogActions>
             <Button
@@ -687,35 +724,31 @@ const AdminHumanResourcePage = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              <Grid container>
-                <Grid item xs={3}>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                </Grid>
-                <Grid item xs={7}>
-                  {selectedAdmin.id} <br />
-                  {selectedAdmin.first_name} <br />
-                  {selectedAdmin.last_name} <br />
-                  {selectedAdmin.email} <br />
-                  {selectedAdmin.is_active === true
-                    ? "Active"
-                    : "Inactive"}{" "}
-                  <br />
-                  {formatDate(selectedAdmin.date_joined)} <br />
-                  <br />
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography variant="h6">Profile Pic</Typography>
-                  <img src={selectedAdmin.profile_photo} alt=""></img>
-                </Grid>
+            <Grid container>
+              <Grid item xs={2}>
+                ID <br />
+                First Name <br />
+                Last Name <br />
+                Email <br />
+                Status <br />
+                Date Joined <br />
               </Grid>
-              <be />
-            </DialogContentText>
+              <Grid item xs={6}>
+                {selectedAdmin.id} <br />
+                {selectedAdmin.first_name} <br />
+                {selectedAdmin.last_name} <br />
+                {selectedAdmin.email} <br />
+                {selectedAdmin.is_active === true ? "Active" : "Inactive"}{" "}
+                <br />
+                {formatDate(selectedAdmin.date_joined)} <br />
+                <br />
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="h6">Profile Pic</Typography>
+                <img src={selectedAdmin.profile_photo} alt=""></img>
+              </Grid>
+            </Grid>
+            <br />
           </DialogContent>
           <DialogActions>
             <Button

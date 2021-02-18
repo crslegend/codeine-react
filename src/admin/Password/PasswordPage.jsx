@@ -47,66 +47,59 @@ const AdminPasswordPage = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <Paper elevation={0} className={classes.paper}>
+      <form onSubmit={handleSubmit} noValidate>
+        <Paper elevation={0} className={classes.paper} autoComplete="off">
           <Grid container>
-            <Grid container>
-              <Grid xs={6}>
-                <form className={classes.form} noValidate autoComplete="off">
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="currentpassword"
-                      label="Current Password"
-                      name="currentpassword"
-                      autoComplete="currentpassword"
-                      required
-                      fullWidth
-                      // value={loginDetails.email}
-                      // error={emailError}
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="newpassword"
-                      label="New Password"
-                      name="newpassword"
-                      autoComplete="newpassword"
-                      required
-                      fullWidth
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="repeatpassword"
-                      label="Repeat Password"
-                      name="repeatpassword"
-                      autoComplete="repeatpassword"
-                      required
-                      fullWidth
-                    />
-                  </div>
+            <Grid item xs={6}>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="currentpassword"
+                  label="Current Password"
+                  name="currentpassword"
+                  autoComplete="currentpassword"
+                  required
+                  fullWidth
+                  // value={loginDetails.email}
+                  // error={emailError}
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="newpassword"
+                  label="New Password"
+                  name="newpassword"
+                  autoComplete="newpassword"
+                  required
+                  fullWidth
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="repeatpassword"
+                  label="Repeat Password"
+                  name="repeatpassword"
+                  autoComplete="repeatpassword"
+                  required
+                  fullWidth
+                />
+              </div>
 
-                  <Button
-                    disabled={loading}
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    type="submit"
-                  >
-                    {loading ? (
-                      <CircularProgress
-                        size="1.5rem"
-                        style={{ color: "#FFF" }}
-                      />
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </form>
-              </Grid>
+              <Button
+                disabled={loading}
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                type="submit"
+              >
+                {loading ? (
+                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </Grid>
           </Grid>
         </Paper>

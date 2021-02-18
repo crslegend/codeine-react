@@ -128,130 +128,123 @@ const AdminProfilePage = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
           <Grid container>
-            <Grid container>
-              <Grid xs={6}>
-                <form className={classes.form} noValidate autoComplete="off">
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="id"
-                      label="ID"
-                      name="id"
-                      autoComplete="id"
-                      fullWidth
-                      disabled
-                      value={profileDetails.id}
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="first_name"
-                      label="First Name"
-                      name="first_Name"
-                      autoComplete="first_name"
-                      required
-                      fullWidth
-                      value={profileDetails.first_name}
-                      // error={firstNameError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          firstname: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="lastname"
-                      label="Last Name"
-                      name="lastname"
-                      autoComplete="lastname"
-                      required
-                      fullWidth
-                      value={profileDetails.last_name}
-                      // error={lastNameError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          lastname: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="email"
-                      label="Email"
-                      name="email"
-                      autoComplete="email"
-                      required
-                      fullWidth
-                      value={profileDetails.email}
-                      // error={emailError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          email: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
+            <Grid item xs={6}>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="id"
+                  label="ID"
+                  name="id"
+                  autoComplete="id"
+                  fullWidth
+                  disabled
+                  value={profileDetails.id}
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="first_name"
+                  label="First Name"
+                  name="first_Name"
+                  autoComplete="first_name"
+                  required
+                  fullWidth
+                  value={profileDetails.first_name}
+                  // error={firstNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      firstname: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="lastname"
+                  label="Last Name"
+                  name="lastname"
+                  autoComplete="lastname"
+                  required
+                  fullWidth
+                  value={profileDetails.last_name}
+                  // error={lastNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      lastname: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="email"
+                  label="Email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  fullWidth
+                  value={profileDetails.email}
+                  // error={emailError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      email: event.target.value,
+                    })
+                  }
+                />
+              </div>
 
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="date_joined"
-                      label="Date Joined"
-                      name="date_joined"
-                      autoComplete="date_joined"
-                      required
-                      fullWidth
-                      disabled
-                      value={formatDate(profileDetails.date_joined)}
-                    />
-                  </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="date_joined"
+                  label="Date Joined"
+                  name="date_joined"
+                  autoComplete="date_joined"
+                  required
+                  fullWidth
+                  disabled
+                  value={formatDate(profileDetails.date_joined)}
+                />
+              </div>
 
-                  <Button
-                    disabled={loading}
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    type="submit"
-                  >
-                    {loading ? (
-                      <CircularProgress
-                        size="1.5rem"
-                        style={{ color: "#FFF" }}
-                      />
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </form>
-              </Grid>
-              <Grid xs={6}>
-                Profile Pic
-                <Button onClick={(e) => setUploadOpen(true)}>
-                  Upload profile pic
-                </Button>
-                <a href="#pablo" onClick={(e) => setUploadOpen(true)}>
-                  <img
-                    src={
-                      profilePhoto.length <= 0
-                        ? profileDetails && profileDetails.profile_photo
-                        : profilePhoto[0].data
-                    }
-                    alt=""
-                  />
-                </a>
-              </Grid>
+              <Button
+                disabled={loading}
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                type="submit"
+              >
+                {loading ? (
+                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              Profile Pic
+              <Button onClick={(e) => setUploadOpen(true)}>
+                Upload profile pic
+              </Button>
+              <a href="#pablo" onClick={(e) => setUploadOpen(true)}>
+                <img
+                  src={
+                    profilePhoto.length <= 0
+                      ? profileDetails && profileDetails.profile_photo
+                      : profilePhoto[0].data
+                  }
+                  alt=""
+                />
+              </a>
             </Grid>
           </Grid>
         </Paper>
