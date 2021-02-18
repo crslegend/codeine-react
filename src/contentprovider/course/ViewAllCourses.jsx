@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = useStyles();
-  // const history = useHistory();
+  const history = useHistory();
 
   const [allCourses, setAllCourses] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -111,7 +111,11 @@ const ViewAllCourses = () => {
           allCourses.map((course, index) => {
             return (
               <Card key={index} className={classes.card}>
-                <CardActionArea>
+                <CardActionArea
+                  onClick={() =>
+                    history.push(`/partner/home/content/view/${course.id}`)
+                  }
+                >
                   <CardMedia
                     className={classes.media}
                     image={course && course.thumbnail}
