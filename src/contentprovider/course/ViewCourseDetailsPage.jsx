@@ -262,12 +262,18 @@ const ViewCourseDetailsPage = () => {
               })}
           </div>
           <div className={classes.courseContent}>
-            <Typography
-              variant="h5"
-              style={{ fontWeight: 600, paddingBottom: "10px" }}
-            >
-              Course Content
-            </Typography>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Course Content
+              </Typography>
+              <Button variant="contained" color="primary">
+                View All Quizzes
+              </Button>
+            </div>
+
             <Typography variant="body2" style={{ paddingBottom: "5px" }}>
               {course &&
                 (course.chapters.length === 1
