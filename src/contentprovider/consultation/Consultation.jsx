@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Typography,
@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { AttachMoney } from "@material-ui/icons";
-import Service from "../../AxiosService";
 
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
@@ -19,8 +18,7 @@ import AddConsultation from "./AddConsultation";
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
-    paddingTop: "10px",
-    marginLeft: "50px",
+    marginLeft: "20px",
   },
   rate: {
     marginTop: "40px",

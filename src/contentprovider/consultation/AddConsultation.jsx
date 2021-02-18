@@ -72,9 +72,9 @@ const AddConsultation = () => {
   const handleSubmit = () => {
     setOpen(false);
     console.log(slot);
-    // Service.client.post("/consultations", slot).catch((error) => {
-    //   console.log(error);
-    // });
+    Service.client.post("/consultations", slot).catch((error) => {
+      console.log(error);
+    });
   };
 
   return (

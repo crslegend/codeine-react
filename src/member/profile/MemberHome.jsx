@@ -4,15 +4,30 @@ import Navbar from "../../components/Navbar";
 import {
   BrowserRouter,
   Switch,
-  Link,
   NavLink,
   useHistory,
   Redirect,
 } from "react-router-dom";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  ListItem,
+  Typography,
+  Divider,
+} from "@material-ui/core";
 import PrivateRoute from "../../components/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
-import { Dashboard, Timeline } from "@material-ui/icons";
+import {
+  Dashboard,
+  Timeline,
+  PublicOutlined,
+  Class,
+  HelpOutline,
+  LockOutlined,
+  PersonOutlineOutlined,
+  Assignment,
+  Payment,
+} from "@material-ui/icons";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -80,23 +95,6 @@ const MemberLanding = () => {
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
-          onClick={() => {
-            history.push("/");
-          }}
-          style={{
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Home
-          </Typography>
-        </Button>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
           style={{
             backgroundColor: "#437FC7",
             textTransform: "capitalize",
@@ -147,7 +145,7 @@ const MemberLanding = () => {
         className={classes.listItem}
         button
       >
-        <Dashboard className={classes.listIcon} />
+        <Assignment className={classes.listIcon} />
         <Typography variant="body1">Courses</Typography>
       </ListItem>
       <ListItem
@@ -160,13 +158,74 @@ const MemberLanding = () => {
         <Timeline className={classes.listIcon} />
         <Typography variant="body1">Consultations</Typography>
       </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/member/home/certification"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <Class className={classes.listIcon} />
+        <Typography variant="body1">Certifications</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/member/home/project"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <PublicOutlined className={classes.listIcon} />
+        <Typography variant="body1">Industry Projects</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/member/home/helpdesk"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <HelpOutline className={classes.listIcon} />
+        <Typography variant="body1">Helpdesk</Typography>
+      </ListItem>
+      <Divider />
+      <ListItem
+        component={NavLink}
+        to="/member/home/profile"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <PersonOutlineOutlined className={classes.listIcon} />
+        <Typography variant="body1">Profile</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/member/home/password"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <LockOutlined className={classes.listIcon} />
+        <Typography variant="body1">Password</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/member/home/transaction"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <Payment className={classes.listIcon} />
+        <Typography variant="body1">Payment Transaction</Typography>
+      </ListItem>
     </Fragment>
   );
 
   const navLogo = (
     <Fragment>
-      <Link
-        to="/member/home"
+      <a
+        href="/"
         style={{
           paddingTop: "10px",
           paddingBottom: "10px",
@@ -175,7 +234,7 @@ const MemberLanding = () => {
         }}
       >
         <img src={logo} width="120%" alt="" />
-      </Link>
+      </a>
     </Fragment>
   );
 
@@ -211,8 +270,43 @@ const MemberLanding = () => {
             />
             <PrivateRoute
               exact
+              path="/member/home/course"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
               path="/member/home/consultation"
               render={() => <Consultation />}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/certification"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/project"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/helpdesk"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/profile"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/password"
+              render={() => <div></div>}
+            />
+            <PrivateRoute
+              exact
+              path="/member/home/transaction"
+              render={() => <div></div>}
             />
             <Redirect from="/member/home" to="/member/home/dashboard" />
           </Switch>

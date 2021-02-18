@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Paper } from "@material-ui/core";
 import {
   ViewState,
@@ -18,19 +18,13 @@ import {
   AppointmentTooltip,
   ConfirmationDialog,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { appointments } from "./Data";
+import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
+import { consults } from "./Data";
 
 const messages = {
   moreInformationLabel: "",
 };
-
-const views = [
-  {
-    type: "month",
-    name: "Auto Mode",
-    maxAppointmentsPerCell: "2",
-  },
-];
 
 const TextEditor = (props) => {
   // eslint-disable-next-line react/destructuring-assignment
@@ -40,13 +34,117 @@ const TextEditor = (props) => {
   return <AppointmentForm.TextEditor {...props} />;
 };
 
+const mapAppointmentData = (item) => ({
+  id: item.id,
+  title: !item.member
+    ? "Open"
+    : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
+  startDate: new Date(item.start_time),
+  endDate: new Date(item.end_time),
+  meeting_link: item.meeting_link,
+  rejected: item.is_rejected,
+  confirmed: item.is_confirmed,
+  member: item.member,
+});
+
+const initialState = {
+  consultations: [],
+  loading: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setLoading":
+      return { ...state, loading: action.payload };
+    case "setConsultations":
+      return {
+        ...state,
+        consultations: action.payload.map(mapAppointmentData),
+      };
+    default:
+      return state;
+  }
+};
+
 const Calendar = () => {
-  const [consultations, setConsultations] = useState(appointments);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { consultations, loading } = state;
+  //const [consultations, setConsultations] = useState(consults);
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
-
   const [allowDeleting, setAllowDeleting] = useState(true);
   const [allowUpdating, setAllowUpdating] = useState(true);
+
+  const setConsultations = React.useCallback(
+    (nextConsultations) =>
+      dispatch({
+        type: "setConsultations",
+        payload: nextConsultations,
+      }),
+    [dispatch]
+  );
+
+  const setLoading = React.useCallback(
+    (nextLoading) =>
+      dispatch({
+        type: "setLoading",
+        payload: nextLoading,
+      }),
+    [dispatch]
+  );
+
+  /*useEffect(() => {
+    setLoading(true);
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_partner_id;
+      Service.client
+        .get("/consultations", { params: { partner__user__id: userid } })
+        .then((res) => {
+          let i = 0;
+          res.data.forEach((item) => {
+            const slot = {
+              id: i,
+              title: !item.member
+                ? "Open"
+                : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
+              startDate: new Date(item.start_time),
+              endDate: new Date(item.end_time),
+              meeting_link: item.meeting_link,
+              rejected: item.is_rejected,
+              confirmed: item.is_confirmed,
+              member: item.member,
+            };
+            console.log(slot);
+            consultations.push(slot);
+            i += 1;
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          setConsultations(null);
+        });
+    }
+  }, [consultations, setConsultations, setLoading]);*/
+
+  useEffect(() => {
+    setLoading(true);
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_partner_id;
+      Service.client
+        .get("/consultations", { params: { partner__user__id: userid } })
+        .then((res) => {
+          setTimeout(() => {
+            setConsultations(res.data);
+            setLoading(false);
+          }, 600);
+        })
+        .catch((error) => {
+          setConsultations(null);
+        });
+    }
+  }, [setConsultations, setLoading]);
+
+  console.log(consultations);
 
   const BasicLayout = ({
     onFieldChange,
@@ -118,29 +216,6 @@ const Calendar = () => {
       </AppointmentForm.BasicLayout>
     );
   };
-
-  /*useEffect(() => {
-    Service.client
-      .get("/contentProvider/consultations")
-      .then((res) => {
-        setData(res.data);
-        console.log(res.data);
-        res.data.map(
-          (item) =>
-            setSlot({
-              ...slot,
-              title: !item.member
-                ? "Open"
-                : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
-            }),
-          console.log(slot),
-          consultations.push(slot)
-        );
-      })
-      .catch((error) => {
-        setData(null);
-      });
-  }, []);*/
 
   const handleCurrentViewChange = (newViewName) => {
     setCurrentViewName(newViewName);

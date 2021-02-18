@@ -1,4 +1,4 @@
-export const appointments = [
+export const consults = [
   {
     id: 0,
     title: "Website Re-Design Plan",
