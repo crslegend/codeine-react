@@ -41,6 +41,7 @@ import {
 import LinkMui from "@material-ui/core/Link";
 
 import components from "./components/NavbarComponents";
+import TakeQuiz from "./components/TakeQuiz";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -245,7 +246,6 @@ const EnrollCourse = () => {
                       }
                     />
                     <Paper
-                      elevation={3}
                       style={{
                         marginTop: "20px",
                         padding: "30px",
@@ -264,7 +264,31 @@ const EnrollCourse = () => {
                   </div>
                 );
               } else if (chosenCourseMaterial.material_type === "QUIZ") {
-                return <div></div>;
+                return (
+                  <div>
+                    <TakeQuiz
+                      quiz={
+                        chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
+                      }
+                    />
+                    <Paper
+                      style={{
+                        marginTop: "20px",
+                        padding: "30px",
+                      }}
+                    >
+                      <Typography
+                        variant="h4"
+                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                      >
+                        {chosenCourseMaterial.title}
+                      </Typography>
+                      <Typography variant="body2">
+                        {chosenCourseMaterial.description}
+                      </Typography>
+                    </Paper>
+                  </div>
+                );
               }
             })()}
           </div>
