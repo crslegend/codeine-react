@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, Avatar } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -11,13 +11,11 @@ import SearchBar from "material-ui-search-bar";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import jwt_decode from "jwt-decode";
 import Toast from "../../components/Toast.js";
@@ -46,6 +44,11 @@ const styles = makeStyles((theme) => ({
   },
   tabPanel: {
     padding: "0px",
+  },
+  avatar: {
+    fontSize: "50px",
+    width: "100px",
+    height: "100px",
   },
 }));
 
@@ -118,6 +121,25 @@ const AdminHumanResourcePage = () => {
     return "";
   };
 
+  const formatStatus = (status) => {
+    if (status) {
+      return "Active";
+    } else {
+      return "Deactivated";
+    }
+  };
+
+  const formatNull = (input) => {
+    if (input) {
+      if (input.organization_name) {
+        return input.organization_name;
+      }
+      return input;
+    } else {
+      return "-";
+    }
+  };
+
   useEffect(() => {
     getMemberData();
     getPartnerData();
@@ -148,33 +170,38 @@ const AdminHumanResourcePage = () => {
     {
       field: "date_joined",
       headerName: "Date Joined",
+      valueFormatter: (params) => formatDate(params.value),
       width: 200,
     },
     {
       field: "is_active",
-      headerName: "Is Active",
+      headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          {params.value ? (
+            <Typography style={{ color: "green" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          ) : (
+            <Typography style={{ color: "red" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          )}
+        </strong>
+      ),
       width: 160,
     },
   ];
 
   let memberRows = allMembersList;
 
-  for (var h = 0; h < allMembersList.length; h++) {
-    memberRows[h].date_joined = formatDate(allMembersList[h].date_joined);
-  }
-
   const getMemberData = () => {
-    memberRows = allMembersList;
-
-    for (var h = 0; h < allMembersList.length; h++) {
-      memberRows[h].date_joined = formatDate(allMembersList[h].date_joined);
-    }
-
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
         .get(`/auth/members`)
         .then((res) => {
           setAllMemberList(res.data);
+          memberRows = allMembersList;
         })
         .catch((err) => {
           //setProfile(null);
@@ -185,9 +212,11 @@ const AdminHumanResourcePage = () => {
   const handleMemberStatus = (e, status, memberid) => {
     e.preventDefault();
     if (status) {
-      Service.client.delete(`/auth/members/${memberid}`).then((res) => {
-        setAllMemberList(res.data);
-        getMemberData();
+      Service.client.delete(`/auth/members/${memberid}`).then(() => {
+        Service.client.get(`auth/memebers/${memberid}`).then((res1) => {
+          setSelectedMember(res1.data);
+          getMemberData();
+        });
       });
       setSbOpen(true);
       setSnackbar({
@@ -199,8 +228,8 @@ const AdminHumanResourcePage = () => {
       console.log("member is deactivated");
     } else {
       Service.client.post(`/auth/members/${memberid}/activate`).then((res) => {
-        setAllMemberList(res.data);
-        //getMemberData();
+        setSelectedMember(res.data);
+        getMemberData();
       });
       setSbOpen(true);
       setSnackbar({
@@ -208,8 +237,6 @@ const AdminHumanResourcePage = () => {
         message: "Member is activated",
         severity: "success",
       });
-
-      console.log("member is activated");
     }
   };
 
@@ -247,8 +274,18 @@ const AdminHumanResourcePage = () => {
 
   const partnerColumns = [
     { field: "id", headerName: "ID", width: 300 },
-    { field: "first_name", headerName: "First name", width: 130 },
-    { field: "last_name", headerName: "Last name", width: 130 },
+    {
+      field: "first_name",
+      headerName: "First name",
+      width: 130,
+      valueFormatter: (params) => formatNull(params.value),
+    },
+    {
+      field: "last_name",
+      headerName: "Last name",
+      width: 130,
+      valueFormatter: (params) => formatNull(params.value),
+    },
     {
       field: "email",
       headerName: "Email",
@@ -257,38 +294,36 @@ const AdminHumanResourcePage = () => {
     {
       field: "date_joined",
       headerName: "Date Joined",
+      valueFormatter: (params) => formatDate(params.value),
       width: 200,
     },
     {
       field: "is_active",
-      headerName: "Is Active",
+      headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          {params.value ? (
+            <Typography style={{ color: "green" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          ) : (
+            <Typography style={{ color: "red" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          )}
+        </strong>
+      ),
       width: 160,
     },
     {
-      field: "job_title",
-      headerName: "Job Title",
-      width: 160,
-    },
-    {
-      field: "organization_name",
+      field: "partner",
       headerName: "Organisation",
+      valueFormatter: (params) => formatNull(params.value.organization),
       width: 160,
     },
   ];
 
-  const partnerRows = allPartnerList;
-
-  for (var i = 0; i < allPartnerList.length; i++) {
-    partnerRows[i].date_joined = formatDate(allPartnerList[i].date_joined);
-    partnerRows[i].organization_name =
-      allPartnerList[i].partner.organization &&
-      allPartnerList[i].partner.organization.organization_name
-        ? allPartnerList[i].partner.organization.organization_name
-        : "-";
-    partnerRows[i].job_title = allPartnerList[i].partner.job_title
-      ? allPartnerList[i].partner.job_title
-      : "-";
-  }
+  let partnerRows = allPartnerList;
 
   const getPartnerData = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -296,6 +331,7 @@ const AdminHumanResourcePage = () => {
         .get(`/auth/partners`)
         .then((res) => {
           setAllPartnerList(res.data);
+          partnerRows = allPartnerList;
         })
         .catch((err) => {
           //setProfile(null);
@@ -303,34 +339,34 @@ const AdminHumanResourcePage = () => {
     }
   };
 
-  const handlePartnerStatus = (status, partnerid) => {
+  const handlePartnerStatus = (e, status, partnerid) => {
     if (status) {
+      Service.client.delete(`/auth/partners/${partnerid}`).then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Partner is deactivated",
+          severity: "success",
+        });
+        setSelectedPartner(res.data);
+        getPartnerData();
+      });
+
+      console.log("Partner is deactivated");
+    } else {
       Service.client
-        .get(`/auth/partners/${partnerid}/deactivate`)
+        .post(`/auth/partners/${partnerid}/activate`)
         .then((res) => {
           setSbOpen(true);
           setSnackbar({
             ...snackbar,
-            message: "Partner is deactivated",
+            message: "Partner is activated",
             severity: "success",
           });
-          console.log(res.data);
-          setAllPartnerList(res.data);
+          setSelectedPartner(res.data);
+          getPartnerData();
         });
-      getPartnerData();
-      console.log("Partner is deactivated");
-    } else {
-      Service.client.get(`/auth/partners/${partnerid}/activate`).then((res) => {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Partner is activated",
-          severity: "success",
-        });
-        console.log(res.data);
-        setAllPartnerList(res.data);
-      });
-      getPartnerData();
+
       console.log("Partner is activated");
     }
   };
@@ -361,8 +397,18 @@ const AdminHumanResourcePage = () => {
 
   const adminColumns = [
     { field: "id", headerName: "ID", width: 300 },
-    { field: "first_name", headerName: "First name", width: 130 },
-    { field: "last_name", headerName: "Last name", width: 130 },
+    {
+      field: "first_name",
+      headerName: "First name",
+      valueFormatter: (params) => formatNull(params.value),
+      width: 130,
+    },
+    {
+      field: "last_name",
+      headerName: "Last name",
+      valueFormatter: (params) => formatNull(params.value),
+      width: 130,
+    },
     {
       field: "email",
       headerName: "Email",
@@ -371,11 +417,25 @@ const AdminHumanResourcePage = () => {
     {
       field: "date_joined",
       headerName: "Date Joined",
+      valueFormatter: (params) => formatDate(params.value),
       width: 200,
     },
     {
       field: "is_active",
-      headerName: "Is Active",
+      headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          {params.value ? (
+            <Typography style={{ color: "green" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          ) : (
+            <Typography style={{ color: "red" }}>
+              {formatStatus(params.value)}
+            </Typography>
+          )}
+        </strong>
+      ),
       width: 160,
     },
   ];
@@ -405,28 +465,30 @@ const AdminHumanResourcePage = () => {
     }
   };
 
-  const handleAdminStatus = (status, adminid) => {
+  const handleAdminStatus = (e, status, adminid) => {
     if (status) {
-      // Service.client.get(`/auth/partners/${adminid}/activate`).then((res) => {
-      //   console.log(res.data);
-      //   setAllAdminList(res.data);
-      // });
+      Service.client.delete(`/auth/admins/${adminid}`).then((res) => {
+        setSelectedAdmin(res.data);
+        getAdminData();
+      });
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
         message: "Admin is deactivated",
         severity: "success",
       });
-      getAdminData();
       console.log("Admin is deactivated");
     } else {
+      Service.client.post(`/auth/admins/${adminid}/activate`).then((res) => {
+        setSelectedAdmin(res.data);
+        getAdminData();
+      });
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
         message: "Admin is activated",
         severity: "success",
       });
-      getAdminData();
       console.log("Admin is activated");
     }
   };
@@ -435,12 +497,12 @@ const AdminHumanResourcePage = () => {
   const [openAdminDialog, setOpenAdminDialog] = useState(false);
 
   const handleClickOpenAdmin = (e) => {
-    setSelectedPartner(e.row);
-    setOpenPartnerDialog(true);
+    setSelectedAdmin(e.row);
+    setOpenAdminDialog(true);
   };
 
   const handleCloseAdmin = () => {
-    setOpenPartnerDialog(false);
+    setOpenAdminDialog(false);
   };
 
   return (
@@ -470,32 +532,40 @@ const AdminHumanResourcePage = () => {
 
       {/* Members Tab */}
       <TabPanel value={value} index={0}>
-        <div style={{ height: "700px", width: "100%" }}>
-          <SearchBar
-            style={{
-              width: "50%",
-              marginBottom: "20px",
-              elavation: "0px",
-            }}
-            placeholder="Search members..."
-            value={searchValue}
-            onChange={(newValue) => setSearchValue(newValue)}
-            //onRequestSearch={getSearchResults}
-            onCancelSearch={() => setSearchValue("")}
-          />
+        <Grid container>
+          <Grid item xs={12}>
+            <SearchBar
+              style={{
+                width: "50%",
+                marginBottom: "20px",
+                elavation: "0px",
+              }}
+              placeholder="Search members..."
+              value={searchValue}
+              onChange={(newValue) => setSearchValue(newValue)}
+              //onRequestSearch={getSearchResults}
+              onCancelSearch={() => setSearchValue("")}
+            />
+          </Grid>
 
-          <DataGrid
-            rows={memberRows}
-            columns={memberColumns.map((column) => ({
-              ...column,
-              //disableClickEventBubbling: true,
-            }))}
-            pageSize={10}
-            checkboxSelection
-            disableSelectionOnClick
-            onRowClick={(e) => handleClickOpenMember(e)}
-          />
-        </div>
+          <Grid
+            item
+            xs={12}
+            style={{ height: "calc(100vh - 250px)", width: "100%" }}
+          >
+            <DataGrid
+              rows={memberRows}
+              columns={memberColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              //checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenMember(e)}
+            />
+          </Grid>
+        </Grid>
 
         <Dialog
           open={openMemberDialog}
@@ -517,24 +587,43 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                ID <br />
-                First Name <br />
-                Last Name <br />
-                Email <br />
-                Status <br />
-                Date Joined <br />
+                <Typography>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                </Typography>
               </Grid>
               <Grid item xs={6}>
-                {selectedMember.id} <br />
-                {selectedMember.first_name} <br />
-                {selectedMember.last_name} <br />
-                {selectedMember.email} <br />
-                {selectedMember.is_active === true ? "Active" : "Inactive"}{" "}
-                <br />
-                {formatDate(selectedMember.date_joined)} <br />
+                <Typography>
+                  {selectedMember.id} <br />
+                  {selectedMember.first_name} <br />
+                  {selectedMember.last_name} <br />
+                  {selectedMember.email} <br />
+                </Typography>
+                {selectedMember.is_active ? (
+                  <Typography style={{ color: "green" }}>Active</Typography>
+                ) : (
+                  <Typography style={{ color: "red" }}>Deactived</Typography>
+                )}{" "}
+                <Typography>
+                  {formatDate(selectedMember.date_joined)} <br />
+                </Typography>
               </Grid>
               <Grid item xs={4}>
-                <img src={selectedMember.profile_photo} alt=""></img>
+                {selectedMember.profile_photo ? (
+                  <Avatar
+                    src={selectedMember.profile_photo}
+                    alt=""
+                    className={classes.avatar}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {selectedMember.email.charAt(0)}
+                  </Avatar>
+                )}
               </Grid>
             </Grid>
             <br /> <br />
@@ -549,9 +638,12 @@ const AdminHumanResourcePage = () => {
                   selectedMember.id
                 )
               }
-              color="secondary"
             >
-              {selectedMember.is_active ? "Deactivate" : "Activate"}
+              {selectedMember.is_active ? (
+                <div style={{ color: "red" }}>Deactivate</div>
+              ) : (
+                <div style={{ color: "green" }}>Activate</div>
+              )}
             </Button>
           </DialogActions>
         </Dialog>
@@ -559,31 +651,43 @@ const AdminHumanResourcePage = () => {
 
       {/* Partners Tab */}
       <TabPanel value={value} index={1}>
-        <div style={{ height: "700px", width: "100%" }}>
-          <SearchBar
-            style={{
-              width: "50%",
-              marginBottom: "20px",
-            }}
-            placeholder="Search partners..."
-            value={searchValuePartner}
-            onChange={(newValue) => setSearchValuePartner(newValue)}
-            //onRequestSearch={getSearchResults}
-            onCancelSearch={() => setSearchValuePartner("")}
-          />
+        <Grid container>
+          <Grid item xs={10}>
+            <SearchBar
+              style={{
+                width: "60%",
+                marginBottom: "20px",
+              }}
+              placeholder="Search partners..."
+              value={searchValuePartner}
+              onChange={(newValue) => setSearchValuePartner(newValue)}
+              //onRequestSearch={getSearchResults}
+              onCancelSearch={() => setSearchValuePartner("")}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <Button>Email Selected Partners</Button>
+          </Grid>
 
-          <DataGrid
-            rows={partnerRows}
-            columns={partnerColumns.map((column) => ({
-              ...column,
-              //disableClickEventBubbling: true,
-            }))}
-            pageSize={10}
-            checkboxSelection
-            disableSelectionOnClick
-            onRowClick={(e) => handleClickOpenPartner(e)}
-          />
-        </div>
+          <Grid
+            item
+            xs={12}
+            style={{ height: "calc(100vh - 250px)", width: "100%" }}
+          >
+            <DataGrid
+              rows={partnerRows}
+              columns={partnerColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenPartner(e)}
+            />
+          </Grid>
+        </Grid>
+
         <Dialog
           open={openPartnerDialog}
           onClose={handleClosePartner}
@@ -604,13 +708,18 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                ID <br />
-                First Name <br />
-                Last Name <br />
-                Email <br />
-                Status <br />
-                Date Joined <br />
-                {!selectedPartner ? (
+                <Typography>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                </Typography>
+
+                <br />
+
+                {selectedPartner.partner.organization ? (
                   <Typography>
                     Job Title <br />
                     Bio <br />
@@ -621,16 +730,28 @@ const AdminHumanResourcePage = () => {
                 )}
               </Grid>
               <Grid item xs={6}>
-                {selectedPartner.id} <br />
-                {selectedPartner.first_name} <br />
-                {selectedPartner.last_name} <br />
-                {selectedPartner.email} <br />
-                {selectedPartner.is_active === true
-                  ? "Active"
-                  : "Inactive"}{" "}
+                <Typography>
+                  {selectedPartner.id} <br />
+                  {selectedPartner.first_name
+                    ? selectedPartner.first_name
+                    : "-"}{" "}
+                  <br />
+                  {selectedPartner.last_name
+                    ? selectedPartner.last_name
+                    : "-"}{" "}
+                  <br />
+                  {selectedPartner.email} <br />
+                </Typography>
+                {selectedPartner.is_active ? (
+                  <Typography style={{ color: "green" }}>Active</Typography>
+                ) : (
+                  <Typography style={{ color: "red" }}>Deactived</Typography>
+                )}{" "}
+                <Typography>
+                  {formatDate(selectedPartner.date_joined)} <br />
+                </Typography>
                 <br />
-                {formatDate(selectedPartner.date_joined)} <br />
-                {!selectedPartner ? (
+                {selectedPartner.partner.organization ? (
                   <Typography>
                     {selectedPartner.partner.job_title}
                     <br />
@@ -643,16 +764,24 @@ const AdminHumanResourcePage = () => {
                 )}
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="h6">Profile Pic</Typography>
-                <img
-                  src={selectedPartner.profile_photo}
-                  alt=""
-                  width="200px"
-                ></img>
+                {selectedPartner.profile_photo ? (
+                  <Avatar
+                    src={selectedPartner.profile_photo}
+                    alt=""
+                    className={classes.avatar}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {selectedPartner.email.charAt(0)}
+                  </Avatar>
+                )}
 
-                {!selectedPartner ? (
+                <br />
+                <br />
+                <br />
+
+                {selectedPartner.partner.organization ? (
                   <Fragment>
-                    <Typography variant="h6">Company Logo</Typography>
                     <img
                       src={
                         selectedPartner.partner.organization.organization_photo
@@ -670,10 +799,19 @@ const AdminHumanResourcePage = () => {
           </DialogContent>
           <DialogActions>
             <Button
-              onClick={() => handlePartnerStatus(selectedPartner.is_active)}
-              color="secondary"
+              onClick={(e) =>
+                handlePartnerStatus(
+                  e,
+                  selectedPartner.is_active,
+                  selectedPartner.id
+                )
+              }
             >
-              {selectedPartner.is_active === true ? "Deactivate" : "Activate"}
+              {selectedPartner.is_active ? (
+                <div style={{ color: "red" }}>Deactivate</div>
+              ) : (
+                <div style={{ color: "green" }}>Activate</div>
+              )}
             </Button>
           </DialogActions>
         </Dialog>
@@ -681,36 +819,44 @@ const AdminHumanResourcePage = () => {
 
       {/* Admin Tab */}
       <TabPanel value={value} index={2}>
-        <div style={{ height: "700px", width: "100%" }}>
-          <SearchBar
-            style={{
-              width: "50%",
-              marginBottom: "20px",
-            }}
-            placeholder="Search admin..."
-            value={searchValueAdmin}
-            onChange={(newValue) => setSearchValueAdmin(newValue)}
-            //onRequestSearch={getSearchResults}
-            onCancelSearch={() => setSearchValueAdmin("")}
-          />
+        <Grid container>
+          <Grid item xs={12}>
+            <SearchBar
+              style={{
+                width: "50%",
+                marginBottom: "20px",
+              }}
+              placeholder="Search admin..."
+              value={searchValueAdmin}
+              onChange={(newValue) => setSearchValueAdmin(newValue)}
+              //onRequestSearch={getSearchResults}
+              onCancelSearch={() => setSearchValueAdmin("")}
+            />
+          </Grid>
 
-          <DataGrid
-            rows={adminRows}
-            columns={adminColumns.map((column) => ({
-              ...column,
-              //disableClickEventBubbling: true,
-            }))}
-            pageSize={10}
-            checkboxSelection
-            disableSelectionOnClick
-            onRowClick={(e) => handleClickOpenAdmin(e)}
-          />
-        </div>
+          <Grid
+            item
+            xs={12}
+            style={{ height: "calc(100vh - 250px)", width: "100%" }}
+          >
+            <DataGrid
+              rows={adminRows}
+              columns={adminColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              //checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpenAdmin(e)}
+            />
+          </Grid>
+        </Grid>
         <Dialog
-          open={openPartnerDialog}
+          open={openAdminDialog}
           onClose={handleCloseAdmin}
           aria-labelledby="form-dialog-title"
-          maxWidth="sm"
+          maxWidth="md"
           fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
@@ -726,38 +872,58 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                ID <br />
-                First Name <br />
-                Last Name <br />
-                Email <br />
-                Status <br />
-                Date Joined <br />
+                <Typography>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                </Typography>
               </Grid>
               <Grid item xs={6}>
-                {selectedAdmin.id} <br />
-                {selectedAdmin.first_name} <br />
-                {selectedAdmin.last_name} <br />
-                {selectedAdmin.email} <br />
-                {selectedAdmin.is_active === true ? "Active" : "Inactive"}{" "}
-                <br />
-                {formatDate(selectedAdmin.date_joined)} <br />
+                <Typography>
+                  {selectedAdmin.id} <br />
+                  {selectedAdmin.first_name} <br />
+                  {selectedAdmin.last_name} <br />
+                  {selectedAdmin.email} <br />
+                </Typography>
+                {selectedAdmin.is_active ? (
+                  <Typography style={{ color: "green" }}>Active</Typography>
+                ) : (
+                  <Typography style={{ color: "red" }}>Deactived</Typography>
+                )}{" "}
+                <Typography>
+                  {formatDate(selectedAdmin.date_joined)} <br />
+                </Typography>
                 <br />
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="h6">Profile Pic</Typography>
-                <img src={selectedAdmin.profile_photo} alt=""></img>
+                {selectedAdmin.profile_photo ? (
+                  <Avatar
+                    src={selectedAdmin.profile_photo}
+                    alt=""
+                    className={classes.avatar}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {selectedAdmin.email.charAt(0)}
+                  </Avatar>
+                )}
               </Grid>
             </Grid>
             <br />
           </DialogContent>
-          <DialogActions>
+          {/* <DialogActions>
             <Button
-              onClick={() => handleAdminStatus(selectedAdmin.is_active)}
+              onClick={(e) =>
+                handleAdminStatus(e, selectedAdmin.is_active, selectedAdmin.id)
+              }
               color="secondary"
             >
               {selectedAdmin.is_active === true ? "Deactivate" : "Activate"}
             </Button>
-          </DialogActions>
+          </DialogActions> */}
         </Dialog>
       </TabPanel>
     </Fragment>

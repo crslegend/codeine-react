@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   Grid,
+  Avatar,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -17,6 +18,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -30,10 +32,28 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: "calc(100vh - 115px)",
   },
+  avatar: {
+    fontSize: "100px",
+    width: "200px",
+    height: "200px",
+  },
 }));
 
-const AdminProfilePage = () => {
+const AdminProfilePage = (props) => {
   const classes = useStyles();
+
+  const { profile, setProfile } = props;
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +62,6 @@ const AdminProfilePage = () => {
     first_name: "",
     last_name: "",
     email: "",
-    contactnumber: "",
     date_joined: "",
   });
 
@@ -50,18 +69,8 @@ const AdminProfilePage = () => {
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      // console.log(`profile useeffect userid = ${userid}`);
-      Service.client
-        .get(`/auth/members/${userid}`)
-        .then((res) => {
-          setProfileDetails(res.data);
-        })
-        .catch((err) => {
-          //setProfile([]);
-        });
-    }
+    setProfileDetails(profile);
+    console.log(profile);
   }, []);
 
   const formatDate = (date) => {
@@ -81,6 +90,7 @@ const AdminProfilePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     // instantiate form-data
     const formData = new FormData();
@@ -92,15 +102,22 @@ const AdminProfilePage = () => {
 
     // submit form-data as per usual
     Service.client
-      .put(`/users/${profileDetails.id}`, formData)
+      .put(`/auth/members/${profileDetails.id}`, formData)
       .then((res) => {
-        console.log(res);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile Updated!",
+          severity: "success",
+        });
+        setProfileDetails(res.data);
+        setProfile(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
-
-    setLoading(true);
+    setLoading(false);
   };
 
   function handleUploadProfileImage() {
@@ -117,7 +134,7 @@ const AdminProfilePage = () => {
 
     // submit form-data as per usual
     Service.client
-      .put(`/users/${profileDetails.id}`, formData)
+      .put(`/auth/members/${profileDetails.id}`, formData)
       .then((res) => {
         console.log(res);
       })
@@ -128,6 +145,7 @@ const AdminProfilePage = () => {
 
   return (
     <div>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
           <Grid container>
@@ -149,7 +167,7 @@ const AdminProfilePage = () => {
                   margin="normal"
                   id="first_name"
                   label="First Name"
-                  name="first_Name"
+                  name="first_name"
                   autoComplete="first_name"
                   required
                   fullWidth
@@ -158,7 +176,7 @@ const AdminProfilePage = () => {
                   onChange={(event) =>
                     setProfileDetails({
                       ...profileDetails,
-                      firstname: event.target.value,
+                      first_name: event.target.value,
                     })
                   }
                 />
@@ -166,10 +184,10 @@ const AdminProfilePage = () => {
               <div>
                 <TextField
                   margin="normal"
-                  id="lastname"
+                  id="last_name"
                   label="Last Name"
-                  name="lastname"
-                  autoComplete="lastname"
+                  name="last_name"
+                  autoComplete="last_name"
                   required
                   fullWidth
                   value={profileDetails.last_name}
@@ -177,7 +195,7 @@ const AdminProfilePage = () => {
                   onChange={(event) =>
                     setProfileDetails({
                       ...profileDetails,
-                      lastname: event.target.value,
+                      last_name: event.target.value,
                     })
                   }
                 />
@@ -231,19 +249,24 @@ const AdminProfilePage = () => {
               </Button>
             </Grid>
             <Grid item xs={6}>
-              Profile Pic
-              <Button onClick={(e) => setUploadOpen(true)}>
-                Upload profile pic
-              </Button>
-              <a href="#pablo" onClick={(e) => setUploadOpen(true)}>
-                <img
-                  src={
-                    profilePhoto.length <= 0
-                      ? profileDetails && profileDetails.profile_photo
-                      : profilePhoto[0].data
-                  }
-                  alt=""
-                />
+              Profile Pic <br />
+              <br />
+              <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+                {profilePhoto ? (
+                  <Avatar
+                    src={
+                      profilePhoto.length <= 0
+                        ? profileDetails && profileDetails.profile_photo
+                        : profilePhoto[0].data
+                    }
+                    alt=""
+                    className={classes.avatar}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {profileDetails.email.charAt(0)}
+                  </Avatar>
+                )}
               </a>
             </Grid>
           </Grid>
@@ -290,13 +313,12 @@ const AdminProfilePage = () => {
         <DialogActions>
           <Button
             className={classes.button}
-            color="cancel"
             onClick={() => {
               setProfilePhoto([]);
               setUploadOpen(false);
             }}
           >
-            CANCEL
+            Cancel
           </Button>
 
           <Button
@@ -307,7 +329,7 @@ const AdminProfilePage = () => {
               handleUploadProfileImage();
             }}
           >
-            UPDATE
+            Update
           </Button>
         </DialogActions>
       </Dialog>
