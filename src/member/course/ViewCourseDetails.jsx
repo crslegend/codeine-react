@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Avatar,
   Button,
   Card,
   CardActionArea,
@@ -80,6 +81,11 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
+  },
+  instructorAvatar: {
+    width: theme.spacing(8),
+    height: theme.spacing(8),
+    marginRight: theme.spacing(3),
   },
 }));
 
@@ -259,8 +265,8 @@ const ViewCourseDetails = () => {
               <Typography variant="body2" style={{ paddingBottom: "5px" }}>
                 {course &&
                   (course.chapters.length === 1
-                    ? "1 Chapter (excluding Course Overview)"
-                    : `${course.chapters.length} Chapters (excluding Course Overview)`)}
+                    ? "1 Chapter (excluding Course Overview) + Final Quiz"
+                    : `${course.chapters.length} Chapters (excluding Course Overview) + Final Quiz`)}
               </Typography>
               <Accordion
                 expanded={expanded === `overview`}
@@ -600,9 +606,51 @@ const ViewCourseDetails = () => {
             </Card>
 
             <Card className={classes.cardOnRight}>
-              <Typography variant="h6" style={{ fontWeight: 600 }}>
+              <Typography
+                variant="h6"
+                style={{ fontWeight: 600, marginBottom: "10px" }}
+              >
                 Instructor
               </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "25px",
+                }}
+              >
+                <Avatar
+                  className={classes.instructorAvatar}
+                  src={
+                    course &&
+                    course.partner.profile_photo &&
+                    course.partner.profile_photo
+                  }
+                  alt="instructor"
+                />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <Typography variant="body1">
+                    {course && course.partner.first_name}{" "}
+                    {course && course.partner.last_name}
+                  </Typography>
+                  <Typography variant="body2">
+                    {course && course.partner.partner.job_title
+                      ? course.partner.partner.job_title.concat(", ")
+                      : ""}
+                    {course &&
+                      course.partner.partner.organization &&
+                      course.partner.partner.organization.organization_name}
+                  </Typography>
+                </div>
+              </div>
+              <div>
+                <Typography variant="h6" style={{ color: "#437FC7" }}>
+                  Bio
+                </Typography>
+                <Typography variant="body2">
+                  {course && course.partner.partner.bio}
+                </Typography>
+              </div>
             </Card>
           </div>
         </div>
