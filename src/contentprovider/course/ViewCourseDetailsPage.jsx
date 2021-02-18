@@ -183,9 +183,11 @@ const ViewCourseDetailsPage = () => {
           >
             <Edit />
           </IconButton>
-          <IconButton onClick={() => setDeleteCourseDialog(true)}>
-            <Delete />
-          </IconButton>
+          {course && !course.is_deleted && (
+            <IconButton onClick={() => setDeleteCourseDialog(true)}>
+              <Delete />
+            </IconButton>
+          )}
         </div>
       </div>
       <div className={classes.courseSection}>
