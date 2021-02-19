@@ -5,13 +5,12 @@ import {
   FormControlLabel,
   Paper,
   Radio,
-  RadioGroup,
   Typography,
 } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({}));
 
-const MCQ = ({ question, index, pageNum, setPageNum, quizLength }) => {
+const MCQ = ({ question, index, setPageNum }) => {
   const classes = styles();
   console.log(question);
 
@@ -51,7 +50,13 @@ const MCQ = ({ question, index, pageNum, setPageNum, quizLength }) => {
           </Typography>
           <Typography variant="h6">{question.title}</Typography>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginBottom: "20px",
+          }}
+        >
           {question &&
             question.mcq.options.length > 0 &&
             question.mcq.options.map((option) => {
@@ -77,10 +82,10 @@ const MCQ = ({ question, index, pageNum, setPageNum, quizLength }) => {
             </Typography>
           ) : (
             <Typography style={{ color: "red" }} variant="body2">
-              Wrong answer. The correct answer is {question.mcq.correct_answer}
+              Wrong answer. The correct answer is {question.mcq.correct_answer}.
             </Typography>
           ))}
-        <div style={{ marginTop: "15px" }}>
+        <div style={{ marginTop: "10px" }}>
           <Button
             variant="contained"
             disabled={!chosenOption}
@@ -91,7 +96,7 @@ const MCQ = ({ question, index, pageNum, setPageNum, quizLength }) => {
         </div>
         <div
           style={{
-            marginTop: "15px",
+            marginTop: "30px",
             display: "flex",
             justifyContent: "space-between",
           }}

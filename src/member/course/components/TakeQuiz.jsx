@@ -62,9 +62,7 @@ const TakeQuiz = ({ quiz }) => {
                   <MCQ
                     question={question}
                     index={index}
-                    pageNum={pageNum}
                     setPageNum={setPageNum}
-                    quizLength={quiz && quiz.questions.length}
                   />
                 );
               }
