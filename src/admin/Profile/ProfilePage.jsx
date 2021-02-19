@@ -19,6 +19,7 @@ import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import Toast from "../../components/Toast.js";
+import validator from "validator";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -63,15 +64,29 @@ const AdminProfilePage = (props) => {
     last_name: "",
     email: "",
     date_joined: "",
+    profile_photo: "",
   });
 
-  const [profilePhoto, setProfilePhoto] = useState([]);
+  const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
-    setProfileDetails(profile);
-    console.log(profile);
+    getProfileDetails();
   }, []);
+
+  const getProfileDetails = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const adminid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get(`/auth/admins/${adminid}`)
+        .then((res) => {
+          setProfileDetails(res.data);
+        })
+        .catch((err) => {
+          setProfileDetails();
+        });
+    }
+  };
 
   const formatDate = (date) => {
     const options = {
@@ -82,7 +97,6 @@ const AdminProfilePage = (props) => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -90,15 +104,32 @@ const AdminProfilePage = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validator.isEmail(profileDetails.email)) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a valid email!",
+        severity: "error",
+      });
+      return;
+    }
     setLoading(true);
 
     // instantiate form-data
     const formData = new FormData();
 
     // appending data to form-data
-    Object.keys(profileDetails).forEach((key) =>
-      formData.append(key, profileDetails[key])
-    );
+    // Object.keys(profileDetails).forEach((key) =>
+    //   formData.append(key, profileDetails[key])
+    // );
+
+    // formData.append("profile_photo", profilePhoto[0].file);
+
+    formData.append("id", profileDetails.id);
+    formData.append("first_name", profileDetails.first_name);
+    formData.append("last_name", profileDetails.last_name);
+    formData.append("email", profileDetails.email);
+    formData.append("data_joined", profileDetails.date_joined);
 
     // submit form-data as per usual
     Service.client
@@ -110,8 +141,9 @@ const AdminProfilePage = (props) => {
           message: "Profile Updated!",
           severity: "success",
         });
-        setProfileDetails(res.data);
+        console.log(res.data);
         setProfile(res.data);
+        setProfileDetails(res.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -120,14 +152,27 @@ const AdminProfilePage = (props) => {
     setLoading(false);
   };
 
-  function handleUploadProfileImage() {
+  const handleUploadProfileImage = (e) => {
     // instantiate form-data
+    e.preventDefault();
+
+    if (!profilePhoto) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please upload an image!",
+        severity: "error",
+      });
+      return;
+    }
+    setUploadOpen(false);
     const formData = new FormData();
 
     // appending data to form-data
     Object.keys(profileDetails).forEach((key) =>
       formData.append(key, profileDetails[key])
     );
+
     if (profilePhoto.length > 0) {
       formData.append("profile_photo", profilePhoto[0].file);
     }
@@ -136,12 +181,23 @@ const AdminProfilePage = (props) => {
     Service.client
       .put(`/auth/members/${profileDetails.id}`, formData)
       .then((res) => {
-        console.log(res);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile photo updated successfully!",
+          severity: "success",
+        });
+        Service.client
+          .get(`/auth/members/${profileDetails.id}`)
+          .then((res) => {
+            setProfile(res.data);
+          })
+          .catch();
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   return (
     <div>
@@ -252,21 +308,26 @@ const AdminProfilePage = (props) => {
               Profile Pic <br />
               <br />
               <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
-                {profilePhoto ? (
+                {!profileDetails.profile_photo ? (
+                  <Avatar className={classes.avatar}>
+                    {profileDetails.email.charAt(0)}
+                  </Avatar>
+                ) : (
                   <Avatar
                     src={
-                      profilePhoto.length <= 0
-                        ? profileDetails && profileDetails.profile_photo
+                      !profilePhoto
+                        ? profileDetails.profile_photo
                         : profilePhoto[0].data
                     }
                     alt=""
                     className={classes.avatar}
                   />
-                ) : (
-                  <Avatar className={classes.avatar}>
-                    {profileDetails.email.charAt(0)}
-                  </Avatar>
                 )}
+                {/* <Avatar
+                  src={profileDetails.profile_photo}
+                  alt=""
+                  className={classes.avatar}
+                /> */}
               </a>
             </Grid>
           </Grid>
@@ -282,7 +343,7 @@ const AdminProfilePage = (props) => {
           <IconButton
             style={{ right: "12px", top: "8px", position: "absolute" }}
             onClick={() => {
-              setProfilePhoto([]);
+              setProfilePhoto();
               setUploadOpen(false);
             }}
           >
@@ -297,16 +358,19 @@ const AdminProfilePage = (props) => {
             acceptedFiles={["image/*"]}
             filesLimit={1}
             fileObjects={profilePhoto}
+            useChipsForPreview={true}
             maxFileSize={5000000}
             onAdd={(newPhoto) => {
-              // console.log("onAdd", newPhoto);
-              setProfilePhoto([].concat(newPhoto));
+              setProfilePhoto(newPhoto);
             }}
             onDelete={(deletePhotoObj) => {
-              // console.log("onDelete", deletePhotoObj);
-              setProfilePhoto([]);
+              setProfilePhoto();
             }}
-            showPreviewsInDropzone={true}
+            previewGridProps={{
+              item: {
+                xs: "auto",
+              },
+            }}
           />
         </DialogContent>
 
@@ -314,7 +378,7 @@ const AdminProfilePage = (props) => {
           <Button
             className={classes.button}
             onClick={() => {
-              setProfilePhoto([]);
+              setProfilePhoto();
               setUploadOpen(false);
             }}
           >
@@ -324,9 +388,8 @@ const AdminProfilePage = (props) => {
           <Button
             className={classes.button}
             color="primary"
-            onClick={() => {
-              setUploadOpen(false);
-              handleUploadProfileImage();
+            onClick={(e) => {
+              handleUploadProfileImage(e);
             }}
           >
             Update

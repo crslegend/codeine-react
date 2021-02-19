@@ -213,7 +213,7 @@ const AdminHumanResourcePage = () => {
     e.preventDefault();
     if (status) {
       Service.client.delete(`/auth/members/${memberid}`).then(() => {
-        Service.client.get(`auth/memebers/${memberid}`).then((res1) => {
+        Service.client.get(`auth/members/${memberid}`).then((res1) => {
           setSelectedMember(res1.data);
           getMemberData();
         });

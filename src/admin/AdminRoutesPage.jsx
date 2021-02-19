@@ -97,7 +97,7 @@ const AdminRoutesPage = () => {
       const userid = jwt_decode(Service.getJWT()).user_id;
       // console.log(`profile useeffect userid = ${userid}`);
       Service.client
-        .get(`/auth/members/${userid}`)
+        .get(`/auth/admins/${userid}`)
         .then((res) => {
           setProfile(res.data);
         })
