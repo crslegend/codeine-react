@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Button,
   CircularProgress,
@@ -20,6 +20,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import Toast from "../../components/Toast.js";
 import validator from "validator";
+import Badge from "@material-ui/core/Badge";
+import EditIcon from "../../assets/editIcon.svg";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -39,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
     height: "200px",
   },
 }));
+
+const SmallAvatar = withStyles((theme) => ({
+  root: {
+    width: 30,
+    height: 30,
+    border: `2px solid ${theme.palette.background.paper}`,
+  },
+}))(Avatar);
 
 const AdminProfilePage = (props) => {
   const classes = useStyles();
@@ -109,6 +119,24 @@ const AdminProfilePage = (props) => {
       setSnackbar({
         ...snackbar,
         message: "Please enter a valid email!",
+        severity: "error",
+      });
+      return;
+    }
+    if (!profileDetails.first_name) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a first name!",
+        severity: "error",
+      });
+      return;
+    }
+    if (!profileDetails.last_name) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a last name!",
         severity: "error",
       });
       return;
@@ -191,6 +219,7 @@ const AdminProfilePage = (props) => {
           .get(`/auth/members/${profileDetails.id}`)
           .then((res) => {
             setProfile(res.data);
+            setProfileDetails(res.data);
           })
           .catch();
       })
@@ -304,24 +333,54 @@ const AdminProfilePage = (props) => {
                 )}
               </Button>
             </Grid>
-            <Grid item xs={6}>
-              Profile Pic <br />
+            <Grid item xs={6} style={{ paddingLeft: "25px" }}>
               <br />
               <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
                 {!profileDetails.profile_photo ? (
-                  <Avatar className={classes.avatar}>
-                    {profileDetails.email.charAt(0)}
-                  </Avatar>
-                ) : (
-                  <Avatar
-                    src={
-                      !profilePhoto
-                        ? profileDetails.profile_photo
-                        : profilePhoto[0].data
-                    }
-                    alt=""
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
                     className={classes.avatar}
-                  />
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar className={classes.avatar}>
+                      {profileDetails.email.charAt(0)}
+                    </Avatar>
+                  </Badge>
+                ) : (
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar
+                      alt="Pic"
+                      src={
+                        !profilePhoto
+                          ? profileDetails.profile_photo
+                          : profilePhoto[0].data
+                      }
+                      className={classes.avatar}
+                    />
+                  </Badge>
                 )}
                 {/* <Avatar
                   src={profileDetails.profile_photo}

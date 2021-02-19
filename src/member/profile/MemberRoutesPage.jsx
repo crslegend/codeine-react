@@ -32,7 +32,9 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
-import Consultation from "./Consultation";
+import Consultation from "./Consultation/ConsultationPage";
+import Profile from "./Profile/ProfilePage";
+import Password from "./Password/PasswordPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
@@ -281,12 +283,12 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/profile"
-              render={() => <div></div>}
+              render={() => <Profile />}
             />
             <PrivateRoute
               exact
               path="/member/home/password"
-              render={() => <div></div>}
+              render={() => <Password />}
             />
             <PrivateRoute
               exact

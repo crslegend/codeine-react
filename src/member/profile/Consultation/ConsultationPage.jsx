@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
 import { Button, Box, Typography } from "@material-ui/core";
 import jwt_decode from "jwt-decode";
-import Service from "../../AxiosService";
+import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   heading: {

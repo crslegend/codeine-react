@@ -8,7 +8,7 @@ import IndustryLanding from "./industrypartner/landing/IndustryLanding";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
-import MemberHome from "./member/profile/MemberHome";
+import MemberHome from "./member/profile/MemberRoutesPage";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderHome";

@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   margin: {
     margin: theme.spacing(1),
+    width: "100%",
   },
   withoutLabel: {
     marginTop: theme.spacing(3),
@@ -205,7 +206,7 @@ const AdminPasswordPage = () => {
               </div> */}
 
               <div>
-                <FormControl className={(classes.margin, classes.textField)}>
+                <FormControl className={classes.margin}>
                   <InputLabel htmlFor="standard-adornment-password">
                     Current Password
                   </InputLabel>
@@ -234,7 +235,7 @@ const AdminPasswordPage = () => {
               </div>
 
               <div>
-                <FormControl className={(classes.margin, classes.textField)}>
+                <FormControl className={classes.margin}>
                   <InputLabel htmlFor="standard-adornment-password">
                     New Password
                   </InputLabel>
@@ -263,7 +264,7 @@ const AdminPasswordPage = () => {
               </div>
 
               <div>
-                <FormControl className={(classes.margin, classes.textField)}>
+                <FormControl className={classes.margin}>
                   <InputLabel htmlFor="standard-adornment-password">
                     Repeat Password
                   </InputLabel>
