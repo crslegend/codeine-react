@@ -97,7 +97,7 @@ const AdminRoutesPage = () => {
       const userid = jwt_decode(Service.getJWT()).user_id;
       // console.log(`profile useeffect userid = ${userid}`);
       Service.client
-        .get(`/auth/members/${userid}`)
+        .get(`/auth/admins/${userid}`)
         .then((res) => {
           setProfile(res.data);
         })
@@ -145,9 +145,19 @@ const AdminRoutesPage = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>{profile.email.charAt(0)}</Avatar>
+        {profile.profile_photo ? (
+          <Avatar
+            alt=""
+            src={profile.profile_photo}
+            className={classes.avatar}
+          />
+        ) : (
+          <Avatar className={classes.avatar}>{profile.email.charAt(0)}</Avatar>
+        )}
       </div>
-      <Typography variant="h6">{profile.first_name}</Typography>
+      <Typography variant="h6">
+        {profile.first_name} {profile.last_name}
+      </Typography>
       <Typography variant="body1">{profile.email}</Typography>
     </Fragment>
   );
@@ -261,7 +271,13 @@ const AdminRoutesPage = () => {
             path="/admin/analytics"
             render={() => <AnalyticsPage />}
           />
-          <Route exact path="/admin/profile" render={() => <ProfilePage />} />
+          <Route
+            exact
+            path="/admin/profile"
+            render={() => (
+              <ProfilePage profile={profile} setProfile={setProfile} />
+            )}
+          />
           <Route exact path="/admin/password" render={() => <PasswordPage />} />
           <Redirect from="/admin" to="/admin/humanresource" />
         </Switch>

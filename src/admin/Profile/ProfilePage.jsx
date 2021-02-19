@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   Grid,
+  Avatar,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -17,6 +18,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import Toast from "../../components/Toast.js";
+import validator from "validator";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -30,10 +33,28 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: "calc(100vh - 115px)",
   },
+  avatar: {
+    fontSize: "100px",
+    width: "200px",
+    height: "200px",
+  },
 }));
 
-const AdminProfilePage = () => {
+const AdminProfilePage = (props) => {
   const classes = useStyles();
+
+  const { profile, setProfile } = props;
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -42,27 +63,30 @@ const AdminProfilePage = () => {
     first_name: "",
     last_name: "",
     email: "",
-    contactnumber: "",
     date_joined: "",
+    profile_photo: "",
   });
 
-  const [profilePhoto, setProfilePhoto] = useState([]);
+  const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
+    getProfileDetails();
+  }, []);
+
+  const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      // console.log(`profile useeffect userid = ${userid}`);
+      const adminid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get(`/auth/members/${userid}`)
+        .get(`/auth/admins/${adminid}`)
         .then((res) => {
           setProfileDetails(res.data);
         })
         .catch((err) => {
-          //setProfile([]);
+          setProfileDetails();
         });
     }
-  }, []);
+  };
 
   const formatDate = (date) => {
     const options = {
@@ -73,7 +97,6 @@ const AdminProfilePage = () => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -81,177 +104,231 @@ const AdminProfilePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validator.isEmail(profileDetails.email)) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a valid email!",
+        severity: "error",
+      });
+      return;
+    }
+    setLoading(true);
 
     // instantiate form-data
     const formData = new FormData();
 
     // appending data to form-data
-    Object.keys(profileDetails).forEach((key) =>
-      formData.append(key, profileDetails[key])
-    );
+    // Object.keys(profileDetails).forEach((key) =>
+    //   formData.append(key, profileDetails[key])
+    // );
+
+    // formData.append("profile_photo", profilePhoto[0].file);
+
+    formData.append("id", profileDetails.id);
+    formData.append("first_name", profileDetails.first_name);
+    formData.append("last_name", profileDetails.last_name);
+    formData.append("email", profileDetails.email);
+    formData.append("data_joined", profileDetails.date_joined);
 
     // submit form-data as per usual
     Service.client
-      .put(`/users/${profileDetails.id}`, formData)
+      .put(`/auth/members/${profileDetails.id}`, formData)
       .then((res) => {
-        console.log(res);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile Updated!",
+          severity: "success",
+        });
+        console.log(res.data);
+        setProfile(res.data);
+        setProfileDetails(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
-
-    setLoading(true);
+    setLoading(false);
   };
 
-  function handleUploadProfileImage() {
+  const handleUploadProfileImage = (e) => {
     // instantiate form-data
+    e.preventDefault();
+
+    if (!profilePhoto) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please upload an image!",
+        severity: "error",
+      });
+      return;
+    }
+    setUploadOpen(false);
     const formData = new FormData();
 
     // appending data to form-data
     Object.keys(profileDetails).forEach((key) =>
       formData.append(key, profileDetails[key])
     );
+
     if (profilePhoto.length > 0) {
       formData.append("profile_photo", profilePhoto[0].file);
     }
 
     // submit form-data as per usual
     Service.client
-      .put(`/users/${profileDetails.id}`, formData)
+      .put(`/auth/members/${profileDetails.id}`, formData)
       .then((res) => {
-        console.log(res);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile photo updated successfully!",
+          severity: "success",
+        });
+        Service.client
+          .get(`/auth/members/${profileDetails.id}`)
+          .then((res) => {
+            setProfile(res.data);
+          })
+          .catch();
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
           <Grid container>
-            <Grid container>
-              <Grid xs={6}>
-                <form className={classes.form} noValidate autoComplete="off">
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="id"
-                      label="ID"
-                      name="id"
-                      autoComplete="id"
-                      fullWidth
-                      disabled
-                      value={profileDetails.id}
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="first_name"
-                      label="First Name"
-                      name="first_Name"
-                      autoComplete="first_name"
-                      required
-                      fullWidth
-                      value={profileDetails.first_name}
-                      // error={firstNameError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          firstname: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="lastname"
-                      label="Last Name"
-                      name="lastname"
-                      autoComplete="lastname"
-                      required
-                      fullWidth
-                      value={profileDetails.last_name}
-                      // error={lastNameError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          lastname: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="email"
-                      label="Email"
-                      name="email"
-                      autoComplete="email"
-                      required
-                      fullWidth
-                      value={profileDetails.email}
-                      // error={emailError}
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          email: event.target.value,
-                        })
-                      }
-                    />
-                  </div>
+            <Grid item xs={6}>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="id"
+                  label="ID"
+                  name="id"
+                  autoComplete="id"
+                  fullWidth
+                  disabled
+                  value={profileDetails.id}
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="first_name"
+                  label="First Name"
+                  name="first_name"
+                  autoComplete="first_name"
+                  required
+                  fullWidth
+                  value={profileDetails.first_name}
+                  // error={firstNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      first_name: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="last_name"
+                  label="Last Name"
+                  name="last_name"
+                  autoComplete="last_name"
+                  required
+                  fullWidth
+                  value={profileDetails.last_name}
+                  // error={lastNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      last_name: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="email"
+                  label="Email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  fullWidth
+                  value={profileDetails.email}
+                  // error={emailError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      email: event.target.value,
+                    })
+                  }
+                />
+              </div>
 
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="date_joined"
-                      label="Date Joined"
-                      name="date_joined"
-                      autoComplete="date_joined"
-                      required
-                      fullWidth
-                      disabled
-                      value={formatDate(profileDetails.date_joined)}
-                    />
-                  </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="date_joined"
+                  label="Date Joined"
+                  name="date_joined"
+                  autoComplete="date_joined"
+                  required
+                  fullWidth
+                  disabled
+                  value={formatDate(profileDetails.date_joined)}
+                />
+              </div>
 
-                  <Button
-                    disabled={loading}
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    type="submit"
-                  >
-                    {loading ? (
-                      <CircularProgress
-                        size="1.5rem"
-                        style={{ color: "#FFF" }}
-                      />
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </form>
-              </Grid>
-              <Grid xs={6}>
-                Profile Pic
-                <Button onClick={(e) => setUploadOpen(true)}>
-                  Upload profile pic
-                </Button>
-                <a href="#pablo" onClick={(e) => setUploadOpen(true)}>
-                  <img
+              <Button
+                disabled={loading}
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                type="submit"
+              >
+                {loading ? (
+                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              Profile Pic <br />
+              <br />
+              <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+                {!profileDetails.profile_photo ? (
+                  <Avatar className={classes.avatar}>
+                    {profileDetails.email.charAt(0)}
+                  </Avatar>
+                ) : (
+                  <Avatar
                     src={
-                      profilePhoto.length <= 0
-                        ? profileDetails && profileDetails.profile_photo
+                      !profilePhoto
+                        ? profileDetails.profile_photo
                         : profilePhoto[0].data
                     }
                     alt=""
+                    className={classes.avatar}
                   />
-                </a>
-              </Grid>
+                )}
+                {/* <Avatar
+                  src={profileDetails.profile_photo}
+                  alt=""
+                  className={classes.avatar}
+                /> */}
+              </a>
             </Grid>
           </Grid>
         </Paper>
@@ -266,7 +343,7 @@ const AdminProfilePage = () => {
           <IconButton
             style={{ right: "12px", top: "8px", position: "absolute" }}
             onClick={() => {
-              setProfilePhoto([]);
+              setProfilePhoto();
               setUploadOpen(false);
             }}
           >
@@ -281,40 +358,41 @@ const AdminProfilePage = () => {
             acceptedFiles={["image/*"]}
             filesLimit={1}
             fileObjects={profilePhoto}
+            useChipsForPreview={true}
             maxFileSize={5000000}
             onAdd={(newPhoto) => {
-              // console.log("onAdd", newPhoto);
-              setProfilePhoto([].concat(newPhoto));
+              setProfilePhoto(newPhoto);
             }}
             onDelete={(deletePhotoObj) => {
-              // console.log("onDelete", deletePhotoObj);
-              setProfilePhoto([]);
+              setProfilePhoto();
             }}
-            showPreviewsInDropzone={true}
+            previewGridProps={{
+              item: {
+                xs: "auto",
+              },
+            }}
           />
         </DialogContent>
 
         <DialogActions>
           <Button
             className={classes.button}
-            color="cancel"
             onClick={() => {
-              setProfilePhoto([]);
+              setProfilePhoto();
               setUploadOpen(false);
             }}
           >
-            CANCEL
+            Cancel
           </Button>
 
           <Button
             className={classes.button}
             color="primary"
-            onClick={() => {
-              setUploadOpen(false);
-              handleUploadProfileImage();
+            onClick={(e) => {
+              handleUploadProfileImage(e);
             }}
           >
-            UPDATE
+            Update
           </Button>
         </DialogActions>
       </Dialog>
