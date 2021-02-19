@@ -1,4 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
 import {
   ViewState,
@@ -25,6 +27,18 @@ const messages = {
   moreInformationLabel: "",
 };
 
+const styles = {
+  toolbarRoot: {
+    position: "relative",
+  },
+  progress: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    left: 0,
+  },
+};
+
 const TextEditor = (props) => {
   // eslint-disable-next-line react/destructuring-assignment
   if (props.type === "multilineTextEditor") {
@@ -33,13 +47,25 @@ const TextEditor = (props) => {
   return <AppointmentForm.TextEditor {...props} />;
 };
 
+const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
+  ({ children, classes, ...restProps }) => (
+    <div className={classes.toolbarRoot}>
+      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+      <LinearProgress className={classes.progress} />
+    </div>
+  )
+);
+
+const usaTime = (date) =>
+  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: !item.member
     ? item.title
     : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
-  startDate: new Date(item.start_time),
-  endDate: new Date(item.end_time),
+  startDate: usaTime(item.start_time),
+  endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
   rejected: item.is_rejected,
   confirmed: item.is_confirmed,
@@ -265,7 +291,9 @@ const Calendar = () => {
           <IntegratedEditing />
           <WeekView name="week" timeTableCellComponent={weekview} />
           <MonthView name="month" timeTableCellComponent={monthview} />
-          <Toolbar />
+          <Toolbar
+            {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
+          />
           <DateNavigator />
           <TodayButton />
           <Appointments />

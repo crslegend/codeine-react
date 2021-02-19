@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
@@ -35,6 +36,25 @@ const AddConsultation = () => {
     title: title,
   });
   const [open, setOpen] = useState(false);
+  const [submittedNewSlot, setSubmittedNewSlot] = useState(false);
+
+  const fetchUpdate = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get("/consultations", { params: { search: userid } })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchUpdate();
+  }, []);
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -83,9 +103,15 @@ const AddConsultation = () => {
   const handleSubmit = () => {
     setOpen(false);
     console.log(slot);
-    Service.client.post("/consultations", slot).catch((error) => {
-      console.log(error);
-    });
+    Service.client
+      .post("/consultations", slot)
+      .then((res) => {
+        setSubmittedNewSlot(true);
+        fetchUpdate();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -160,6 +186,13 @@ const AddConsultation = () => {
           <Button onClick={handleSubmit} color="primary">
             Create
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={submittedNewSlot}>
+        <DialogTitle>New consultation added!</DialogTitle>
+        <DialogContent>New consultation added!</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSubmittedNewSlot(false)}>Okay</Button>
         </DialogActions>
       </Dialog>
     </div>
