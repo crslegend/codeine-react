@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import MCQ from "./MCQ";
 import MRQ from "./MRQ";
+import ShortAnswer from "./ShortAnswer";
 
 const styles = makeStyles((theme) => ({
   button: {
@@ -57,7 +58,6 @@ const TakeQuiz = ({ quiz }) => {
       ) : null}
       {quiz && quiz.questions.length > 0
         ? quiz.questions.map((question, index) => {
-            console.log(pageNum);
             if (pageNum === index) {
               if (question.mcq) {
                 return (
@@ -71,6 +71,15 @@ const TakeQuiz = ({ quiz }) => {
               } else if (question.mrq) {
                 return (
                   <MRQ
+                    key={index}
+                    question={question}
+                    index={index}
+                    setPageNum={setPageNum}
+                  />
+                );
+              } else if (question.shortanswer) {
+                return (
+                  <ShortAnswer
                     key={index}
                     question={question}
                     index={index}
