@@ -49,7 +49,7 @@ const TakeQuiz = ({ quiz }) => {
               onClick={() => setPageNum(pageNum + 1)}
               style={{ width: 150, alignSelf: "center" }}
             >
-              Start Quiz
+              Enter Quiz
             </Button>
           </Paper>
         </Fragment>

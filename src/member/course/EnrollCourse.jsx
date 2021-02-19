@@ -303,7 +303,9 @@ const EnrollCourse = () => {
                 id={`overview`}
                 style={{ backgroundColor: "#F4F4F4" }}
               >
-                <Typography>Course Overview</Typography>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Course Overview
+                </Typography>
               </AccordionSummary>
               <AccordionDetails
                 style={{
@@ -321,15 +323,13 @@ const EnrollCourse = () => {
               course.chapters.length > 0 &&
               course.chapters.map((chapter, index) => {
                 return (
-                  <Accordion expanded={expanded === `${index}`} key={index}>
+                  <Accordion
+                    expanded={expanded === `${index}`}
+                    key={index}
+                    onChange={handleChange(`${index}`)}
+                  >
                     <AccordionSummary
-                      expandIcon={
-                        <ExpandMore
-                          onClick={() =>
-                            setExpanded(!expanded ? `${index}` : false)
-                          }
-                        />
-                      }
+                      expandIcon={<ExpandMore />}
                       id={`${index}`}
                       style={{
                         backgroundColor: "#F4F4F4",
@@ -341,8 +341,9 @@ const EnrollCourse = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Checkbox />
-                        <Typography>{chapter.title}</Typography>
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          {chapter.title}
+                        </Typography>
                       </div>
                     </AccordionSummary>
                     <AccordionDetails
@@ -464,7 +465,9 @@ const EnrollCourse = () => {
                 id={`final`}
                 style={{ backgroundColor: "#F4F4F4" }}
               >
-                <Typography>Final Quiz</Typography>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Final Quiz
+                </Typography>
               </AccordionSummary>
               <AccordionDetails
                 style={{
