@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import MCQ from "./MCQ";
+import MRQ from "./MRQ";
 
 const styles = makeStyles((theme) => ({
   button: {
@@ -56,10 +57,21 @@ const TakeQuiz = ({ quiz }) => {
       ) : null}
       {quiz && quiz.questions.length > 0
         ? quiz.questions.map((question, index) => {
+            console.log(pageNum);
             if (pageNum === index) {
               if (question.mcq) {
                 return (
                   <MCQ
+                    key={index}
+                    question={question}
+                    index={index}
+                    setPageNum={setPageNum}
+                  />
+                );
+              } else if (question.mrq) {
+                return (
+                  <MRQ
+                    key={index}
                     question={question}
                     index={index}
                     setPageNum={setPageNum}
