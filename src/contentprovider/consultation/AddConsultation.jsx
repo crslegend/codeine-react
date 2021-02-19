@@ -190,7 +190,6 @@ const AddConsultation = () => {
       </Dialog>
       <Dialog open={submittedNewSlot}>
         <DialogTitle>New consultation added!</DialogTitle>
-        <DialogContent>New consultation added!</DialogContent>
         <DialogActions>
           <Button onClick={() => setSubmittedNewSlot(false)}>Okay</Button>
         </DialogActions>

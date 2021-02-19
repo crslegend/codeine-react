@@ -67,8 +67,6 @@ const mapAppointmentData = (item) => ({
   startDate: usaTime(item.start_time),
   endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
-  rejected: item.is_rejected,
-  confirmed: item.is_confirmed,
   member: item.member,
 });
 
@@ -88,6 +86,24 @@ const reducer = (state, action) => {
       };
     default:
       return state;
+  }
+};
+
+const handleGetAllConsultations = (setConsultations, setLoading) => {
+  setLoading(true);
+  if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+    const userid = jwt_decode(Service.getJWT()).user_id;
+    Service.client
+      .get("/consultations", { params: { search: userid } })
+      .then((res) => {
+        setTimeout(() => {
+          setConsultations(res.data);
+          setLoading(false);
+        }, 600);
+      })
+      .catch((error) => {
+        setConsultations(null);
+      });
   }
 };
 
@@ -118,50 +134,80 @@ const Calendar = () => {
   );
 
   useEffect(() => {
-    setLoading(true);
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      Service.client
-        .get("/consultations", { params: { search: userid } })
-        .then((res) => {
-          setTimeout(() => {
-            setConsultations(res.data);
-            setLoading(false);
-          }, 600);
-        })
-        .catch((error) => {
-          setConsultations(null);
-        });
-    }
+    handleGetAllConsultations(setConsultations, setLoading);
   }, [setConsultations, setLoading]);
 
-  console.log(consultations);
+  const handleUpdate = React.useCallback((id, appointment) => {
+    let updateConsult = {};
+
+    if (appointment.endDate !== undefined) {
+      appointment.endDate = new Date(appointment.endDate);
+      console.log(appointment.endDate);
+      appointment.endDate = new Date(
+        appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
+      console.log(appointment.endDate);
+      updateConsult = {
+        ...updateConsult,
+        end_time: appointment.endDate,
+      };
+    }
+    if (appointment.startDate !== undefined) {
+      appointment.startDate = new Date(appointment.startDate);
+      console.log(appointment.startDate);
+      appointment.startDate = new Date(
+        appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
+      console.log(appointment.startDate);
+      updateConsult = {
+        ...updateConsult,
+        start_time: appointment.startDate,
+      };
+    }
+
+    if (appointment.title !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        title: appointment.title,
+      };
+    }
+
+    if (appointment.meeting_link !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        meeting_link: appointment.meeting_link,
+      };
+    }
+    console.log(updateConsult);
+
+    Service.client
+      .put(`/consultations/${id}`, updateConsult)
+      .then((res) => {
+        console.log(res);
+        handleGetAllConsultations(setConsultations, setLoading);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
   const BasicLayout = ({
     onFieldChange,
     appointmentData,
     readOnly,
+    locale,
     ...restProps
   }) => {
     const onLinkChange = (nextValue) => {
       onFieldChange({ meeting_link: nextValue });
-    };
-    const onConfirmChange = (nextValue) => {
-      onFieldChange({ confirmed: nextValue, rejected: !nextValue });
-    };
-
-    const onRejectChange = (nextValue) => {
-      onFieldChange({ rejected: nextValue, confirmed: !nextValue });
     };
 
     if (
       appointmentData.member === undefined ||
       appointmentData.member === null
     ) {
-      console.log("true");
       setAllowDeleting(true);
     } else {
-      console.log("false");
       setAllowDeleting(false);
     }
 
@@ -176,6 +222,7 @@ const Calendar = () => {
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
         onFieldChange={onFieldChange}
+        locale="en-US"
         readOnly={!allowDeleting || !allowUpdating}
         {...restProps}
       >
@@ -196,20 +243,7 @@ const Calendar = () => {
           type="title"
         />
         <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
-        <AppointmentForm.BooleanEditor
-          style={{ marginTop: "10px" }}
-          value={appointmentData.confirmed}
-          onValueChange={onConfirmChange}
-          readOnly={allowDeleting || !allowUpdating}
-          label="Confirm Consultation"
-        />
-        <AppointmentForm.BooleanEditor
-          style={{ marginTop: "10px" }}
-          value={appointmentData.rejected}
-          onValueChange={onRejectChange}
-          readOnly={allowDeleting || !allowUpdating}
-          label="Reject Consultation"
-        />
+
         {console.log(allowDeleting)}
       </AppointmentForm.BasicLayout>
     );
@@ -219,7 +253,7 @@ const Calendar = () => {
     setCurrentViewName(newViewName);
   };
 
-  const onCommitChanges = React.useCallback(
+  /*(const onCommitChanges = React.useCallback(
     ({ changed, deleted }) => {
       if (changed) {
         setConsultations(
@@ -237,8 +271,27 @@ const Calendar = () => {
       }
     },
     [setConsultations, consultations]
+  );*/
+
+  const onCommitChanges = React.useCallback(
+    ({ changed, deleted }) => {
+      if (changed) {
+        consultations.map((appointment) =>
+          changed[appointment.id]
+            ? handleUpdate(appointment.id, changed[appointment.id])
+            : appointment
+        );
+      }
+      if (deleted !== undefined) {
+        setConsultations(
+          consultations.filter((appointment) => appointment.id !== deleted)
+        );
+      }
+    },
+    [setConsultations, consultations, handleUpdate]
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekview = React.useCallback(
     React.memo(({ onDoubleClick, startDate, ...restProps }) => (
       <WeekView.TimeTableCell {...restProps} onDoubleClick={undefined} />
@@ -246,6 +299,7 @@ const Calendar = () => {
     []
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const monthview = React.useCallback(
     React.memo(({ onDoubleClick, ...restProps }) => (
       <MonthView.TimeTableCell {...restProps} onDoubleClick={undefined} />
@@ -281,7 +335,7 @@ const Calendar = () => {
   return (
     <Fragment>
       <Paper>
-        <Scheduler data={consultations} height="700">
+        <Scheduler data={consultations} locale="en-US" height="700">
           <ViewState
             defaultCurrentDate={currentDate}
             currentViewName={currentViewName}
