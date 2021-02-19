@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import Service from "../../AxiosService";
 import logo from "../../assets/CodeineLogos/Member.svg";
 import Toast from "../../components/Toast.js";
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 const MemberLoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { state } = useLocation();
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -90,7 +91,12 @@ const MemberLoginPage = () => {
       .then((res) => {
         console.log(res);
         Service.storeCredentials(res.data);
-        history.push("/");
+
+        if (state) {
+          history.push(`/courses/${state.courseId}`);
+        } else {
+          history.push("/");
+        }
       })
       .catch((err) => {
         setLoading(false);

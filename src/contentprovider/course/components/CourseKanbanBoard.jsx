@@ -45,7 +45,7 @@ const data = {
 };
 const useStyles = makeStyles((theme) => ({
   container: {
-    display: "flex",
+    display: "inline-flex",
   },
 }));
 

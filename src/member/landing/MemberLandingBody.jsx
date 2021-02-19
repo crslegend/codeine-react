@@ -8,6 +8,7 @@ import Categories from "./Categories";
 import RecentProjects from "./RecentProjects";
 
 import landingmodel from "../../assets/member-landing-model.jpg";
+import { Link } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -104,7 +105,12 @@ const MemberLandingBody = () => {
             <Typography variant="h5" className={classes.bannersentence2}>
               millions who are learning to code!
             </Typography>
-            <Button variant="fill" className={classes.bannerbutton}>
+            <Button
+              variant="fill"
+              className={classes.bannerbutton}
+              component={Link}
+              to="/courses"
+            >
               Our Courses
             </Button>
           </Grid>

@@ -21,6 +21,7 @@ import logo from "../assets/CodeineLogos/Partner.svg";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
+import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -210,6 +211,12 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/content/new"
               render={() => <CourseCreation />}
+            />
+            <PrivateRoute
+              path="/partner/home/content/view/:id"
+              strict
+              sensitive
+              render={(match) => <ViewCourseDetailsPage match={match} />}
             />
             <PrivateRoute
               path="/partner/home/content/:id"

@@ -7,14 +7,23 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Popover,
+  Typography,
 } from "@material-ui/core";
 import PageTitle from "../../components/PageTitle";
 import { Add, MoreVert } from "@material-ui/icons";
 import { Link, useHistory } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
+import { Rating } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -49,21 +58,31 @@ const useStyles = makeStyles((theme) => ({
     width: 150,
     textTransform: "capitalize",
   },
+  dialogButtons: {
+    width: 100,
+  },
 }));
 
 const ViewAllCourses = () => {
   const classes = useStyles();
-  // const history = useHistory();
+  const history = useHistory();
 
   const [allCourses, setAllCourses] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
+  const [deleteCourseId, setDeleteCourseId] = useState();
+
   const getAllCourses = () => {
+    let decoded;
+    if (Cookies.get("t1")) {
+      decoded = jwt_decode(Cookies.get("t1"));
+    }
     Service.client
-      .get(`/courses/ebd49e8d-a724-432a-938b-5de1c0ccde9f`)
+      .get(`/privateCourses`, { params: { partnerId: decoded.user_id } })
       .then((res) => {
-        // console.log(res);
-        setAllCourses(res.data);
+        console.log(res);
+        setAllCourses(res.data.results);
       })
       .catch((err) => console.log(err));
   };
@@ -76,11 +95,38 @@ const ViewAllCourses = () => {
     setAnchorEl(null);
   };
 
+  const handleDeleteCourse = (courseId) => {
+    Service.client
+      .delete(`/courses/${courseId}`)
+      .then((res) => {
+        console.log(res);
+        setDeleteCourseDialog(false);
+        setDeleteCourseId();
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getAllCourses();
   }, []);
 
   console.log(allCourses);
+
+  const publishedChip = (
+    <Chip
+      label="Published"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "green" }}
+    />
+  );
+  const unPublishedChip = <Chip label="Not Published" size="small" />;
+  const deletedChip = (
+    <Chip
+      label="Deleted"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
 
   return (
     <Fragment>
@@ -97,52 +143,138 @@ const ViewAllCourses = () => {
         </Button>
       </div>
       <div className={classes.courses}>
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              className={classes.media}
-              image={allCourses && allCourses.thumbnail}
-              title={allCourses && allCourses.title}
-            />
-            <CardContent>{allCourses && allCourses.title}</CardContent>
-          </CardActionArea>
-          <CardActions style={{ float: "right" }}>
-            <IconButton onClick={handleClick} size="small">
-              <MoreVert />
-            </IconButton>
-            <Popover
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              anchorReference="anchorPosition"
-              anchorPosition={{ top: 405, left: 475 }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              <div className={classes.popoverContents}>
-                <Button className={classes.popoverButtons}>
-                  Reply Comments
-                </Button>
-                <Button
-                  className={classes.popoverButtons}
-                  component={Link}
-                  to={allCourses && `/partner/home/content/${allCourses.id}`}
+        {allCourses &&
+          allCourses.length > 0 &&
+          allCourses.map((course, index) => {
+            return (
+              <Card key={index} className={classes.card}>
+                <CardActionArea
+                  onClick={() =>
+                    history.push(`/partner/home/content/view/${course.id}`)
+                  }
                 >
-                  Edit Course
-                </Button>
-                <Button className={classes.popoverButtons}>
-                  <span style={{ color: "red" }}>Delete Course</span>
-                </Button>
-              </div>
-            </Popover>
-          </CardActions>
-        </Card>
+                  <CardMedia
+                    className={classes.media}
+                    image={course && course.thumbnail}
+                    title={course && course.title}
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="body1"
+                      style={{ fontWeight: 600, paddingBottom: "10px" }}
+                    >
+                      {course && course.title}
+                    </Typography>
+                    {(() => {
+                      if (course.is_deleted) {
+                        return deletedChip;
+                      } else if (course.is_published) {
+                        return publishedChip;
+                      } else if (!course.is_published) {
+                        return unPublishedChip;
+                      }
+                    })()}
+                  </CardContent>
+                </CardActionArea>
+                <CardActions
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <Rating
+                      size="small"
+                      readOnly
+                      value={
+                        course && course.rating ? parseFloat(course.rating) : 0
+                      }
+                    />
+                  </div>
+                  <div>
+                    <IconButton onClick={handleClick} size="small">
+                      <MoreVert />
+                    </IconButton>
+                    <Popover
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                      anchorReference="anchorPosition"
+                      anchorPosition={{ top: 405, left: 475 }}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                    >
+                      <div className={classes.popoverContents}>
+                        <Button className={classes.popoverButtons}>
+                          Reply Comments
+                        </Button>
+                        <Button
+                          className={classes.popoverButtons}
+                          component={Link}
+                          to={course && `/partner/home/content/${course.id}`}
+                        >
+                          Edit Course
+                        </Button>
+                        <Button
+                          className={classes.popoverButtons}
+                          onClick={() => {
+                            setDeleteCourseId(course.id);
+                            setDeleteCourseDialog(true);
+                          }}
+                        >
+                          <span style={{ color: "red" }}>Delete Course</span>
+                        </Button>
+                      </div>
+                    </Popover>
+                  </div>
+                </CardActions>
+              </Card>
+            );
+          })}
       </div>
+
+      <Dialog
+        open={deleteCourseDialog}
+        onClose={() => {
+          setDeleteCourseId();
+          setDeleteCourseDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Course?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteCourseId();
+              setDeleteCourseDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              handleDeleteCourse(deleteCourseId);
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

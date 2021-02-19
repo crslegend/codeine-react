@@ -75,7 +75,7 @@ const FeaturedCourses = () => {
               marginTop: "-25px",
             }}
           >
-            <Link to="/" className={classes.link}>
+            <Link to="/courses" className={classes.link}>
               VIEW ALL
               <br />
               COURSES

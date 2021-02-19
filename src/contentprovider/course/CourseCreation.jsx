@@ -21,6 +21,7 @@ import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
+import validator from "validator";
 
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
@@ -30,6 +31,11 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogButtons: {
     width: 100,
+  },
+  kanban: {
+    width: "100%",
+    overflow: "auto",
+    marginBottom: "20px",
   },
 }));
 
@@ -152,6 +158,27 @@ const CourseCreation = () => {
       return;
     }
 
+    // check if intro video URL is a valid URL
+    if (
+      !validator.isURL(courseDetails.introduction_video_url, {
+        protocols: ["http", "https"],
+        require_protocol: true,
+        allow_underscores: true,
+      })
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter a valid URL!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
     let neverChooseOne = true;
     for (const property in languages) {
       if (languages[property]) {
@@ -219,6 +246,9 @@ const CourseCreation = () => {
       return;
     }
 
+    const requirementsArr = courseDetails.requirements.split(",");
+    const learnObjectivesArr = courseDetails.learning_objectives.split(",");
+
     let data = {
       ...courseDetails,
       coding_languages: [],
@@ -226,6 +256,8 @@ const CourseCreation = () => {
       categories: [],
       price: 20,
       thumbnail: coursePicAvatar[0].file,
+      requirements: requirementsArr,
+      learning_objectives: learnObjectivesArr,
     };
 
     for (const property in languages) {
@@ -245,7 +277,7 @@ const CourseCreation = () => {
         data.coding_languages.push(property);
       }
     }
-    console.log(data);
+    // console.log(data);
 
     const formData = new FormData();
     formData.append("title", data.title);
@@ -255,7 +287,7 @@ const CourseCreation = () => {
       JSON.stringify(data.learning_objectives)
     );
     formData.append("requirements", JSON.stringify(data.requirements));
-    formData.append("introduction_video_url", data.requirements);
+    formData.append("introduction_video_url", data.introduction_video_url);
 
     if (!courseId && data.thumbnail) {
       formData.append("thumbnail", data.thumbnail);
@@ -326,14 +358,14 @@ const CourseCreation = () => {
 
     if (chosenId) {
       Service.client
-        .get(`/courses/${chosenId}`)
+        .get(`/privateCourses/${chosenId}`)
         .then((res) => {
           console.log(res);
           setCourseDetails({
             title: res.data.title,
             description: res.data.description,
-            learning_objectives: res.data.description,
-            requirements: res.data.requirements,
+            learning_objectives: res.data.learning_objectives.join(),
+            requirements: res.data.requirements.join(),
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
           });
@@ -698,17 +730,20 @@ const CourseCreation = () => {
                     </Button>
                   </div>
                 </div>
-                <CourseKanbanBoard
-                  courseId={courseId}
-                  state={allChapters}
-                  setState={setAllChapters}
-                  getCourse={getCourse}
-                />
+                <div className={classes.kanban}>
+                  <CourseKanbanBoard
+                    courseId={courseId}
+                    state={allChapters}
+                    setState={setAllChapters}
+                    getCourse={getCourse}
+                  />
+                </div>
+
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={() => setToNextPage()}
-                  style={{ float: "right" }}
+                  style={{ float: "right", marginBottom: "20px" }}
                 >
                   Next
                 </Button>
@@ -802,7 +837,7 @@ const CourseCreation = () => {
                     />
                     <label htmlFor="marks">
                       <Typography variant="body1" style={{ marginTop: "10px" }}>
-                        Marks
+                        Passing Marks
                       </Typography>
                     </label>
                     <TextField

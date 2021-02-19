@@ -9,9 +9,10 @@ import {
   Drawer,
   IconButton,
   TextField,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Folder } from "@material-ui/icons";
+import { Folder, Help } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { ToggleButton } from "@material-ui/lab";
 
@@ -139,15 +140,22 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
-        <label htmlFor="requirements">
-          <Typography variant="body2">
-            Course Requirements (Required)
-          </Typography>
-        </label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <label htmlFor="requirements">
+            <Typography variant="body2" style={{ marginRight: "5px" }}>
+              Course Requirements (Required)
+            </Typography>
+          </label>
+          <Tooltip title="Separate the requirements with commas (eg. NodeJS,HTML,CSS)">
+            <IconButton disableRipple size="small">
+              <Help fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </div>
         <TextField
           id="requirements"
           variant="outlined"
-          placeholder="eg. Node.JS, Java EE"
+          placeholder="eg. Node.JS,Java EE"
           margin="dense"
           fullWidth
           value={courseDetails && courseDetails.requirements}
@@ -161,11 +169,18 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
-        <label htmlFor="objectives">
-          <Typography variant="body2">
-            Course Learning Objectives (Required)
-          </Typography>
-        </label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <label htmlFor="requirements">
+            <Typography variant="body2" style={{ marginRight: "5px" }}>
+              Course Learning Objectives (Required)
+            </Typography>
+          </label>
+          <Tooltip title="Separate the objectives with commas (eg. to gain knowledge,to make use of)">
+            <IconButton disableRipple size="small">
+              <Help fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </div>
         <TextField
           id="objectives"
           variant="outlined"
