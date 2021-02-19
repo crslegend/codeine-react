@@ -27,10 +27,12 @@ const AddConsultation = () => {
   const [startTime, setStartTime] = useState(currentDate);
   const [endTime, setEndTime] = useState(currentDate);
   const [meetingLink, setMeetingLink] = useState("");
+  const [title, setTitle] = useState("Open");
   const [slot, setSlot] = useState({
     start_time: startTime,
     end_time: endTime,
     meeting_link: meetingLink,
+    title: title,
   });
   const [open, setOpen] = useState(false);
 
@@ -53,6 +55,15 @@ const AddConsultation = () => {
     setSlot({
       ...slot,
       end_time: e,
+    });
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e);
+
+    setSlot({
+      ...slot,
+      title: e,
     });
   };
 
@@ -123,6 +134,14 @@ const AddConsultation = () => {
             InputLabelProps={{
               shrink: true,
             }}
+          />
+          <TextField
+            margin="dense"
+            id="name"
+            label="Title"
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            fullWidth
           />
           <TextField
             margin="dense"

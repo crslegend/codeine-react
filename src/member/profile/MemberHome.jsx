@@ -160,16 +160,6 @@ const MemberLanding = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/member/home/certification"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <Class className={classes.listIcon} />
-        <Typography variant="body1">Certifications</Typography>
-      </ListItem>
-      <ListItem
-        component={NavLink}
         to="/member/home/project"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -277,11 +267,6 @@ const MemberLanding = () => {
               exact
               path="/member/home/consultation"
               render={() => <Consultation />}
-            />
-            <PrivateRoute
-              exact
-              path="/member/home/certification"
-              render={() => <div></div>}
             />
             <PrivateRoute
               exact

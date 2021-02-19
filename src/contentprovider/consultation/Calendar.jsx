@@ -36,7 +36,7 @@ const TextEditor = (props) => {
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: !item.member
-    ? "Open"
+    ? item.title
     : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
   startDate: new Date(item.start_time),
   endDate: new Date(item.end_time),
@@ -68,7 +68,6 @@ const reducer = (state, action) => {
 const Calendar = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
-  //const [consultations, setConsultations] = useState(consults);
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
   const [allowDeleting, setAllowDeleting] = useState(true);
