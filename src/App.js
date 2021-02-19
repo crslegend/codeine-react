@@ -8,7 +8,7 @@ import IndustryLanding from "./industrypartner/landing/IndustryLanding";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
-import MemberDashboard from "./member/profile/MemberDashboard";
+import MemberHome from "./member/profile/MemberHome";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderHome";
@@ -45,7 +45,7 @@ const App = () => {
       <Route exact path="/" component={MemberLandingPage} />
       <PrivateRoute
         path="/member/home"
-        render={() => <MemberDashboard />}
+        render={() => <MemberHome />}
         user="member"
       />
       <Route exact path="/member/login" component={MemberLoginPage} />

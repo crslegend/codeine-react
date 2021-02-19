@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { AttachMoney } from "@material-ui/icons";
 import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
 
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
@@ -19,8 +20,7 @@ import AddConsultation from "./AddConsultation";
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
-    paddingTop: "10px",
-    marginLeft: "50px",
+    marginLeft: "20px",
   },
   rate: {
     marginTop: "40px",
@@ -42,7 +42,41 @@ const Consultation = () => {
 
   const updateRate = () => {
     setSubmitRate(false);
+
+    const formData = new FormData();
+    formData.append("consultation_rate", rate);
+
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      console.log(userid);
+      Service.client
+        .put(`/auth/partners/${userid}`, formData)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
+
+  useEffect(() => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      console.log(userid);
+      Service.client
+        .get(`/auth/partners/${userid}`)
+        .then((res) => {
+          setRate(res.data.partner.consultation_rate);
+          console.log(res.data);
+        })
+        .catch((error) => {
+          setRate(0);
+        });
+    }
+  }, [setRate]);
+
+  console.log(rate);
 
   return (
     <div className={classes.root}>

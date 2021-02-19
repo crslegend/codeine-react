@@ -1,4 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
 import {
   ViewState,
@@ -18,19 +20,24 @@ import {
   AppointmentTooltip,
   ConfirmationDialog,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { appointments } from "./Data";
+import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
 
 const messages = {
   moreInformationLabel: "",
 };
 
-const views = [
-  {
-    type: "month",
-    name: "Auto Mode",
-    maxAppointmentsPerCell: "2",
+const styles = {
+  toolbarRoot: {
+    position: "relative",
   },
-];
+  progress: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    left: 0,
+  },
+};
 
 const TextEditor = (props) => {
   // eslint-disable-next-line react/destructuring-assignment
@@ -40,13 +47,95 @@ const TextEditor = (props) => {
   return <AppointmentForm.TextEditor {...props} />;
 };
 
+const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
+  ({ children, classes, ...restProps }) => (
+    <div className={classes.toolbarRoot}>
+      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+      <LinearProgress className={classes.progress} />
+    </div>
+  )
+);
+
+const usaTime = (date) =>
+  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+
+const mapAppointmentData = (item) => ({
+  id: item.id,
+  title: !item.member
+    ? item.title
+    : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
+  startDate: usaTime(item.start_time),
+  endDate: usaTime(item.end_time),
+  meeting_link: item.meeting_link,
+  rejected: item.is_rejected,
+  confirmed: item.is_confirmed,
+  member: item.member,
+});
+
+const initialState = {
+  consultations: [],
+  loading: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setLoading":
+      return { ...state, loading: action.payload };
+    case "setConsultations":
+      return {
+        ...state,
+        consultations: action.payload.map(mapAppointmentData),
+      };
+    default:
+      return state;
+  }
+};
+
 const Calendar = () => {
-  const [consultations, setConsultations] = useState(appointments);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { consultations, loading } = state;
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
-
   const [allowDeleting, setAllowDeleting] = useState(true);
   const [allowUpdating, setAllowUpdating] = useState(true);
+
+  const setConsultations = React.useCallback(
+    (nextConsultations) =>
+      dispatch({
+        type: "setConsultations",
+        payload: nextConsultations,
+      }),
+    [dispatch]
+  );
+
+  const setLoading = React.useCallback(
+    (nextLoading) =>
+      dispatch({
+        type: "setLoading",
+        payload: nextLoading,
+      }),
+    [dispatch]
+  );
+
+  useEffect(() => {
+    setLoading(true);
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get("/consultations", { params: { search: userid } })
+        .then((res) => {
+          setTimeout(() => {
+            setConsultations(res.data);
+            setLoading(false);
+          }, 600);
+        })
+        .catch((error) => {
+          setConsultations(null);
+        });
+    }
+  }, [setConsultations, setLoading]);
+
+  console.log(consultations);
 
   const BasicLayout = ({
     onFieldChange,
@@ -65,14 +154,20 @@ const Calendar = () => {
       onFieldChange({ rejected: nextValue, confirmed: !nextValue });
     };
 
-    if (appointmentData.member !== undefined) {
-      setAllowDeleting(false);
-    } else {
+    if (
+      appointmentData.member === undefined ||
+      appointmentData.member === null
+    ) {
+      console.log("true");
       setAllowDeleting(true);
+    } else {
+      console.log("false");
+      setAllowDeleting(false);
     }
 
     if (appointmentData.endDate < currentDate) {
       setAllowUpdating(false);
+      setAllowDeleting(false);
     } else {
       setAllowUpdating(true);
     }
@@ -81,7 +176,7 @@ const Calendar = () => {
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
         onFieldChange={onFieldChange}
-        readOnly={!allowDeleting}
+        readOnly={!allowDeleting || !allowUpdating}
         {...restProps}
       >
         <AppointmentForm.Label
@@ -115,32 +210,10 @@ const Calendar = () => {
           readOnly={allowDeleting || !allowUpdating}
           label="Reject Consultation"
         />
+        {console.log(allowDeleting)}
       </AppointmentForm.BasicLayout>
     );
   };
-
-  /*useEffect(() => {
-    Service.client
-      .get("/contentProvider/consultations")
-      .then((res) => {
-        setData(res.data);
-        console.log(res.data);
-        res.data.map(
-          (item) =>
-            setSlot({
-              ...slot,
-              title: !item.member
-                ? "Open"
-                : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
-            }),
-          console.log(slot),
-          consultations.push(slot)
-        );
-      })
-      .catch((error) => {
-        setData(null);
-      });
-  }, []);*/
 
   const handleCurrentViewChange = (newViewName) => {
     setCurrentViewName(newViewName);
@@ -218,7 +291,9 @@ const Calendar = () => {
           <IntegratedEditing />
           <WeekView name="week" timeTableCellComponent={weekview} />
           <MonthView name="month" timeTableCellComponent={monthview} />
-          <Toolbar />
+          <Toolbar
+            {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
+          />
           <DateNavigator />
           <TodayButton />
           <Appointments />
