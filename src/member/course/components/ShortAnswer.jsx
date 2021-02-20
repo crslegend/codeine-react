@@ -2,6 +2,8 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
+import Service from "../../../AxiosService";
+
 const styles = makeStyles((theme) => ({}));
 
 const ShortAnswer = ({
@@ -27,6 +29,48 @@ const ShortAnswer = ({
     );
 
     setCorrect(result);
+  };
+
+  const handleSaveResponse = () => {
+    setPageNum(index + 1);
+
+    const data = {
+      response: enteredAnswer,
+      responses: null,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleFinishQuiz = () => {
+    const data = {
+      response: enteredAnswer,
+      responses: null,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+
+        Service.client
+          .patch(`/quizResults/${resultObj.id}/submit`)
+          .then((res) => {
+            console.log(res);
+            setResultObj(res.data);
+            setPageNum(index + 1);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -102,7 +146,7 @@ const ShortAnswer = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleFinishQuiz();
               }}
             >
               Finish
@@ -112,7 +156,7 @@ const ShortAnswer = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleSaveResponse();
               }}
             >
               Next

@@ -29,6 +29,10 @@ const TakeQuiz = ({ quiz }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleRetryQuiz = () => {
+    setPageNum(-1);
+  };
+
   return (
     <Fragment>
       {pageNum && pageNum === -1 ? (
@@ -105,6 +109,28 @@ const TakeQuiz = ({ quiz }) => {
             }
           })
         : null}
+      {pageNum && pageNum > quiz.questions.length - 1 ? (
+        <Paper style={{ padding: "50px", textAlign: "center" }}>
+          <Typography
+            variant="subtitle1"
+            style={{ fontWeight: 600, paddingBottom: "10px" }}
+          >
+            End of Quiz
+          </Typography>
+          <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+            {resultObj && resultObj.passed
+              ? "Well Done! You passed the quiz!"
+              : "You did not pass the quiz. Try Again!"}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleRetryQuiz()}
+          >
+            Re-try Quiz
+          </Button>
+        </Paper>
+      ) : null}
     </Fragment>
   );
 };

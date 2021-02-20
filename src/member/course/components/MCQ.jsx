@@ -8,6 +8,8 @@ import {
   Typography,
 } from "@material-ui/core";
 
+import Service from "../../../AxiosService";
+
 const styles = makeStyles((theme) => ({}));
 
 const MCQ = ({
@@ -20,6 +22,7 @@ const MCQ = ({
 }) => {
   const classes = styles();
   console.log(question);
+  // console.log(resultObj);
 
   const [chosenOption, setChosenOption] = useState();
   const [displayAnswer, setDisplayAnswer] = useState(false);
@@ -37,6 +40,48 @@ const MCQ = ({
     } else {
       setCorrect(false);
     }
+  };
+
+  const handleSaveResponse = () => {
+    setPageNum(index + 1);
+
+    const data = {
+      response: chosenOption,
+      responses: null,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleFinishQuiz = () => {
+    const data = {
+      response: chosenOption,
+      responses: null,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+
+        Service.client
+          .patch(`/quizResults/${resultObj.id}/submit`)
+          .then((res) => {
+            console.log(res);
+            setResultObj(res.data);
+            setPageNum(index + 1);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   console.log(chosenOption);
@@ -122,7 +167,7 @@ const MCQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleFinishQuiz();
               }}
             >
               Finish
@@ -132,7 +177,7 @@ const MCQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleSaveResponse();
               }}
             >
               Next

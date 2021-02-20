@@ -7,6 +7,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
+import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({}));
 
@@ -51,6 +52,48 @@ const MRQ = ({
     } else {
       setCorrect(false);
     }
+  };
+
+  const handleSaveResponse = () => {
+    setPageNum(index + 1);
+
+    const data = {
+      response: null,
+      responses: chosenOption,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleFinishQuiz = () => {
+    const data = {
+      response: null,
+      responses: chosenOption,
+      question: question.id,
+    };
+
+    Service.client
+      .put(`/quizResults/${resultObj.id}`, data)
+      .then((res) => {
+        console.log(res);
+
+        Service.client
+          .patch(`/quizResults/${resultObj.id}/submit`)
+          .then((res) => {
+            console.log(res);
+            setResultObj(res.data);
+            setPageNum(index + 1);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   console.log(chosenOption);
@@ -142,7 +185,7 @@ const MRQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleFinishQuiz();
               }}
             >
               Finish
@@ -152,7 +195,7 @@ const MRQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                setPageNum(index + 1);
+                handleSaveResponse();
               }}
             >
               Next
