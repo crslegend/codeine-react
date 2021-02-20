@@ -39,6 +39,7 @@ import {
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
+import ReactPlayer from "react-player";
 
 import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
@@ -127,6 +128,10 @@ const EnrollCourse = () => {
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
+          setChosenCourseMaterial({
+            material_type: "INTRO",
+            introduction_video_url: res.data.introduction_video_url,
+          });
         })
         .catch((err) => console.log(err));
     }
@@ -233,6 +238,16 @@ const EnrollCourse = () => {
                       quiz={
                         chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
                       }
+                    />
+                  </div>
+                );
+              } else {
+                return (
+                  <div>
+                    <ReactPlayer
+                      url={chosenCourseMaterial.introduction_video_url}
+                      width="100%"
+                      height="400px"
                     />
                   </div>
                 );
@@ -486,7 +501,7 @@ const EnrollCourse = () => {
                                     >
                                       {material.quiz &&
                                         material.quiz.questions.length +
-                                          ` questions`}
+                                          ` Questions`}
                                     </Typography>
                                   </div>
                                   <Typography
