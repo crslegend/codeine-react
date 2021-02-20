@@ -96,6 +96,16 @@ const MRQ = ({
       .catch((err) => console.log(err));
   };
 
+  const loadPrevAnswer = (response) => {
+    setChosenOption(response);
+  };
+
+  useEffect(() => {
+    if (resultObj && resultObj.quiz_answers[index].responses !== null) {
+      loadPrevAnswer(resultObj.quiz_answers[index].responses);
+    }
+  }, []);
+
   console.log(chosenOption);
 
   return (

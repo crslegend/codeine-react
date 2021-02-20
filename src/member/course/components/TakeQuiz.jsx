@@ -30,6 +30,7 @@ const TakeQuiz = ({ quiz }) => {
   };
 
   const handleRetryQuiz = () => {
+    setResultObj();
     setPageNum(-1);
   };
 

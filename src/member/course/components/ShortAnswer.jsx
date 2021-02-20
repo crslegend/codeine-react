@@ -73,6 +73,16 @@ const ShortAnswer = ({
       .catch((err) => console.log(err));
   };
 
+  const loadPrevAnswer = (response) => {
+    setEnteredAnswer(response);
+  };
+
+  useEffect(() => {
+    if (resultObj && resultObj.quiz_answers[index].response !== null) {
+      loadPrevAnswer(resultObj.quiz_answers[index].response);
+    }
+  }, []);
+
   return (
     <Fragment>
       <Paper

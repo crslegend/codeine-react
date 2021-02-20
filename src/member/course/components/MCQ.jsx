@@ -84,6 +84,16 @@ const MCQ = ({
       .catch((err) => console.log(err));
   };
 
+  const loadPrevAnswer = (response) => {
+    setChosenOption(response);
+  };
+
+  useEffect(() => {
+    if (resultObj && resultObj.quiz_answers[index].response !== null) {
+      loadPrevAnswer(resultObj.quiz_answers[index].response);
+    }
+  }, []);
+
   console.log(chosenOption);
 
   return (
