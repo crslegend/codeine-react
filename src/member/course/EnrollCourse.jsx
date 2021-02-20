@@ -314,6 +314,7 @@ const EnrollCourse = () => {
                   padding: "20px",
                 }}
               >
+                <Movie fontSize="small" style={{ marginRight: "5px" }} />
                 <LinkMui className={classes.linkMui}>
                   Introduction Video
                 </LinkMui>
@@ -431,22 +432,56 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <Movie
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+                                    <Movie
+                                      fontSize="small"
+                                      style={{ marginRight: "5px" }}
+                                    />
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() =>
+                                        handleChosenCourseMaterial(material)
+                                      }
+                                    >
+                                      {material.title}
+                                    </LinkMui>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
                           } else if (material.material_type === "QUIZ") {
@@ -455,22 +490,67 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <Assignment
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+                                    <Assignment
+                                      fontSize="small"
+                                      style={{ marginRight: "5px" }}
+                                    />
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() =>
+                                        handleChosenCourseMaterial(material)
+                                      }
+                                    >
+                                      {material.title}
+                                    </LinkMui>
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        marginLeft: "auto",
+                                        order: 2,
+                                      }}
+                                    >
+                                      {material.quiz &&
+                                        material.quiz.questions.length +
+                                          ` questions`}
+                                    </Typography>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
                           }
