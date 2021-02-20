@@ -7,23 +7,16 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
-  Select,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
+import ReactPlayer from "react-player";
 
 import Service from "../../AxiosService";
 import {
@@ -99,6 +92,8 @@ const ViewCourseDetailsPage = () => {
   const [expanded, setExpanded] = useState(false);
 
   const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
+
+  const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -277,8 +272,8 @@ const ViewCourseDetailsPage = () => {
             <Typography variant="body2" style={{ paddingBottom: "5px" }}>
               {course &&
                 (course.chapters.length === 1
-                  ? "1 Chapter (excluding Course Overview)"
-                  : `${course.chapters.length} Chapters (excluding Course Overview)`)}
+                  ? "1 Chapter (excluding Course Overview) + Final Quiz"
+                  : `${course.chapters.length} Chapters (excluding Course Overview) + Final Quiz`)}
             </Typography>
             <Accordion
               expanded={expanded === `overview`}
@@ -294,10 +289,12 @@ const ViewCourseDetailsPage = () => {
               <AccordionDetails
                 style={{ display: "flex", justifyContent: "center" }}
               >
-                <iframe
-                  width="420"
-                  height="345"
-                  src={course && course.introduction_video_url}
+                <ReactPlayer
+                  ref={ref}
+                  url={course && course.introduction_video_url}
+                  width="100%"
+                  height="400px"
+                  controls
                 />
               </AccordionDetails>
             </Accordion>

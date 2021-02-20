@@ -36,6 +36,7 @@ import {
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
+import ReactPlayer from "react-player";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -98,6 +99,8 @@ const ViewCourseDetails = () => {
   const [course, setCourse] = useState();
 
   const [expanded, setExpanded] = useState(false);
+
+  const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -282,10 +285,12 @@ const ViewCourseDetails = () => {
                 <AccordionDetails
                   style={{ display: "flex", justifyContent: "center" }}
                 >
-                  <iframe
-                    width="420"
-                    height="345"
-                    src={course && course.introduction_video_url}
+                  <ReactPlayer
+                    ref={ref}
+                    url={course && course.introduction_video_url}
+                    width="100%"
+                    height="400px"
+                    controls
                   />
                 </AccordionDetails>
               </Accordion>
