@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Avatar } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import AppBar from "@material-ui/core/AppBar";
@@ -17,7 +17,6 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
 import Grid from "@material-ui/core/Grid";
-import jwt_decode from "jwt-decode";
 import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     height: "calc(100vh - 115px)",
   },
   avatar: {
-    fontSize: "100px",
+    fontSize: "80px",
     width: "200px",
     height: "200px",
   },
@@ -146,13 +146,6 @@ const AdminProfilePage = (props) => {
     // instantiate form-data
     const formData = new FormData();
 
-    // appending data to form-data
-    // Object.keys(profileDetails).forEach((key) =>
-    //   formData.append(key, profileDetails[key])
-    // );
-
-    // formData.append("profile_photo", profilePhoto[0].file);
-
     formData.append("id", profileDetails.id);
     formData.append("first_name", profileDetails.first_name);
     formData.append("last_name", profileDetails.last_name);
@@ -227,7 +220,6 @@ const AdminProfilePage = (props) => {
         console.log(err);
       });
   };
-  
 
   return (
     <div>
@@ -383,11 +375,6 @@ const AdminProfilePage = (props) => {
                     />
                   </Badge>
                 )}
-                {/* <Avatar
-                  src={profileDetails.profile_photo}
-                  alt=""
-                  className={classes.avatar}
-                /> */}
               </a>
             </Grid>
           </Grid>

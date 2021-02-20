@@ -1,12 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   CircularProgress,
   Paper,
-  TextField,
-  Typography,
   Grid,
 } from "@material-ui/core";
 import Toast from "../../components/Toast.js";
@@ -153,146 +150,88 @@ const AdminPasswordPage = () => {
         <Paper elevation={0} className={classes.paper} autoComplete="off">
           <Grid container>
             <Grid item xs={6}>
-              {/* <div>
-                <TextField
-                  margin="normal"
+              <FormControl className={classes.margin}>
+                <InputLabel htmlFor="standard-adornment-password">
+                  Current Password
+                </InputLabel>
+                <Input
                   id="old_password"
-                  label="Current Password"
-                  name="old_password"
-                  required
-                  fullWidth
+                  type={passwordDetails.showOldPassword ? "text" : "password"}
                   value={passwordDetails.old_password}
-                  onChange={(event) =>
-                    setPasswordDetails({
-                      ...passwordDetails,
-                      old_password: event.target.value,
-                    })
+                  onChange={handleChange("old_password")}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowOldPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {passwordDetails.showOldPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
                   }
                 />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
+              </FormControl>
+
+              <FormControl className={classes.margin}>
+                <InputLabel htmlFor="standard-adornment-password">
+                  New Password
+                </InputLabel>
+                <Input
                   id="new_password"
-                  label="New Password"
-                  name="new_password"
-                  required
-                  fullWidth
+                  type={passwordDetails.showNewPassword ? "text" : "password"}
                   value={passwordDetails.new_password}
-                  onChange={(event) =>
-                    setPasswordDetails({
-                      ...passwordDetails,
-                      new_password: event.target.value,
-                    })
+                  onChange={handleChange("new_password")}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowNewPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {passwordDetails.showNewPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
                   }
                 />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
+              </FormControl>
+
+              <FormControl className={classes.margin}>
+                <InputLabel htmlFor="standard-adornment-password">
+                  Repeat Password
+                </InputLabel>
+                <Input
                   id="repeat_password"
-                  label="Repeat Password"
-                  name="repeat_password"
-                  required
-                  fullWidth
+                  type={
+                    passwordDetails.showRepeatPassword ? "text" : "password"
+                  }
                   value={passwordDetails.repeat_password}
-                  onChange={(event) =>
-                    setPasswordDetails({
-                      ...passwordDetails,
-                      repeat_password: event.target.value,
-                    })
+                  onChange={handleChange("repeat_password")}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowRepeatPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {passwordDetails.showRepeatPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
                   }
                 />
-              </div> */}
-
-              <div>
-                <FormControl className={classes.margin}>
-                  <InputLabel htmlFor="standard-adornment-password">
-                    Current Password
-                  </InputLabel>
-                  <Input
-                    id="old_password"
-                    type={passwordDetails.showOldPassword ? "text" : "password"}
-                    value={passwordDetails.old_password}
-                    onChange={handleChange("old_password")}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowOldPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {passwordDetails.showOldPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </div>
-
-              <div>
-                <FormControl className={classes.margin}>
-                  <InputLabel htmlFor="standard-adornment-password">
-                    New Password
-                  </InputLabel>
-                  <Input
-                    id="new_password"
-                    type={passwordDetails.showNewPassword ? "text" : "password"}
-                    value={passwordDetails.new_password}
-                    onChange={handleChange("new_password")}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowNewPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {passwordDetails.showNewPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </div>
-
-              <div>
-                <FormControl className={classes.margin}>
-                  <InputLabel htmlFor="standard-adornment-password">
-                    Repeat Password
-                  </InputLabel>
-                  <Input
-                    id="repeat_password"
-                    type={
-                      passwordDetails.showRepeatPassword ? "text" : "password"
-                    }
-                    value={passwordDetails.repeat_password}
-                    onChange={handleChange("repeat_password")}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowRepeatPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {passwordDetails.showRepeatPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </div>
+              </FormControl>
 
               <Button
                 disabled={loading}
