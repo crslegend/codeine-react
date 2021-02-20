@@ -43,6 +43,7 @@ import ReactPlayer from "react-player";
 
 import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
+import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -106,9 +107,11 @@ const EnrollCourse = () => {
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState("overview");
 
   const [unenrollDialog, setUnenrollDialog] = useState(false);
+
+  const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
     // console.log(isExpanded);
@@ -164,6 +167,10 @@ const EnrollCourse = () => {
     setChosenCourseMaterial(material);
   };
 
+  const handleDuration = (duration) => {
+    console.log(duration);
+  };
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -199,7 +206,7 @@ const EnrollCourse = () => {
           </Button>
         </div>
         <div className={classes.courseSection}>
-          <div style={{ width: "45%" }}>
+          <div style={{ width: "60%" }}>
             {(() => {
               if (!chosenCourseMaterial) {
                 return (
@@ -221,13 +228,16 @@ const EnrollCourse = () => {
               } else if (chosenCourseMaterial.material_type === "VIDEO") {
                 return (
                   <div>
-                    <iframe
-                      width="100%"
-                      height="345"
-                      src={
+                    <ReactPlayer
+                      ref={ref}
+                      url={
                         chosenCourseMaterial &&
                         chosenCourseMaterial.video.video_url
                       }
+                      width="100%"
+                      height="500px"
+                      onDuration={handleDuration}
+                      controls
                     />
                   </div>
                 );
@@ -245,9 +255,12 @@ const EnrollCourse = () => {
                 return (
                   <div>
                     <ReactPlayer
+                      ref={ref}
                       url={chosenCourseMaterial.introduction_video_url}
                       width="100%"
-                      height="400px"
+                      height="500px"
+                      onDuration={handleDuration}
+                      controls
                     />
                   </div>
                 );
@@ -255,7 +268,7 @@ const EnrollCourse = () => {
             })()}
           </div>
           <div style={{ width: "5%" }} />
-          <div style={{ width: "45%" }}>
+          <div style={{ width: "35%" }}>
             <Accordion
               expanded={expanded === `overview`}
               onChange={handleChange(`overview`)}
@@ -277,9 +290,20 @@ const EnrollCourse = () => {
                 }}
               >
                 <Movie fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui className={classes.linkMui}>
+                <LinkMui
+                  className={classes.linkMui}
+                  onClick={() => {
+                    setChosenCourseMaterial({
+                      material_type: "INTRO",
+                      introduction_video_url: course.introduction_video_url,
+                    });
+                  }}
+                >
                   Introduction Video
                 </LinkMui>
+                {/* {calculate.CalculateDuration(
+                  course && course.introduction_video_url
+                )} */}
               </AccordionDetails>
             </Accordion>
             {course &&
