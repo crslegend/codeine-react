@@ -19,6 +19,7 @@ import {
   AppointmentForm,
   AppointmentTooltip,
   ConfirmationDialog,
+  AllDayPanel,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -68,6 +69,8 @@ const mapAppointmentData = (item) => ({
   endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
   member: item.member,
+  rRule: item.rRule,
+  allDay: item.allDay,
 });
 
 const initialState = {
@@ -133,69 +136,107 @@ const Calendar = () => {
     [dispatch]
   );
 
+  // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(setConsultations, setLoading);
   }, [setConsultations, setLoading]);
 
-  const handleUpdate = React.useCallback((id, appointment) => {
-    let updateConsult = {};
+  // handles updating of consultation slot
+  const handleUpdate = React.useCallback(
+    (id, appointment) => {
+      let updateConsult = {};
 
-    if (appointment.endDate !== undefined) {
-      appointment.endDate = new Date(appointment.endDate);
-      console.log(appointment.endDate);
-      appointment.endDate = new Date(
-        appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
-      ).toISOString("en-US", { timeZone: "UTC" });
-      console.log(appointment.endDate);
-      updateConsult = {
-        ...updateConsult,
-        end_time: appointment.endDate,
-      };
-    }
-    if (appointment.startDate !== undefined) {
-      appointment.startDate = new Date(appointment.startDate);
-      console.log(appointment.startDate);
-      appointment.startDate = new Date(
-        appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
-      ).toISOString("en-US", { timeZone: "UTC" });
-      console.log(appointment.startDate);
-      updateConsult = {
-        ...updateConsult,
-        start_time: appointment.startDate,
-      };
-    }
+      if (appointment.endDate !== undefined) {
+        appointment.endDate = new Date(appointment.endDate);
+        console.log(appointment.endDate);
+        appointment.endDate = new Date(
+          appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
+        ).toISOString("en-US", { timeZone: "UTC" });
+        console.log(appointment.endDate);
+        updateConsult = {
+          ...updateConsult,
+          end_time: appointment.endDate,
+        };
+      }
+      if (appointment.startDate !== undefined) {
+        appointment.startDate = new Date(appointment.startDate);
+        console.log(appointment.startDate);
+        appointment.startDate = new Date(
+          appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
+        ).toISOString("en-US", { timeZone: "UTC" });
+        console.log(appointment.startDate);
+        updateConsult = {
+          ...updateConsult,
+          start_time: appointment.startDate,
+        };
+      }
 
-    if (appointment.title !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        title: appointment.title,
-      };
-    }
+      if (appointment.title !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          title: appointment.title,
+        };
+      }
 
-    if (appointment.meeting_link !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        meeting_link: appointment.meeting_link,
-      };
-    }
-    console.log(updateConsult);
+      if (appointment.meeting_link !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          meeting_link: appointment.meeting_link,
+        };
+      }
+      console.log(updateConsult);
 
-    Service.client
-      .put(`/consultations/${id}`, updateConsult)
-      .then((res) => {
-        console.log(res);
-        handleGetAllConsultations(setConsultations, setLoading);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  });
+      if (appointment.rRule !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          rRule: appointment.rRule,
+        };
+      }
+      console.log(appointment.rRule);
+
+      if (appointment.allDay !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          allDay: appointment.allDay,
+        };
+      }
+      console.log(appointment.allDay);
+
+      Service.client
+        .put(`/consultations/${id}`, updateConsult)
+        .then((res) => {
+          console.log(res);
+          handleGetAllConsultations(setConsultations, setLoading);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    [setConsultations, setLoading]
+  );
+
+  // handles deletion of consultation slot
+  const handleDelete = React.useCallback(
+    (id) => {
+      console.log(id);
+      Service.client
+        .delete(`/consultations/${id}`)
+        .then((res) => {
+          console.log(res);
+          handleGetAllConsultations(setConsultations, setLoading);
+        })
+        .catch((error) => {
+          console.log(id);
+          console.log(error);
+        });
+    },
+    [setConsultations, setLoading]
+  );
 
   const BasicLayout = ({
     onFieldChange,
     appointmentData,
     readOnly,
-    locale,
     ...restProps
   }) => {
     const onLinkChange = (nextValue) => {
@@ -222,7 +263,6 @@ const Calendar = () => {
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
         onFieldChange={onFieldChange}
-        locale="en-US"
         readOnly={!allowDeleting || !allowUpdating}
         {...restProps}
       >
@@ -253,26 +293,6 @@ const Calendar = () => {
     setCurrentViewName(newViewName);
   };
 
-  /*(const onCommitChanges = React.useCallback(
-    ({ changed, deleted }) => {
-      if (changed) {
-        setConsultations(
-          consultations.map((appointment) =>
-            changed[appointment.id]
-              ? { ...appointment, ...changed[appointment.id] }
-              : appointment
-          )
-        );
-      }
-      if (deleted !== undefined) {
-        setConsultations(
-          consultations.filter((appointment) => appointment.id !== deleted)
-        );
-      }
-    },
-    [setConsultations, consultations]
-  );*/
-
   const onCommitChanges = React.useCallback(
     ({ changed, deleted }) => {
       if (changed) {
@@ -283,12 +303,15 @@ const Calendar = () => {
         );
       }
       if (deleted !== undefined) {
-        setConsultations(
-          consultations.filter((appointment) => appointment.id !== deleted)
-        );
+        consultations.forEach((appointment) => {
+          if (appointment.id === deleted) {
+            console.log(appointment.id);
+            handleDelete(deleted);
+          }
+        });
       }
     },
-    [setConsultations, consultations, handleUpdate]
+    [consultations, handleUpdate, handleDelete]
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -335,7 +358,7 @@ const Calendar = () => {
   return (
     <Fragment>
       <Paper>
-        <Scheduler data={consultations} locale="en-US" height="700">
+        <Scheduler data={consultations} height="700">
           <ViewState
             defaultCurrentDate={currentDate}
             currentViewName={currentViewName}
@@ -359,6 +382,7 @@ const Calendar = () => {
             messages={messages}
           />
           <ViewSwitcher />
+          <AllDayPanel />
           <ConfirmationDialog />
         </Scheduler>
       </Paper>
