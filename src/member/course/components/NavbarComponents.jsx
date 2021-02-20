@@ -52,7 +52,7 @@ const loggedInNavbar = (onClickFn) => {
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
           >
-            View Dashboard
+            Dashboard
           </Typography>
         </Link>
       </ListItem>
