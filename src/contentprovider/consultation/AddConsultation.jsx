@@ -23,7 +23,11 @@ const useStyles = makeStyles((theme) => ({
 const AddConsultation = () => {
   const classes = useStyles();
   const date = new Date();
-  const currentDate = date.toISOString().substr(0, 16);
+  const currentDate = new Date(
+    date.getTime() - date.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .substr(0, 16);
 
   const [startTime, setStartTime] = useState(currentDate);
   const [endTime, setEndTime] = useState(currentDate);

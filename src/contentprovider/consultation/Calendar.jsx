@@ -2,11 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
-import {
-  ViewState,
-  EditingState,
-  IntegratedEditing,
-} from "@devexpress/dx-react-scheduler";
+import { ViewState, EditingState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
@@ -20,6 +16,7 @@ import {
   AppointmentTooltip,
   ConfirmationDialog,
   AllDayPanel,
+  EditRecurrenceMenu,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -69,6 +66,7 @@ const mapAppointmentData = (item) => ({
   endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
   member: item.member,
+  consultation_rate: item.consultation_rate,
   rRule: item.rRule,
   allDay: item.allDay,
 });
@@ -202,6 +200,14 @@ const Calendar = () => {
       }
       console.log(appointment.allDay);
 
+      if (appointment.consultation_rate !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          consultation_rate: appointment.consultation_rate,
+        };
+      }
+      console.log(appointment.consultation_rate);
+
       Service.client
         .put(`/consultations/${id}`, updateConsult)
         .then((res) => {
@@ -243,6 +249,10 @@ const Calendar = () => {
       onFieldChange({ meeting_link: nextValue });
     };
 
+    const onRateChange = (nextValue) => {
+      onFieldChange({ consultation_rate: nextValue });
+    };
+
     if (
       appointmentData.member === undefined ||
       appointmentData.member === null
@@ -274,8 +284,19 @@ const Calendar = () => {
         <AppointmentForm.TextEditor
           value={appointmentData.meeting_link}
           onValueChange={onLinkChange}
-          readOnly={!allowUpdating}
+          readOnly={!allowDeleting || !allowUpdating}
           placeholder="Enter conference link"
+        />
+        <AppointmentForm.Label
+          style={{ marginTop: "10px" }}
+          text="Consultation rate ($)"
+          type="title"
+        />
+        <AppointmentForm.TextEditor
+          value={appointmentData.consultation_rate}
+          onValueChange={onRateChange}
+          readOnly={!allowDeleting || !allowUpdating}
+          placeholder="Enter consultation rate e.g. 100.50"
         />
         <AppointmentForm.Label
           style={{ marginTop: "10px" }}
@@ -365,7 +386,6 @@ const Calendar = () => {
             onCurrentViewNameChange={handleCurrentViewChange}
           />
           <EditingState onCommitChanges={onCommitChanges} />
-          <IntegratedEditing />
           <WeekView name="week" timeTableCellComponent={weekview} />
           <MonthView name="month" timeTableCellComponent={monthview} />
           <Toolbar
@@ -374,6 +394,7 @@ const Calendar = () => {
           <DateNavigator />
           <TodayButton />
           <Appointments />
+          <EditRecurrenceMenu />
           <AppointmentTooltip showOpenButton />
           <AppointmentForm
             commandButtonComponent={CommandButton}
