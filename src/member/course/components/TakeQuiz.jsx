@@ -4,6 +4,7 @@ import { Button, Paper, Typography } from "@material-ui/core";
 import MCQ from "./MCQ";
 import MRQ from "./MRQ";
 import ShortAnswer from "./ShortAnswer";
+import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   button: {
@@ -16,6 +17,17 @@ const TakeQuiz = ({ quiz }) => {
   console.log(quiz);
 
   const [pageNum, setPageNum] = useState(-1);
+  const [resultObj, setResultObj] = useState();
+
+  const handleCreateQuizResult = () => {
+    Service.client
+      .post(`/quiz/${quiz.id}/results`)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Fragment>
@@ -37,7 +49,10 @@ const TakeQuiz = ({ quiz }) => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => setPageNum(pageNum + 1)}
+              onClick={() => {
+                handleCreateQuizResult();
+                setPageNum(pageNum + 1);
+              }}
               style={{ width: 150, alignSelf: "center" }}
             >
               Enter Quiz
@@ -55,6 +70,9 @@ const TakeQuiz = ({ quiz }) => {
                     question={question}
                     index={index}
                     setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
+                    quizLength={quiz && quiz.questions.length}
                   />
                 );
               } else if (question.mrq) {
@@ -64,6 +82,9 @@ const TakeQuiz = ({ quiz }) => {
                     question={question}
                     index={index}
                     setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
+                    quizLength={quiz && quiz.questions.length}
                   />
                 );
               } else if (question.shortanswer) {
@@ -73,6 +94,9 @@ const TakeQuiz = ({ quiz }) => {
                     question={question}
                     index={index}
                     setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
+                    quizLength={quiz && quiz.questions.length}
                   />
                 );
               }

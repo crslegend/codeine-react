@@ -10,7 +10,14 @@ import {
 
 const styles = makeStyles((theme) => ({}));
 
-const MCQ = ({ question, index, setPageNum }) => {
+const MCQ = ({
+  question,
+  index,
+  setPageNum,
+  resultObj,
+  setResultObj,
+  quizLength,
+}) => {
   const classes = styles();
   console.log(question);
 
@@ -110,15 +117,27 @@ const MCQ = ({ question, index, setPageNum }) => {
           >
             Back
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              setPageNum(index + 1);
-            }}
-          >
-            Next
-          </Button>
+          {quizLength && quizLength === index + 1 ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setPageNum(index + 1);
+              }}
+            >
+              Finish
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setPageNum(index + 1);
+              }}
+            >
+              Next
+            </Button>
+          )}
         </div>
       </Paper>
     </Fragment>

@@ -1,18 +1,17 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Paper,
-  Radio,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({}));
 
-const ShortAnswer = ({ question, index, setPageNum }) => {
+const ShortAnswer = ({
+  question,
+  index,
+  setPageNum,
+  resultObj,
+  setResultObj,
+  quizLength,
+}) => {
   const classes = styles();
   console.log(question);
 
@@ -98,15 +97,27 @@ const ShortAnswer = ({ question, index, setPageNum }) => {
           >
             Back
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              setPageNum(index + 1);
-            }}
-          >
-            Next
-          </Button>
+          {quizLength && quizLength === index + 1 ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setPageNum(index + 1);
+              }}
+            >
+              Finish
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setPageNum(index + 1);
+              }}
+            >
+              Next
+            </Button>
+          )}
         </div>
       </Paper>
     </Fragment>
