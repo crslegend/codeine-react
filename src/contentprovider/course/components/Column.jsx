@@ -3,14 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
 import {
-  Add,
   Assignment,
   AttachFile,
   Delete,
   DragIndicator,
   Edit,
   Movie,
-  SentimentSatisfiedAltRounded,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {

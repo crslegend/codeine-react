@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -8,16 +8,8 @@ import {
   Avatar,
   Button,
   Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   Chip,
-  FormControl,
   IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
-  Select,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -136,6 +128,7 @@ const ViewCourseDetails = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatDate = (date) => {

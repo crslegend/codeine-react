@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+// import Navbar from "../../components/Navbar";
 import {
   Accordion,
   AccordionDetails,
@@ -112,6 +112,7 @@ const ViewCourseDetailsPage = () => {
 
   useEffect(() => {
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatDate = (date) => {

@@ -135,23 +135,24 @@ const EnrollCourse = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatDate = (date) => {
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+  // const formatDate = (date) => {
+  //   const options = {
+  //     weekday: "long",
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   };
 
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
+  //   if (date !== null) {
+  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
+  //     // console.log(newDate);
+  //     return newDate;
+  //   }
+  //   return "";
+  // };
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
@@ -530,6 +531,8 @@ const EnrollCourse = () => {
                                 </div>
                               </div>
                             );
+                          } else {
+                            return null;
                           }
                         })}
                     </AccordionDetails>
