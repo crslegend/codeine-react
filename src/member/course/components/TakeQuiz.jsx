@@ -1,17 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from "@material-ui/core";
+import { Button, Paper, Typography } from "@material-ui/core";
 import MCQ from "./MCQ";
 import MRQ from "./MRQ";
 import ShortAnswer from "./ShortAnswer";

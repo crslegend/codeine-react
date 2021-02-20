@@ -7,23 +7,16 @@ import {
   AccordionSummary,
   Button,
   Checkbox,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
   Paper,
-  Select,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
-import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
@@ -33,9 +26,7 @@ import {
   Assignment,
   AttachFile,
   ExpandMore,
-  FiberManualRecord,
   GetApp,
-  Language,
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
@@ -43,7 +34,7 @@ import ReactPlayer from "react-player";
 
 import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
-import calculate from "./components/CalculateDuration";
+// import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
   root: {
