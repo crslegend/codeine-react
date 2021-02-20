@@ -110,7 +110,7 @@ const EnrollCourse = () => {
   const [unenrollDialog, setUnenrollDialog] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
-    console.log(isExpanded);
+    // console.log(isExpanded);
     setExpanded(isExpanded ? panel : false);
   };
 
@@ -354,13 +354,10 @@ const EnrollCourse = () => {
                       }}
                     >
                       <Typography
-                        variant="body2"
-                        style={{ paddingBottom: "15px" }}
+                        variant="body1"
+                        style={{ paddingBottom: "20px" }}
                       >
-                        {chapter.course_materials &&
-                        chapter.course_materials.length === 1
-                          ? "1 Course Material"
-                          : `${chapter.course_materials.length} Course Materials`}
+                        {chapter.overview && chapter.overview}
                       </Typography>
                       {chapter.course_materials &&
                         chapter.course_materials.length > 0 &&
@@ -371,35 +368,61 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <AttachFile
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
-                                <IconButton
-                                  size="small"
-                                  style={{ marginLeft: "auto", order: 2 }}
-                                  href={
-                                    material.course_file.zip_file
-                                      ? material.course_file.zip_file
-                                      : material.course_file.google_drive_url
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <GetApp />
-                                </IconButton>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+
+                                    <AttachFile fontSize="small" />
+                                    {material.title}
+                                    <IconButton
+                                      size="small"
+                                      style={{ marginLeft: "auto", order: 2 }}
+                                      href={
+                                        material.course_file.zip_file
+                                          ? material.course_file.zip_file
+                                          : material.course_file
+                                              .google_drive_url
+                                      }
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      <GetApp />
+                                    </IconButton>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
                           } else if (material.material_type === "VIDEO") {
