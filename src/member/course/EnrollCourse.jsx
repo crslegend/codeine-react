@@ -213,27 +213,6 @@ const EnrollCourse = () => {
                     </Typography>
                   </Paper>
                 );
-              } else if (chosenCourseMaterial.material_type === "FILE") {
-                return (
-                  <Paper
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      padding: "30px",
-                    }}
-                  >
-                    <Typography
-                      variant="h4"
-                      style={{ fontWeight: 600, paddingBottom: "10px" }}
-                    >
-                      {chosenCourseMaterial.title}
-                    </Typography>
-                    <Typography variant="body2">
-                      {chosenCourseMaterial.description}
-                    </Typography>
-                  </Paper>
-                );
               } else if (chosenCourseMaterial.material_type === "VIDEO") {
                 return (
                   <div>
@@ -245,22 +224,6 @@ const EnrollCourse = () => {
                         chosenCourseMaterial.video.video_url
                       }
                     />
-                    <Paper
-                      style={{
-                        marginTop: "20px",
-                        padding: "30px",
-                      }}
-                    >
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
-                      >
-                        {chosenCourseMaterial.title}
-                      </Typography>
-                      <Typography variant="body2">
-                        {chosenCourseMaterial.description}
-                      </Typography>
-                    </Paper>
                   </div>
                 );
               } else if (chosenCourseMaterial.material_type === "QUIZ") {
@@ -271,22 +234,6 @@ const EnrollCourse = () => {
                         chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
                       }
                     />
-                    <Paper
-                      style={{
-                        marginTop: "20px",
-                        padding: "30px",
-                      }}
-                    >
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
-                      >
-                        {chosenCourseMaterial.title}
-                      </Typography>
-                      <Typography variant="body2">
-                        {chosenCourseMaterial.description}
-                      </Typography>
-                    </Paper>
                   </div>
                 );
               }
