@@ -18,6 +18,7 @@ import LandingPageRoute from "./components/LandingPageRoute";
 import ViewAllCourses from "./member/course/ViewAllCourses";
 import ViewCourseDetails from "./member/course/ViewCourseDetails";
 import EnrollCourse from "./member/course/EnrollCourse";
+import PaymentSuccess from "./components/PaymentSuccess";
 
 const App = () => {
   return (
@@ -72,6 +73,7 @@ const App = () => {
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <PrivateRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
+      <Route path="/payment/success" component={PaymentSuccess} />
       <Route component={NotFound} />
     </Switch>
   );
