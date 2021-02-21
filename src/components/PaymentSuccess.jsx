@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
-import { Link, useParams } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import Service from "../AxiosService";
 import logo from "../assets/CodeineLogos/Partner.svg";
 
@@ -39,9 +39,43 @@ const styles = makeStyles((theme) => ({
 
 const PaymentSuccess = () => {
   const classes = styles();
-  const { id } = useParams();
+  // const { id } = useParams();
+  const location = useLocation();
+  const history = useHistory();
 
-  useEffect(() => {}, []);
+  const [user, setUser] = useState();
+
+  const handleRedirect = () => {
+    if (user === "partner") {
+      history.push(`/partner/home/content`);
+    } else {
+      // return to member consult
+    }
+  };
+
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get("pId") !== null) {
+      setUser("partner");
+    } else {
+      setUser("member");
+    }
+
+    // in future create payment transaction for the user
+
+    if (new URLSearchParams(location.search).get("courseId") !== null) {
+      Service.client
+        .patch(
+          `/courses/${new URLSearchParams(location.search).get(
+            "courseId"
+          )}/publish`
+        )
+        .then((res) => {
+          console.log(res);
+          localStorage.removeItem("courseId");
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
 
   return (
     <div>
@@ -65,6 +99,7 @@ const PaymentSuccess = () => {
           variant="contained"
           color="primary"
           style={{ marginTop: "25px" }}
+          onClick={() => handleRedirect()}
         >
           Bring Me Back
         </Button>

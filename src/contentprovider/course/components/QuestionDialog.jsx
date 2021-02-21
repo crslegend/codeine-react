@@ -607,7 +607,6 @@ const QuestionDialog = ({
             onChange={(e) => {
               handleQuestionInputChange(e);
             }}
-            disabled={!editMode && editQuestionDialog}
           />
           {questionType && (
             <Fragment>
@@ -637,7 +636,6 @@ const QuestionDialog = ({
                   }
                 })()}
                 onChange={(e) => handleMarksChange(e)}
-                disabled={!editMode && editQuestionDialog}
                 style={{ marginBottom: "10px" }}
                 InputProps={{
                   inputProps: { min: 0 },
@@ -656,7 +654,6 @@ const QuestionDialog = ({
               <Select
                 value={correctAnswer}
                 onChange={(e) => setCorrectAnswer(e.target.value)}
-                disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
               >
@@ -680,7 +677,6 @@ const QuestionDialog = ({
                 multiple
                 value={correctAnswer}
                 onChange={(e) => handleSelectMultiSelectAnswers(e)}
-                disabled={!editMode && editQuestionDialog}
                 label="Select Correct Answer"
                 variant="outlined"
                 renderValue={(selected) => {
@@ -723,7 +719,6 @@ const QuestionDialog = ({
                 onChange={(e) => {
                   handleShortAnswerInput(e);
                 }}
-                disabled={!editMode && editQuestionDialog}
               />
             </Fragment>
           )}
@@ -751,7 +746,6 @@ const QuestionDialog = ({
                       <TextField
                         value={option}
                         placeholder="Enter option"
-                        disabled={!editMode && editQuestionDialog}
                         style={{ marginBottom: "10px" }}
                         onChange={(e) => handleOptionInputChange(e, index)}
                       />
@@ -763,7 +757,6 @@ const QuestionDialog = ({
                           onClick={() => {
                             handleDeleteOption(index);
                           }}
-                          disabled={!editMode && editQuestionDialog}
                         >
                           <Clear />
                         </IconButton>
@@ -775,7 +768,6 @@ const QuestionDialog = ({
                           onClick={() => {
                             handleAddOption();
                           }}
-                          disabled={!editMode && editQuestionDialog}
                         >
                           <Add />
                         </IconButton>
@@ -814,7 +806,6 @@ const QuestionDialog = ({
             variant="contained"
             color="primary"
             className={classes.dialogButtons}
-            disabled={!editMode && editQuestionDialog}
             onClick={() => {
               if (editQuestionDialog) {
                 handleUpdateQuestion();
