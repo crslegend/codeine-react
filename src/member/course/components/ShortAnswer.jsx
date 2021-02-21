@@ -33,8 +33,6 @@ const ShortAnswer = ({
   };
 
   const handleSaveResponse = () => {
-    setPageNum(index + 1);
-
     const data = {
       response: enteredAnswer,
       responses: null,
@@ -175,6 +173,7 @@ const ShortAnswer = ({
               color="primary"
               onClick={() => {
                 handleSaveResponse();
+                setPageNum(index + 1);
               }}
             >
               Next

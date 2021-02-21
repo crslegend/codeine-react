@@ -44,8 +44,6 @@ const MCQ = ({
   };
 
   const handleSaveResponse = () => {
-    setPageNum(index + 1);
-
     const data = {
       response: chosenOption,
       responses: null,
@@ -196,6 +194,7 @@ const MCQ = ({
               color="primary"
               onClick={() => {
                 handleSaveResponse();
+                setPageNum(index + 1);
               }}
             >
               Next

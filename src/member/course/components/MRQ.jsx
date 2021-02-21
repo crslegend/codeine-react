@@ -56,8 +56,6 @@ const MRQ = ({
   };
 
   const handleSaveResponse = () => {
-    setPageNum(index + 1);
-
     const data = {
       response: null,
       responses: chosenOption,
@@ -214,6 +212,7 @@ const MRQ = ({
               color="primary"
               onClick={() => {
                 handleSaveResponse();
+                setPageNum(index + 1);
               }}
             >
               Next
