@@ -129,6 +129,9 @@ const CourseCreation = () => {
   const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState();
+
   const handleSaveCourseDetails = () => {
     console.log(coursePicAvatar);
     if (!coursePicAvatar) {
@@ -656,28 +659,73 @@ const CourseCreation = () => {
       .catch((err) => console.log(err));
   };
 
+  const handlePaymentDialog = () => {
+    if (paymentAmount < 1) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Contribution amount has to be higher",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const decoded = jwt_decode(Cookies.get("t1"));
+
+    // console.log(decoded);
+    Service.client
+      .get(`/auth/partners/${decoded.user_id}`)
+      .then((res) => {
+        console.log(res);
+
+        if (
+          res.data.partner.organization &&
+          res.data.partner.organization.organization_name
+        ) {
+          // means enterprise partner
+          if (paymentAmount < 500) {
+            setSbOpen(true);
+            setSnackbar({
+              message:
+                "Contribution amount has to be greater than or equals to $500 for enterprise",
+              severity: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+            return;
+          }
+        }
+
+        handleStripePaymentGateway(
+          paymentAmount,
+          res.data.email,
+          decoded.user_id
+        );
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleLastPageSave = () => {
     if (isPublished === "true") {
-      // to check whether partner paid
-      const decoded = jwt_decode(Cookies.get("t1"));
-      // console.log(decoded);
-      Service.client
-        .get(`/auth/partners/${decoded.user_id}`)
-        .then((res) => {
-          // console.log(res);
-          // setUser(res.data);
-          const amount = 50;
-          handleStripePaymentGateway(amount, res.data.email, decoded.user_id);
-        })
-        .catch((err) => console.log(err));
-
-      // Service.client
-      //   .patch(`/courses/${courseId}/publish`)
-      //   .then((res) => {
-      //     localStorage.removeItem("courseId");
-      //     history.push(`/partner/home/content`);
-      //   })
-      //   .catch((err) => console.log(err));
+      const check = true; // to check whether partner paid
+      if (check) {
+        setPaymentDialog(true);
+      } else {
+        Service.client
+          .patch(`/courses/${courseId}/publish`)
+          .then((res) => {
+            localStorage.removeItem("courseId");
+            history.push(`/partner/home/content`);
+          })
+          .catch((err) => console.log(err));
+      }
     } else {
       Service.client
         .patch(`/courses/${courseId}/unpublish`)
@@ -1079,6 +1127,54 @@ const CourseCreation = () => {
             </Button>
           </DialogActions>
         </form>
+      </Dialog>
+
+      <Dialog
+        open={paymentDialog}
+        onClose={() => setPaymentDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>You have yet to contribute for this month</DialogTitle>
+        <DialogContent>
+          <label htmlFor="amount">
+            <Typography>
+              Please enter the amount you wish to contribute below
+            </Typography>
+          </label>
+          <TextField
+            id="amount"
+            variant="outlined"
+            placeholder="Enter amount (eg. 50.50)"
+            type="number"
+            required
+            fullWidth
+            margin="dense"
+            value={paymentAmount && paymentAmount}
+            onChange={(e) => setPaymentAmount(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setPaymentDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handlePaymentDialog()}
+          >
+            Proceed To Pay
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );
