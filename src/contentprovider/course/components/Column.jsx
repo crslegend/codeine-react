@@ -528,7 +528,6 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
               color="primary"
               className={classes.dialogButtons}
               type="submit"
-              disabled={!editMode}
             >
               Save
             </Button>

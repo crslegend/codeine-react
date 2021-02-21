@@ -224,9 +224,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       if (zipFile) {
         formData.append("zip_file", zipFile[0].file);
       }
-      if (editFile.google_drive_url) {
-        formData.append("google_drive_url", editFile.google_drive_url);
-      }
+      formData.append("google_drive_url", editFile.google_drive_url);
 
       Service.client
         .put(`/materials/${courseMaterialId}/files`, formData)
@@ -540,33 +538,32 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                       marginBottom: "25px",
                     }}
                   />
-                  {editMode && (
-                    <Fragment>
-                      <Typography variant="body2" style={{ marginTop: "10px" }}>
-                        Upload a Zip File (to replace the current file)
-                      </Typography>
-                      <DropzoneAreaBase
-                        dropzoneText="Drag and drop a zip file or click&nbsp;here"
-                        dropzoneClass={classes.dropzoneContainer}
-                        // dropzoneProps={{ disabled: true }}
-                        filesLimit={1}
-                        maxFileSize={5000000000}
-                        fileObjects={zipFile}
-                        useChipsForPreview={true}
-                        onAdd={(newFile) => {
-                          setZipFile(newFile);
-                        }}
-                        onDelete={(fileObj) => {
-                          setZipFile();
-                        }}
-                        previewGridProps={{
-                          item: {
-                            xs: "auto",
-                          },
-                        }}
-                      />
-                    </Fragment>
-                  )}
+
+                  <div>
+                    <Typography variant="body2" style={{ marginTop: "10px" }}>
+                      Upload a Zip File (to replace the current file)
+                    </Typography>
+                    <DropzoneAreaBase
+                      dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                      dropzoneClass={classes.dropzoneContainer}
+                      // dropzoneProps={{ disabled: true }}
+                      filesLimit={1}
+                      maxFileSize={5000000000}
+                      fileObjects={zipFile}
+                      useChipsForPreview={true}
+                      onAdd={(newFile) => {
+                        setZipFile(newFile);
+                      }}
+                      onDelete={(fileObj) => {
+                        setZipFile();
+                      }}
+                      previewGridProps={{
+                        item: {
+                          xs: "auto",
+                        },
+                      }}
+                    />
+                  </div>
 
                   {editFile && editFile.zip_file && (
                     <div style={{ display: "flex" }}>
@@ -580,6 +577,8 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                               ? editFile.zip_file.replace("#", "")
                               : "#"
                           }
+                          rel="noopener noreferrer"
+                          target="_blank"
                         >
                           Uploaded File
                         </LinkMui>
