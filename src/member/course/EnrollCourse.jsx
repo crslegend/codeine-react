@@ -160,7 +160,7 @@ const EnrollCourse = () => {
   };
 
   const handleDuration = (duration) => {
-    console.log(duration);
+    // console.log(duration);
   };
 
   return (
@@ -378,9 +378,14 @@ const EnrollCourse = () => {
 
                                     <AttachFile fontSize="small" />
                                     {material.title}
-                                    <IconButton
-                                      size="small"
-                                      style={{ marginLeft: "auto", order: 2 }}
+                                    <Button
+                                      variant="outlined"
+                                      style={{
+                                        marginLeft: "auto",
+                                        order: 2,
+                                        textTransform: "capitalize",
+                                        height: 25,
+                                      }}
                                       href={
                                         material.course_file.zip_file
                                           ? material.course_file.zip_file
@@ -390,13 +395,14 @@ const EnrollCourse = () => {
                                       target="_blank"
                                       rel="noopener noreferrer"
                                     >
-                                      <GetApp />
-                                    </IconButton>
+                                      Download File
+                                    </Button>
                                   </div>
                                   <Typography
                                     style={{
                                       fontSize: "12px",
                                       opacity: 0.7,
+                                      marginTop: "5px",
                                     }}
                                   >
                                     {material.description}
