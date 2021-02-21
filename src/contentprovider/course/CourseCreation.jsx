@@ -23,6 +23,12 @@ import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
 import validator from "validator";
 
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
+
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
     display: "flex",
@@ -627,17 +633,51 @@ const CourseCreation = () => {
     setPageNum(pageNum + 1);
   };
 
+  const handleStripePaymentGateway = async (amount, email) => {
+    // Get Stripe.js instance
+    const stripe = await stripePromise;
+
+    const data = {
+      courseId: courseId,
+      total_price: amount,
+      email: email,
+      description: "Monthly Contributions",
+      user: "partner",
+    };
+
+    axios
+      .post("/create-checkout-session", data)
+      .then((res) => {
+        console.log(res);
+        stripe.redirectToCheckout({
+          sessionId: res.data.id,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleLastPageSave = () => {
     if (isPublished === "true") {
       // to check whether partner paid
-
+      const decoded = jwt_decode(Cookies.get("t1"));
+      // console.log(decoded);
       Service.client
-        .patch(`/courses/${courseId}/publish`)
+        .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          localStorage.removeItem("courseId");
-          history.push(`/partner/home/content`);
+          // console.log(res);
+          // setUser(res.data);
+          const amount = 50;
+          handleStripePaymentGateway(amount, res.data.email);
         })
         .catch((err) => console.log(err));
+
+      // Service.client
+      //   .patch(`/courses/${courseId}/publish`)
+      //   .then((res) => {
+      //     localStorage.removeItem("courseId");
+      //     history.push(`/partner/home/content`);
+      //   })
+      //   .catch((err) => console.log(err));
     } else {
       Service.client
         .patch(`/courses/${courseId}/unpublish`)
