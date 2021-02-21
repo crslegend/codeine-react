@@ -54,9 +54,13 @@ const PaymentSuccess = () => {
   };
 
   useEffect(() => {
-    if (new URLSearchParams(location.search).get("user") !== null) {
-      setUser(new URLSearchParams(location.search).get("user"));
+    if (new URLSearchParams(location.search).get("pId") !== null) {
+      setUser("partner");
+    } else {
+      setUser("member");
     }
+
+    // in future create payment transaction for the user
 
     if (new URLSearchParams(location.search).get("courseId") !== null) {
       Service.client
@@ -66,7 +70,7 @@ const PaymentSuccess = () => {
           )}/publish`
         )
         .then((res) => {
-          // console.log(res)
+          console.log(res);
           localStorage.removeItem("courseId");
         })
         .catch((err) => console.log(err));

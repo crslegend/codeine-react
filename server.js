@@ -39,7 +39,7 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&courseId=${transaction.courseId}&user=${transaction.user}`,
+      success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&courseId=${transaction.courseId}&pId=${transaction.pId}`,
       cancel_url: `http://localhost:3000/partner/home/content/${transaction.courseId}`,
     });
     res.json({ id: session.id });

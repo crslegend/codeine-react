@@ -633,7 +633,7 @@ const CourseCreation = () => {
     setPageNum(pageNum + 1);
   };
 
-  const handleStripePaymentGateway = async (amount, email) => {
+  const handleStripePaymentGateway = async (amount, email, userId) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
@@ -642,7 +642,7 @@ const CourseCreation = () => {
       total_price: amount,
       email: email,
       description: "Monthly Contributions",
-      user: "partner",
+      pId: userId,
     };
 
     axios
@@ -667,7 +667,7 @@ const CourseCreation = () => {
           // console.log(res);
           // setUser(res.data);
           const amount = 50;
-          handleStripePaymentGateway(amount, res.data.email);
+          handleStripePaymentGateway(amount, res.data.email, decoded.user_id);
         })
         .catch((err) => console.log(err));
 
