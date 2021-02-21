@@ -172,6 +172,12 @@ const EnrollCourse = () => {
       .then((res) => {
         console.log(res);
         setResultObj(res.data);
+        setPageNum(-1);
+        // if (res.data.passed) {
+        //   setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
+        // } else {
+        //   setPageNum(-1);
+        // }
       })
       .catch((err) => console.log(err));
   };
@@ -534,7 +540,6 @@ const EnrollCourse = () => {
                                     <LinkMui
                                       className={classes.linkMui}
                                       onClick={() => {
-                                        setPageNum(-1);
                                         handleChosenCourseMaterial(material);
                                         handleCreateQuizResult(
                                           material.quiz.id
@@ -598,7 +603,6 @@ const EnrollCourse = () => {
                 <LinkMui
                   className={classes.linkMui}
                   onClick={() => {
-                    setPageNum(-1);
                     setChosenCourseMaterial({
                       material_type: "FINAL",
                       quiz: course.assessment,
