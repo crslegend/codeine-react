@@ -7,23 +7,16 @@ import {
   AccordionSummary,
   Button,
   Checkbox,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
   Paper,
-  Select,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
-import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
@@ -33,15 +26,15 @@ import {
   Assignment,
   AttachFile,
   ExpandMore,
-  FiberManualRecord,
   GetApp,
-  Language,
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
+import ReactPlayer from "react-player";
 
 import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
+// import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -105,12 +98,17 @@ const EnrollCourse = () => {
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState("overview");
 
   const [unenrollDialog, setUnenrollDialog] = useState(false);
 
+  const [pageNum, setPageNum] = useState(-1);
+  const [resultObj, setResultObj] = useState();
+
+  const ref = React.createRef();
+
   const handleChange = (panel) => (event, isExpanded) => {
-    console.log(isExpanded);
+    // console.log(isExpanded);
     setExpanded(isExpanded ? panel : false);
   };
 
@@ -127,6 +125,10 @@ const EnrollCourse = () => {
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
+          setChosenCourseMaterial({
+            material_type: "INTRO",
+            introduction_video_url: res.data.introduction_video_url,
+          });
         })
         .catch((err) => console.log(err));
     }
@@ -136,27 +138,48 @@ const EnrollCourse = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatDate = (date) => {
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+  // const formatDate = (date) => {
+  //   const options = {
+  //     weekday: "long",
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   };
 
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
+  //   if (date !== null) {
+  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
+  //     // console.log(newDate);
+  //     return newDate;
+  //   }
+  //   return "";
+  // };
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
     setChosenCourseMaterial(material);
+  };
+
+  const handleDuration = (duration) => {
+    // console.log(duration);
+  };
+
+  const handleCreateQuizResult = (quizId) => {
+    Service.client
+      .post(`/quiz/${quizId}/results`)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+        setPageNum(-1);
+        // if (res.data.passed) {
+        //   setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
+        // } else {
+        //   setPageNum(-1);
+        // }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -194,7 +217,7 @@ const EnrollCourse = () => {
           </Button>
         </div>
         <div className={classes.courseSection}>
-          <div style={{ width: "45%" }}>
+          <div style={{ width: "60%" }}>
             {(() => {
               if (!chosenCourseMaterial) {
                 return (
@@ -213,87 +236,62 @@ const EnrollCourse = () => {
                     </Typography>
                   </Paper>
                 );
-              } else if (chosenCourseMaterial.material_type === "FILE") {
-                return (
-                  <Paper
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      padding: "30px",
-                    }}
-                  >
-                    <Typography
-                      variant="h4"
-                      style={{ fontWeight: 600, paddingBottom: "10px" }}
-                    >
-                      {chosenCourseMaterial.title}
-                    </Typography>
-                    <Typography variant="body2">
-                      {chosenCourseMaterial.description}
-                    </Typography>
-                  </Paper>
-                );
               } else if (chosenCourseMaterial.material_type === "VIDEO") {
                 return (
                   <div>
-                    <iframe
-                      width="100%"
-                      height="345"
-                      src={
+                    <ReactPlayer
+                      ref={ref}
+                      url={
                         chosenCourseMaterial &&
                         chosenCourseMaterial.video.video_url
                       }
+                      width="100%"
+                      height="500px"
+                      onDuration={handleDuration}
+                      controls
                     />
-                    <Paper
-                      style={{
-                        marginTop: "20px",
-                        padding: "30px",
-                      }}
-                    >
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
-                      >
-                        {chosenCourseMaterial.title}
-                      </Typography>
-                      <Typography variant="body2">
-                        {chosenCourseMaterial.description}
-                      </Typography>
-                    </Paper>
                   </div>
                 );
-              } else if (chosenCourseMaterial.material_type === "QUIZ") {
+              } else if (
+                chosenCourseMaterial.material_type === "QUIZ" ||
+                chosenCourseMaterial.material_type === "FINAL"
+              ) {
                 return (
                   <div>
                     <TakeQuiz
                       quiz={
                         chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
                       }
+                      quizTitle={
+                        chosenCourseMaterial.title && chosenCourseMaterial.title
+                      }
+                      quizType={chosenCourseMaterial.material_type}
+                      pageNum={pageNum}
+                      setPageNum={setPageNum}
+                      resultObj={resultObj}
+                      setResultObj={setResultObj}
+                      handleCreateQuizResult={handleCreateQuizResult}
                     />
-                    <Paper
-                      style={{
-                        marginTop: "20px",
-                        padding: "30px",
-                      }}
-                    >
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
-                      >
-                        {chosenCourseMaterial.title}
-                      </Typography>
-                      <Typography variant="body2">
-                        {chosenCourseMaterial.description}
-                      </Typography>
-                    </Paper>
+                  </div>
+                );
+              } else {
+                return (
+                  <div>
+                    <ReactPlayer
+                      ref={ref}
+                      url={chosenCourseMaterial.introduction_video_url}
+                      width="100%"
+                      height="500px"
+                      onDuration={handleDuration}
+                      controls
+                    />
                   </div>
                 );
               }
             })()}
           </div>
           <div style={{ width: "5%" }} />
-          <div style={{ width: "45%" }}>
+          <div style={{ width: "35%" }}>
             <Accordion
               expanded={expanded === `overview`}
               onChange={handleChange(`overview`)}
@@ -303,7 +301,9 @@ const EnrollCourse = () => {
                 id={`overview`}
                 style={{ backgroundColor: "#F4F4F4" }}
               >
-                <Typography>Course Overview</Typography>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Course Overview
+                </Typography>
               </AccordionSummary>
               <AccordionDetails
                 style={{
@@ -312,24 +312,34 @@ const EnrollCourse = () => {
                   padding: "20px",
                 }}
               >
-                <LinkMui className={classes.linkMui}>
+                <Movie fontSize="small" style={{ marginRight: "5px" }} />
+                <LinkMui
+                  className={classes.linkMui}
+                  onClick={() => {
+                    setChosenCourseMaterial({
+                      material_type: "INTRO",
+                      introduction_video_url: course.introduction_video_url,
+                    });
+                  }}
+                >
                   Introduction Video
                 </LinkMui>
+                {/* {calculate.CalculateDuration(
+                  course && course.introduction_video_url
+                )} */}
               </AccordionDetails>
             </Accordion>
             {course &&
               course.chapters.length > 0 &&
               course.chapters.map((chapter, index) => {
                 return (
-                  <Accordion expanded={expanded === `${index}`} key={index}>
+                  <Accordion
+                    expanded={expanded === `${index}`}
+                    key={index}
+                    onChange={handleChange(`${index}`)}
+                  >
                     <AccordionSummary
-                      expandIcon={
-                        <ExpandMore
-                          onClick={() =>
-                            setExpanded(!expanded ? `${index}` : false)
-                          }
-                        />
-                      }
+                      expandIcon={<ExpandMore />}
                       id={`${index}`}
                       style={{
                         backgroundColor: "#F4F4F4",
@@ -341,8 +351,9 @@ const EnrollCourse = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Checkbox />
-                        <Typography>{chapter.title}</Typography>
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          {chapter.title}
+                        </Typography>
                       </div>
                     </AccordionSummary>
                     <AccordionDetails
@@ -353,13 +364,10 @@ const EnrollCourse = () => {
                       }}
                     >
                       <Typography
-                        variant="body2"
-                        style={{ paddingBottom: "15px" }}
+                        variant="body1"
+                        style={{ paddingBottom: "20px" }}
                       >
-                        {chapter.course_materials &&
-                        chapter.course_materials.length === 1
-                          ? "1 Course Material"
-                          : `${chapter.course_materials.length} Course Materials`}
+                        {chapter.overview && chapter.overview}
                       </Typography>
                       {chapter.course_materials &&
                         chapter.course_materials.length > 0 &&
@@ -370,35 +378,67 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <AttachFile
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
-                                <IconButton
-                                  size="small"
-                                  style={{ marginLeft: "auto", order: 2 }}
-                                  href={
-                                    material.course_file.zip_file
-                                      ? material.course_file.zip_file
-                                      : material.course_file.google_drive_url
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <GetApp />
-                                </IconButton>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+
+                                    <AttachFile fontSize="small" />
+                                    {material.title}
+                                    <Button
+                                      variant="outlined"
+                                      style={{
+                                        marginLeft: "auto",
+                                        order: 2,
+                                        textTransform: "capitalize",
+                                        height: 25,
+                                      }}
+                                      href={
+                                        material.course_file.zip_file
+                                          ? material.course_file.zip_file
+                                          : material.course_file
+                                              .google_drive_url
+                                      }
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      Download File
+                                    </Button>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
                           } else if (material.material_type === "VIDEO") {
@@ -407,22 +447,56 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <Movie
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+                                    <Movie
+                                      fontSize="small"
+                                      style={{ marginRight: "5px" }}
+                                    />
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() =>
+                                        handleChosenCourseMaterial(material)
+                                      }
+                                    >
+                                      {material.title}
+                                    </LinkMui>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
                           } else if (material.material_type === "QUIZ") {
@@ -431,24 +505,74 @@ const EnrollCourse = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
-                                  marginBottom: "15px",
+                                  marginBottom: "20px",
                                 }}
                               >
-                                <Assignment
-                                  fontSize="small"
-                                  style={{ marginRight: "5px" }}
-                                />
-                                <LinkMui
-                                  className={classes.linkMui}
-                                  onClick={() =>
-                                    handleChosenCourseMaterial(material)
-                                  }
+                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  {material.title}
-                                </LinkMui>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      minWidth: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        fontWeight: 600,
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {`${index + 1}.`}
+                                    </Typography>
+                                    <Assignment
+                                      fontSize="small"
+                                      style={{ marginRight: "5px" }}
+                                    />
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() => {
+                                        handleChosenCourseMaterial(material);
+                                        handleCreateQuizResult(
+                                          material.quiz.id
+                                        );
+                                      }}
+                                    >
+                                      {material.title}
+                                    </LinkMui>
+                                    <Typography
+                                      variant="body2"
+                                      style={{
+                                        marginLeft: "auto",
+                                        order: 2,
+                                      }}
+                                    >
+                                      {material.quiz &&
+                                        material.quiz.questions.length +
+                                          ` Questions`}
+                                    </Typography>
+                                  </div>
+                                  <Typography
+                                    style={{
+                                      fontSize: "12px",
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {material.description}
+                                  </Typography>
+                                </div>
                               </div>
                             );
+                          } else {
+                            return null;
                           }
                         })}
                     </AccordionDetails>
@@ -464,7 +588,9 @@ const EnrollCourse = () => {
                 id={`final`}
                 style={{ backgroundColor: "#F4F4F4" }}
               >
-                <Typography>Final Quiz</Typography>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Final Quiz
+                </Typography>
               </AccordionSummary>
               <AccordionDetails
                 style={{
@@ -474,7 +600,16 @@ const EnrollCourse = () => {
                 }}
               >
                 <Assignment fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui className={classes.linkMui}>
+                <LinkMui
+                  className={classes.linkMui}
+                  onClick={() => {
+                    setChosenCourseMaterial({
+                      material_type: "FINAL",
+                      quiz: course.assessment,
+                    });
+                    handleCreateQuizResult(course.assessment.id);
+                  }}
+                >
                   Attempt Final Quiz
                 </LinkMui>
               </AccordionDetails>

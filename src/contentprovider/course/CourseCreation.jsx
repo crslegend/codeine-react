@@ -834,6 +834,8 @@ const CourseCreation = () => {
                           instructions: e.target.value,
                         });
                       }}
+                      multiline
+                      rows={4}
                     />
                     <label htmlFor="marks">
                       <Typography variant="body1" style={{ marginTop: "10px" }}>

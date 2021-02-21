@@ -1,23 +1,21 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
   FormControl,
   InputLabel,
-  ListItem,
   MenuItem,
   Select,
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Footer from "../landing/Footer";
-import logo from "../../assets/CodeineLogos/Member.svg";
+
 import SearchBar from "material-ui-search-bar";
 import PageTitle from "../../components/PageTitle";
 

@@ -1,18 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from "@material-ui/core";
+import { Button, Paper, Typography } from "@material-ui/core";
 import MCQ from "./MCQ";
+import MRQ from "./MRQ";
+import ShortAnswer from "./ShortAnswer";
+import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   button: {
@@ -20,11 +12,36 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const TakeQuiz = ({ quiz }) => {
+const TakeQuiz = ({
+  quiz,
+  quizTitle,
+  quizType,
+  pageNum,
+  setPageNum,
+  resultObj,
+  setResultObj,
+  handleCreateQuizResult,
+}) => {
   const classes = styles();
   console.log(quiz);
 
-  const [pageNum, setPageNum] = useState(-1);
+  // const [pageNum, setPageNum] = useState(-1);
+  // const [resultObj, setResultObj] = useState();
+
+  // const handleCreateQuizResult = () => {
+  //   Service.client
+  //     .post(`/quiz/${quiz.id}/results`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setResultObj(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  const handleRetryQuiz = () => {
+    handleCreateQuizResult(quiz && quiz.id);
+    setPageNum(-1);
+  };
 
   return (
     <Fragment>
@@ -37,6 +54,12 @@ const TakeQuiz = ({ quiz }) => {
               padding: "30px",
             }}
           >
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 600, paddingBottom: "20px" }}
+            >
+              {quizTitle && quizTitle ? quizTitle : "Final Quiz"}
+            </Typography>
             <Typography variant="h6" style={{ fontWeight: 600 }}>
               Instructions
             </Typography>
@@ -46,10 +69,12 @@ const TakeQuiz = ({ quiz }) => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => setPageNum(pageNum + 1)}
+              onClick={() => {
+                setPageNum(pageNum + 1);
+              }}
               style={{ width: 150, alignSelf: "center" }}
             >
-              Start Quiz
+              Enter Quiz
             </Button>
           </Paper>
         </Fragment>
@@ -60,11 +85,40 @@ const TakeQuiz = ({ quiz }) => {
               if (question.mcq) {
                 return (
                   <MCQ
+                    key={index}
                     question={question}
                     index={index}
-                    pageNum={pageNum}
                     setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
+                  />
+                );
+              } else if (question.mrq) {
+                return (
+                  <MRQ
+                    key={index}
+                    question={question}
+                    index={index}
+                    setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
+                    quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
+                  />
+                );
+              } else if (question.shortanswer) {
+                return (
+                  <ShortAnswer
+                    key={index}
+                    question={question}
+                    index={index}
+                    setPageNum={setPageNum}
+                    resultObj={resultObj}
+                    setResultObj={setResultObj}
+                    quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
                   />
                 );
               }
@@ -73,6 +127,28 @@ const TakeQuiz = ({ quiz }) => {
             }
           })
         : null}
+      {pageNum && pageNum > quiz.questions.length - 1 ? (
+        <Paper style={{ padding: "50px", textAlign: "center" }}>
+          <Typography
+            variant="subtitle1"
+            style={{ fontWeight: 600, paddingBottom: "10px" }}
+          >
+            End of Quiz
+          </Typography>
+          <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+            {resultObj && resultObj.passed
+              ? "Well Done! You passed the quiz!"
+              : "You did not pass the quiz. Try Again!"}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleRetryQuiz()}
+          >
+            Re-try Quiz
+          </Button>
+        </Paper>
+      ) : null}
     </Fragment>
   );
 };

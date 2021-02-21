@@ -1,18 +1,12 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  FormControlLabel,
-  Paper,
-  Radio,
-  Typography,
-} from "@material-ui/core";
+import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
 import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({}));
 
-const MCQ = ({
+const ShortAnswer = ({
   question,
   index,
   setPageNum,
@@ -23,29 +17,24 @@ const MCQ = ({
 }) => {
   const classes = styles();
   console.log(question);
-  // console.log(resultObj);
 
-  const [chosenOption, setChosenOption] = useState();
+  const [enteredAnswer, setEnteredAnswer] = useState("");
   const [displayAnswer, setDisplayAnswer] = useState(false);
   const [correct, setCorrect] = useState(false);
 
-  const handleOptionChange = (option) => {
-    setDisplayAnswer(false);
-    setChosenOption(option);
-  };
-
   const handleCheckAnswer = () => {
     setDisplayAnswer(true);
-    if (chosenOption === question.mcq.correct_answer) {
-      setCorrect(true);
-    } else {
-      setCorrect(false);
-    }
+
+    const result = question.shortanswer.keywords.some((keyword) =>
+      enteredAnswer.includes(keyword)
+    );
+
+    setCorrect(result);
   };
 
   const handleSaveResponse = () => {
     const data = {
-      response: chosenOption,
+      response: enteredAnswer,
       responses: null,
       question: question.id,
     };
@@ -61,7 +50,7 @@ const MCQ = ({
 
   const handleFinishQuiz = () => {
     const data = {
-      response: chosenOption,
+      response: enteredAnswer,
       responses: null,
       question: question.id,
     };
@@ -84,7 +73,7 @@ const MCQ = ({
   };
 
   const loadPrevAnswer = (response) => {
-    setChosenOption(response);
+    setEnteredAnswer(response);
   };
 
   useEffect(() => {
@@ -96,8 +85,6 @@ const MCQ = ({
       loadPrevAnswer(resultObj.quiz_answers[index].response);
     }
   }, []);
-
-  console.log(chosenOption);
 
   return (
     <Fragment>
@@ -115,31 +102,16 @@ const MCQ = ({
           </Typography>
           <Typography variant="h6">{question.title}</Typography>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginBottom: "20px",
-          }}
-        >
-          {question &&
-            question.mcq.options.length > 0 &&
-            question.mcq.options.map((option, index) => {
-              return (
-                <FormControlLabel
-                  key={index}
-                  value={option}
-                  label={option}
-                  control={
-                    <Radio
-                      checked={chosenOption === option}
-                      onChange={() => handleOptionChange(option)}
-                    />
-                  }
-                />
-              );
-            })}
-        </div>
+        <TextField
+          variant="outlined"
+          margin="dense"
+          placeholder="Enter your answer here"
+          multiline
+          rows={2}
+          fullWidth
+          value={enteredAnswer}
+          onChange={(e) => setEnteredAnswer(e.target.value)}
+        />
         {displayAnswer &&
           displayAnswer &&
           (correct ? (
@@ -148,14 +120,21 @@ const MCQ = ({
             </Typography>
           ) : (
             <Typography style={{ color: "red" }} variant="body2">
-              Wrong answer. The correct answer is {question.mcq.correct_answer}.
+              Wrong answer. The correct keyword(s) includes{" "}
+              {question.shortanswer.keywords.length > 0 &&
+                question.shortanswer.keywords.map((answer, index) => {
+                  if (index + 1 === question.shortanswer.keywords.length) {
+                    return `${answer}.`;
+                  }
+                  return `${answer}, `;
+                })}
             </Typography>
           ))}
         {quizType && quizType === "QUIZ" ? (
           <div style={{ marginTop: "10px" }}>
             <Button
               variant="contained"
-              disabled={!chosenOption}
+              disabled={!enteredAnswer || enteredAnswer === ""}
               onClick={() => handleCheckAnswer()}
             >
               Check Answer
@@ -206,4 +185,4 @@ const MCQ = ({
   );
 };
 
-export default MCQ;
+export default ShortAnswer;

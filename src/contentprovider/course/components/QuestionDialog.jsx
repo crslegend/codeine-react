@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -783,6 +783,8 @@ const QuestionDialog = ({
                     </div>
                   </Fragment>
                 );
+              } else {
+                return null;
               }
             })}
         </DialogContent>
