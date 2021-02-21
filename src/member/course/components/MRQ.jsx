@@ -18,6 +18,7 @@ const MRQ = ({
   resultObj,
   setResultObj,
   quizLength,
+  quizType,
 }) => {
   const classes = styles();
   console.log(question);
@@ -101,7 +102,11 @@ const MRQ = ({
   };
 
   useEffect(() => {
-    if (resultObj && resultObj.quiz_answers[index].responses !== null) {
+    if (
+      resultObj &&
+      resultObj.quiz_answers[index] &&
+      resultObj.quiz_answers[index].responses !== null
+    ) {
       loadPrevAnswer(resultObj.quiz_answers[index].responses);
     }
   }, []);
@@ -166,15 +171,17 @@ const MRQ = ({
                 })}
             </Typography>
           ))}
-        <div style={{ marginTop: "10px" }}>
-          <Button
-            variant="contained"
-            disabled={!chosenOption}
-            onClick={() => handleCheckAnswer()}
-          >
-            Check Answer
-          </Button>
-        </div>
+        {quizType && quizType === "QUIZ" ? (
+          <div style={{ marginTop: "10px" }}>
+            <Button
+              variant="contained"
+              disabled={!chosenOption}
+              onClick={() => handleCheckAnswer()}
+            >
+              Check Answer
+            </Button>
+          </div>
+        ) : null}
         <div
           style={{
             marginTop: "30px",
@@ -185,6 +192,7 @@ const MRQ = ({
           <Button
             variant="contained"
             onClick={() => {
+              handleSaveResponse();
               setPageNum(index - 1);
             }}
           >

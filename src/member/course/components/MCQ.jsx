@@ -19,6 +19,7 @@ const MCQ = ({
   resultObj,
   setResultObj,
   quizLength,
+  quizType,
 }) => {
   const classes = styles();
   console.log(question);
@@ -89,7 +90,11 @@ const MCQ = ({
   };
 
   useEffect(() => {
-    if (resultObj && resultObj.quiz_answers[index].response !== null) {
+    if (
+      resultObj &&
+      resultObj.quiz_answers[index] &&
+      resultObj.quiz_answers[index].response !== null
+    ) {
       loadPrevAnswer(resultObj.quiz_answers[index].response);
     }
   }, []);
@@ -148,15 +153,17 @@ const MCQ = ({
               Wrong answer. The correct answer is {question.mcq.correct_answer}.
             </Typography>
           ))}
-        <div style={{ marginTop: "10px" }}>
-          <Button
-            variant="contained"
-            disabled={!chosenOption}
-            onClick={() => handleCheckAnswer()}
-          >
-            Check Answer
-          </Button>
-        </div>
+        {quizType && quizType === "QUIZ" ? (
+          <div style={{ marginTop: "10px" }}>
+            <Button
+              variant="contained"
+              disabled={!chosenOption}
+              onClick={() => handleCheckAnswer()}
+            >
+              Check Answer
+            </Button>
+          </div>
+        ) : null}
         <div
           style={{
             marginTop: "30px",
@@ -167,6 +174,7 @@ const MCQ = ({
           <Button
             variant="contained"
             onClick={() => {
+              handleSaveResponse();
               setPageNum(index - 1);
             }}
           >

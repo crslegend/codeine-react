@@ -12,25 +12,34 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const TakeQuiz = ({ quiz }) => {
+const TakeQuiz = ({
+  quiz,
+  quizTitle,
+  quizType,
+  pageNum,
+  setPageNum,
+  resultObj,
+  setResultObj,
+  handleCreateQuizResult,
+}) => {
   const classes = styles();
   console.log(quiz);
 
-  const [pageNum, setPageNum] = useState(-1);
-  const [resultObj, setResultObj] = useState();
+  // const [pageNum, setPageNum] = useState(-1);
+  // const [resultObj, setResultObj] = useState();
 
-  const handleCreateQuizResult = () => {
-    Service.client
-      .post(`/quiz/${quiz.id}/results`)
-      .then((res) => {
-        console.log(res);
-        setResultObj(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleCreateQuizResult = () => {
+  //   Service.client
+  //     .post(`/quiz/${quiz.id}/results`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setResultObj(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const handleRetryQuiz = () => {
-    setResultObj();
+    handleCreateQuizResult(quiz && quiz.id);
     setPageNum(-1);
   };
 
@@ -45,6 +54,12 @@ const TakeQuiz = ({ quiz }) => {
               padding: "30px",
             }}
           >
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 600, paddingBottom: "20px" }}
+            >
+              {quizTitle && quizTitle ? quizTitle : "Final Quiz"}
+            </Typography>
             <Typography variant="h6" style={{ fontWeight: 600 }}>
               Instructions
             </Typography>
@@ -55,7 +70,6 @@ const TakeQuiz = ({ quiz }) => {
               variant="contained"
               color="primary"
               onClick={() => {
-                handleCreateQuizResult();
                 setPageNum(pageNum + 1);
               }}
               style={{ width: 150, alignSelf: "center" }}
@@ -78,6 +92,7 @@ const TakeQuiz = ({ quiz }) => {
                     resultObj={resultObj}
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
                   />
                 );
               } else if (question.mrq) {
@@ -90,6 +105,7 @@ const TakeQuiz = ({ quiz }) => {
                     resultObj={resultObj}
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
                   />
                 );
               } else if (question.shortanswer) {
@@ -102,6 +118,7 @@ const TakeQuiz = ({ quiz }) => {
                     resultObj={resultObj}
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
+                    quizType={quizType}
                   />
                 );
               }

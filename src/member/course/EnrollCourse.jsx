@@ -102,6 +102,9 @@ const EnrollCourse = () => {
 
   const [unenrollDialog, setUnenrollDialog] = useState(false);
 
+  const [pageNum, setPageNum] = useState(-1);
+  const [resultObj, setResultObj] = useState();
+
   const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -161,6 +164,16 @@ const EnrollCourse = () => {
 
   const handleDuration = (duration) => {
     // console.log(duration);
+  };
+
+  const handleCreateQuizResult = (quizId) => {
+    Service.client
+      .post(`/quiz/${quizId}/results`)
+      .then((res) => {
+        console.log(res);
+        setResultObj(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -233,13 +246,25 @@ const EnrollCourse = () => {
                     />
                   </div>
                 );
-              } else if (chosenCourseMaterial.material_type === "QUIZ") {
+              } else if (
+                chosenCourseMaterial.material_type === "QUIZ" ||
+                chosenCourseMaterial.material_type === "FINAL"
+              ) {
                 return (
                   <div>
                     <TakeQuiz
                       quiz={
                         chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
                       }
+                      quizTitle={
+                        chosenCourseMaterial.title && chosenCourseMaterial.title
+                      }
+                      quizType={chosenCourseMaterial.material_type}
+                      pageNum={pageNum}
+                      setPageNum={setPageNum}
+                      resultObj={resultObj}
+                      setResultObj={setResultObj}
+                      handleCreateQuizResult={handleCreateQuizResult}
                     />
                   </div>
                 );
@@ -508,9 +533,13 @@ const EnrollCourse = () => {
                                     />
                                     <LinkMui
                                       className={classes.linkMui}
-                                      onClick={() =>
-                                        handleChosenCourseMaterial(material)
-                                      }
+                                      onClick={() => {
+                                        setPageNum(-1);
+                                        handleChosenCourseMaterial(material);
+                                        handleCreateQuizResult(
+                                          material.quiz.id
+                                        );
+                                      }}
                                     >
                                       {material.title}
                                     </LinkMui>
@@ -566,7 +595,17 @@ const EnrollCourse = () => {
                 }}
               >
                 <Assignment fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui className={classes.linkMui}>
+                <LinkMui
+                  className={classes.linkMui}
+                  onClick={() => {
+                    setPageNum(-1);
+                    setChosenCourseMaterial({
+                      material_type: "FINAL",
+                      quiz: course.assessment,
+                    });
+                    handleCreateQuizResult(course.assessment.id);
+                  }}
+                >
                   Attempt Final Quiz
                 </LinkMui>
               </AccordionDetails>
