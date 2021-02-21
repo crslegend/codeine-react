@@ -12,8 +12,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
   Popover,
+  Select,
   Typography,
 } from "@material-ui/core";
 import PageTitle from "../../components/PageTitle";
@@ -24,6 +28,7 @@ import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
 import { Rating } from "@material-ui/lab";
+import SearchBar from "material-ui-search-bar";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -61,6 +66,23 @@ const useStyles = makeStyles((theme) => ({
   dialogButtons: {
     width: 100,
   },
+  searchSection: {
+    display: "flex",
+    alignItems: "center",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  },
+  searchBar: {
+    width: 350,
+  },
+  input: {
+    fontWeight: 600,
+  },
+  formControl: {
+    marginLeft: theme.spacing(5),
+    minWidth: 120,
+    maxHeight: 50,
+  },
 }));
 
 const ViewAllCourses = () => {
@@ -73,13 +95,22 @@ const ViewAllCourses = () => {
   const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
   const [deleteCourseId, setDeleteCourseId] = useState();
 
+  const [searchValue, setSearchValue] = useState("");
+  const [sortMethod, setSortMethod] = useState("");
+
   const getAllCourses = () => {
     let decoded;
     if (Cookies.get("t1")) {
       decoded = jwt_decode(Cookies.get("t1"));
     }
+
+    let queryParams = {
+      search: searchValue,
+      partnerId: decoded.user_id,
+    };
+
     Service.client
-      .get(`/privateCourses`, { params: { partnerId: decoded.user_id } })
+      .get(`/privateCourses`, { params: { ...queryParams } })
       .then((res) => {
         console.log(res);
         setAllCourses(res.data.results);
@@ -106,9 +137,25 @@ const ViewAllCourses = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleRequestSearch = () => {
+    getAllCourses();
+  };
+
+  const handleCancelSearch = () => {
+    setSearchValue("");
+  };
+
+  const onSortChange = () => {};
+
   useEffect(() => {
     getAllCourses();
   }, []);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getAllCourses();
+    } // eslint-disable-next-line
+  }, [searchValue]);
 
   console.log(allCourses);
 
@@ -141,6 +188,42 @@ const ViewAllCourses = () => {
         >
           Create New Course
         </Button>
+      </div>
+      <div className={classes.searchSection}>
+        <SearchBar
+          placeholder="Search Courses"
+          value={searchValue}
+          onChange={(newValue) => setSearchValue(newValue)}
+          onCancelSearch={handleCancelSearch}
+          onRequestSearch={handleRequestSearch}
+          className={classes.searchBar}
+          classes={{
+            input: classes.input,
+          }}
+        />
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel>Sort By</InputLabel>
+          <Select
+            label="Sort By"
+            value={sortMethod}
+            onChange={(event) => {
+              setSortMethod(event.target.value);
+              onSortChange(event.target.value);
+            }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            <MenuItem value="+published_date">
+              Published Date (Ascending)
+            </MenuItem>
+            <MenuItem value="-published_date">
+              Published Date (Descending)
+            </MenuItem>
+            <MenuItem value="+rating">Rating (Ascending)</MenuItem>
+            <MenuItem value="-rating">Rating (Descending)</MenuItem>
+          </Select>
+        </FormControl>
       </div>
       <div className={classes.courses}>
         {allCourses &&
