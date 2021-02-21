@@ -477,9 +477,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
           Course Material{" "}
           <span style={{ textTransform: "capitalize" }}>({materialType})</span>
           <div style={{ float: "right" }}>
-            <IconButton size="small" onClick={() => setEditMode(true)}>
+            {/* <IconButton size="small" onClick={() => setEditMode(true)}>
               <Edit />
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="small"
               onClick={() => setDeleteCourseMaterialDialog(true)}
@@ -511,7 +511,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                   <label htmlFor="description">
                     <Typography variant="body2">Description of File</Typography>
@@ -530,8 +529,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     }}
                     required
                     placeholder="Enter Description"
+                    multiline
+                    rows={4}
                     style={{ marginBottom: "25px" }}
-                    disabled={!editMode}
                   />
                   <div
                     style={{
@@ -614,7 +614,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     placeholder="https://drive.google.com"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                 </Fragment>
               );
@@ -639,7 +638,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                   <label htmlFor="description">
                     <Typography variant="body2">
@@ -660,8 +658,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     }}
                     required
                     placeholder="Enter Description"
+                    multiline
+                    rows={4}
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                   <label htmlFor="url">
                     <Typography variant="body2">Video URL</Typography>
@@ -681,7 +680,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     placeholder="https://www.google.com"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                 </Fragment>
               );
@@ -706,7 +704,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                   <label htmlFor="description">
                     <Typography variant="body2">Description of Quiz</Typography>
@@ -725,8 +722,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     }}
                     required
                     placeholder="Enter Description"
+                    multiline
+                    rows={4}
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                   <label htmlFor="marks">
                     <Typography variant="body2">Passing Marks</Typography>
@@ -749,7 +747,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     required
                     style={{ marginBottom: "15px" }}
                     type="number"
-                    disabled={!editMode}
                   />
                   <label htmlFor="marks">
                     <Typography variant="body2">Instructions</Typography>
@@ -767,9 +764,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                       });
                     }}
                     required
+                    multiline
+                    rows={4}
                     placeholder="eg. Read the questions carefully"
                     style={{ marginBottom: "15px" }}
-                    disabled={!editMode}
                   />
                 </Fragment>
               );
@@ -796,7 +794,6 @@ const Task = ({ task, index, getCourse, subtasks }) => {
             variant="contained"
             color="primary"
             className={classes.dialogButtons}
-            disabled={!editMode}
             onClick={() => handleUpdateCourseMaterial()}
           >
             Save

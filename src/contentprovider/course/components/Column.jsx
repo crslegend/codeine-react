@@ -459,9 +459,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
           <DialogTitle>
             {column.title}
             <div style={{ float: "right" }}>
-              <IconButton size="small" onClick={() => setEditMode(true)}>
+              {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 size="small"
                 onClick={() => {
@@ -490,7 +490,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 });
               }}
               required
-              disabled={!editMode}
+              style={{ marginBottom: "20px" }}
             />
             <label htmlFor="overview">
               <Typography variant="body2">Chapter Overview</Typography>
@@ -508,7 +508,8 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 });
               }}
               required
-              disabled={!editMode}
+              multiline
+              rows={4}
             />
           </DialogContent>
           <DialogActions>
