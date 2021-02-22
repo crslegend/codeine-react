@@ -146,6 +146,7 @@ const Calendar = () => {
 
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
+  console.log(currentDate);
   const [allowDeleting, setAllowDeleting] = useState(true);
   const [allowUpdating, setAllowUpdating] = useState(true);
 
@@ -283,10 +284,7 @@ const Calendar = () => {
       onFieldChange({ max_members: nextValue });
     };
 
-    if (
-      appointmentData.member === undefined ||
-      appointmentData.member === null
-    ) {
+    if (appointmentData.member.length === 0) {
       setAllowDeleting(true);
     } else {
       setAllowDeleting(false);
