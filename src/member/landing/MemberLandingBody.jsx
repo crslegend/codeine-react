@@ -106,7 +106,7 @@ const MemberLandingBody = () => {
               millions who are learning to code!
             </Typography>
             <Button
-              variant="fill"
+              variant="contained"
               className={classes.bannerbutton}
               component={Link}
               to="/courses"

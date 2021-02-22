@@ -95,12 +95,23 @@ const ContentProviderLoginPage = () => {
       .catch((err) => {
         setLoading(false);
         console.log(err);
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Incorrect email address or password. Please try again!",
-          severity: "error",
-        });
+
+        if (err.response.status === 403) {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message:
+              "Your account is still being reviewed by our admin, please try again later.",
+            severity: "error",
+          });
+        } else {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Incorrect email address or password. Please try again!",
+            severity: "error",
+          });
+        }
       });
   };
 

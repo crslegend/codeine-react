@@ -10,9 +10,20 @@ import {
   useHistory,
 } from "react-router-dom";
 import PrivateRoute from "../components/PrivateRoute";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  ListItem,
+  Typography,
+  Divider,
+} from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
+import PaymentIcon from "@material-ui/icons/Payment";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -22,6 +33,12 @@ import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
 import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
+import Password from "./password/PasswordPage";
+import Profile from "./profile/ProfilePage";
+import Helpdesk from "./helpdesk/HelpdeskPage";
+import Wallet from "./wallet/WalletPage";
+import Student from "./student/StudentPage";
+import DashboardPage from "./dashboard/DashboardPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,7 +94,11 @@ const ContentProviderHome = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({
+    first_name: "Member",
+    email: "Member panel",
+    profile_photo: "",
+  });
 
   const loggedInNavbar = (
     <Fragment>
@@ -103,14 +124,21 @@ const ContentProviderHome = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>
-          {user && user.first_name.charAt(0)}
-        </Avatar>
+        {user.profile_photo ? (
+          <Avatar alt="" src={user.profile_photo} className={classes.avatar} />
+        ) : (
+          <Avatar className={classes.avatar}>
+            {user.first_name.charAt(0)}
+          </Avatar>
+        )}
       </div>
       <Typography variant="h6">
-        {user && user.first_name} {user && user.last_name}
+        {user.first_name} {user.last_name}
       </Typography>
-      {user && user.partner.organization && (
+      {user && user.partner && !user.partner.organization && (
+        <Typography variant="body1">{user.partner.job_title}</Typography>
+      )}
+      {user && user.partner && user.partner.organization && (
         <Typography variant="body1">
           {user.partner.organization.organization_name}
         </Typography>
@@ -142,14 +170,64 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/partner/home/student"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <SchoolOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Course Student</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/partner/home/consultation"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
-        // style={{ position: "fixed", bottom: 5, width: "239px" }}
       >
         <Timeline className={classes.listIcon} />
         <Typography variant="body1">Consultation</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/helpdesk"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <HelpOutlineOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Helpdesk</Typography>
+      </ListItem>
+      <Divider />
+      <ListItem
+        component={NavLink}
+        to="/partner/home/profile"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <PersonOutlineOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Profile</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/password"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <LockOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Password</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/wallet"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <PaymentIcon className={classes.listIcon} />
+        <Typography variant="body1">Wallet</Typography>
       </ListItem>
     </Fragment>
   );
@@ -200,7 +278,7 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/dashboard"
-              render={() => <div></div>}
+              render={() => <DashboardPage />}
             />
             <PrivateRoute
               exact
@@ -226,8 +304,33 @@ const ContentProviderHome = () => {
             />
             <PrivateRoute
               exact
+              path="/partner/home/student"
+              render={() => <Student />}
+            />
+            <PrivateRoute
+              exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/helpdesk"
+              render={() => <Helpdesk />}
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/password"
+              render={() => <Password />}
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/profile"
+              render={() => <Profile profile={user} setProfile={setUser} />}
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/wallet"
+              render={() => <Wallet />}
             />
             <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>

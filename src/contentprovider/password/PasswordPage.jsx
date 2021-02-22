@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminPasswordPage = () => {
+const PartnerPasswordPage = () => {
   const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ const AdminPasswordPage = () => {
     setPasswordDetails({ ...passwordDetails, [prop]: event.target.value });
   };
 
-  const [adminId, setAdminId] = useState();
+  const [partnerId, setPartnerId] = useState();
 
   const [passwordDetails, setPasswordDetails] = useState({
     old_password: "",
@@ -87,14 +87,14 @@ const AdminPasswordPage = () => {
 
   const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const adminid = jwt_decode(Service.getJWT()).user_id;
+      const partnerid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get(`/auth/admins/${adminid}`)
+        .get(`/auth/partners/${partnerid}`)
         .then((res) => {
-          setAdminId(res.data.id);
+          setPartnerId(res.data.id);
         })
         .catch((err) => {
-          setAdminId();
+          setPartnerId();
         });
     }
   };
@@ -128,7 +128,7 @@ const AdminPasswordPage = () => {
     }
 
     Service.client
-      .patch(`/auth/admins/${adminId}`, passwordDetails)
+      .patch(`/auth/partners/${partnerId}/changePassword`, passwordDetails)
       .then((res) => {
         setSbOpen(true);
         setSnackbar({
@@ -136,7 +136,6 @@ const AdminPasswordPage = () => {
           message: "Password updated successfully!",
           severity: "success",
         });
-        e.target.reset();
       })
       .catch((err) => {
         setSbOpen(true);
@@ -146,12 +145,12 @@ const AdminPasswordPage = () => {
           severity: "error",
         });
       });
-      passwordDetails.new_password = "";
-      passwordDetails.repeat_password = "";
-      passwordDetails.old_password = "";
-      passwordDetails.showOldPassword = false;
-      passwordDetails.showNewPassword = false;
-      passwordDetails.showRepeatPassword = false;
+    passwordDetails.new_password = "";
+    passwordDetails.repeat_password = "";
+    passwordDetails.old_password = "";
+    passwordDetails.showOldPassword = false;
+    passwordDetails.showNewPassword = false;
+    passwordDetails.showRepeatPassword = false;
   };
 
   return (
@@ -265,4 +264,4 @@ const AdminPasswordPage = () => {
   );
 };
 
-export default AdminPasswordPage;
+export default PartnerPasswordPage;
