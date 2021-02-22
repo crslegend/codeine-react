@@ -1090,7 +1090,7 @@ const CourseCreation = () => {
                 fullWidth
                 margin="dense"
                 multiline
-                rows={2}
+                rows={5}
                 placeholder="Enter Chapter Overview"
                 value={chapterDetails && chapterDetails.overview}
                 onChange={(e) => {
