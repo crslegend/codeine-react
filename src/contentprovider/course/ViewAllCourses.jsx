@@ -27,7 +27,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
-import { Rating } from "@material-ui/lab";
+import { Pagination, Rating } from "@material-ui/lab";
 import SearchBar from "material-ui-search-bar";
 
 const useStyles = makeStyles((theme) => ({
@@ -85,14 +85,27 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 120,
     maxHeight: 50,
   },
+  paginationSection: {
+    float: "right",
+    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(5),
+  },
+  pagination: {
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+    [theme.breakpoints.down("sm")]: {
+      size: "small",
+    },
+  },
 }));
 
 const ViewAllCourses = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [allCourses, setAllCourses] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [allCourses, setAllCourses] = useState([]);
+  // const [anchorEl, setAnchorEl] = useState(null);
 
   const [popover, setPopover] = useState({
     popoverId: null,
@@ -105,7 +118,13 @@ const ViewAllCourses = () => {
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
 
-  const getAllCourses = () => {
+  const itemsPerPage = 4;
+  const [page, setPage] = useState(1);
+  const [noOfPages, setNumPages] = useState(
+    Math.ceil(allCourses.length / itemsPerPage)
+  );
+
+  const getAllCourses = (sort) => {
     let decoded;
     if (Cookies.get("t1")) {
       decoded = jwt_decode(Cookies.get("t1"));
@@ -115,12 +134,44 @@ const ViewAllCourses = () => {
       search: searchValue,
       partnerId: decoded.user_id,
     };
+    console.log(sort);
+
+    if (sort !== undefined) {
+      if (sort === "rating" || sort === "-rating") {
+        queryParams = {
+          ...queryParams,
+          sortRating: sort,
+        };
+      }
+
+      if (sort === "published_date" || sort === "-published_date") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sort,
+        };
+      }
+    } else {
+      if (sortMethod === "rating" || sortMethod === "-rating") {
+        queryParams = {
+          ...queryParams,
+          sortRating: sortMethod,
+        };
+      }
+
+      if (sortMethod === "published_date" || sortMethod === "-published_date") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sortMethod,
+        };
+      }
+    }
 
     Service.client
       .get(`/privateCourses`, { params: { ...queryParams } })
       .then((res) => {
         console.log(res);
         setAllCourses(res.data.results);
+        setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
   };
@@ -158,7 +209,14 @@ const ViewAllCourses = () => {
     setSearchValue("");
   };
 
-  const onSortChange = () => {};
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    getAllCourses(e.target.value);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   useEffect(() => {
     getAllCourses();
@@ -220,20 +278,19 @@ const ViewAllCourses = () => {
             label="Sort By"
             value={sortMethod}
             onChange={(event) => {
-              setSortMethod(event.target.value);
-              onSortChange(event.target.value);
+              onSortChange(event);
             }}
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value="+published_date">
-              Published Date (Ascending)
-            </MenuItem>
             <MenuItem value="-published_date">
-              Published Date (Descending)
+              Published Date (Least Recent)
             </MenuItem>
-            <MenuItem value="+rating">Rating (Ascending)</MenuItem>
+            <MenuItem value="published_date">
+              Published Date (Most Recent)
+            </MenuItem>
+            <MenuItem value="rating">Rating (Ascending)</MenuItem>
             <MenuItem value="-rating">Rating (Descending)</MenuItem>
           </Select>
         </FormControl>
@@ -334,6 +391,21 @@ const ViewAllCourses = () => {
               </Card>
             );
           })}
+      </div>
+      <div className={classes.paginationSection}>
+        {allCourses && allCourses.length > 0 && (
+          <Pagination
+            count={noOfPages}
+            page={page}
+            onChange={handlePageChange}
+            defaultPage={1}
+            color="primary"
+            size="medium"
+            showFirstButton
+            showLastButton
+            className={classes.pagination}
+          />
+        )}
       </div>
 
       <Dialog
