@@ -70,16 +70,36 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
 const usaTime = (date) =>
   new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
 
+const handleMemberList = (list) => {
+  const newList = [];
+  let i = 1;
+  console.log(list);
+  list.forEach((listItem) => {
+    console.log(list.length);
+    if (list.length === i) {
+      newList.push(
+        listItem.member.first_name + " " + listItem.member.last_name
+      );
+    } else {
+      newList.push(
+        listItem.member.first_name + " " + listItem.member.last_name + ", "
+      );
+    }
+    i++;
+  });
+  console.log(newList);
+  return newList;
+};
+
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
   startDate: usaTime(item.start_time),
   endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
-  member: undefined,
+  member: handleMemberList(item.confirmed_applications),
+  max_members: item.max_members,
   price_per_pax: item.price_per_pax,
-  //rRule: undefined,
-  //rRule: item.r_rule,
   allDay: item.is_all_day,
 });
 
@@ -193,17 +213,16 @@ const Calendar = () => {
           meeting_link: appointment.meeting_link,
         };
       }
-      // if (appointment.rRule !== undefined) {
-      //   updateConsult = {
-      //     ...updateConsult,
-      //     r_rule: appointment.rRule,
-      //   };
-      // }
-      // console.log(appointment.rRule);
       if (appointment.allDay !== undefined) {
         updateConsult = {
           ...updateConsult,
           is_all_day: appointment.allDay,
+        };
+      }
+      if (appointment.max_members !== undefined) {
+        updateConsult = {
+          ...updateConsult,
+          max_members: appointment.max_members,
         };
       }
       if (appointment.price_per_pax !== undefined) {
@@ -245,14 +264,6 @@ const Calendar = () => {
     [setConsultations, setLoading]
   );
 
-  // const RecurrenceLayout = ({ visible, ...restProps }) => {
-  //   return (
-  //     <AppointmentForm.RecurrenceLayout visible="false" {...restProps}>
-  //       <AppointmentForm.WeeklyRecurrenceSelector readOnly />
-  //     </AppointmentForm.RecurrenceLayout>
-  //   );
-  // };
-
   const BasicLayout = ({
     onFieldChange,
     appointmentData,
@@ -266,6 +277,10 @@ const Calendar = () => {
 
     const onRateChange = (nextValue) => {
       onFieldChange({ price_per_pax: nextValue });
+    };
+
+    const onMaxMemberChange = (nextValue) => {
+      onFieldChange({ max_members: nextValue });
     };
 
     if (
@@ -312,6 +327,17 @@ const Calendar = () => {
           onValueChange={onRateChange}
           readOnly={!allowDeleting || !allowUpdating}
           placeholder="Enter price per hour e.g. 100.50"
+        />
+        <AppointmentForm.Label
+          style={{ marginTop: "10px" }}
+          text="Max no. of pax"
+          type="title"
+        />
+        <AppointmentForm.TextEditor
+          value={appointmentData.max_members}
+          onValueChange={onMaxMemberChange}
+          readOnly={!allowDeleting || !allowUpdating}
+          placeholder="Enter maximum number of bookings allowed"
         />
         <AppointmentForm.Label
           style={{ marginTop: "10px" }}
@@ -392,7 +418,7 @@ const Calendar = () => {
   return (
     <Fragment>
       <Paper>
-        <Scheduler data={consultations} height="700">
+        <Scheduler data={consultations} height="750">
           <ViewState
             defaultCurrentDate={currentDate}
             currentViewName={currentViewName}
