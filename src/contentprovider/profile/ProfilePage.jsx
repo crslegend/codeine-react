@@ -8,16 +8,18 @@ import {
   Typography,
   Grid,
   Avatar,
+  InputAdornment,
+  DialogActions,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import { AttachMoney } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import validator from "validator";
 import Badge from "@material-ui/core/Badge";
@@ -50,7 +52,7 @@ const SmallAvatar = withStyles((theme) => ({
   },
 }))(Avatar);
 
-const AdminProfilePage = (props) => {
+const PartnerProfilePage = (props) => {
   const classes = useStyles();
 
   const { profile, setProfile } = props;
@@ -75,6 +77,11 @@ const AdminProfilePage = (props) => {
     email: "",
     date_joined: "",
     profile_photo: "",
+    partner: {
+      job_title: "",
+      bio: "",
+      consultation_rate: "",
+    },
   });
 
   const [profilePhoto, setProfilePhoto] = useState();
@@ -86,9 +93,9 @@ const AdminProfilePage = (props) => {
 
   const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const adminid = jwt_decode(Service.getJWT()).user_id;
+      const partnerid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get(`/auth/admins/${adminid}`)
+        .get(`/auth/partners/${partnerid}`)
         .then((res) => {
           setProfileDetails(res.data);
         })
@@ -151,10 +158,16 @@ const AdminProfilePage = (props) => {
     formData.append("last_name", profileDetails.last_name);
     formData.append("email", profileDetails.email);
     formData.append("data_joined", profileDetails.date_joined);
+    formData.append("job_title", profileDetails.partner.job_title);
+    formData.append("bio", profileDetails.partner.bio);
+    formData.append(
+      "consultation_rate",
+      profileDetails.partner.consultation_rate
+    );
 
     // submit form-data as per usual
     Service.client
-      .put(`/auth/members/${profileDetails.id}`, formData)
+      .put(`/auth/partners/${profileDetails.id}`, formData)
       .then((res) => {
         setSbOpen(true);
         setSnackbar({
@@ -200,7 +213,7 @@ const AdminProfilePage = (props) => {
 
     // submit form-data as per usual
     Service.client
-      .put(`/auth/members/${profileDetails.id}`, formData)
+      .put(`/auth/partners/${profileDetails.id}`, formData)
       .then((res) => {
         setSbOpen(true);
         setSnackbar({
@@ -208,13 +221,8 @@ const AdminProfilePage = (props) => {
           message: "Profile photo updated successfully!",
           severity: "success",
         });
-        Service.client
-          .get(`/auth/members/${profileDetails.id}`)
-          .then((res) => {
-            setProfile(res.data);
-            setProfileDetails(res.data);
-          })
-          .catch();
+        setProfile(res.data);
+        setProfileDetails(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -312,6 +320,84 @@ const AdminProfilePage = (props) => {
                 />
               </div>
 
+              <div>
+                <TextField
+                  margin="normal"
+                  id="job_title"
+                  label="Job Title"
+                  name="job_title"
+                  autoComplete="job_title"
+                  required
+                  fullWidth
+                  value={profileDetails.partner.job_title}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      partner: {
+                        ...profileDetails.partner,
+                        job_title: event.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <TextField
+                  margin="normal"
+                  id="bio"
+                  label="Bio"
+                  name="bio"
+                  autoComplete="bio"
+                  required
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={profileDetails.partner.bio}
+                  // error={emailError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      partner: {
+                        ...profileDetails.partner,
+                        bio: event.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <TextField
+                  margin="normal"
+                  id="consultation_rate"
+                  label="Consultation Rate"
+                  name="consultation_rate"
+                  autoComplete="consultation_rate"
+                  type="number"
+                  required
+                  fullWidth
+                  value={profileDetails.partner.consultation_rate}
+                  InputProps={{
+                    inputProps: { min: 0 },
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoney style={{ fontSize: "large" }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      partner: {
+                        ...profileDetails.partner,
+                        consultation_rate: event.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+
               <Button
                 disabled={loading}
                 variant="contained"
@@ -346,7 +432,7 @@ const AdminProfilePage = (props) => {
                     }
                   >
                     <Avatar className={classes.avatar}>
-                      {profileDetails.email.charAt(0)}
+                      {profileDetails.first_name.charAt(0)}
                     </Avatar>
                   </Badge>
                 ) : (
@@ -447,4 +533,4 @@ const AdminProfilePage = (props) => {
   );
 };
 
-export default AdminProfilePage;
+export default PartnerProfilePage;

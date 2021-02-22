@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -9,7 +9,7 @@ import {
   Grid,
   Avatar,
 } from "@material-ui/core";
-import Service from "../../AxiosService";
+import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -18,10 +18,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import Toast from "../../components/Toast.js";
+import Toast from "../../../components/Toast.js";
 import validator from "validator";
 import Badge from "@material-ui/core/Badge";
-import EditIcon from "../../assets/editIcon.svg";
+import EditIcon from "../../../assets/editIcon.svg";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -33,12 +34,20 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    height: "calc(100vh - 115px)",
+    height: "calc(100vh - 185px)",
+    padding: theme.spacing(3),
   },
   avatar: {
     fontSize: "80px",
     width: "200px",
     height: "200px",
+  },
+  heading: {
+    height: "70px",
+    backgroundColor: "#437FC7",
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
   },
 }));
 
@@ -50,7 +59,7 @@ const SmallAvatar = withStyles((theme) => ({
   },
 }))(Avatar);
 
-const AdminProfilePage = (props) => {
+const Profile = (props) => {
   const classes = useStyles();
 
   const { profile, setProfile } = props;
@@ -86,9 +95,9 @@ const AdminProfilePage = (props) => {
 
   const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const adminid = jwt_decode(Service.getJWT()).user_id;
+      const userid = jwt_decode(Service.getJWT()).user_id;
       Service.client
-        .get(`/auth/admins/${adminid}`)
+        .get(`/auth/members/${userid}`)
         .then((res) => {
           setProfileDetails(res.data);
         })
@@ -222,7 +231,12 @@ const AdminProfilePage = (props) => {
   };
 
   return (
-    <div>
+    <Fragment>
+      <Box className={classes.heading}>
+        <Typography variant="h5" style={{ marginLeft: "40px", color: "#fff" }}>
+          Profile Details
+        </Typography>
+      </Box>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
@@ -346,7 +360,7 @@ const AdminProfilePage = (props) => {
                     }
                   >
                     <Avatar className={classes.avatar}>
-                      {profileDetails.email.charAt(0)}
+                      {profileDetails.first_name.charAt(0)}
                     </Avatar>
                   </Badge>
                 ) : (
@@ -443,8 +457,8 @@ const AdminProfilePage = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };
 
-export default AdminProfilePage;
+export default Profile;

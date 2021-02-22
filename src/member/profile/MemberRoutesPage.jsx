@@ -31,8 +31,9 @@ import {
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-
-import Consultation from "./Consultation";
+import Consultation from "./Consultation/ConsultationPage";
+import Profile from "./Profile/ProfilePage";
+import Password from "./Password/PasswordPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,12 +75,11 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     fontSize: "60px",
   },
-  mainPanel: {
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    paddingTop: theme.spacing(12),
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(7),
+    backgroundColor: "#fff",
     width: "calc(100% - 240px)",
     marginLeft: "240px",
   },
@@ -89,7 +89,11 @@ const MemberLanding = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({
+    first_name: "Member",
+    email: "Member panel",
+    profile_photo: "",
+  });
 
   const memberNavbar = (
     <Fragment>
@@ -115,14 +119,18 @@ const MemberLanding = () => {
   const sidebarHead = (
     <Fragment>
       <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-        <Avatar className={classes.avatar}>
-          {user && user.first_name.charAt(0)}
-        </Avatar>
+        {user.profile_photo ? (
+          <Avatar alt="" src={user.profile_photo} className={classes.avatar} />
+        ) : (
+          <Avatar className={classes.avatar}>
+            {user.first_name.charAt(0)}
+          </Avatar>
+        )}
       </div>
       <Typography variant="h6">
-        {user && user.first_name} {user && user.last_name}
+        {user.first_name} {user.last_name}
       </Typography>
-      <Typography variant="body1">Student</Typography>
+      <Typography variant="body1">{user.email}</Typography>
     </Fragment>
   );
 
@@ -251,7 +259,8 @@ const MemberLanding = () => {
       <div className={classes.root}>
         <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
-        <div className={classes.mainPanel}>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
           <Switch>
             <PrivateRoute
               exact
@@ -281,12 +290,12 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/profile"
-              render={() => <div></div>}
+              render={() => <Profile profile={user} setProfile={setUser} />}
             />
             <PrivateRoute
               exact
               path="/member/home/password"
-              render={() => <div></div>}
+              render={() => <Password />}
             />
             <PrivateRoute
               exact
@@ -295,7 +304,7 @@ const MemberLanding = () => {
             />
             <Redirect from="/member/home" to="/member/home/dashboard" />
           </Switch>
-        </div>
+        </main>
       </div>
     </BrowserRouter>
   );

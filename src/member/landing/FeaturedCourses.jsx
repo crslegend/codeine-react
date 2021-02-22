@@ -199,7 +199,7 @@ const FeaturedCourses = () => {
                       >
                         <Rating
                           name="read-only"
-                          value="3.5"
+                          value="4.5"
                           precision={0.1}
                           readOnly
                         />
@@ -212,7 +212,7 @@ const FeaturedCourses = () => {
                             marginLeft: "1vw",
                           }}
                         >
-                          3.5
+                          4.5
                         </Typography>
                       </div>
                     </Grid>
