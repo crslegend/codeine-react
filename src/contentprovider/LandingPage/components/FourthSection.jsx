@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -43,7 +44,12 @@ const FourthSection = () => {
       <Typography variant="h6" className={classes.typography}>
         Join our expanding online learning marketplace.
       </Typography>
-      <Button className={classes.startButton} style={{ marginTop: "30px" }}>
+      <Button
+        className={classes.startButton}
+        style={{ marginTop: "30px" }}
+        component={Link}
+        to="/partner/login"
+      >
         Get Started
       </Button>
     </div>

@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
 import image1 from "../../../assets/first-section-img.png";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -74,6 +75,8 @@ const FirstSection = () => {
         <Button
           className={classes.startButton}
           style={{ marginTop: "40px", marginBottom: "40px" }}
+          component={Link}
+          to="/partner/login"
         >
           Start Now
         </Button>
