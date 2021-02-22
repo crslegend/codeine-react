@@ -46,10 +46,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   courses: {
+    display: "flex",
     marginTop: "30px",
   },
   card: {
     width: 200,
+    marginRight: "30px",
   },
   media: {
     height: 0,
@@ -92,6 +94,11 @@ const ViewAllCourses = () => {
   const [allCourses, setAllCourses] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [popover, setPopover] = useState({
+    popoverId: null,
+    anchorEl: null,
+  });
+
   const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
   const [deleteCourseId, setDeleteCourseId] = useState();
 
@@ -118,12 +125,18 @@ const ViewAllCourses = () => {
       .catch((err) => console.log(err));
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event, courseId) => {
+    setPopover({
+      popoverId: courseId,
+      anchorEl: event.currentTarget,
+    });
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setPopover({
+      popoverId: null,
+      anchorEl: null,
+    });
   };
 
   const handleDeleteCourse = (courseId) => {
@@ -275,21 +288,23 @@ const ViewAllCourses = () => {
                     />
                   </div>
                   <div>
-                    <IconButton onClick={handleClick} size="small">
+                    <IconButton
+                      onClick={(e) => handleClick(e, course.id)}
+                      size="small"
+                    >
                       <MoreVert />
                     </IconButton>
                     <Popover
-                      open={Boolean(anchorEl)}
+                      open={popover.popoverId === course.id}
                       onClose={handleClose}
-                      anchorReference="anchorPosition"
-                      anchorPosition={{ top: 405, left: 475 }}
+                      anchorEl={popover.anchorEl}
                       anchorOrigin={{
                         vertical: "bottom",
                         horizontal: "left",
                       }}
                       transformOrigin={{
                         vertical: "top",
-                        horizontal: "right",
+                        horizontal: "center",
                       }}
                     >
                       <div className={classes.popoverContents}>
