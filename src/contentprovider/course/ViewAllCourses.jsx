@@ -51,7 +51,15 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     width: 200,
+    minHeight: 280,
     marginRight: "30px",
+    display: "flex",
+    flexDirection: "column",
+  },
+  cardActionArea: {
+    flexGrow: 1,
+    flexDirection: "column",
+    alignItems: "stretch",
   },
   media: {
     height: 0,
@@ -305,6 +313,7 @@ const ViewAllCourses = () => {
                   onClick={() =>
                     history.push(`/partner/home/content/view/${course.id}`)
                   }
+                  className={classes.cardActionArea}
                 >
                   <CardMedia
                     className={classes.media}

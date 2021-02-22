@@ -23,6 +23,7 @@ import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 
 import components from "./components/NavbarComponents";
+import { Rating } from "@material-ui/lab";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -107,9 +108,44 @@ const ViewAllCourses = () => {
     }
   };
 
-  const getAllCourses = () => {
+  const getAllCourses = (sort) => {
+    let queryParams = {
+      search: searchValue,
+    };
+    console.log(sort);
+
+    if (sort !== undefined) {
+      if (sort === "rating" || sort === "-rating") {
+        queryParams = {
+          ...queryParams,
+          sortRating: sort,
+        };
+      }
+
+      if (sort === "published_date" || sort === "-published_date") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sort,
+        };
+      }
+    } else {
+      if (sortMethod === "rating" || sortMethod === "-rating") {
+        queryParams = {
+          ...queryParams,
+          sortRating: sortMethod,
+        };
+      }
+
+      if (sortMethod === "published_date" || sortMethod === "-published_date") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sortMethod,
+        };
+      }
+    }
+
     Service.client
-      .get(`/courses`)
+      .get(`/courses`, { params: { ...queryParams } })
       .then((res) => {
         // console.log(res);
         setAllCourses(res.data.results);
@@ -119,7 +155,10 @@ const ViewAllCourses = () => {
   };
   console.log(allCourses);
 
-  const onSortChange = () => {};
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    getAllCourses(e.target.value);
+  };
 
   const handleRequestSearch = () => {
     getAllCourses();
@@ -138,15 +177,11 @@ const ViewAllCourses = () => {
     getAllCourses();
   }, []);
 
-  //   const getPartnerById = (id) => {
-  //     console.log(id);
-  //     Service.client
-  //       .get(`/auth/partners/${id}`)
-  //       .then((res) => {
-  //         console.log(res);
-  //       })
-  //       .catch((err) => console.log(err));
-  //   };
+  useEffect(() => {
+    if (searchValue === "") {
+      getAllCourses();
+    } // eslint-disable-next-line
+  }, [searchValue]);
 
   return (
     <div className={classes.root}>
@@ -171,6 +206,7 @@ const ViewAllCourses = () => {
           <SearchBar
             placeholder="Search for Courses"
             value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
             onRequestSearch={handleRequestSearch}
             className={classes.searchBar}
@@ -184,16 +220,20 @@ const ViewAllCourses = () => {
               label="Sort By"
               value={sortMethod}
               onChange={(event) => {
-                setSortMethod(event.target.value);
-                onSortChange(event.target.value);
+                onSortChange(event);
               }}
             >
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="publish">Recently Published</MenuItem>
-              <MenuItem value="A-Z">(A-Z) Alphabetically</MenuItem>
-              <MenuItem value="Z-A">(Z-A) Alphabetically</MenuItem>
+              <MenuItem value="-published_date">
+                Published Date (Least Recent)
+              </MenuItem>
+              <MenuItem value="published_date">
+                Published Date (Most Recent)
+              </MenuItem>
+              <MenuItem value="rating">Rating (Ascending)</MenuItem>
+              <MenuItem value="-rating">Rating (Descending)</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -216,9 +256,22 @@ const ViewAllCourses = () => {
                     <CardContent>
                       <Typography variant="h6">{course.title}</Typography>
                       <br />
-                      <Typography variant="body2">
-                        Insert partner name here
+                      <Typography
+                        variant="body2"
+                        style={{ opacity: 0.7, paddingBottom: "10px" }}
+                      >
+                        {course.partner && course.partner.first_name}{" "}
+                        {course.partner && course.partner.last_name}
                       </Typography>
+                      <Rating
+                        size="small"
+                        readOnly
+                        value={
+                          course && course.rating
+                            ? parseFloat(course.rating)
+                            : 0
+                        }
+                      />
                     </CardContent>
                   </CardActionArea>
                 </Card>
