@@ -2,17 +2,16 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
+  Checkbox,
   FormControlLabel,
   Paper,
-  Radio,
   Typography,
 } from "@material-ui/core";
-
 import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({}));
 
-const MCQ = ({
+const MRQ = ({
   question,
   index,
   setPageNum,
@@ -23,20 +22,33 @@ const MCQ = ({
 }) => {
   const classes = styles();
   console.log(question);
-  // console.log(resultObj);
 
-  const [chosenOption, setChosenOption] = useState();
+  const [chosenOption, setChosenOption] = useState([]);
   const [displayAnswer, setDisplayAnswer] = useState(false);
   const [correct, setCorrect] = useState(false);
 
-  const handleOptionChange = (option) => {
+  const handleOptionChange = (e, option) => {
+    if (e.target.checked) {
+      let newArr = [...chosenOption];
+      newArr.push(option);
+      setChosenOption(newArr);
+    } else {
+      const arr = chosenOption.filter((existing) => existing !== option);
+      setChosenOption(arr);
+    }
+
     setDisplayAnswer(false);
-    setChosenOption(option);
   };
 
   const handleCheckAnswer = () => {
     setDisplayAnswer(true);
-    if (chosenOption === question.mcq.correct_answer) {
+    if (chosenOption.length === question.mrq.correct_answer.length) {
+      for (let i = 0; i < chosenOption.length; i++) {
+        if (!question.mrq.correct_answer.includes(chosenOption[i])) {
+          setCorrect(false);
+          return;
+        }
+      }
       setCorrect(true);
     } else {
       setCorrect(false);
@@ -45,8 +57,8 @@ const MCQ = ({
 
   const handleSaveResponse = () => {
     const data = {
-      response: chosenOption,
-      responses: null,
+      response: null,
+      responses: chosenOption,
       question: question.id,
     };
 
@@ -61,8 +73,8 @@ const MCQ = ({
 
   const handleFinishQuiz = () => {
     const data = {
-      response: chosenOption,
-      responses: null,
+      response: null,
+      responses: chosenOption,
       question: question.id,
     };
 
@@ -91,9 +103,9 @@ const MCQ = ({
     if (
       resultObj &&
       resultObj.quiz_answers[index] &&
-      resultObj.quiz_answers[index].response !== null
+      resultObj.quiz_answers[index].responses !== null
     ) {
-      loadPrevAnswer(resultObj.quiz_answers[index].response);
+      loadPrevAnswer(resultObj.quiz_answers[index].responses);
     }
   }, []);
 
@@ -123,17 +135,16 @@ const MCQ = ({
           }}
         >
           {question &&
-            question.mcq.options.length > 0 &&
-            question.mcq.options.map((option, index) => {
+            question.mrq.options.length > 0 &&
+            question.mrq.options.map((option, index) => {
               return (
                 <FormControlLabel
                   key={index}
-                  value={option}
                   label={option}
                   control={
-                    <Radio
-                      checked={chosenOption === option}
-                      onChange={() => handleOptionChange(option)}
+                    <Checkbox
+                      checked={chosenOption && chosenOption.includes(option)}
+                      onChange={(e) => handleOptionChange(e, option)}
                     />
                   }
                 />
@@ -148,7 +159,14 @@ const MCQ = ({
             </Typography>
           ) : (
             <Typography style={{ color: "red" }} variant="body2">
-              Wrong answer. The correct answer is {question.mcq.correct_answer}.
+              Wrong answer. The correct answers are{" "}
+              {question.mrq.correct_answer.length > 0 &&
+                question.mrq.correct_answer.map((answer, index) => {
+                  if (index + 1 === question.mrq.correct_answer.length) {
+                    return `${answer}.`;
+                  }
+                  return `${answer}, `;
+                })}
             </Typography>
           ))}
         {quizType && quizType === "QUIZ" ? (
@@ -206,4 +224,4 @@ const MCQ = ({
   );
 };
 
-export default MCQ;
+export default MRQ;

@@ -255,7 +255,7 @@ const ContentProviderHome = () => {
       Service.client
         .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           setUser(res.data);
         })
         .catch((err) => console.log(err));

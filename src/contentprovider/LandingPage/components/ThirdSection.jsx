@@ -6,7 +6,6 @@ import image from "../../../assets/third-section-img.png";
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "100%",
-    height: "100%",
     backgroundColor: "#fff",
     display: "flex",
     flexDirection: "row",

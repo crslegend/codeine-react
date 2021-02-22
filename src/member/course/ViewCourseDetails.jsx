@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -8,16 +8,8 @@ import {
   Avatar,
   Button,
   Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   Chip,
-  FormControl,
   IconButton,
-  InputLabel,
-  ListItem,
-  MenuItem,
-  Select,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -36,6 +28,7 @@ import {
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
+import ReactPlayer from "react-player";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -99,6 +92,8 @@ const ViewCourseDetails = () => {
 
   const [expanded, setExpanded] = useState(false);
 
+  const ref = React.createRef();
+
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -133,6 +128,7 @@ const ViewCourseDetails = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatDate = (date) => {
@@ -282,10 +278,12 @@ const ViewCourseDetails = () => {
                 <AccordionDetails
                   style={{ display: "flex", justifyContent: "center" }}
                 >
-                  <iframe
-                    width="420"
-                    height="345"
-                    src={course && course.introduction_video_url}
+                  <ReactPlayer
+                    ref={ref}
+                    url={course && course.introduction_video_url}
+                    width="100%"
+                    height="400px"
+                    controls
                   />
                 </AccordionDetails>
               </Accordion>

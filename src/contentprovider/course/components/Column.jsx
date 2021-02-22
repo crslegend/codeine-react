@@ -3,14 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
 import {
-  Add,
   Assignment,
   AttachFile,
   Delete,
   DragIndicator,
   Edit,
   Movie,
-  SentimentSatisfiedAltRounded,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
@@ -461,9 +459,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
           <DialogTitle>
             {column.title}
             <div style={{ float: "right" }}>
-              <IconButton size="small" onClick={() => setEditMode(true)}>
+              {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 size="small"
                 onClick={() => {
@@ -492,7 +490,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 });
               }}
               required
-              disabled={!editMode}
+              style={{ marginBottom: "20px" }}
             />
             <label htmlFor="overview">
               <Typography variant="body2">Chapter Overview</Typography>
@@ -510,7 +508,8 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 });
               }}
               required
-              disabled={!editMode}
+              multiline
+              rows={4}
             />
           </DialogContent>
           <DialogActions>
@@ -529,7 +528,6 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
               color="primary"
               className={classes.dialogButtons}
               type="submit"
-              disabled={!editMode}
             >
               Save
             </Button>

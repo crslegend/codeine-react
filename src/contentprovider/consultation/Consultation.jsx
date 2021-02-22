@@ -80,9 +80,17 @@ const Consultation = () => {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h1" style={{ marginBottom: "50px" }}>
-        Upcoming schedule at a glance
-      </Typography>
+      <div
+        style={{
+          display: "flex",
+          marginBottom: "30px",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="h1">Upcoming schedule at a glance</Typography>
+        <AddConsultation />
+      </div>
+
       <Calendar />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <TextField
@@ -109,7 +117,6 @@ const Consultation = () => {
           }}
           helperText="Press enter to confirm update"
         />
-        <AddConsultation />
       </div>
       <Dialog open={submitRate}>
         <DialogTitle className={classes.dialog}>Please confirm!</DialogTitle>

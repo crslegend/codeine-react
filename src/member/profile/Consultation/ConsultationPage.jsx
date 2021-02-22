@@ -21,13 +21,6 @@ const Consultation = () => {
   const classes = useStyles();
 
   const [allConsultations, setAllConsultations] = useState([]);
-  const [selectedConsultation, setSelectedConsultation] = useState({
-    partner: "",
-    status: "",
-    meeting_link: "",
-    start_time: "",
-    duration: "",
-  });
 
   useEffect(() => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -36,24 +29,34 @@ const Consultation = () => {
         .get("/consultations", { params: { search: userid } })
         .then((res) => {
           setAllConsultations(res.data);
-          console.log(res.data);
         })
         .catch((error) => {
           setAllConsultations(null);
         });
     }
-  }, []);
+  }, [setAllConsultations]);
 
   console.log(allConsultations);
 
+  const formatStatus = (status) => {
+    if (status === "Confirmed") {
+      return "green";
+    } else if (status === "Rejected") {
+      return "red";
+    } else {
+      return "orange";
+    }
+  };
+
   const consultationColumns = [
     { field: "title", headerName: "Title", width: 200 },
-    { field: "meeting_link", headerName: "Meeting Link", width: 500 },
-    { field: "start_time", headerName: "Date & Time", width: 200 },
+    { field: "meeting_link", headerName: "Meeting Link", width: 400 },
+    { field: "start_time", headerName: "Start Time", width: 250 },
     {
-      field: "duration",
-      headerName: "Duration",
-      width: 150,
+      field: "end_time",
+      headerName: "End Time",
+      type: "date",
+      width: 250,
     },
     {
       field: "partner",
@@ -63,10 +66,20 @@ const Consultation = () => {
     {
       field: "status",
       headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          <Typography style={{ color: formatStatus(params.value) }}>
+            {params.value}
+            {console.log(params.value)}
+          </Typography>
+        </strong>
+      ),
       width: 150,
     },
     {
-      width: 100,
+      width: 150,
+      field: "is_cancelled",
+      headerName: "Remove",
       renderCell: () => (
         <Button
           style={{ color: "#437FC7", textTransform: "capitalize" }}
@@ -80,13 +93,13 @@ const Consultation = () => {
     },
   ];
 
-  const consultationRows = allConsultations;
-
   const formatDate = (date) => {
     const options = {
       year: "numeric",
       month: "long",
       day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
     };
 
     if (date !== null) {
@@ -97,11 +110,20 @@ const Consultation = () => {
     return "";
   };
 
-  /*for (var h = 0; h < allConsultations.length; h++) {
-    consultationRows[h].start_time = formatDate(
-      setAllConsultations[h].start_time
-    );
-  }*/
+  const consultationRows = allConsultations;
+
+  for (var h = 0; h < allConsultations.length; h++) {
+    consultationRows[h].start_time = formatDate(allConsultations[h].start_time);
+    consultationRows[h].end_time = formatDate(allConsultations[h].end_time);
+
+    if (allConsultations[h].is_confirmed) {
+      consultationRows[h].status = "Confirmed";
+    } else if (allConsultations[h].is_rejected) {
+      consultationRows[h].status = "Rejected";
+    } else {
+      consultationRows[h].status = "Pending";
+    }
+  }
 
   return (
     <Fragment>
