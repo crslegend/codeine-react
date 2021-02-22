@@ -273,7 +273,9 @@ const ViewCourseDetails = () => {
                   id={`overview`}
                   style={{ backgroundColor: "#F4F4F4" }}
                 >
-                  <Typography>Course Overview</Typography>
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    Course Overview
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails
                   style={{ display: "flex", justifyContent: "center" }}
@@ -301,7 +303,9 @@ const ViewCourseDetails = () => {
                         id={`${index}`}
                         style={{ backgroundColor: "#F4F4F4" }}
                       >
-                        <Typography>{chapter.title}</Typography>
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          {chapter.title}
+                        </Typography>
                       </AccordionSummary>
                       <AccordionDetails
                         style={{
@@ -311,13 +315,10 @@ const ViewCourseDetails = () => {
                         }}
                       >
                         <Typography
-                          variant="body2"
+                          variant="body1"
                           style={{ paddingBottom: "15px" }}
                         >
-                          {chapter.course_materials &&
-                          chapter.course_materials.length === 1
-                            ? "1 Course Material"
-                            : `${chapter.course_materials.length} Course Materials`}
+                          {chapter.overview && chapter.overview}
                         </Typography>
                         {chapter.course_materials &&
                           chapter.course_materials.length > 0 &&
