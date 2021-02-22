@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import Service from "../../AxiosService";
-import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
@@ -53,23 +52,23 @@ const AddConsultation = () => {
   const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
 
-  const fetchUpdate = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      Service.client
-        .get("/consultations", { params: { search: userid } })
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
+  // const fetchUpdate = () => {
+  //   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+  //     const userid = jwt_decode(Service.getJWT()).user_id;
+  //     Service.client
+  //       .get("/consultations", { params: { search: userid } })
+  //       .then((res) => {
+  //         console.log(res.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUpdate();
-  }, []);
+  // useEffect(() => {
+  //   fetchUpdate();
+  // }, []);
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -148,16 +147,16 @@ const AddConsultation = () => {
   };
 
   const handleSubmit = () => {
-    setOpen(false);
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
     } else {
+      setOpen(false);
       Service.client
         .post("/consultations", slot)
         .then((res) => {
           setSuccessAlertOpen(true);
-          fetchUpdate();
+          window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -238,22 +237,26 @@ const AddConsultation = () => {
             }}
           >
             <TextField
-              required
               margin="dense"
               id="name"
               label="Max no. of members"
               value={maxMembers}
               onChange={(e) => handleMaxMemberChange(e.target.value)}
               type="number"
+              InputProps={{
+                inputProps: { min: 1 },
+              }}
             />
             <TextField
-              required
               margin="dense"
               id="name"
               label="Price per pax (per hour)"
               value={pricePerPax}
               onChange={(e) => handlePriceChange(e.target.value)}
               type="number"
+              InputProps={{
+                inputProps: { min: 0 },
+              }}
             />{" "}
           </div>
         </DialogContent>

@@ -252,7 +252,7 @@ const Calendar = () => {
     (id) => {
       console.log(id);
       Service.client
-        .delete(`/consultations/${id}`)
+        .patch(`/consultations/${id}/cancel`)
         .then((res) => {
           console.log(res);
           handleGetAllConsultations(setConsultations, setLoading);
