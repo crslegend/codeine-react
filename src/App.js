@@ -11,7 +11,7 @@ import AdminRoutesPage from "./admin/AdminRoutesPage";
 import MemberHome from "./member/profile/MemberRoutesPage";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
-import ContentProviderHome from "./contentprovider/ContentProviderHome";
+import ContentProviderHome from "./contentprovider/ContentProviderRoutes";
 import ContentProviderLoginPage from "./contentprovider/auth/ContentProviderLoginPage";
 import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderRegisterPage";
 import LandingPageRoute from "./components/LandingPageRoute";

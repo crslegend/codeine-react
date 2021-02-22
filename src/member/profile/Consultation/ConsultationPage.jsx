@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
-    margin: "-30px -56px 40px",
   },
 }));
 

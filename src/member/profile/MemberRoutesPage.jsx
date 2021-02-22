@@ -122,7 +122,9 @@ const MemberLanding = () => {
         {user.profile_photo ? (
           <Avatar alt="" src={user.profile_photo} className={classes.avatar} />
         ) : (
-          <Avatar className={classes.avatar}>{user.email.charAt(0)}</Avatar>
+          <Avatar className={classes.avatar}>
+            {user.first_name.charAt(0)}
+          </Avatar>
         )}
       </div>
       <Typography variant="h6">

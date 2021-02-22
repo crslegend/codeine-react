@@ -120,9 +120,19 @@ const Password = () => {
     e.preventDefault();
     //setLoading(true);
 
-    console.log("old password = " + passwordDetails.old_password);
-    console.log("new password = " + passwordDetails.new_password);
-    console.log("repeat password = " + passwordDetails.repeat_password);
+    if (
+      passwordDetails.new_password === "" ||
+      passwordDetails.repeat_password === "" ||
+      passwordDetails.old_password === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "All fields must be filled in.",
+        severity: "error",
+      });
+      return;
+    }
 
     if (passwordDetails.new_password !== passwordDetails.repeat_password) {
       setSbOpen(true);
@@ -143,7 +153,9 @@ const Password = () => {
           message: "Password updated successfully!",
           severity: "success",
         });
-        e.target.reset();
+        passwordDetails.old_password = "";
+        passwordDetails.new_password = "";
+        passwordDetails.repeat_password = "";
       })
       .catch((err) => {
         setSbOpen(true);
