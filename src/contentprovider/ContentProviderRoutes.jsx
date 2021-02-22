@@ -33,8 +33,12 @@ import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
 import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
-import PasswordPage from "./password/PasswordPage";
-import ProfilePage from "./profile/ProfilePage";
+import Password from "./password/PasswordPage";
+import Profile from "./profile/ProfilePage";
+import Helpdesk from "./helpdesk/HelpdeskPage";
+import Wallet from "./wallet/WalletPage";
+import Student from "./student/StudentPage";
+import DashboardPage from "./dashboard/DashboardPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -274,7 +278,7 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/dashboard"
-              render={() => <div></div>}
+              render={() => <DashboardPage />}
             />
             <PrivateRoute
               exact
@@ -301,7 +305,7 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/student"
-              render={() => <Consultation />}
+              render={() => <Student />}
             />
             <PrivateRoute
               exact
@@ -311,22 +315,22 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/helpdesk"
-              render={() => <Consultation />}
+              render={() => <Helpdesk />}
             />
             <PrivateRoute
               exact
               path="/partner/home/password"
-              render={() => <PasswordPage />}
+              render={() => <Password />}
             />
             <PrivateRoute
               exact
               path="/partner/home/profile"
-              render={() => <ProfilePage profile={user} setProfile={setUser} />}
+              render={() => <Profile profile={user} setProfile={setUser} />}
             />
             <PrivateRoute
               exact
               path="/partner/home/wallet"
-              render={() => <ProfilePage />}
+              render={() => <Wallet />}
             />
             <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>

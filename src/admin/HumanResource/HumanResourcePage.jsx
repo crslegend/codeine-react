@@ -347,7 +347,12 @@ const AdminHumanResourcePage = () => {
           message: "Partner is deactivated",
           severity: "success",
         });
-        setSelectedPartner(res.data);
+        Service.client
+          .get(`/auth/partners/${partnerid}`)
+          .then((res) => {
+            setSelectedPartner(res.data);
+          })
+          .catch((err) => {});
         getPartnerData();
       });
 
