@@ -165,6 +165,12 @@ const Password = () => {
           severity: "error",
         });
       });
+    passwordDetails.new_password = "";
+    passwordDetails.repeat_password = "";
+    passwordDetails.old_password = "";
+    passwordDetails.showOldPassword = false;
+    passwordDetails.showNewPassword = false;
+    passwordDetails.showRepeatPassword = false;
   };
 
   return (

@@ -136,7 +136,6 @@ const PartnerPasswordPage = () => {
           message: "Password updated successfully!",
           severity: "success",
         });
-        e.target.reset();
       })
       .catch((err) => {
         setSbOpen(true);
@@ -146,6 +145,12 @@ const PartnerPasswordPage = () => {
           severity: "error",
         });
       });
+    passwordDetails.new_password = "";
+    passwordDetails.repeat_password = "";
+    passwordDetails.old_password = "";
+    passwordDetails.showOldPassword = false;
+    passwordDetails.showNewPassword = false;
+    passwordDetails.showRepeatPassword = false;
   };
 
   return (
