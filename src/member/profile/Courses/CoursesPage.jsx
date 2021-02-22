@@ -2,6 +2,10 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
   FormControl,
   InputLabel,
   MenuItem,
@@ -12,6 +16,9 @@ import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import { Pagination, Rating } from "@material-ui/lab";
+import { Assignment } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -24,16 +31,23 @@ const styles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(5),
   },
-  cards: {
+  courses: {
     display: "flex",
-    flexDirection: "row",
-    paddingTop: theme.spacing(2),
+    marginTop: "30px",
   },
-  cardRoot: {
+  card: {
     width: 200,
-    marginRight: "40px",
+    minHeight: 250,
+    marginRight: "30px",
+    display: "flex",
+    flexDirection: "column",
   },
-  cardMedia: {
+  cardActionArea: {
+    flexGrow: 1,
+    flexDirection: "column",
+    alignItems: "stretch",
+  },
+  media: {
     height: 0,
     paddingTop: "56.25%",
   },
@@ -71,6 +85,7 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
+  const history = useHistory();
 
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
@@ -91,7 +106,7 @@ const CoursesPage = () => {
 
     let queryParams = {
       search: searchValue,
-      partnerId: decoded.user_id,
+      memberId: decoded.user_id,
     };
     console.log(sort);
 
@@ -204,6 +219,78 @@ const CoursesPage = () => {
               <MenuItem value="-rating">Rating (Descending)</MenuItem>
             </Select>
           </FormControl>
+        </div>
+        <div className={classes.courses}>
+          {allCourses && allCourses.length > 0 ? (
+            allCourses
+              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+              .map((course, index) => {
+                return (
+                  <Card key={index} className={classes.card}>
+                    <CardActionArea
+                      onClick={() =>
+                        history.push(`/partner/home/content/view/${course.id}`)
+                      }
+                      className={classes.cardActionArea}
+                    >
+                      <CardMedia
+                        className={classes.media}
+                        image={course && course.thumbnail}
+                        title={course && course.title}
+                      />
+                      <CardContent>
+                        <Typography
+                          variant="body1"
+                          style={{ fontWeight: 600, paddingBottom: "10px" }}
+                        >
+                          {course && course.title}
+                        </Typography>
+                        {(() => {})()}
+                        <div>
+                          <Rating
+                            size="small"
+                            readOnly
+                            value={
+                              course && course.rating
+                                ? parseFloat(course.rating)
+                                : 0
+                            }
+                          />
+                        </div>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                );
+              })
+          ) : (
+            <div
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <Assignment fontSize="large" />
+              <Typography variant="h5">No Courses Found</Typography>
+            </div>
+          )}
+        </div>
+        <div className={classes.paginationSection}>
+          {allCourses && allCourses.length > 0 && (
+            <Pagination
+              count={noOfPages}
+              page={page}
+              onChange={handlePageChange}
+              defaultPage={1}
+              color="primary"
+              size="medium"
+              showFirstButton
+              showLastButton
+              className={classes.pagination}
+            />
+          )}
         </div>
       </div>
     </Fragment>
