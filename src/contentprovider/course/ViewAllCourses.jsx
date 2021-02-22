@@ -21,7 +21,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import PageTitle from "../../components/PageTitle";
-import { Add, MoreVert } from "@material-ui/icons";
+import { Add, MoreVert, NoteAdd } from "@material-ui/icons";
 import { Link, useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -304,8 +304,7 @@ const ViewAllCourses = () => {
         </FormControl>
       </div>
       <div className={classes.courses}>
-        {allCourses &&
-          allCourses.length > 0 &&
+        {allCourses && allCourses.length > 0 ? (
           allCourses.map((course, index) => {
             return (
               <Card key={index} className={classes.card}>
@@ -399,7 +398,21 @@ const ViewAllCourses = () => {
                 </CardActions>
               </Card>
             );
-          })}
+          })
+        ) : (
+          <div
+            style={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+              textAlign: "center",
+              marginTop: "20px",
+            }}
+          >
+            <NoteAdd fontSize="large" />
+            <Typography variant="h5">No Courses Found</Typography>
+          </div>
+        )}
       </div>
       <div className={classes.paginationSection}>
         {allCourses && allCourses.length > 0 && (

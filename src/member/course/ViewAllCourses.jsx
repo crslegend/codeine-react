@@ -24,6 +24,7 @@ import Cookies from "js-cookie";
 
 import components from "./components/NavbarComponents";
 import { Rating } from "@material-ui/lab";
+import { NoteAdd } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -238,8 +239,7 @@ const ViewAllCourses = () => {
           </FormControl>
         </div>
         <div className={classes.cards}>
-          {allCourses &&
-            allCourses.length > 0 &&
+          {allCourses && allCourses.length > 0 ? (
             allCourses.map((course, index) => {
               return (
                 <Card key={index} className={classes.cardRoot}>
@@ -276,7 +276,21 @@ const ViewAllCourses = () => {
                   </CardActionArea>
                 </Card>
               );
-            })}
+            })
+          ) : (
+            <div
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <NoteAdd fontSize="large" />
+              <Typography variant="h5">No Courses Found</Typography>
+            </div>
+          )}
         </div>
         <div className={classes.paginationSection}>
           {allCourses && allCourses.length > 0 && (
