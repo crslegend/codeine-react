@@ -1,77 +1,152 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
-import { Button, Box, Typography } from "@material-ui/core";
+import {
+  Button,
+  IconButton,
+  Typography,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Avatar,
+} from "@material-ui/core";
+import { Close } from "@material-ui/icons";
+
 import jwt_decode from "jwt-decode";
 import Service from "../../AxiosService";
 
-const useStyles = makeStyles((theme) => ({}));
+const styles = makeStyles((theme) => ({
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+}));
 
 const deleteConsultation = () => {};
 
 const ConsultationApplication = () => {
-  const classes = useStyles();
+  const classes = styles();
 
-  const [allConsultations, setAllConsultations] = useState([]);
+  //Toast message
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
+  const [applications, setApplications] = useState([]);
+  const [selectedApplication, setSelectedApplication] = useState({
+    id: "",
+    title: "",
+    start_time: "",
+    end_time: "",
+    meeting_link: "",
+    price_per_pax: "",
+    max_members: "",
+    member_name: "",
+    member: {
+      email: "",
+      profile_photo: "",
+    },
+  });
+  const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
 
   useEffect(() => {
+    getApplicationData();
+  }, [setApplications]);
+
+  const handleClickOpenApplication = (e) => {
+    setSelectedApplication(e.row);
+    setOpenApplicationDialog(true);
+  };
+
+  const handleCloseApplication = () => {
+    setOpenApplicationDialog(false);
+  };
+
+  const getApplicationData = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
       console.log(userid);
       Service.client
-        .get("/consultations", { params: { member_id: userid } })
+        .get("/consultations/partner/applications")
         .then((res) => {
-          setAllConsultations(res.data);
+          setApplications(res.data);
         })
         .catch((error) => {
-          setAllConsultations(null);
+          setApplications(null);
         });
-    }
-  }, [setAllConsultations]);
-
-  console.log(allConsultations);
-  const formatStatus = (status) => {
-    if (status === "Confirmed") {
-      return "green";
-    } else if (status === "Rejected") {
-      return "red";
-    } else {
-      return "orange";
     }
   };
 
-  const consultationColumns = [
-    { field: "title", headerName: "Title", width: 200 },
-    { field: "meeting_link", headerName: "Meeting Link", width: 400 },
-    { field: "start_time", headerName: "Start Time", width: 250 },
+  console.log(applications);
+
+  const handleRejectStatus = (e, status, partnerid) => {
+    Service.client.delete(`/auth/partners/${partnerid}`).then((res) => {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Member is removed from consultation",
+        severity: "success",
+      });
+      Service.client
+        .get(`/auth/partners/${partnerid}`)
+        .then((res) => {
+          setSelectedApplication(res.data);
+        })
+        .catch((err) => {});
+      getApplicationData();
+    });
+
+    console.log("Application is deleted");
+  };
+
+  const applicationsColumns = [
+    { field: "title", headerName: "Title", width: 250 },
+    {
+      field: "member_name",
+      headerName: "Submitted By",
+      width: 200,
+    },
+    {
+      field: "meeting_link",
+      headerName: "Meeting Link",
+      width: 300,
+    },
+    {
+      field: "start_time",
+      headerName: "Start Time",
+      width: 220,
+    },
     {
       field: "end_time",
       headerName: "End Time",
       type: "date",
-      width: 250,
+      width: 220,
     },
     {
-      field: "partner",
-      headerName: "Created By",
-      width: 200,
+      field: "max_pax",
+      headerName: "No. of slots",
+      width: 130,
     },
     {
-      field: "status",
-      headerName: "Status",
-      renderCell: (params) => (
-        <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>
-            {params.value}
-            {console.log(params.value)}
-          </Typography>
-        </strong>
-      ),
+      field: "current_pax",
+      headerName: "No. of signups",
       width: 150,
     },
     {
-      width: 150,
-      field: "is_cancelled",
-      headerName: "Remove",
+      width: 120,
+      field: "is_rejected",
+      headerName: "Action",
       renderCell: () => (
         <Button
           style={{ color: "#437FC7", textTransform: "capitalize" }}
@@ -79,7 +154,7 @@ const ConsultationApplication = () => {
             deleteConsultation();
           }}
         >
-          Cancel
+          Reject
         </Button>
       ),
     },
@@ -102,34 +177,136 @@ const ConsultationApplication = () => {
     return "";
   };
 
-  const consultationRows = allConsultations;
+  const applicationsRows = applications;
 
-  for (var h = 0; h < allConsultations.length; h++) {
-    consultationRows[h].start_time = formatDate(allConsultations[h].start_time);
-    consultationRows[h].end_time = formatDate(allConsultations[h].end_time);
-
-    if (allConsultations[h].is_confirmed) {
-      consultationRows[h].status = "Confirmed";
-    } else if (allConsultations[h].is_rejected) {
-      consultationRows[h].status = "Rejected";
-    } else {
-      consultationRows[h].status = "Pending";
-    }
+  for (var h = 0; h < applications.length; h++) {
+    applicationsRows[h].start_time = formatDate(
+      applications[h].consultation_slot.start_time
+    );
+    applicationsRows[h].end_time = formatDate(
+      applications[h].consultation_slot.end_time
+    );
+    applicationsRows[h].meeting_link =
+      applications[h].consultation_slot.meeting_link;
+    applicationsRows[h].title = applications[h].consultation_slot.title;
+    applicationsRows[h].max_pax = applications[h].consultation_slot.max_members;
+    applicationsRows[h].current_pax = applications[h].member.length; //update API
+    console.log(applicationsRows[h].current_pax);
+    applicationsRows[h].member_name =
+      applications[h].member.first_name +
+      " " +
+      applications[h].member.last_name;
+    applicationsRows[h].member.email = applications[h].member.email;
+    console.log(applicationsRows[h].member.email);
   }
 
   return (
-    <div style={{ height: "650px", width: "100%", marginBottom: "40px" }}>
-      <DataGrid
-        rows={consultationRows}
-        columns={consultationColumns.map((column) => ({
-          ...column,
-          //disableClickEventBubbling: true,
-        }))}
-        pageSize={10}
-        checkboxSelection
-        disableSelectionOnClick
-        /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
-      />
+    <div style={{ minHeight: "70vh" }}>
+      <Typography
+        variant="h4"
+        style={{ marginBottom: "20px", color: "#437FC7" }}
+      >
+        Consultation Applications
+      </Typography>
+      <div style={{ height: "650px", width: "100%" }}>
+        <DataGrid
+          rows={applicationsRows}
+          columns={applicationsColumns.map((column) => ({
+            ...column,
+            //disableClickEventBubbling: true,
+          }))}
+          pageSize={10}
+          checkboxSelection
+          disableSelectionOnClick
+          onRowClick={(e) => handleClickOpenApplication(e)}
+        />
+      </div>
+      <Dialog
+        open={openApplicationDialog}
+        onClose={handleCloseApplication}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <DialogTitle id="form-dialog-title">
+          Application Detail
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={handleCloseApplication}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container>
+            <Grid item xs={2}>
+              <Typography>
+                Application ID <br />
+                Title <br />
+                Meeting Link <br />
+                Start Date <br />
+                End Date <br />
+                Price per pax (per hour) <br />
+                Maximum number of slots available <br />
+                Current slots taken <br />
+              </Typography>
+
+              <br />
+            </Grid>
+            <Grid item xs={6}>
+              <Typography>
+                {selectedApplication.id} <br />
+                {selectedApplication.title}
+                <br />
+                {selectedApplication.meeting_link}
+                <br />
+                {formatDate(selectedApplication.start_time)} <br />
+                {formatDate(selectedApplication.end_time)} <br />
+                {selectedApplication.price_per_pax}
+                <br />
+                {selectedApplication.max_members}
+                <br />
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              {selectedApplication.member.profile_photo ? (
+                <Avatar
+                  src={selectedApplication.member.profile_photo}
+                  alt=""
+                  className={classes.avatar}
+                />
+              ) : (
+                <Avatar className={classes.avatar}>
+                  {selectedApplication &&
+                    selectedApplication.member.email.charAt(0)}
+                </Avatar>
+              )}
+              {selectedApplication.first_name +
+                " " +
+                selectedApplication.last_name}
+
+              <br />
+              <br />
+              <br />
+            </Grid>
+          </Grid>
+          <br />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={(e) =>
+              handleRejectStatus(
+                e,
+                selectedApplication.is_rejected,
+                selectedApplication.id
+              )
+            }
+          >
+            <div style={{ color: "red" }}>Reject</div>
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

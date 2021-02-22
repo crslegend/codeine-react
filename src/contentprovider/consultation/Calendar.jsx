@@ -126,7 +126,9 @@ const handleGetAllConsultations = (setConsultations, setLoading) => {
   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
     const userid = jwt_decode(Service.getJWT()).user_id;
     Service.client
-      .get("/consultations", { params: { partner_id: userid } })
+      .get("/consultations", {
+        params: { partner_id: userid, is_cancelled: "False" },
+      })
       .then((res) => {
         setTimeout(() => {
           setConsultations(res.data);
@@ -179,11 +181,11 @@ const Calendar = () => {
 
       if (appointment.endDate !== undefined) {
         appointment.endDate = new Date(appointment.endDate);
-        //console.log(appointment.endDate);
+
         appointment.endDate = new Date(
           appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
         ).toISOString("en-US", { timeZone: "UTC" });
-        //console.log(appointment.endDate);
+
         updateConsult = {
           ...updateConsult,
           end_time: appointment.endDate,
@@ -191,11 +193,11 @@ const Calendar = () => {
       }
       if (appointment.startDate !== undefined) {
         appointment.startDate = new Date(appointment.startDate);
-        //console.log(appointment.startDate);
+
         appointment.startDate = new Date(
           appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
         ).toISOString("en-US", { timeZone: "UTC" });
-        //console.log(appointment.startDate);
+
         updateConsult = {
           ...updateConsult,
           start_time: appointment.startDate,

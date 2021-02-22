@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
     marginLeft: "20px",
+    marginBottom: "50px",
   },
   divider: {
     backgroundColor: "#164D8F",
