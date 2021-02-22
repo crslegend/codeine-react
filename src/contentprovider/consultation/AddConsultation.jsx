@@ -49,6 +49,7 @@ const AddConsultation = () => {
   });
   const [open, setOpen] = useState(false);
 
+  const [titleAlertOpen, setTitleAlertOpen] = useState(false);
   const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
 
@@ -74,11 +75,18 @@ const AddConsultation = () => {
     setOpen(true);
   };
 
-  const handleAlertClose = (e, reason) => {
+  const handleLinkAlertClose = (e, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setMeetingLinkAlertOpen(false);
+  };
+
+  const handleTitleAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setTitleAlertOpen(false);
   };
 
   const handleSuccessAlertClose = (e, reason) => {
@@ -150,6 +158,8 @@ const AddConsultation = () => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
+    } else if (slot.title === "" || slot.title === undefined) {
+      setTitleAlertOpen(true);
     } else {
       setOpen(false);
       Service.client
@@ -285,13 +295,23 @@ const AddConsultation = () => {
           </Typography>
         </Alert>
       </Snackbar>
-
+      <Snackbar
+        open={titleAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleTitleAlertClose}
+      >
+        <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
+          <Typography variant="body1">
+            Please enter a consultation title!
+          </Typography>
+        </Alert>
+      </Snackbar>
       <Snackbar
         open={meetingLinkAlertOpen}
         autoHideDuration={4000}
-        onClose={handleAlertClose}
+        onClose={handleLinkAlertClose}
       >
-        <Alert onClose={handleAlertClose} elevation={6} severity="error">
+        <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
           <Typography variant="body1">Please enter a meeting link!</Typography>
         </Alert>
       </Snackbar>

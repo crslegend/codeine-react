@@ -1,23 +1,15 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
 import { Button, Box, Typography } from "@material-ui/core";
 import jwt_decode from "jwt-decode";
-import Service from "../../../AxiosService";
+import Service from "../../AxiosService";
 
-const useStyles = makeStyles((theme) => ({
-  heading: {
-    height: "70px",
-    backgroundColor: "#437FC7",
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 const deleteConsultation = () => {};
 
-const Consultation = () => {
+const ConsultationApplication = () => {
   const classes = useStyles();
 
   const [allConsultations, setAllConsultations] = useState([]);
@@ -38,7 +30,6 @@ const Consultation = () => {
   }, [setAllConsultations]);
 
   console.log(allConsultations);
-
   const formatStatus = (status) => {
     if (status === "Confirmed") {
       return "green";
@@ -127,27 +118,20 @@ const Consultation = () => {
   }
 
   return (
-    <Fragment>
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Consultations
-        </Typography>
-      </Box>
-      <div style={{ height: "700px", width: "100%" }}>
-        <DataGrid
-          rows={consultationRows}
-          columns={consultationColumns.map((column) => ({
-            ...column,
-            //disableClickEventBubbling: true,
-          }))}
-          pageSize={10}
-          checkboxSelection
-          disableSelectionOnClick
-          /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
-        />
-      </div>
-    </Fragment>
+    <div style={{ height: "650px", width: "100%", marginBottom: "40px" }}>
+      <DataGrid
+        rows={consultationRows}
+        columns={consultationColumns.map((column) => ({
+          ...column,
+          //disableClickEventBubbling: true,
+        }))}
+        pageSize={10}
+        checkboxSelection
+        disableSelectionOnClick
+        /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
+      />
+    </div>
   );
 };
 
-export default Consultation;
+export default ConsultationApplication;

@@ -19,7 +19,6 @@ import {
   AppointmentForm,
   AppointmentTooltip,
   ConfirmationDialog,
-  AllDayPanel,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -28,6 +27,7 @@ const messages = {
   detailsLabel: "Edit Consultation",
   moreInformationLabel: "",
   repeatLabel: "",
+  allDayLabel: "",
 };
 
 const styles = {
@@ -100,7 +100,6 @@ const mapAppointmentData = (item) => ({
   member: handleMemberList(item.confirmed_applications),
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
-  allDay: item.is_all_day,
 });
 
 const initialState = {
@@ -441,7 +440,6 @@ const Calendar = () => {
             messages={messages}
           />
           <ViewSwitcher />
-          <AllDayPanel />
           <ConfirmationDialog />
         </Scheduler>
       </Paper>

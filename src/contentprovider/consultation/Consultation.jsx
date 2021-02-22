@@ -1,13 +1,21 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, Divider } from "@material-ui/core";
+
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
+import ConsultationApplication from "./ConsultationApplication";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
     marginLeft: "20px",
+  },
+  divider: {
+    backgroundColor: "#164D8F",
+    margin: "50px 0px",
+    width: "100%",
+    height: "2px",
   },
 }));
 
@@ -27,6 +35,8 @@ const Consultation = () => {
         <AddConsultation />
       </div>
       <Calendar />
+      <Divider className={classes.divider} />
+      <ConsultationApplication />
     </div>
   );
 };
