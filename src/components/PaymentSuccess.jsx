@@ -4,6 +4,7 @@ import { Button, Paper, Typography } from "@material-ui/core";
 import { useLocation, useHistory } from "react-router-dom";
 import Service from "../AxiosService";
 import logo from "../assets/CodeineLogos/Partner.svg";
+import logo1 from "../assets/CodeineLogos/Member.svg";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -81,7 +82,11 @@ const PaymentSuccess = () => {
     <div>
       <Paper elevation={3} className={classes.paper}>
         <div className={classes.codeineLogo}>
-          <img src={logo} alt="logo" width="90%" />
+          <img
+            src={user && user === "partner" ? logo : logo1}
+            alt="logo"
+            width="90%"
+          />
         </div>
         <Typography
           variant="h5"
