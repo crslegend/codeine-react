@@ -25,6 +25,7 @@ import {
   FiberManualRecord,
   Language,
   Movie,
+  RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
@@ -66,7 +67,11 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
-  reviews: {},
+  reviews: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "30px",
+  },
   cardOnRight: {
     width: 400,
     margin: "auto",
@@ -89,6 +94,7 @@ const ViewCourseDetails = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+  const [courseReviews, setCourseReviews] = useState([]);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -104,7 +110,7 @@ const ViewCourseDetails = () => {
     }
   };
 
-  const getCourse = () => {
+  const getCourse = async () => {
     if (Cookies.get("t1")) {
       Service.client
         .get(`/privateCourses/${id}`)
@@ -122,6 +128,14 @@ const ViewCourseDetails = () => {
         })
         .catch((err) => console.log(err));
     }
+
+    Service.client
+      .get(`/courses/${id}/reviews`)
+      .then((res) => {
+        console.log(res);
+        setCourseReviews(res.data);
+      })
+      .catch((err) => console.log(err));
   };
   console.log(course);
 
@@ -419,7 +433,37 @@ const ViewCourseDetails = () => {
                 {course && course.description}
               </Typography>
             </div>
-            <div className={classes.reviews}>REVIEWS HERE</div>
+            <div className={classes.reviews}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Reviews
+              </Typography>
+              <Typography
+                variant="h1"
+                style={{
+                  fontWeight: 600,
+                  color: "#ffb400",
+                  marginLeft: "35px",
+                }}
+              >
+                {course && parseFloat(course.rating).toFixed(1)}
+              </Typography>
+              <Rating
+                name="read-only"
+                readOnly
+                value={course && course.rating ? parseFloat(course.rating) : 0}
+              />
+              {courseReviews && courseReviews.length > 0 ? (
+                <div></div>
+              ) : (
+                <div style={{ marginTop: "30px", textAlign: "center" }}>
+                  <RateReview fontSize="large" />
+                  <Typography variant="h6">No Reviews Yet</Typography>
+                </div>
+              )}
+            </div>
           </div>
           <div style={{ flexGrow: 1 }}>
             <div
