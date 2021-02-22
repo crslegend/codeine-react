@@ -181,7 +181,7 @@ const CoursesPage = () => {
     <Fragment>
       <Box className={classes.heading}>
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Courses
+          My Enrolled Courses
         </Typography>
       </Box>
       <div className={classes.content}>
@@ -244,6 +244,13 @@ const CoursesPage = () => {
                           style={{ fontWeight: 600, paddingBottom: "10px" }}
                         >
                           {course && course.title}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          style={{ opacity: 0.7, paddingBottom: "10px" }}
+                        >
+                          {course.partner && course.partner.first_name}{" "}
+                          {course.partner && course.partner.last_name}
                         </Typography>
                         {(() => {})()}
                         <div>
