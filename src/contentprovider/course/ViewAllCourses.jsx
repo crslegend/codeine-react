@@ -305,100 +305,104 @@ const ViewAllCourses = () => {
       </div>
       <div className={classes.courses}>
         {allCourses && allCourses.length > 0 ? (
-          allCourses.map((course, index) => {
-            return (
-              <Card key={index} className={classes.card}>
-                <CardActionArea
-                  onClick={() =>
-                    history.push(`/partner/home/content/view/${course.id}`)
-                  }
-                  className={classes.cardActionArea}
-                >
-                  <CardMedia
-                    className={classes.media}
-                    image={course && course.thumbnail}
-                    title={course && course.title}
-                  />
-                  <CardContent>
-                    <Typography
-                      variant="body1"
-                      style={{ fontWeight: 600, paddingBottom: "10px" }}
-                    >
-                      {course && course.title}
-                    </Typography>
-                    {(() => {
-                      if (course.is_deleted) {
-                        return deletedChip;
-                      } else if (course.is_published) {
-                        return publishedChip;
-                      } else if (!course.is_published) {
-                        return unPublishedChip;
-                      }
-                    })()}
-                  </CardContent>
-                </CardActionArea>
-                <CardActions
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div>
-                    <Rating
-                      size="small"
-                      readOnly
-                      value={
-                        course && course.rating ? parseFloat(course.rating) : 0
-                      }
+          allCourses
+            .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+            .map((course, index) => {
+              return (
+                <Card key={index} className={classes.card}>
+                  <CardActionArea
+                    onClick={() =>
+                      history.push(`/partner/home/content/view/${course.id}`)
+                    }
+                    className={classes.cardActionArea}
+                  >
+                    <CardMedia
+                      className={classes.media}
+                      image={course && course.thumbnail}
+                      title={course && course.title}
                     />
-                  </div>
-                  <div>
-                    <IconButton
-                      onClick={(e) => handleClick(e, course.id)}
-                      size="small"
-                    >
-                      <MoreVert />
-                    </IconButton>
-                    <Popover
-                      open={popover.popoverId === course.id}
-                      onClose={handleClose}
-                      anchorEl={popover.anchorEl}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                      }}
-                    >
-                      <div className={classes.popoverContents}>
-                        <Button className={classes.popoverButtons}>
-                          Reply Comments
-                        </Button>
-                        <Button
-                          className={classes.popoverButtons}
-                          component={Link}
-                          to={course && `/partner/home/content/${course.id}`}
-                        >
-                          Edit Course
-                        </Button>
-                        <Button
-                          className={classes.popoverButtons}
-                          onClick={() => {
-                            setDeleteCourseId(course.id);
-                            setDeleteCourseDialog(true);
-                          }}
-                        >
-                          <span style={{ color: "red" }}>Delete Course</span>
-                        </Button>
-                      </div>
-                    </Popover>
-                  </div>
-                </CardActions>
-              </Card>
-            );
-          })
+                    <CardContent>
+                      <Typography
+                        variant="body1"
+                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                      >
+                        {course && course.title}
+                      </Typography>
+                      {(() => {
+                        if (course.is_deleted) {
+                          return deletedChip;
+                        } else if (course.is_published) {
+                          return publishedChip;
+                        } else if (!course.is_published) {
+                          return unPublishedChip;
+                        }
+                      })()}
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <Rating
+                        size="small"
+                        readOnly
+                        value={
+                          course && course.rating
+                            ? parseFloat(course.rating)
+                            : 0
+                        }
+                      />
+                    </div>
+                    <div>
+                      <IconButton
+                        onClick={(e) => handleClick(e, course.id)}
+                        size="small"
+                      >
+                        <MoreVert />
+                      </IconButton>
+                      <Popover
+                        open={popover.popoverId === course.id}
+                        onClose={handleClose}
+                        anchorEl={popover.anchorEl}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                      >
+                        <div className={classes.popoverContents}>
+                          <Button className={classes.popoverButtons}>
+                            Reply Comments
+                          </Button>
+                          <Button
+                            className={classes.popoverButtons}
+                            component={Link}
+                            to={course && `/partner/home/content/${course.id}`}
+                          >
+                            Edit Course
+                          </Button>
+                          <Button
+                            className={classes.popoverButtons}
+                            onClick={() => {
+                              setDeleteCourseId(course.id);
+                              setDeleteCourseDialog(true);
+                            }}
+                          >
+                            <span style={{ color: "red" }}>Delete Course</span>
+                          </Button>
+                        </div>
+                      </Popover>
+                    </div>
+                  </CardActions>
+                </Card>
+              );
+            })
         ) : (
           <div
             style={{

@@ -240,43 +240,45 @@ const ViewAllCourses = () => {
         </div>
         <div className={classes.cards}>
           {allCourses && allCourses.length > 0 ? (
-            allCourses.map((course, index) => {
-              return (
-                <Card key={index} className={classes.cardRoot}>
-                  <CardActionArea
-                    onClick={() => {
-                      history.push(`/courses/${course.id}`);
-                    }}
-                  >
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image={course.thumbnail && course.thumbnail}
-                      title={course && course.title}
-                    />
-                    <CardContent>
-                      <Typography variant="h6">{course.title}</Typography>
-                      <br />
-                      <Typography
-                        variant="body2"
-                        style={{ opacity: 0.7, paddingBottom: "10px" }}
-                      >
-                        {course.partner && course.partner.first_name}{" "}
-                        {course.partner && course.partner.last_name}
-                      </Typography>
-                      <Rating
-                        size="small"
-                        readOnly
-                        value={
-                          course && course.rating
-                            ? parseFloat(course.rating)
-                            : 0
-                        }
+            allCourses
+              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+              .map((course, index) => {
+                return (
+                  <Card key={index} className={classes.cardRoot}>
+                    <CardActionArea
+                      onClick={() => {
+                        history.push(`/courses/${course.id}`);
+                      }}
+                    >
+                      <CardMedia
+                        className={classes.cardMedia}
+                        image={course.thumbnail && course.thumbnail}
+                        title={course && course.title}
                       />
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              );
-            })
+                      <CardContent>
+                        <Typography variant="h6">{course.title}</Typography>
+                        <br />
+                        <Typography
+                          variant="body2"
+                          style={{ opacity: 0.7, paddingBottom: "10px" }}
+                        >
+                          {course.partner && course.partner.first_name}{" "}
+                          {course.partner && course.partner.last_name}
+                        </Typography>
+                        <Rating
+                          size="small"
+                          readOnly
+                          value={
+                            course && course.rating
+                              ? parseFloat(course.rating)
+                              : 0
+                          }
+                        />
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                );
+              })
           ) : (
             <div
               style={{
