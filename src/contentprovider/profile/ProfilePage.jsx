@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     height: "calc(100vh - 115px)",
+    backgroundColor: "#fafafa",
   },
   avatar: {
     fontSize: "80px",
@@ -402,7 +403,7 @@ const PartnerProfilePage = (props) => {
                 disabled={loading}
                 variant="contained"
                 color="primary"
-                className={classes.button}
+                style={{ marginTop: "20px" }}
                 type="submit"
               >
                 {loading ? (

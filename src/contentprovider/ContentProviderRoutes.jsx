@@ -18,7 +18,7 @@ import {
   Divider,
 } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
-import { Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
+import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
@@ -39,6 +39,7 @@ import Helpdesk from "./helpdesk/HelpdeskPage";
 import Wallet from "./wallet/WalletPage";
 import Student from "./student/StudentPage";
 import DashboardPage from "./dashboard/DashboardPage";
+import ContributionsPage from "./contributions/ContributionsPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -221,6 +222,16 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/partner/home/contributions"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <AttachMoney className={classes.listIcon} />
+        <Typography variant="body1">Contributions</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/partner/home/wallet"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -331,6 +342,11 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/wallet"
               render={() => <Wallet />}
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/contributions"
+              render={() => <ContributionsPage />}
             />
             <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>

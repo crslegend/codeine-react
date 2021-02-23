@@ -509,7 +509,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
               }}
               required
               multiline
-              rows={4}
+              rows={5}
             />
           </DialogContent>
           <DialogActions>
