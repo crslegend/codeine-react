@@ -24,6 +24,18 @@ const styles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  avatar: {
+    fontSize: "95px",
+    width: theme.spacing(20),
+    height: theme.spacing(20),
+    marginBottom: "15px",
+    marginLeft: "45px",
+  },
+  rejectButton: {
+    fontSize: "18px",
+    color: "#437FC7",
+    padding: "10px 20px",
+  },
 }));
 
 const deleteConsultation = () => {};
@@ -53,6 +65,9 @@ const ConsultationApplication = () => {
     price_per_pax: "",
     max_members: "",
     member_name: "",
+    consultation_slot: {
+      id: "",
+    },
     member: {
       email: "",
       profile_photo: "",
@@ -229,7 +244,17 @@ const ConsultationApplication = () => {
         fullWidth={true}
       >
         <DialogTitle id="form-dialog-title">
-          Application Detail
+          <Typography
+            variant="h4"
+            style={{
+              marginTop: "10px",
+              marginLeft: "20px",
+              marginBottom: "10px",
+            }}
+          >
+            Application Detail
+          </Typography>
+
           <IconButton
             aria-label="close"
             className={classes.closeButton}
@@ -240,35 +265,6 @@ const ConsultationApplication = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container>
-            <Grid item xs={2}>
-              <Typography>
-                Application ID <br />
-                Title <br />
-                Meeting Link <br />
-                Start Date <br />
-                End Date <br />
-                Price per pax (per hour) <br />
-                Maximum number of slots available <br />
-                Current slots taken <br />
-              </Typography>
-
-              <br />
-            </Grid>
-            <Grid item xs={6}>
-              <Typography>
-                {selectedApplication.id} <br />
-                {selectedApplication.title}
-                <br />
-                {selectedApplication.meeting_link}
-                <br />
-                {formatDate(selectedApplication.start_time)} <br />
-                {formatDate(selectedApplication.end_time)} <br />
-                {selectedApplication.price_per_pax}
-                <br />
-                {selectedApplication.max_members}
-                <br />
-              </Typography>
-            </Grid>
             <Grid item xs={4}>
               {selectedApplication.member.profile_photo ? (
                 <Avatar
@@ -282,30 +278,64 @@ const ConsultationApplication = () => {
                     selectedApplication.member.email.charAt(0)}
                 </Avatar>
               )}
-              {selectedApplication.first_name +
-                " " +
-                selectedApplication.last_name}
+              <Typography
+                variant="h5"
+                style={{ textAlign: "center", marginRight: "60px" }}
+              >
+                {selectedApplication.member_name}
+                <br />
+                {selectedApplication.member.email}
+              </Typography>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography variant="h6">
+                Application ID <br />
+                Consultation ID <br />
+                Title <br />
+                Meeting Link <br />
+                Start Date <br />
+                End Date <br />
+                Price <br />
+                Maximum available slots <br />
+                Current slots taken <br />
+              </Typography>
 
               <br />
-              <br />
-              <br />
+            </Grid>
+            <Grid item xs={5}>
+              <Typography variant="h6">
+                {selectedApplication.id} <br />
+                {selectedApplication.consultation_slot.id} <br />
+                {selectedApplication.title}
+                <br />
+                {selectedApplication.meeting_link}
+                <br />
+                {formatDate(selectedApplication.start_time)} <br />
+                {formatDate(selectedApplication.end_time)} <br />$
+                {selectedApplication.consultation_slot.price_per_pax}
+                <br />
+                {selectedApplication.max_pax}
+                <br />
+                <br />
+              </Typography>
             </Grid>
           </Grid>
           <br />
+          <DialogActions>
+            <Button
+              className={classes.rejectButton}
+              onClick={(e) =>
+                handleRejectStatus(
+                  e,
+                  selectedApplication.is_rejected,
+                  selectedApplication.id
+                )
+              }
+            >
+              Reject
+            </Button>
+          </DialogActions>
         </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={(e) =>
-              handleRejectStatus(
-                e,
-                selectedApplication.is_rejected,
-                selectedApplication.id
-              )
-            }
-          >
-            <div style={{ color: "red" }}>Reject</div>
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );
