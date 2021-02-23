@@ -25,6 +25,8 @@ const TakeQuiz = ({
   progressArr,
   setProgressArr,
   courseId,
+  progress,
+  setProgress,
 }) => {
   const classes = styles();
   console.log(resultObj);
@@ -101,6 +103,8 @@ const TakeQuiz = ({
                     progressArr={progressArr}
                     setProgressArr={setProgressArr}
                     courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               } else if (question.mrq) {
@@ -118,6 +122,8 @@ const TakeQuiz = ({
                     progressArr={progressArr}
                     setProgressArr={setProgressArr}
                     courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               } else if (question.shortanswer) {
@@ -135,6 +141,8 @@ const TakeQuiz = ({
                     progressArr={progressArr}
                     setProgressArr={setProgressArr}
                     courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               }

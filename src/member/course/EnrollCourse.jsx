@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   Checkbox,
   Dialog,
@@ -12,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  LinearProgress,
   Paper,
   TextField,
   Typography,
@@ -129,6 +131,7 @@ const EnrollCourse = () => {
   const [resultObj, setResultObj] = useState();
 
   const [progressArr, setProgressArr] = useState([]);
+  const [progress, setProgress] = useState(0);
 
   const ref = React.createRef();
 
@@ -159,6 +162,7 @@ const EnrollCourse = () => {
             .get(`enrollments`, { params: { courseId: id } })
             .then((res) => {
               console.log(res);
+              setProgress(res.data[0].progress);
               if (!res.data[0].materials_done) {
                 setProgressArr([]);
               } else {
@@ -258,6 +262,7 @@ const EnrollCourse = () => {
         .patch(`/courses/${id}/enrollments`, arr)
         .then((res) => {
           console.log(res);
+          setProgress(res.data.progress);
         })
         .catch((err) => console.log(err));
     }
@@ -298,6 +303,7 @@ const EnrollCourse = () => {
       .patch(`/courses/${id}/enrollments`, arr)
       .then((res) => {
         console.log(res);
+        setProgress(res.data.progress);
       })
       .catch((err) => console.log(err));
   };
@@ -416,6 +422,8 @@ const EnrollCourse = () => {
                       progressArr={progressArr}
                       setProgressArr={setProgressArr}
                       courseId={id}
+                      progress={progress}
+                      setProgress={setProgress}
                     />
                   </div>
                 );
@@ -446,6 +454,20 @@ const EnrollCourse = () => {
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
+            <Typography variant="h6">Your Progress</Typography>
+            <div style={{ width: "100%", marginBottom: "20px" }}>
+              <Box display="flex" alignItems="center">
+                <Box width="100%" mr={1}>
+                  <LinearProgress variant="determinate" value={progress} />
+                </Box>
+                <Box minWidth={35}>
+                  <Typography variant="body2">
+                    {progress && parseInt(progress).toFixed() + "%"}
+                  </Typography>
+                </Box>
+              </Box>
+            </div>
+
             <Accordion
               expanded={expanded === `overview`}
               onChange={handleChange(`overview`)}

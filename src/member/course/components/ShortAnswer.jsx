@@ -18,6 +18,8 @@ const ShortAnswer = ({
   progressArr,
   setProgressArr,
   courseId,
+  progress,
+  setProgress,
 }) => {
   const classes = styles();
   console.log(question);
@@ -84,6 +86,19 @@ const ShortAnswer = ({
                 .patch(`/courses/${courseId}/enrollments`, arr)
                 .then((res) => {
                   console.log(res);
+                })
+                .catch((err) => console.log(err));
+            } else if (res.data.passed && quizType === "FINAL") {
+              Service.client
+                .get(`enrollments`, { params: { courseId: courseId } })
+                .then((res) => {
+                  console.log(res);
+                  setProgress(res.data[0].progress);
+                  if (!res.data[0].materials_done) {
+                    setProgressArr([]);
+                  } else {
+                    setProgressArr(res.data[0].materials_done);
+                  }
                 })
                 .catch((err) => console.log(err));
             }
