@@ -384,22 +384,28 @@ const EnrollCourse = () => {
               <AccordionDetails
                 style={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
                   padding: "20px",
                 }}
               >
-                <Movie fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui
-                  className={classes.linkMui}
-                  onClick={() => {
-                    setChosenCourseMaterial({
-                      material_type: "INTRO",
-                      introduction_video_url: course.introduction_video_url,
-                    });
-                  }}
-                >
-                  Introduction Video
-                </LinkMui>
+                <Typography variant="body1" style={{ paddingBottom: "20px" }}>
+                  {course && course.description}
+                </Typography>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Movie fontSize="small" style={{ marginRight: "5px" }} />
+                  <LinkMui
+                    className={classes.linkMui}
+                    onClick={() => {
+                      setChosenCourseMaterial({
+                        material_type: "INTRO",
+                        introduction_video_url: course.introduction_video_url,
+                      });
+                    }}
+                  >
+                    Introduction Video
+                  </LinkMui>
+                </div>
+
                 {/* {calculate.CalculateDuration(
                   course && course.introduction_video_url
                 )} */}
