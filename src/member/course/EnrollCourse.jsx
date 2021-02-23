@@ -37,6 +37,7 @@ import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
 import Toast from "../../components/Toast.js";
 import { Rating } from "@material-ui/lab";
+import jwt_decode from "jwt-decode";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -109,6 +110,7 @@ const EnrollCourse = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+  const [givenCourseReview, setGivenCourseReview] = useState(false);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
@@ -153,11 +155,30 @@ const EnrollCourse = () => {
         .catch((err) => console.log(err));
     }
   };
+
+  const getCourseReviews = () => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    Service.client
+      .get(`/courses/${id}/reviews`)
+      .then((res) => {
+        // console.log(res);
+        if (res.data.length > 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].member.id === decoded.user_id) {
+              setGivenCourseReview(true);
+              break;
+            }
+          }
+        }
+      })
+      .catch((err) => console.log(err));
+  };
   console.log(course);
 
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    getCourseReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -248,13 +269,20 @@ const EnrollCourse = () => {
             <ArrowBack />
           </IconButton>
           <div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setReviewDialog(true)}
-            >
-              Give Course Review
-            </Button>
+            {givenCourseReview && givenCourseReview ? (
+              <Button variant="contained" color="primary" disabled>
+                Course Review Given
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setReviewDialog(true)}
+              >
+                Give Course Review
+              </Button>
+            )}
+
             <Button
               variant="contained"
               className={classes.unenrollButton}
