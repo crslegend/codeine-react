@@ -503,7 +503,8 @@ const ViewCourseDetails = () => {
                         <Avatar style={{ marginRight: "15px" }} />
                         <div style={{ flexDirection: "column" }}>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            Name here
+                            {review.member && review.member.first_name}{" "}
+                            {review.member && review.member.last_name}
                           </Typography>
                           <div
                             style={{ display: "flex", marginBottom: "10px" }}
@@ -767,7 +768,7 @@ const ViewCourseDetails = () => {
                 </div>
               </div>
               <div>
-                <Typography variant="h6" style={{ color: "#437FC7" }}>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
                   Bio
                 </Typography>
                 <Typography variant="body2">
