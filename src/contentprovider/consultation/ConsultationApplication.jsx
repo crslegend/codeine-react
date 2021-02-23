@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
+import SearchBar from "material-ui-search-bar";
 
 import jwt_decode from "jwt-decode";
 import Service from "../../AxiosService";
@@ -75,6 +76,7 @@ const ConsultationApplication = () => {
   });
   const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     getApplicationData();
@@ -100,11 +102,19 @@ const ConsultationApplication = () => {
   };
 
   const getApplicationData = () => {
+    let queryParams;
+
+    queryParams = {
+      search: searchValue,
+    };
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
       console.log(userid);
       Service.client
-        .get("/consultations/partner/applications")
+        .get("/consultations/partner/applications", {
+          params: { ...queryParams },
+        })
         .then((res) => {
           setApplications(res.data);
         })
@@ -142,7 +152,7 @@ const ConsultationApplication = () => {
   };
 
   const applicationsColumns = [
-    { field: "title", headerName: "Title", width: 250 },
+    { field: "title", headerName: "Title", width: 220 },
     {
       field: "member_name",
       headerName: "Submitted By",
@@ -151,18 +161,18 @@ const ConsultationApplication = () => {
     {
       field: "meeting_link",
       headerName: "Meeting Link",
-      width: 300,
+      width: 220,
     },
     {
       field: "start_time",
       headerName: "Start Time",
-      width: 220,
+      width: 210,
     },
     {
       field: "end_time",
       headerName: "End Time",
       type: "date",
-      width: 220,
+      width: 210,
     },
     {
       field: "max_pax",
@@ -244,10 +254,24 @@ const ConsultationApplication = () => {
       </Typography>
       <Typography
         variant="body1"
-        style={{ marginBottom: "40px", color: "#000000" }}
+        style={{ marginBottom: "30px", color: "#000000" }}
       >
         Click on the respective applications below to view application details.
       </Typography>
+      <Grid item xs={12}>
+        <SearchBar
+          style={{
+            width: "50%",
+            marginBottom: "30px",
+            elavation: "0px",
+          }}
+          placeholder="Search applications..."
+          value={searchValue}
+          onChange={(newValue) => setSearchValue(newValue)}
+          onRequestSearch={getApplicationData}
+          onCancelSearch={() => setSearchValue("")}
+        />
+      </Grid>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           rows={applicationsRows}
@@ -317,8 +341,8 @@ const ConsultationApplication = () => {
                 Consultation ID <br />
                 Title <br />
                 Meeting Link <br />
-                Start Date <br />
-                End Date <br />
+                Start Time <br />
+                End Time <br />
                 Price <br />
                 Maximum available slots <br />
                 Current slots taken <br />
