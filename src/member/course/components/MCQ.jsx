@@ -20,6 +20,10 @@ const MCQ = ({
   setResultObj,
   quizLength,
   quizType,
+  materialId,
+  progressArr,
+  setProgressArr,
+  courseId,
 }) => {
   const classes = styles();
   console.log(question);
@@ -77,6 +81,19 @@ const MCQ = ({
             console.log(res);
             setResultObj(res.data);
             setPageNum(index + 1);
+
+            if (res.data.passed && !progressArr.includes(materialId)) {
+              let arr = [...progressArr];
+              arr.push(materialId);
+              setProgressArr(arr);
+
+              Service.client
+                .patch(`/courses/${courseId}/enrollments`, arr)
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => console.log(err));
+            }
           })
           .catch((err) => console.log(err));
       })

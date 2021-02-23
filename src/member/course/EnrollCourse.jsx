@@ -411,6 +411,10 @@ const EnrollCourse = () => {
                       resultObj={resultObj}
                       setResultObj={setResultObj}
                       handleCreateQuizResult={handleCreateQuizResult}
+                      materialId={chosenCourseMaterial.id}
+                      progressArr={progressArr}
+                      setProgressArr={setProgressArr}
+                      courseId={id}
                     />
                   </div>
                 );

@@ -21,9 +21,13 @@ const TakeQuiz = ({
   resultObj,
   setResultObj,
   handleCreateQuizResult,
+  materialId,
+  progressArr,
+  setProgressArr,
+  courseId,
 }) => {
   const classes = styles();
-  console.log(quiz);
+  console.log(resultObj);
 
   // const [pageNum, setPageNum] = useState(-1);
   // const [resultObj, setResultObj] = useState();
@@ -93,6 +97,10 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
                   />
                 );
               } else if (question.mrq) {
@@ -106,6 +114,10 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
                   />
                 );
               } else if (question.shortanswer) {
@@ -119,6 +131,10 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
                   />
                 );
               }
