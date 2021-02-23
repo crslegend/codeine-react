@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   addButton: {
     color: "#fff",
     backgroundColor: theme.palette.primary.main,
-    height: 50,
+    height: 35,
     "&:hover": {
       color: "#000",
     },
