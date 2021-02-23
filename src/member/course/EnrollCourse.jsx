@@ -127,6 +127,8 @@ const EnrollCourse = () => {
   const [pageNum, setPageNum] = useState(-1);
   const [resultObj, setResultObj] = useState();
 
+  const [progressArr, setProgressArr] = useState([]);
+
   const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -151,6 +153,18 @@ const EnrollCourse = () => {
             material_type: "INTRO",
             introduction_video_url: res.data.introduction_video_url,
           });
+
+          Service.client
+            .get(`enrollments`, { params: { courseId: id } })
+            .then((res) => {
+              console.log(res);
+              if (!res.data[0].materials_done) {
+                setProgressArr([]);
+              } else {
+                setProgressArr(res.data[0].materials_done);
+              }
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     }
@@ -241,6 +255,31 @@ const EnrollCourse = () => {
       })
       .catch((err) => console.log(err));
   };
+
+  const handleCheckMaterial = (e, materialId) => {
+    let arr = [];
+    if (progressArr.length > 0) {
+      arr = [...progressArr];
+    }
+
+    if (e.target.checked) {
+      arr.push(materialId);
+      setProgressArr(arr);
+    } else {
+      arr = arr.filter((id) => id !== materialId);
+      console.log(arr);
+      setProgressArr(arr);
+    }
+
+    Service.client
+      .patch(`/courses/${id}/enrollments`, arr)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  console.log(progressArr);
 
   return (
     <div className={classes.root}>
@@ -463,7 +502,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
@@ -532,7 +581,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
@@ -590,7 +649,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
