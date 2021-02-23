@@ -25,8 +25,9 @@ const Consultation = () => {
   useEffect(() => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
+      console.log(userid);
       Service.client
-        .get("/consultations", { params: { search: userid } })
+        .get("/consultations", { params: { member_id: userid } })
         .then((res) => {
           setAllConsultations(res.data);
         })

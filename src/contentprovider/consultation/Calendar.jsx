@@ -2,7 +2,11 @@ import React, { Fragment, useEffect, useState } from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
-import { ViewState, EditingState } from "@devexpress/dx-react-scheduler";
+import {
+  ViewState,
+  EditingState,
+  IntegratedEditing,
+} from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
@@ -15,14 +19,15 @@ import {
   AppointmentForm,
   AppointmentTooltip,
   ConfirmationDialog,
-  AllDayPanel,
-  EditRecurrenceMenu,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 
 const messages = {
+  detailsLabel: "Edit Consultation",
   moreInformationLabel: "",
+  repeatLabel: "",
+  allDayLabel: "",
 };
 
 const styles = {
@@ -45,6 +50,14 @@ const TextEditor = (props) => {
   return <AppointmentForm.TextEditor {...props} />;
 };
 
+const BooleanEditor = (props) => {
+  // eslint-disable-next-line react/destructuring-assignment
+  if (props.label === "") {
+    return null;
+  }
+  return <AppointmentForm.BooleanEditor {...props} />;
+};
+
 const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
   ({ children, classes, ...restProps }) => (
     <div className={classes.toolbarRoot}>
@@ -57,18 +70,36 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
 const usaTime = (date) =>
   new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
 
+const handleMemberList = (list) => {
+  const newList = [];
+  let i = 1;
+  console.log(list);
+  list.forEach((listItem) => {
+    console.log(list.length);
+    if (list.length === i) {
+      newList.push(
+        listItem.member.first_name + " " + listItem.member.last_name
+      );
+    } else {
+      newList.push(
+        listItem.member.first_name + " " + listItem.member.last_name + ", "
+      );
+    }
+    i++;
+  });
+  console.log(newList);
+  return newList;
+};
+
 const mapAppointmentData = (item) => ({
   id: item.id,
-  title: !item.member
-    ? item.title
-    : `Consultation with ${item.member.first_name} ${item.member.last_name}`,
+  title: item.title,
   startDate: usaTime(item.start_time),
   endDate: usaTime(item.end_time),
   meeting_link: item.meeting_link,
-  member: item.member,
-  consultation_rate: item.consultation_rate,
-  rRule: item.rRule,
-  allDay: item.allDay,
+  member: handleMemberList(item.confirmed_applications),
+  max_members: item.max_members,
+  price_per_pax: item.price_per_pax,
 });
 
 const initialState = {
@@ -95,7 +126,9 @@ const handleGetAllConsultations = (setConsultations, setLoading) => {
   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
     const userid = jwt_decode(Service.getJWT()).user_id;
     Service.client
-      .get("/consultations", { params: { search: userid } })
+      .get("/consultations", {
+        params: { partner_id: userid, is_cancelled: "False" },
+      })
       .then((res) => {
         setTimeout(() => {
           setConsultations(res.data);
@@ -111,8 +144,10 @@ const handleGetAllConsultations = (setConsultations, setLoading) => {
 const Calendar = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
+
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = new Date();
+  console.log(currentDate);
   const [allowDeleting, setAllowDeleting] = useState(true);
   const [allowUpdating, setAllowUpdating] = useState(true);
 
@@ -140,103 +175,94 @@ const Calendar = () => {
   }, [setConsultations, setLoading]);
 
   // handles updating of consultation slot
-  const handleUpdate = React.useCallback(
-    (id, appointment) => {
-      let updateConsult = {};
+  const handleUpdate = React.useCallback((id, appointment) => {
+    let updateConsult = {};
 
-      if (appointment.endDate !== undefined) {
-        appointment.endDate = new Date(appointment.endDate);
-        console.log(appointment.endDate);
-        appointment.endDate = new Date(
-          appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
-        ).toISOString("en-US", { timeZone: "UTC" });
-        console.log(appointment.endDate);
-        updateConsult = {
-          ...updateConsult,
-          end_time: appointment.endDate,
-        };
-      }
-      if (appointment.startDate !== undefined) {
-        appointment.startDate = new Date(appointment.startDate);
-        console.log(appointment.startDate);
-        appointment.startDate = new Date(
-          appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
-        ).toISOString("en-US", { timeZone: "UTC" });
-        console.log(appointment.startDate);
-        updateConsult = {
-          ...updateConsult,
-          start_time: appointment.startDate,
-        };
-      }
+    if (appointment.endDate !== undefined) {
+      appointment.endDate = new Date(appointment.endDate);
 
-      if (appointment.title !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          title: appointment.title,
-        };
-      }
+      appointment.endDate = new Date(
+        appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
 
-      if (appointment.meeting_link !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          meeting_link: appointment.meeting_link,
-        };
-      }
-      console.log(updateConsult);
+      updateConsult = {
+        ...updateConsult,
+        end_time: appointment.endDate,
+      };
+    }
+    if (appointment.startDate !== undefined) {
+      appointment.startDate = new Date(appointment.startDate);
 
-      if (appointment.rRule !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          rRule: appointment.rRule,
-        };
-      }
-      console.log(appointment.rRule);
+      appointment.startDate = new Date(
+        appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
 
-      if (appointment.allDay !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          allDay: appointment.allDay,
-        };
-      }
-      console.log(appointment.allDay);
+      updateConsult = {
+        ...updateConsult,
+        start_time: appointment.startDate,
+      };
+    }
+    if (appointment.title !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        title: appointment.title,
+      };
+    }
+    if (appointment.meeting_link !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        meeting_link: appointment.meeting_link,
+      };
+    }
+    if (appointment.allDay !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        is_all_day: appointment.allDay,
+      };
+    }
+    if (appointment.max_members !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        max_members: appointment.max_members,
+      };
+    }
+    if (appointment.price_per_pax !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        price_per_pax: appointment.price_per_pax,
+      };
+    }
+    console.log(updateConsult);
 
-      if (appointment.consultation_rate !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          consultation_rate: appointment.consultation_rate,
-        };
-      }
-      console.log(appointment.consultation_rate);
-
-      Service.client
-        .put(`/consultations/${id}`, updateConsult)
-        .then((res) => {
-          console.log(res);
-          handleGetAllConsultations(setConsultations, setLoading);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    [setConsultations, setLoading]
-  );
+    Service.client
+      .put(`/consultations/${id}`, updateConsult)
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   // handles deletion of consultation slot
   const handleDelete = React.useCallback(
     (id) => {
       console.log(id);
       Service.client
-        .delete(`/consultations/${id}`)
+        .patch(`/consultations/${id}/cancel`)
         .then((res) => {
           console.log(res);
-          handleGetAllConsultations(setConsultations, setLoading);
+
+          window.location.reload();
         })
         .catch((error) => {
           console.log(id);
           console.log(error);
         });
     },
-    [setConsultations, setLoading]
+
+    []
   );
 
   const BasicLayout = ({
@@ -245,22 +271,18 @@ const Calendar = () => {
     readOnly,
     ...restProps
   }) => {
+    console.log(appointmentData);
     const onLinkChange = (nextValue) => {
       onFieldChange({ meeting_link: nextValue });
     };
 
     const onRateChange = (nextValue) => {
-      onFieldChange({ consultation_rate: nextValue });
+      onFieldChange({ price_per_pax: nextValue });
     };
 
-    if (
-      appointmentData.member === undefined ||
-      appointmentData.member === null
-    ) {
-      setAllowDeleting(true);
-    } else {
-      setAllowDeleting(false);
-    }
+    const onMaxMemberChange = (nextValue) => {
+      onFieldChange({ max_members: nextValue });
+    };
 
     if (appointmentData.endDate < currentDate) {
       setAllowUpdating(false);
@@ -289,14 +311,25 @@ const Calendar = () => {
         />
         <AppointmentForm.Label
           style={{ marginTop: "10px" }}
-          text="Consultation rate ($)"
+          text="Rate per pax ($)"
           type="title"
         />
         <AppointmentForm.TextEditor
-          value={appointmentData.consultation_rate}
+          value={appointmentData.price_per_pax}
           onValueChange={onRateChange}
           readOnly={!allowDeleting || !allowUpdating}
-          placeholder="Enter consultation rate e.g. 100.50"
+          placeholder="Enter price per hour e.g. 100.50"
+        />
+        <AppointmentForm.Label
+          style={{ marginTop: "10px" }}
+          text="Max no. of pax"
+          type="title"
+        />
+        <AppointmentForm.TextEditor
+          value={appointmentData.max_members}
+          onValueChange={onMaxMemberChange}
+          readOnly={!allowDeleting || !allowUpdating}
+          placeholder="Enter maximum number of bookings allowed"
         />
         <AppointmentForm.Label
           style={{ marginTop: "10px" }}
@@ -304,8 +337,6 @@ const Calendar = () => {
           type="title"
         />
         <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
-
-        {console.log(allowDeleting)}
       </AppointmentForm.BasicLayout>
     );
   };
@@ -379,7 +410,7 @@ const Calendar = () => {
   return (
     <Fragment>
       <Paper>
-        <Scheduler data={consultations} height="700">
+        <Scheduler data={consultations} height="750">
           <ViewState
             defaultCurrentDate={currentDate}
             currentViewName={currentViewName}
@@ -394,16 +425,16 @@ const Calendar = () => {
           <DateNavigator />
           <TodayButton />
           <Appointments />
-          <EditRecurrenceMenu />
+          <IntegratedEditing />
           <AppointmentTooltip showOpenButton />
           <AppointmentForm
             commandButtonComponent={CommandButton}
             basicLayoutComponent={BasicLayout}
             textEditorComponent={TextEditor}
+            booleanEditorComponent={BooleanEditor}
             messages={messages}
           />
           <ViewSwitcher />
-          <AllDayPanel />
           <ConfirmationDialog />
         </Scheduler>
       </Paper>
