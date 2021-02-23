@@ -240,6 +240,28 @@ const EnrollCourse = () => {
     // console.log(duration);
   };
 
+  const handleVideoProgress = (state, videoId) => {
+    // console.log(state);
+    // console.log(videoId);
+    if (progressArr.includes(videoId)) {
+      return;
+    }
+
+    if (state.played >= 0.9) {
+      // console.log("FINISH");
+
+      let arr = [...progressArr];
+      arr.push(videoId);
+      setProgressArr(arr);
+      Service.client
+        .patch(`/courses/${id}/enrollments`, arr)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   const handleCreateQuizResult = (quizId) => {
     Service.client
       .post(`/quiz/${quizId}/results`)
@@ -363,6 +385,9 @@ const EnrollCourse = () => {
                       width="100%"
                       height="500px"
                       onDuration={handleDuration}
+                      onProgress={(state) =>
+                        handleVideoProgress(state, chosenCourseMaterial.id)
+                      }
                       controls
                     />
                   </div>
