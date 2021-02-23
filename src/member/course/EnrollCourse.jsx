@@ -13,6 +13,7 @@ import {
   DialogTitle,
   IconButton,
   Paper,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -34,6 +35,9 @@ import ReactPlayer from "react-player";
 
 import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
+import Toast from "../../components/Toast.js";
+import { Rating } from "@material-ui/lab";
+import jwt_decode from "jwt-decode";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -50,8 +54,8 @@ const styles = makeStyles((theme) => ({
     paddingRight: theme.spacing(10),
   },
   unenrollButton: {
-    marginRight: "45px",
-    height: 40,
+    marginLeft: "25px",
+    marginRight: "25px",
     backgroundColor: theme.palette.red.main,
     color: "#fff",
     "&:hover": {
@@ -93,14 +97,32 @@ const EnrollCourse = () => {
   const history = useHistory();
   const { id } = useParams();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+  const [givenCourseReview, setGivenCourseReview] = useState(false);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
   const [expanded, setExpanded] = useState("overview");
 
   const [unenrollDialog, setUnenrollDialog] = useState(false);
+  const [reviewDialog, setReviewDialog] = useState(false);
+
+  const [review, setReview] = useState({
+    rating: 0,
+    description: "",
+  });
 
   const [pageNum, setPageNum] = useState(-1);
   const [resultObj, setResultObj] = useState();
@@ -133,29 +155,67 @@ const EnrollCourse = () => {
         .catch((err) => console.log(err));
     }
   };
+
+  const getCourseReviews = () => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    Service.client
+      .get(`/courses/${id}/reviews`)
+      .then((res) => {
+        // console.log(res);
+        if (res.data.length > 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].member.id === decoded.user_id) {
+              setGivenCourseReview(true);
+              break;
+            }
+          }
+        }
+      })
+      .catch((err) => console.log(err));
+  };
   console.log(course);
 
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
+    getCourseReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const formatDate = (date) => {
-  //   const options = {
-  //     weekday: "long",
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   };
+  const handleSubmitReview = () => {
+    if (review.rating === 0 || review.description === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a rating and description for the review!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
 
-  //   if (date !== null) {
-  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
-  //     // console.log(newDate);
-  //     return newDate;
-  //   }
-  //   return "";
-  // };
+    Service.client
+      .post(`/courses/${id}/reviews`, review)
+      .then((res) => {
+        console.log(res);
+        setReviewDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "Course review submitted successfully!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      })
+      .catch((err) => console.log(err));
+  };
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
@@ -208,13 +268,29 @@ const EnrollCourse = () => {
           <IconButton onClick={() => history.push(`/courses/${id}`)}>
             <ArrowBack />
           </IconButton>
-          <Button
-            variant="contained"
-            className={classes.unenrollButton}
-            onClick={() => setUnenrollDialog(true)}
-          >
-            Unenroll
-          </Button>
+          <div>
+            {givenCourseReview && givenCourseReview ? (
+              <Button variant="contained" color="primary" disabled>
+                Course Review Given
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setReviewDialog(true)}
+              >
+                Give Course Review
+              </Button>
+            )}
+
+            <Button
+              variant="contained"
+              className={classes.unenrollButton}
+              onClick={() => setUnenrollDialog(true)}
+            >
+              Unenroll
+            </Button>
+          </div>
         </div>
         <div className={classes.courseSection}>
           <div style={{ width: "60%" }}>
@@ -308,22 +384,28 @@ const EnrollCourse = () => {
               <AccordionDetails
                 style={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
                   padding: "20px",
                 }}
               >
-                <Movie fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui
-                  className={classes.linkMui}
-                  onClick={() => {
-                    setChosenCourseMaterial({
-                      material_type: "INTRO",
-                      introduction_video_url: course.introduction_video_url,
-                    });
-                  }}
-                >
-                  Introduction Video
-                </LinkMui>
+                <Typography variant="body1" style={{ paddingBottom: "20px" }}>
+                  {course && course.description}
+                </Typography>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Movie fontSize="small" style={{ marginRight: "5px" }} />
+                  <LinkMui
+                    className={classes.linkMui}
+                    onClick={() => {
+                      setChosenCourseMaterial({
+                        material_type: "INTRO",
+                        introduction_video_url: course.introduction_video_url,
+                      });
+                    }}
+                  >
+                    Introduction Video
+                  </LinkMui>
+                </div>
+
                 {/* {calculate.CalculateDuration(
                   course && course.introduction_video_url
                 )} */}
@@ -652,6 +734,75 @@ const EnrollCourse = () => {
             }}
           >
             Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={reviewDialog}
+        onClose={() => setReviewDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Course Review</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+            Give Rating
+          </Typography>
+
+          <Rating
+            value={review && review.rating}
+            onChange={(event, newValue) => {
+              setReview({
+                ...review,
+                rating: newValue,
+              });
+            }}
+            style={{ marginBottom: "20px" }}
+          />
+          <label htmlFor="description">
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              Give Review Description
+            </Typography>
+          </label>
+          <TextField
+            id="description"
+            variant="outlined"
+            margin="dense"
+            value={review && review.description}
+            onChange={(e) =>
+              setReview({
+                ...review,
+                description: e.target.value,
+              })
+            }
+            fullWidth
+            placeholder="Enter review description"
+            multiline
+            rows={3}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setReviewDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleSubmitReview();
+            }}
+          >
+            Give Review
           </Button>
         </DialogActions>
       </Dialog>
