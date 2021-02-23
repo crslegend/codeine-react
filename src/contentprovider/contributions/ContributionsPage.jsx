@@ -53,12 +53,14 @@ const ContributionsPage = () => {
 
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState();
+  const [month, setMonth] = useState(1);
 
   const handleStripePaymentGateway = async (amount, email, userId) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
     const data = {
+      total_price: amount,
       email: email,
       description: "Monthly Contributions",
       pId: userId,
@@ -80,6 +82,20 @@ const ContributionsPage = () => {
       setSbOpen(true);
       setSnackbar({
         message: "Contribution amount has to be higher",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (month < 1) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Number of months has to be at least 1",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -154,9 +170,7 @@ const ContributionsPage = () => {
         <DialogTitle>Contribution</DialogTitle>
         <DialogContent>
           <label htmlFor="amount">
-            <Typography>
-              Please enter the amount you wish to contribute below
-            </Typography>
+            <Typography>Enter contribution amount below</Typography>
           </label>
           <TextField
             id="amount"
@@ -168,6 +182,24 @@ const ContributionsPage = () => {
             margin="dense"
             value={paymentAmount && paymentAmount}
             onChange={(e) => setPaymentAmount(e.target.value)}
+            style={{ marginBottom: "20px" }}
+          />
+          <label htmlFor="month">
+            <Typography>Enter number of contribution months</Typography>
+          </label>
+          <TextField
+            id="month"
+            variant="outlined"
+            placeholder="Enter number of months"
+            type="number"
+            required
+            fullWidth
+            margin="dense"
+            value={month && month}
+            onChange={(e) => setMonth(e.target.value)}
+            InputProps={{
+              inputProps: { min: 1 },
+            }}
           />
         </DialogContent>
         <DialogActions>
