@@ -783,9 +783,10 @@ const EnrollCourse = () => {
                 <LinkMui
                   className={classes.linkMui}
                   onClick={() => {
-                    setChosenCourseMaterial({
+                    handleChosenCourseMaterial({
                       material_type: "FINAL",
                       quiz: course.assessment,
+                      id: course.assessment.id,
                     });
                     handleCreateQuizResult(course.assessment.id);
                   }}
