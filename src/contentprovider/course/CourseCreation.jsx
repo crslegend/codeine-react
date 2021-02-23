@@ -1058,7 +1058,7 @@ const CourseCreation = () => {
         onClose={() => setPaymentDialog(false)}
         PaperProps={{
           style: {
-            width: "400px",
+            width: "500px",
           },
         }}
       >
