@@ -159,18 +159,39 @@ const TakeQuiz = ({
           >
             End of Quiz
           </Typography>
-          <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-            {resultObj && resultObj.passed
-              ? "Well Done! You passed the quiz!"
-              : "You did not pass the quiz. Try Again!"}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleRetryQuiz()}
-          >
-            Re-try Quiz
-          </Button>
+          {quizType && quizType === "QUIZ" ? (
+            <Fragment>
+              <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                {resultObj && resultObj.passed
+                  ? "Well Done! You passed the quiz!"
+                  : "You did not pass the quiz. Try Again!"}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleRetryQuiz()}
+              >
+                Re-try Quiz
+              </Button>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                {resultObj && resultObj.passed
+                  ? "Well Done! You passed the final quiz!"
+                  : "You did not pass the final quiz. Try Again!"}
+              </Typography>
+              {resultObj && !resultObj.passed && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleRetryQuiz()}
+                >
+                  Re-try Quiz
+                </Button>
+              )}
+            </Fragment>
+          )}
         </Paper>
       ) : null}
     </Fragment>
