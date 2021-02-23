@@ -81,6 +81,13 @@ const styles = makeStyles((theme) => ({
       size: "small",
     },
   },
+  link: {
+    textDecoration: "none",
+    color: "black",
+    "&:hover": {
+      backgroundColor: "none",
+    },
+  },
 }));
 
 const CoursesPage = () => {
@@ -227,45 +234,47 @@ const CoursesPage = () => {
               .map((course, index) => {
                 return (
                   <Card key={index} className={classes.card}>
-                    <CardActionArea
-                      onClick={() =>
-                        history.push(`/partner/home/content/view/${course.id}`)
-                      }
-                      className={classes.cardActionArea}
-                    >
-                      <CardMedia
-                        className={classes.media}
-                        image={course && course.thumbnail}
-                        title={course && course.title}
-                      />
-                      <CardContent>
-                        <Typography
-                          variant="body1"
-                          style={{ fontWeight: 600, paddingBottom: "10px" }}
-                        >
-                          {course && course.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          style={{ opacity: 0.7, paddingBottom: "10px" }}
-                        >
-                          {course.partner && course.partner.first_name}{" "}
-                          {course.partner && course.partner.last_name}
-                        </Typography>
-                        {(() => {})()}
-                        <div>
-                          <Rating
-                            size="small"
-                            readOnly
-                            value={
-                              course && course.rating
-                                ? parseFloat(course.rating)
-                                : 0
-                            }
-                          />
-                        </div>
-                      </CardContent>
-                    </CardActionArea>
+                    <a href={`/courses/${course.id}`} className={classes.link}>
+                      <CardActionArea
+                        // onClick={() => {
+                        //   return <a href={`/courses/${course.id}`} />;
+                        // }}
+                        className={classes.cardActionArea}
+                      >
+                        <CardMedia
+                          className={classes.media}
+                          image={course && course.thumbnail}
+                          title={course && course.title}
+                        />
+                        <CardContent>
+                          <Typography
+                            variant="body1"
+                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                          >
+                            {course && course.title}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            style={{ opacity: 0.7, paddingBottom: "10px" }}
+                          >
+                            {course.partner && course.partner.first_name}{" "}
+                            {course.partner && course.partner.last_name}
+                          </Typography>
+                          {(() => {})()}
+                          <div>
+                            <Rating
+                              size="small"
+                              readOnly
+                              value={
+                                course && course.rating
+                                  ? parseFloat(course.rating)
+                                  : 0
+                              }
+                            />
+                          </div>
+                        </CardContent>
+                      </CardActionArea>
+                    </a>
                   </Card>
                 );
               })
