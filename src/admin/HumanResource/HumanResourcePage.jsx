@@ -196,11 +196,31 @@ const AdminHumanResourcePage = () => {
   ];
 
   let memberRows = allMembersList;
+  const [searchValueMember, setSearchValueMember] = useState("");
 
   const getMemberData = () => {
+    let queryParams;
+    let active = "active";
+    let deactived = "deactivated";
+    if (searchValueMember !== "") {
+      if (active.includes(searchValueMember.toLowerCase())) {
+        queryParams = {
+          is_active: true,
+        };
+      } else if (deactived.includes(searchValueMember.toLowerCase())) {
+        queryParams = {
+          is_active: false,
+        };
+      } else {
+        queryParams = {
+          search: searchValueMember,
+        };
+      }
+    }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
-        .get(`/auth/members`)
+        .get(`/auth/members`, { params: { ...queryParams } })
         .then((res) => {
           setAllMemberList(res.data);
           memberRows = allMembersList;
@@ -242,7 +262,6 @@ const AdminHumanResourcePage = () => {
     }
   };
 
-  const [searchValue, setSearchValue] = useState("");
   const [openMemberDialog, setOpenMemberDialog] = useState(false);
 
   const handleClickOpenMember = (e) => {
@@ -328,9 +347,28 @@ const AdminHumanResourcePage = () => {
   let partnerRows = allPartnerList;
 
   const getPartnerData = () => {
+    let queryParams;
+    let active = "active";
+    let deactived = "deactivated";
+    if (searchValuePartner !== "") {
+      if (active.includes(searchValuePartner.toLowerCase())) {
+        queryParams = {
+          is_active: true,
+        };
+      } else if (deactived.includes(searchValuePartner.toLowerCase())) {
+        queryParams = {
+          is_active: false,
+        };
+      } else {
+        queryParams = {
+          search: searchValuePartner,
+        };
+      }
+    }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
-        .get(`/auth/partners`)
+        .get(`/auth/partners`, { params: { ...queryParams } })
         .then((res) => {
           setAllPartnerList(res.data);
           partnerRows = allPartnerList;
@@ -460,43 +498,34 @@ const AdminHumanResourcePage = () => {
   }
 
   const getAdminData = () => {
+    let queryParams;
+    let active = "active";
+    let deactived = "deactivated";
+    if (searchValueAdmin !== "") {
+      if (active.includes(searchValueAdmin.toLowerCase())) {
+        queryParams = {
+          is_active: true,
+        };
+      } else if (deactived.includes(searchValueAdmin.toLowerCase())) {
+        queryParams = {
+          is_active: false,
+        };
+      } else {
+        queryParams = {
+          search: searchValueAdmin,
+        };
+      }
+    }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
-        .get(`/auth/admins`)
+        .get(`/auth/admins`, { params: { ...queryParams } })
         .then((res) => {
           setAllAdminList(res.data);
         })
         .catch((err) => {
           //setProfile(null);
         });
-    }
-  };
-
-  const handleAdminStatus = (e, status, adminid) => {
-    if (status) {
-      Service.client.delete(`/auth/admins/${adminid}`).then((res) => {
-        setSelectedAdmin(res.data);
-        getAdminData();
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Admin is deactivated",
-        severity: "success",
-      });
-      console.log("Admin is deactivated");
-    } else {
-      Service.client.post(`/auth/admins/${adminid}/activate`).then((res) => {
-        setSelectedAdmin(res.data);
-        getAdminData();
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Admin is activated",
-        severity: "success",
-      });
-      console.log("Admin is activated");
     }
   };
 
@@ -548,10 +577,10 @@ const AdminHumanResourcePage = () => {
                 elavation: "0px",
               }}
               placeholder="Search members..."
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
-              //onRequestSearch={getSearchResults}
-              onCancelSearch={() => setSearchValue("")}
+              value={searchValueMember}
+              onChange={(newValue) => setSearchValueMember(newValue)}
+              onRequestSearch={getMemberData}
+              onCancelSearch={() => setSearchValueMember("")}
             />
           </Grid>
 
@@ -668,7 +697,7 @@ const AdminHumanResourcePage = () => {
               placeholder="Search partners..."
               value={searchValuePartner}
               onChange={(newValue) => setSearchValuePartner(newValue)}
-              //onRequestSearch={getSearchResults}
+              onRequestSearch={getPartnerData}
               onCancelSearch={() => setSearchValuePartner("")}
             />
           </Grid>
@@ -836,7 +865,7 @@ const AdminHumanResourcePage = () => {
               placeholder="Search admin..."
               value={searchValueAdmin}
               onChange={(newValue) => setSearchValueAdmin(newValue)}
-              //onRequestSearch={getSearchResults}
+              onRequestSearch={getAdminData}
               onCancelSearch={() => setSearchValueAdmin("")}
             />
           </Grid>
