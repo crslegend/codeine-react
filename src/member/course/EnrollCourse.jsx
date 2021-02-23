@@ -38,6 +38,7 @@ import TakeQuiz from "./components/TakeQuiz";
 import Toast from "../../components/Toast.js";
 import { Rating } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
+import CommentsSection from "./components/CommentsSection";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -418,7 +419,7 @@ const EnrollCourse = () => {
                     />
                   </div>
                 );
-              } else {
+              } else if (chosenCourseMaterial.material_type === "INTRO") {
                 return (
                   <div>
                     <ReactPlayer
@@ -431,8 +432,17 @@ const EnrollCourse = () => {
                     />
                   </div>
                 );
+              } else {
+                return null;
               }
             })()}
+            {chosenCourseMaterial &&
+              chosenCourseMaterial.material_type !== "FINAL" &&
+              chosenCourseMaterial.material_type !== "INTRO" && (
+                <div style={{ marginTop: "20px" }}>
+                  <CommentsSection />
+                </div>
+              )}
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
@@ -568,7 +578,14 @@ const EnrollCourse = () => {
                                     </Typography>
 
                                     <AttachFile fontSize="small" />
-                                    {material.title}
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() =>
+                                        handleChosenCourseMaterial(material)
+                                      }
+                                    >
+                                      {material.title}
+                                    </LinkMui>
                                     <Button
                                       variant="outlined"
                                       style={{
