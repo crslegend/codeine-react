@@ -636,82 +636,6 @@ const CourseCreation = () => {
     setPageNum(pageNum + 1);
   };
 
-  const handleStripePaymentGateway = async (amount, email, userId) => {
-    // Get Stripe.js instance
-    const stripe = await stripePromise;
-
-    const data = {
-      courseId: courseId,
-      total_price: amount,
-      email: email,
-      description: "Monthly Contributions",
-      pId: userId,
-    };
-
-    axios
-      .post("/create-checkout-session", data)
-      .then((res) => {
-        console.log(res);
-        stripe.redirectToCheckout({
-          sessionId: res.data.id,
-        });
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handlePaymentDialog = () => {
-    if (paymentAmount < 1) {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Contribution amount has to be higher",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
-    }
-
-    const decoded = jwt_decode(Cookies.get("t1"));
-
-    // console.log(decoded);
-    Service.client
-      .get(`/auth/partners/${decoded.user_id}`)
-      .then((res) => {
-        console.log(res);
-
-        if (
-          res.data.partner.organization &&
-          res.data.partner.organization.organization_name
-        ) {
-          // means enterprise partner
-          if (paymentAmount < 500) {
-            setSbOpen(true);
-            setSnackbar({
-              message:
-                "Contribution amount has to be greater than or equals to $500 for enterprise",
-              severity: "error",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-              autoHideDuration: 3000,
-            });
-            return;
-          }
-        }
-
-        handleStripePaymentGateway(
-          paymentAmount,
-          res.data.email,
-          decoded.user_id
-        );
-      })
-      .catch((err) => console.log(err));
-  };
-
   const handleLastPageSave = () => {
     if (isPublished === "true") {
       const check = true; // to check whether partner paid
@@ -1139,24 +1063,6 @@ const CourseCreation = () => {
         }}
       >
         <DialogTitle>You have yet to contribute for this month</DialogTitle>
-        <DialogContent>
-          <label htmlFor="amount">
-            <Typography>
-              Please enter the amount you wish to contribute below
-            </Typography>
-          </label>
-          <TextField
-            id="amount"
-            variant="outlined"
-            placeholder="Enter amount (eg. 50.50)"
-            type="number"
-            required
-            fullWidth
-            margin="dense"
-            value={paymentAmount && paymentAmount}
-            onChange={(e) => setPaymentAmount(e.target.value)}
-          />
-        </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
@@ -1170,9 +1076,9 @@ const CourseCreation = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => handlePaymentDialog()}
+            onClick={() => history.push(`/partner/home/contributions`)}
           >
-            Proceed To Pay
+            Go To Contributions
           </Button>
         </DialogActions>
       </Dialog>
