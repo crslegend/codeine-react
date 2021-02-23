@@ -197,9 +197,10 @@ const ConsultationApplication = () => {
       minute: "numeric",
     };
 
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
+    options.timeZone = "UTC";
+
+    if (date !== null || date !== "") {
+      const newDate = new Date(date).toLocaleDateString("en-US", options);
       return newDate;
     }
     return "";
