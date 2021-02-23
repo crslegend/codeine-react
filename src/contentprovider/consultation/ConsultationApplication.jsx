@@ -13,6 +13,7 @@ import {
   Avatar,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
+import Toast from "../../components/Toast.js";
 
 import jwt_decode from "jwt-decode";
 import Service from "../../AxiosService";
@@ -37,8 +38,6 @@ const styles = makeStyles((theme) => ({
     padding: "10px 20px",
   },
 }));
-
-const deleteConsultation = () => {};
 
 const ConsultationApplication = () => {
   const classes = styles();
@@ -67,6 +66,7 @@ const ConsultationApplication = () => {
     member_name: "",
     consultation_slot: {
       id: "",
+      number_of_signups: "",
     },
     member: {
       email: "",
@@ -74,6 +74,7 @@ const ConsultationApplication = () => {
     },
   });
   const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
 
   useEffect(() => {
     getApplicationData();
@@ -84,8 +85,18 @@ const ConsultationApplication = () => {
     setOpenApplicationDialog(true);
   };
 
+  const handleCloseReject = () => {
+    setOpenRejectDialog(false);
+  };
+
   const handleCloseApplication = () => {
     setOpenApplicationDialog(false);
+  };
+
+  const handleReject = (applicationId) => {
+    setOpenRejectDialog(false);
+    setOpenApplicationDialog(false);
+    rejectConsultation(applicationId);
   };
 
   const getApplicationData = () => {
@@ -105,24 +116,29 @@ const ConsultationApplication = () => {
 
   console.log(applications);
 
-  const handleRejectStatus = (e, status, partnerid) => {
-    Service.client.delete(`/auth/partners/${partnerid}`).then((res) => {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Member is removed from consultation",
-        severity: "success",
+  const rejectConsultation = (applicationId) => {
+    Service.client
+      .patch(`/consultations/application/${applicationId}/reject`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Member is removed from consultation",
+          severity: "success",
+        });
+        getApplicationData();
+        window.location.reload();
       });
-      Service.client
-        .get(`/auth/partners/${partnerid}`)
-        .then((res) => {
-          setSelectedApplication(res.data);
-        })
-        .catch((err) => {});
-      getApplicationData();
-    });
 
     console.log("Application is deleted");
+  };
+
+  const formatStatus = (status) => {
+    if (status !== "Rejected") {
+      return "green";
+    } else {
+      return "red";
+    }
   };
 
   const applicationsColumns = [
@@ -154,24 +170,21 @@ const ConsultationApplication = () => {
       width: 130,
     },
     {
-      field: "current_pax",
+      field: "number_of_signups",
       headerName: "No. of signups",
       width: 150,
     },
     {
-      width: 120,
-      field: "is_rejected",
-      headerName: "Action",
-      renderCell: () => (
-        <Button
-          style={{ color: "#437FC7", textTransform: "capitalize" }}
-          onClick={() => {
-            deleteConsultation();
-          }}
-        >
-          Reject
-        </Button>
+      field: "status",
+      headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          <Typography style={{ color: formatStatus(params.value) }}>
+            {params.value}
+          </Typography>
+        </strong>
       ),
+      width: 130,
     },
   ];
 
@@ -205,30 +218,40 @@ const ConsultationApplication = () => {
       applications[h].consultation_slot.meeting_link;
     applicationsRows[h].title = applications[h].consultation_slot.title;
     applicationsRows[h].max_pax = applications[h].consultation_slot.max_members;
-    applicationsRows[h].current_pax = applications[h].member.length; //update API
-    console.log(applicationsRows[h].current_pax);
+    applicationsRows[h].number_of_signups =
+      applications[h].consultation_slot.number_of_signups; //update API
+
     applicationsRows[h].member_name =
       applications[h].member.first_name +
       " " +
       applications[h].member.last_name;
-    applicationsRows[h].member.email = applications[h].member.email;
-    console.log(applicationsRows[h].member.email);
+    if (applications[h].is_rejected === true) {
+      applicationsRows[h].status = "Rejected";
+    } else {
+      applicationsRows[h].status = "Accepted";
+    }
   }
 
   return (
     <div style={{ minHeight: "70vh" }}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Typography
         variant="h4"
-        style={{ marginBottom: "20px", color: "#437FC7" }}
+        style={{ marginBottom: "5px", color: "#437FC7" }}
       >
         Consultation Applications
+      </Typography>
+      <Typography
+        variant="body1"
+        style={{ marginBottom: "40px", color: "#000000" }}
+      >
+        Click on the respective applications below to view application details.
       </Typography>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           rows={applicationsRows}
           columns={applicationsColumns.map((column) => ({
             ...column,
-            //disableClickEventBubbling: true,
           }))}
           pageSize={10}
           checkboxSelection
@@ -316,26 +339,56 @@ const ConsultationApplication = () => {
                 <br />
                 {selectedApplication.max_pax}
                 <br />
+                {selectedApplication.consultation_slot.number_of_signups}
                 <br />
               </Typography>
             </Grid>
           </Grid>
           <br />
           <DialogActions>
-            <Button
-              className={classes.rejectButton}
-              onClick={(e) =>
-                handleRejectStatus(
-                  e,
-                  selectedApplication.is_rejected,
-                  selectedApplication.id
-                )
-              }
-            >
-              Reject
-            </Button>
+            {selectedApplication.is_rejected === false ? (
+              <Button
+                className={classes.rejectButton}
+                onClick={(e) => setOpenRejectDialog(true)}
+              >
+                Reject
+              </Button>
+            ) : (
+              ""
+            )}
           </DialogActions>
         </DialogContent>
+      </Dialog>
+      <Dialog
+        open={openRejectDialog}
+        onClose={handleCloseReject}
+        maxWidth="xs"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <Typography style={{ textAlign: "center", fontSize: "24px" }}>
+            Are you sure?
+          </Typography>
+        </DialogTitle>
+        <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
+          Press confirm to proceed. Note that action cannot be undone.
+        </DialogContent>
+        <DialogActions style={{ paddingBottom: "20px", marginRight: "5px" }}>
+          <Button
+            variant="outlined"
+            onClick={(e) => setOpenRejectDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            style={{ color: "#437FC7" }}
+            onClick={(e) => handleReject(selectedApplication.id)}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

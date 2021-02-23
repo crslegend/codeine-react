@@ -175,78 +175,75 @@ const Calendar = () => {
   }, [setConsultations, setLoading]);
 
   // handles updating of consultation slot
-  const handleUpdate = React.useCallback(
-    (id, appointment) => {
-      let updateConsult = {};
+  const handleUpdate = React.useCallback((id, appointment) => {
+    let updateConsult = {};
 
-      if (appointment.endDate !== undefined) {
-        appointment.endDate = new Date(appointment.endDate);
+    if (appointment.endDate !== undefined) {
+      appointment.endDate = new Date(appointment.endDate);
 
-        appointment.endDate = new Date(
-          appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
-        ).toISOString("en-US", { timeZone: "UTC" });
+      appointment.endDate = new Date(
+        appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
 
-        updateConsult = {
-          ...updateConsult,
-          end_time: appointment.endDate,
-        };
-      }
-      if (appointment.startDate !== undefined) {
-        appointment.startDate = new Date(appointment.startDate);
+      updateConsult = {
+        ...updateConsult,
+        end_time: appointment.endDate,
+      };
+    }
+    if (appointment.startDate !== undefined) {
+      appointment.startDate = new Date(appointment.startDate);
 
-        appointment.startDate = new Date(
-          appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
-        ).toISOString("en-US", { timeZone: "UTC" });
+      appointment.startDate = new Date(
+        appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
+      ).toISOString("en-US", { timeZone: "UTC" });
 
-        updateConsult = {
-          ...updateConsult,
-          start_time: appointment.startDate,
-        };
-      }
-      if (appointment.title !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          title: appointment.title,
-        };
-      }
-      if (appointment.meeting_link !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          meeting_link: appointment.meeting_link,
-        };
-      }
-      if (appointment.allDay !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          is_all_day: appointment.allDay,
-        };
-      }
-      if (appointment.max_members !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          max_members: appointment.max_members,
-        };
-      }
-      if (appointment.price_per_pax !== undefined) {
-        updateConsult = {
-          ...updateConsult,
-          price_per_pax: appointment.price_per_pax,
-        };
-      }
-      console.log(updateConsult);
+      updateConsult = {
+        ...updateConsult,
+        start_time: appointment.startDate,
+      };
+    }
+    if (appointment.title !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        title: appointment.title,
+      };
+    }
+    if (appointment.meeting_link !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        meeting_link: appointment.meeting_link,
+      };
+    }
+    if (appointment.allDay !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        is_all_day: appointment.allDay,
+      };
+    }
+    if (appointment.max_members !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        max_members: appointment.max_members,
+      };
+    }
+    if (appointment.price_per_pax !== undefined) {
+      updateConsult = {
+        ...updateConsult,
+        price_per_pax: appointment.price_per_pax,
+      };
+    }
+    console.log(updateConsult);
 
-      Service.client
-        .put(`/consultations/${id}`, updateConsult)
-        .then((res) => {
-          console.log(res);
-          handleGetAllConsultations(setConsultations, setLoading);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    [setConsultations, setLoading]
-  );
+    Service.client
+      .put(`/consultations/${id}`, updateConsult)
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   // handles deletion of consultation slot
   const handleDelete = React.useCallback(
@@ -256,14 +253,16 @@ const Calendar = () => {
         .patch(`/consultations/${id}/cancel`)
         .then((res) => {
           console.log(res);
-          handleGetAllConsultations(setConsultations, setLoading);
+
+          window.location.reload();
         })
         .catch((error) => {
           console.log(id);
           console.log(error);
         });
     },
-    [setConsultations, setLoading]
+
+    []
   );
 
   const BasicLayout = ({
@@ -284,12 +283,6 @@ const Calendar = () => {
     const onMaxMemberChange = (nextValue) => {
       onFieldChange({ max_members: nextValue });
     };
-
-    if (appointmentData.member.length === 0) {
-      setAllowDeleting(true);
-    } else {
-      setAllowDeleting(false);
-    }
 
     if (appointmentData.endDate < currentDate) {
       setAllowUpdating(false);
