@@ -94,7 +94,11 @@ const MRQ = ({
             setResultObj(res.data);
             setPageNum(index + 1);
 
-            if (res.data.passed && !progressArr.includes(materialId)) {
+            if (
+              res.data.passed &&
+              !progressArr.includes(materialId) &&
+              quizType === "QUIZ"
+            ) {
               let arr = [...progressArr];
               arr.push(materialId);
               setProgressArr(arr);
