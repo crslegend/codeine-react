@@ -48,7 +48,7 @@ const PaymentSuccess = () => {
 
   const handleRedirect = () => {
     if (user === "partner") {
-      history.push(`/partner/home/content`);
+      history.push(`/partner/home/contributions`);
     } else {
       // return to member consult
     }

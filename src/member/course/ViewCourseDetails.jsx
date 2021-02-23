@@ -25,6 +25,7 @@ import {
   FiberManualRecord,
   Language,
   Movie,
+  RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
@@ -66,7 +67,11 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
-  reviews: {},
+  reviews: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "30px",
+  },
   cardOnRight: {
     width: 400,
     margin: "auto",
@@ -89,6 +94,7 @@ const ViewCourseDetails = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
+  const [courseReviews, setCourseReviews] = useState([]);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -104,7 +110,7 @@ const ViewCourseDetails = () => {
     }
   };
 
-  const getCourse = () => {
+  const getCourse = async () => {
     if (Cookies.get("t1")) {
       Service.client
         .get(`/privateCourses/${id}`)
@@ -122,6 +128,14 @@ const ViewCourseDetails = () => {
         })
         .catch((err) => console.log(err));
     }
+
+    Service.client
+      .get(`/courses/${id}/reviews`)
+      .then((res) => {
+        console.log(res);
+        setCourseReviews(res.data);
+      })
+      .catch((err) => console.log(err));
   };
   console.log(course);
 
@@ -145,6 +159,43 @@ const ViewCourseDetails = () => {
       return newDate;
     }
     return "";
+  };
+
+  const calculateDateInterval = (timestamp) => {
+    const dateBefore = new Date(timestamp);
+    const dateNow = new Date();
+
+    let seconds = Math.floor((dateNow - dateBefore) / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let days = Math.floor(hours / 24);
+
+    hours = hours - days * 24;
+    minutes = minutes - days * 24 * 60 - hours * 60;
+    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
+
+    if (days === 0) {
+      if (hours === 0) {
+        if (minutes === 0) {
+          return `${seconds} seconds ago`;
+        }
+
+        if (minutes === 1) {
+          return `${minutes} minute ago`;
+        }
+        return `${minutes} minutes ago`;
+      }
+
+      if (hours === 1) {
+        return `${hours} hour ago`;
+      }
+      return `${hours} hours ago`;
+    }
+
+    if (days === 1) {
+      return `${days} day ago`;
+    }
+    return `${days} days ago`;
   };
 
   const handleEnrollment = () => {
@@ -419,7 +470,81 @@ const ViewCourseDetails = () => {
                 {course && course.description}
               </Typography>
             </div>
-            <div className={classes.reviews}>REVIEWS HERE</div>
+            <div className={classes.reviews}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
+                Reviews
+              </Typography>
+              <Typography
+                variant="h1"
+                style={{
+                  fontWeight: 600,
+                  color: "#ffb400",
+                  marginLeft: "35px",
+                }}
+              >
+                {course && parseFloat(course.rating).toFixed(1)}
+              </Typography>
+              <Rating
+                name="read-only"
+                readOnly
+                value={course && course.rating ? parseFloat(course.rating) : 0}
+              />
+              {courseReviews && courseReviews.length > 0 ? (
+                <div style={{ marginTop: "30px" }}>
+                  {courseReviews.map((review, index) => {
+                    return (
+                      <div
+                        key={index}
+                        style={{ display: "flex", marginBottom: "20px" }}
+                      >
+                        <Avatar style={{ marginRight: "15px" }} />
+                        <div style={{ flexDirection: "column" }}>
+                          <Typography variant="h6" style={{ fontWeight: 600 }}>
+                            {review.member && review.member.first_name}{" "}
+                            {review.member && review.member.last_name}
+                          </Typography>
+                          <div
+                            style={{ display: "flex", marginBottom: "10px" }}
+                          >
+                            <Rating
+                              name="read-only"
+                              readOnly
+                              value={
+                                review && review.rating
+                                  ? parseFloat(review.rating)
+                                  : 0
+                              }
+                              size="small"
+                              style={{ marginRight: "20px" }}
+                            />
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {review &&
+                                calculateDateInterval(review.timestamp)}
+                            </Typography>
+                          </div>
+                          <div>
+                            <Typography variant="body2">
+                              {review.description}
+                            </Typography>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ marginTop: "30px", textAlign: "center" }}>
+                  <RateReview fontSize="large" />
+                  <Typography variant="h6">No Reviews Yet</Typography>
+                </div>
+              )}
+            </div>
           </div>
           <div style={{ flexGrow: 1 }}>
             <div
@@ -643,7 +768,7 @@ const ViewCourseDetails = () => {
                 </div>
               </div>
               <div>
-                <Typography variant="h6" style={{ color: "#437FC7" }}>
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
                   Bio
                 </Typography>
                 <Typography variant="body2">

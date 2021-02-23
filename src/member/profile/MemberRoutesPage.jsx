@@ -35,6 +35,7 @@ import Consultation from "./Consultation/ConsultationPage";
 import Profile from "./Profile/ProfilePage";
 import Password from "./Password/PasswordPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
+import CoursesPage from "./Courses/CoursesPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -270,7 +271,7 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/course"
-              render={() => <div></div>}
+              render={() => <CoursesPage />}
             />
             <PrivateRoute
               exact
