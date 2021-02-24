@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -8,9 +8,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Snackbar,
+  Typography,
 } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import Service from "../../AxiosService";
-import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
@@ -32,36 +34,66 @@ const AddConsultation = () => {
   const [startTime, setStartTime] = useState(currentDate);
   const [endTime, setEndTime] = useState(currentDate);
   const [meetingLink, setMeetingLink] = useState("");
+  const [maxMembers, setMaxMembers] = useState(1);
+  const [pricePerPax, setPricePerPax] = useState(1);
   const [title, setTitle] = useState("Open");
   const [slot, setSlot] = useState({
     start_time: startTime,
     end_time: endTime,
     meeting_link: meetingLink,
     title: title,
+    max_members: maxMembers,
+    price_per_pax: pricePerPax,
+    is_all_day: false,
+    r_rule: null,
   });
   const [open, setOpen] = useState(false);
-  const [submittedNewSlot, setSubmittedNewSlot] = useState(false);
 
-  const fetchUpdate = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      Service.client
-        .get("/consultations", { params: { search: userid } })
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
+  const [titleAlertOpen, setTitleAlertOpen] = useState(false);
+  const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
+  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
 
-  useEffect(() => {
-    fetchUpdate();
-  }, []);
+  // const fetchUpdate = () => {
+  //   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+  //     const userid = jwt_decode(Service.getJWT()).user_id;
+  //     Service.client
+  //       .get("/consultations", { params: { search: userid } })
+  //       .then((res) => {
+  //         console.log(res.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchUpdate();
+  // }, []);
 
   const handleDialogOpen = () => {
     setOpen(true);
+  };
+
+  const handleLinkAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setMeetingLinkAlertOpen(false);
+  };
+
+  const handleTitleAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setTitleAlertOpen(false);
+  };
+
+  const handleSuccessAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSuccessAlertOpen(false);
   };
 
   const handleStartTimeChange = (e) => {
@@ -100,22 +132,46 @@ const AddConsultation = () => {
     });
   };
 
+  const handleMaxMemberChange = (e) => {
+    setMaxMembers(e);
+
+    setSlot({
+      ...slot,
+      max_members: e,
+    });
+  };
+
+  const handlePriceChange = (e) => {
+    setPricePerPax(e);
+
+    setSlot({
+      ...slot,
+      price_per_pax: e,
+    });
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleSubmit = () => {
-    setOpen(false);
     console.log(slot);
-    Service.client
-      .post("/consultations", slot)
-      .then((res) => {
-        setSubmittedNewSlot(true);
-        fetchUpdate();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (slot.meeting_link === "" || slot.meeting_link === undefined) {
+      setMeetingLinkAlertOpen(true);
+    } else if (slot.title === "" || slot.title === undefined) {
+      setTitleAlertOpen(true);
+    } else {
+      setOpen(false);
+      Service.client
+        .post("/consultations", slot)
+        .then((res) => {
+          setSuccessAlertOpen(true);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -166,6 +222,7 @@ const AddConsultation = () => {
             }}
           />
           <TextField
+            required
             margin="dense"
             id="name"
             label="Title"
@@ -174,6 +231,7 @@ const AddConsultation = () => {
             fullWidth
           />
           <TextField
+            required
             margin="dense"
             id="name"
             label="Conference link"
@@ -182,6 +240,35 @@ const AddConsultation = () => {
             type="url"
             fullWidth
           />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <TextField
+              margin="dense"
+              id="name"
+              label="Max no. of members"
+              value={maxMembers}
+              onChange={(e) => handleMaxMemberChange(e.target.value)}
+              type="number"
+              InputProps={{
+                inputProps: { min: 1 },
+              }}
+            />
+            <TextField
+              margin="dense"
+              id="name"
+              label="Price per pax (per hour)"
+              value={pricePerPax}
+              onChange={(e) => handlePriceChange(e.target.value)}
+              type="number"
+              InputProps={{
+                inputProps: { min: 0 },
+              }}
+            />{" "}
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -192,12 +279,42 @@ const AddConsultation = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={submittedNewSlot}>
-        <DialogTitle>New consultation added!</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setSubmittedNewSlot(false)}>Okay</Button>
-        </DialogActions>
-      </Dialog>
+
+      <Snackbar
+        open={successAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleSuccessAlertClose}
+      >
+        <Alert
+          onClose={handleSuccessAlertClose}
+          elevation={6}
+          severity="success"
+        >
+          <Typography variant="body1">
+            Consultation slot has been added
+          </Typography>
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={titleAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleTitleAlertClose}
+      >
+        <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
+          <Typography variant="body1">
+            Please enter a consultation title!
+          </Typography>
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={meetingLinkAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleLinkAlertClose}
+      >
+        <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
+          <Typography variant="body1">Please enter a meeting link!</Typography>
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

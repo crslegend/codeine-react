@@ -21,9 +21,15 @@ const TakeQuiz = ({
   resultObj,
   setResultObj,
   handleCreateQuizResult,
+  materialId,
+  progressArr,
+  setProgressArr,
+  courseId,
+  progress,
+  setProgress,
 }) => {
   const classes = styles();
-  console.log(quiz);
+  console.log(resultObj);
 
   // const [pageNum, setPageNum] = useState(-1);
   // const [resultObj, setResultObj] = useState();
@@ -93,6 +99,12 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               } else if (question.mrq) {
@@ -106,6 +118,12 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               } else if (question.shortanswer) {
@@ -119,6 +137,12 @@ const TakeQuiz = ({
                     setResultObj={setResultObj}
                     quizLength={quiz && quiz.questions.length}
                     quizType={quizType}
+                    materialId={materialId}
+                    progressArr={progressArr}
+                    setProgressArr={setProgressArr}
+                    courseId={courseId}
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 );
               }
@@ -130,23 +154,58 @@ const TakeQuiz = ({
       {pageNum && pageNum > quiz.questions.length - 1 ? (
         <Paper style={{ padding: "50px", textAlign: "center" }}>
           <Typography
-            variant="subtitle1"
+            variant="h5"
             style={{ fontWeight: 600, paddingBottom: "10px" }}
           >
             End of Quiz
           </Typography>
-          <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-            {resultObj && resultObj.passed
-              ? "Well Done! You passed the quiz!"
-              : "You did not pass the quiz. Try Again!"}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleRetryQuiz()}
-          >
-            Re-try Quiz
-          </Button>
+          {quizType && quizType === "QUIZ" ? (
+            <Fragment>
+              <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                {resultObj && resultObj.passed
+                  ? "Well Done! You passed the quiz!"
+                  : "You did not pass the quiz. Try Again!"}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleRetryQuiz()}
+              >
+                Re-try Quiz
+              </Button>
+            </Fragment>
+          ) : (
+            <Fragment>
+              {resultObj && resultObj.passed && (
+                <div>
+                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
+                    Result: <span style={{ color: "green" }}>Passed</span>
+                  </Typography>
+                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                    Congratulations! You have cleared this course!
+                  </Typography>
+                </div>
+              )}
+
+              {resultObj && !resultObj.passed && (
+                <div>
+                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
+                    Result: <span style={{ color: "red" }}>Failed</span>
+                  </Typography>
+                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                    You did not pass the final quiz. Try Again!
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleRetryQuiz()}
+                  >
+                    Re-try Quiz
+                  </Button>
+                </div>
+              )}
+            </Fragment>
+          )}
         </Paper>
       ) : null}
     </Fragment>

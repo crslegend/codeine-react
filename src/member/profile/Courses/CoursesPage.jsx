@@ -148,7 +148,7 @@ const CoursesPage = () => {
     }
 
     Service.client
-      .get(`/privateCourses`, { params: { ...queryParams } })
+      .get(`/private-courses`, { params: { ...queryParams } })
       .then((res) => {
         console.log(res);
         setAllCourses(res.data.results);
