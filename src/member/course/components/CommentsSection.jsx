@@ -80,7 +80,7 @@ const CommentsSection = ({ materialId }) => {
 
   useEffect(() => {
     getCourseMaterialComments();
-  }, [materialId]);
+  }, [materialId, pageNum]);
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -288,14 +288,16 @@ const CommentsSection = ({ materialId }) => {
           <Typography variant="h6" style={{ fontWeight: 600 }}>
             Comments Section
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ order: 2, marginLeft: "auto" }}
-            onClick={() => setAddCommentDialog(true)}
-          >
-            Add Comment
-          </Button>
+          {pageNum && pageNum === 1 && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ order: 2, marginLeft: "auto" }}
+              onClick={() => setAddCommentDialog(true)}
+            >
+              Add Comment
+            </Button>
+          )}
         </div>
         {pageNum && pageNum === 1 ? (
           <Fragment>
@@ -606,10 +608,8 @@ const CommentsSection = ({ materialId }) => {
             checkIfOwnerOfComment={checkIfOwnerOfComment}
             commentDialogValue={commentDialogValue}
             setCommentDialogValue={setCommentDialogValue}
-            handleLikeUnlikeComment={handleLikeUnlikeComment}
-            handleUpdateComment={handleUpdateComment}
-            handleReplyComment={handleReplyComment}
-            handleDeleteComment={handleDeleteComment}
+            deletedParentComment={deletedParentComment}
+            deletedChildComment={deletedChildComment}
           />
         )}
       </div>
