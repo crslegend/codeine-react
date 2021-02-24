@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.options("*", cors());
 
-// stripe checkout
+// stripe checkout for contribution
 app.post("/create-checkout-session", async (req, res) => {
   const transaction = req.body;
   console.log(transaction);
@@ -41,6 +41,39 @@ app.post("/create-checkout-session", async (req, res) => {
       mode: "payment",
       success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&pId=${transaction.pId}&contribution=${transaction.contribution}`,
       cancel_url: `http://localhost:3000/partner/home/contributions`,
+    });
+    res.json({ id: session.id });
+  } catch (err) {
+    // console.log(err);
+    res.json(err);
+  }
+});
+
+// stripe checkout for consultation
+app.post("/create-consultation-checkout-session", async (req, res) => {
+  const transaction = req.body;
+  console.log(transaction);
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      customer_email: transaction.email,
+      line_items: [
+        {
+          description: transaction.description,
+          price_data: {
+            currency: "sgd",
+            product_data: {
+              name: transaction.description,
+            },
+            unit_amount: parseFloat(transaction.total_price) * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&mId=${transaction.mId}&consultation=${transaction.consultation}`,
+      cancel_url: `http://localhost:3000/courses/enroll/consultation/${transaction.pId}`,
     });
     res.json({ id: session.id });
   } catch (err) {
