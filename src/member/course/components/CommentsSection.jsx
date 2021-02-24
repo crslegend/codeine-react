@@ -12,8 +12,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import Service from "../../../AxiosService";
-import { Chat, ThumbUp } from "@material-ui/icons";
+import { Block, Chat, Delete, Edit, ThumbUp } from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 const styles = makeStyles((theme) => ({
   dialogButtons: {
@@ -39,15 +41,19 @@ const CommentsSection = ({ materialId }) => {
   const [comments, setComments] = useState([]);
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
+  const [editCommentDialog, setEditCommentDialog] = useState(false);
+  const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
   const [commentDialogValue, setCommentDialogValue] = useState({
     comment: "",
   });
+
+  const [referencedCommentId, setReferencedCommentId] = useState();
 
   const getCourseMaterialComments = () => {
     Service.client
       .get(`/materials/${materialId}/course-comments`)
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
         setComments(res.data);
       })
       .catch((err) => console.log(err));
@@ -120,6 +126,45 @@ const CommentsSection = ({ materialId }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleUpdateComment = (id) => {
+    if (commentDialogValue === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Comment cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    Service.client
+      .patch(`/course-comments/${id}`, commentDialogValue)
+      .then((res) => {
+        console.log(res);
+        setEditCommentDialog(false);
+        setCommentDialogValue("");
+        setReferencedCommentId();
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteComment = (id) => {
+    Service.client
+      .delete(`/course-comments/${id}`)
+      .then((res) => {
+        console.log(res);
+        setDeleteCommentDialog(false);
+        setReferencedCommentId();
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleLikeUnlikeComment = (id, liked) => {
     if (liked) {
       Service.client
@@ -138,6 +183,15 @@ const CommentsSection = ({ materialId }) => {
         })
         .catch((err) => console.log(err));
     }
+  };
+
+  const checkIfOwnerOfComment = (userId) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+
+    if (decoded.user_id === userId) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -162,32 +216,74 @@ const CommentsSection = ({ materialId }) => {
             {comments && comments.length > 0 ? (
               <div style={{ marginTop: "30px" }}>
                 {comments.map((comment, index) => {
-                  return (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <Avatar style={{ marginRight: "15px" }} />
-                      <div style={{ flexDirection: "column", width: "100%" }}>
-                        <Typography variant="h6" style={{ fontWeight: 600 }}>
-                          {comment.user && comment.user.first_name}{" "}
-                          {comment.user && comment.user.last_name}
-                        </Typography>
-                        <div style={{ display: "flex" }}>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {comment &&
-                              calculateDateInterval(comment.timestamp)}
+                  if (comment.user) {
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          marginBottom: "20px",
+                          border: "2px solid lightgrey",
+                          borderRadius: "6px",
+                          padding: "20px",
+                        }}
+                      >
+                        <Avatar style={{ marginRight: "15px" }} />
+                        <div style={{ flexDirection: "column", width: "100%" }}>
+                          <Typography variant="h6" style={{ fontWeight: 600 }}>
+                            {comment.user && comment.user.first_name}{" "}
+                            {comment.user && comment.user.last_name}
+                          </Typography>
+                          <div style={{ display: "flex" }}>
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {comment &&
+                                calculateDateInterval(comment.timestamp)}
+                            </Typography>
+                            {comment && checkIfOwnerOfComment(comment.user.id) && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  order: 2,
+                                  marginLeft: "auto",
+                                }}
+                              >
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    setReferencedCommentId(comment.id);
+                                    setCommentDialogValue({
+                                      comment: comment.comment,
+                                    });
+                                    setEditCommentDialog(true);
+                                  }}
+                                >
+                                  <Edit />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    setReferencedCommentId(comment.id);
+                                    setDeleteCommentDialog(true);
+                                  }}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </div>
+                            )}
+                          </div>
+
+                          <Typography
+                            variant="body1"
+                            style={{ paddingTop: "5px", paddingBottom: "10px" }}
+                          >
+                            {comment.comment}
                           </Typography>
                           <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              order: 2,
-                              marginLeft: "auto",
-                            }}
+                            style={{ display: "flex", alignItems: "center" }}
                           >
                             <Typography
                               variant="body2"
@@ -213,23 +309,41 @@ const CommentsSection = ({ materialId }) => {
                                 }
                               />
                             </IconButton>
+                            <Typography
+                              variant="body2"
+                              style={{
+                                opacity: 0.7,
+                                order: 2,
+                                marginLeft: "auto",
+                              }}
+                            >
+                              Replies:{" "}
+                              {comment.replies && comment.replies.length}
+                            </Typography>
                           </div>
                         </div>
-
-                        <Typography
-                          variant="body1"
-                          style={{ paddingTop: "5px", paddingBottom: "5px" }}
-                        >
-                          {comment.comment}
-                        </Typography>
-                        <div style={{ float: "right" }}>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            Replies: {comment.replies && comment.replies.length}
-                          </Typography>
-                        </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  } else {
+                    return (
+                      <div
+                        style={{
+                          display: "flex",
+                          marginBottom: "20px",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          border: "2px solid lightgrey",
+                          borderRadius: "6px",
+                          padding: "20px",
+                        }}
+                      >
+                        <Block style={{ marginRight: "10px" }} />
+                        <Typography variant="body2">
+                          This comment has been deleted
+                        </Typography>
+                      </div>
+                    );
+                  }
                 })}
               </div>
             ) : (
@@ -293,6 +407,104 @@ const CommentsSection = ({ materialId }) => {
             }}
           >
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={editCommentDialog}
+        onClose={() => {
+          setReferencedCommentId();
+          setEditCommentDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Edit Comment</DialogTitle>
+        <DialogContent>
+          <label htmlFor="comment">
+            <Typography variant="body1">Enter your comment below</Typography>
+          </label>
+          <TextField
+            id="comment"
+            variant="outlined"
+            margin="dense"
+            fullWidth
+            placeholder="Your comments here"
+            multiline
+            rows={4}
+            value={commentDialogValue && commentDialogValue.comment}
+            onChange={(e) =>
+              setCommentDialogValue({
+                comment: e.target.value,
+              })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setEditCommentDialog(false);
+              setCommentDialogValue("");
+              setReferencedCommentId();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleUpdateComment(referencedCommentId);
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteCommentDialog}
+        onClose={() => {
+          setReferencedCommentId();
+          setDeleteCommentDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Comment</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            This action cannot be reverted.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setDeleteCommentDialog(false);
+              setReferencedCommentId();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleDeleteComment(referencedCommentId);
+            }}
+          >
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
