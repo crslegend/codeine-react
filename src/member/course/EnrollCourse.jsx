@@ -55,6 +55,7 @@ const styles = makeStyles((theme) => ({
     minHeight: "calc(100vh - 10px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
+    paddingBottom: theme.spacing(10),
   },
   unenrollButton: {
     marginLeft: "25px",
@@ -459,7 +460,10 @@ const EnrollCourse = () => {
               chosenCourseMaterial.material_type !== "FINAL" &&
               chosenCourseMaterial.material_type !== "INTRO" && (
                 <div style={{ marginTop: "20px" }}>
-                  <CommentsSection materialId={chosenCourseMaterial.id} />
+                  <CommentsSection
+                    materialId={chosenCourseMaterial.id}
+                    user={"member"}
+                  />
                 </div>
               )}
           </div>
