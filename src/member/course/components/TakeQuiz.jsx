@@ -154,7 +154,7 @@ const TakeQuiz = ({
       {pageNum && pageNum > quiz.questions.length - 1 ? (
         <Paper style={{ padding: "50px", textAlign: "center" }}>
           <Typography
-            variant="subtitle1"
+            variant="h5"
             style={{ fontWeight: 600, paddingBottom: "10px" }}
           >
             End of Quiz
@@ -176,19 +176,33 @@ const TakeQuiz = ({
             </Fragment>
           ) : (
             <Fragment>
-              <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-                {resultObj && resultObj.passed
-                  ? "Well Done! You passed the final quiz!"
-                  : "You did not pass the final quiz. Try Again!"}
-              </Typography>
+              {resultObj && resultObj.passed && (
+                <div>
+                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
+                    Result: <span style={{ color: "green" }}>Passed</span>
+                  </Typography>
+                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                    Congratulations! You have cleared this course!
+                  </Typography>
+                </div>
+              )}
+
               {resultObj && !resultObj.passed && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleRetryQuiz()}
-                >
-                  Re-try Quiz
-                </Button>
+                <div>
+                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
+                    Result: <span style={{ color: "red" }}>Failed</span>
+                  </Typography>
+                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
+                    You did not pass the final quiz. Try Again!
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleRetryQuiz()}
+                  >
+                    Re-try Quiz
+                  </Button>
+                </div>
               )}
             </Fragment>
           )}

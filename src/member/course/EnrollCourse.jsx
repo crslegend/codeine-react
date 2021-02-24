@@ -308,10 +308,9 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
-  console.log(progressArr);
-
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Navbar
         logo={components.navLogo}
         bgColor="#fff"
@@ -448,7 +447,7 @@ const EnrollCourse = () => {
               chosenCourseMaterial.material_type !== "FINAL" &&
               chosenCourseMaterial.material_type !== "INTRO" && (
                 <div style={{ marginTop: "20px" }}>
-                  <CommentsSection />
+                  <CommentsSection materialId={chosenCourseMaterial.id} />
                 </div>
               )}
           </div>
