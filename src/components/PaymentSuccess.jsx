@@ -62,17 +62,16 @@ const PaymentSuccess = () => {
     }
 
     // in future create payment transaction for the user
-
-    if (new URLSearchParams(location.search).get("courseId") !== null) {
+    if (new URLSearchParams(location.search).get("contribution") !== null) {
+      const contributionId = new URLSearchParams(location.search).get(
+        "contribution"
+      );
       Service.client
-        .patch(
-          `/courses/${new URLSearchParams(location.search).get(
-            "courseId"
-          )}/publish`
-        )
+        .patch(`/contributions/${contributionId}/update`, {
+          payment_status: "COMPLETED",
+        })
         .then((res) => {
           console.log(res);
-          localStorage.removeItem("courseId");
         })
         .catch((err) => console.log(err));
     }
@@ -100,14 +99,25 @@ const PaymentSuccess = () => {
         >
           Click on the button below to continue.
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ marginTop: "25px" }}
-          onClick={() => handleRedirect()}
-        >
-          Bring Me Back
-        </Button>
+        {user && user === "partner" ? (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "25px" }}
+            onClick={() => handleRedirect()}
+          >
+            View My Contributions
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "25px" }}
+            onClick={() => handleRedirect()}
+          >
+            Go Back To Consulations
+          </Button>
+        )}
       </Paper>
     </div>
   );
