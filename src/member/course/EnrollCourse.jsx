@@ -55,6 +55,7 @@ const styles = makeStyles((theme) => ({
     minHeight: "calc(100vh - 10px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
+    paddingBottom: theme.spacing(10),
   },
   unenrollButton: {
     marginLeft: "25px",
