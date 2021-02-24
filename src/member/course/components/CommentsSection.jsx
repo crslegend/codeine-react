@@ -598,8 +598,18 @@ const CommentsSection = ({ materialId }) => {
           </Fragment>
         ) : (
           <NestedComments
+            materialId={materialId}
             referencedCommentId={referencedCommentId}
+            setReferencedCommentId={setReferencedCommentId}
             setPageNum={setPageNum}
+            calculateDateInterval={calculateDateInterval}
+            checkIfOwnerOfComment={checkIfOwnerOfComment}
+            commentDialogValue={commentDialogValue}
+            setCommentDialogValue={setCommentDialogValue}
+            handleLikeUnlikeComment={handleLikeUnlikeComment}
+            handleUpdateComment={handleUpdateComment}
+            handleReplyComment={handleReplyComment}
+            handleDeleteComment={handleDeleteComment}
           />
         )}
       </div>
