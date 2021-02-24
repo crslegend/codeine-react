@@ -1,16 +1,18 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   TextField,
   Typography,
 } from "@material-ui/core";
 import Service from "../../../AxiosService";
-import { Chat } from "@material-ui/icons";
+import { Chat, ThumbUp } from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
@@ -53,7 +55,44 @@ const CommentsSection = ({ materialId }) => {
 
   useEffect(() => {
     getCourseMaterialComments();
-  }, []);
+  }, [materialId]);
+
+  const calculateDateInterval = (timestamp) => {
+    const dateBefore = new Date(timestamp);
+    const dateNow = new Date();
+
+    let seconds = Math.floor((dateNow - dateBefore) / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let days = Math.floor(hours / 24);
+
+    hours = hours - days * 24;
+    minutes = minutes - days * 24 * 60 - hours * 60;
+    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
+
+    if (days === 0) {
+      if (hours === 0) {
+        if (minutes === 0) {
+          return `${seconds} seconds ago`;
+        }
+
+        if (minutes === 1) {
+          return `${minutes} minute ago`;
+        }
+        return `${minutes} minutes ago`;
+      }
+
+      if (hours === 1) {
+        return `${hours} hour ago`;
+      }
+      return `${hours} hours ago`;
+    }
+
+    if (days === 1) {
+      return `${days} day ago`;
+    }
+    return `${days} days ago`;
+  };
 
   const handleAddComment = (id) => {
     if (commentDialogValue === "") {
@@ -81,6 +120,26 @@ const CommentsSection = ({ materialId }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleLikeUnlikeComment = (id, liked) => {
+    if (liked) {
+      Service.client
+        .delete(`/course-comments/${id}/engagements`)
+        .then((res) => {
+          console.log(res);
+          getCourseMaterialComments();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/course-comments/${id}/engagements`)
+        .then((res) => {
+          console.log(res);
+          getCourseMaterialComments();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -101,7 +160,78 @@ const CommentsSection = ({ materialId }) => {
         {pageNum && pageNum === 1 ? (
           <Fragment>
             {comments && comments.length > 0 ? (
-              <div></div>
+              <div style={{ marginTop: "30px" }}>
+                {comments.map((comment, index) => {
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <Avatar style={{ marginRight: "15px" }} />
+                      <div style={{ flexDirection: "column", width: "100%" }}>
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          {comment.user && comment.user.first_name}{" "}
+                          {comment.user && comment.user.last_name}
+                        </Typography>
+                        <div style={{ display: "flex" }}>
+                          <Typography variant="body2" style={{ opacity: 0.7 }}>
+                            {comment &&
+                              calculateDateInterval(comment.timestamp)}
+                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              order: 2,
+                              marginLeft: "auto",
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              style={{
+                                opacity: 0.7,
+                                paddingRight: "20px",
+                              }}
+                            >
+                              Likes: {comment.likes}
+                            </Typography>
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleLikeUnlikeComment(
+                                  comment.id,
+                                  comment.current_member_liked
+                                )
+                              }
+                            >
+                              <ThumbUp
+                                color={
+                                  comment.current_member_liked ? "primary" : ""
+                                }
+                              />
+                            </IconButton>
+                          </div>
+                        </div>
+
+                        <Typography
+                          variant="body1"
+                          style={{ paddingTop: "5px", paddingBottom: "5px" }}
+                        >
+                          {comment.comment}
+                        </Typography>
+                        <div style={{ float: "right" }}>
+                          <Typography variant="body2" style={{ opacity: 0.7 }}>
+                            Replies: {comment.replies && comment.replies.length}
+                          </Typography>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
               <div style={{ marginTop: "30px", textAlign: "center" }}>
                 <Chat fontSize="large" />
