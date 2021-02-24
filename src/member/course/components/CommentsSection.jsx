@@ -21,6 +21,22 @@ const styles = makeStyles((theme) => ({
   dialogButtons: {
     width: 100,
   },
+  parentComment: {
+    display: "flex",
+    marginBottom: "20px",
+    border: "2px solid lightgrey",
+    borderRadius: "6px",
+    padding: "20px",
+  },
+  childComment: {
+    display: "flex",
+    marginBottom: "20px",
+    border: "2px solid lightgrey",
+    borderRadius: "6px",
+    padding: "20px",
+    width: "90%",
+    marginLeft: "auto",
+  },
 }));
 
 const CommentsSection = ({ materialId }) => {
@@ -41,8 +57,10 @@ const CommentsSection = ({ materialId }) => {
   const [comments, setComments] = useState([]);
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
+  const [replyCommentDialog, setReplyCommentDialog] = useState(false);
   const [editCommentDialog, setEditCommentDialog] = useState(false);
   const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
+
   const [commentDialogValue, setCommentDialogValue] = useState({
     comment: "",
   });
@@ -126,6 +144,37 @@ const CommentsSection = ({ materialId }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleReplyComment = (mId, cId) => {
+    if (commentDialogValue === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Comment cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const data = {
+      comment: commentDialogValue.comment,
+      reply_to: cId,
+    };
+
+    Service.client
+      .post(`/materials/${mId}/course-comments`, data)
+      .then((res) => {
+        console.log(res);
+        setReplyCommentDialog(false);
+        setCommentDialogValue("");
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleUpdateComment = (id) => {
     if (commentDialogValue === "") {
       setSbOpen(true);
@@ -194,6 +243,42 @@ const CommentsSection = ({ materialId }) => {
     return false;
   };
 
+  const deletedParentComment = (
+    <div
+      style={{
+        display: "flex",
+        marginBottom: "20px",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "2px solid lightgrey",
+        borderRadius: "6px",
+        padding: "10px",
+      }}
+    >
+      <Block style={{ marginRight: "10px" }} />
+      <Typography variant="body2">This comment has been deleted</Typography>
+    </div>
+  );
+
+  const deletedChildComment = (
+    <div
+      style={{
+        display: "flex",
+        marginBottom: "20px",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "2px solid lightgrey",
+        borderRadius: "6px",
+        padding: "10px",
+        width: "90%",
+        marginLeft: "auto",
+      }}
+    >
+      <Block style={{ marginRight: "10px" }} />
+      <Typography variant="body2">This comment has been deleted</Typography>
+    </div>
+  );
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -218,131 +303,279 @@ const CommentsSection = ({ materialId }) => {
                 {comments.map((comment, index) => {
                   if (comment.user) {
                     return (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          marginBottom: "20px",
-                          border: "2px solid lightgrey",
-                          borderRadius: "6px",
-                          padding: "20px",
-                        }}
-                      >
-                        <Avatar style={{ marginRight: "15px" }} />
-                        <div style={{ flexDirection: "column", width: "100%" }}>
-                          <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            {comment.user && comment.user.first_name}{" "}
-                            {comment.user && comment.user.last_name}
-                          </Typography>
-                          <div style={{ display: "flex" }}>
+                      <Fragment>
+                        <div key={index} className={classes.parentComment}>
+                          {comment.user.profile_photo ? (
+                            <Avatar
+                              style={{ marginRight: "15px" }}
+                              src={comment.user.profile_photo}
+                            />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {comment.user.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                          <div
+                            style={{ flexDirection: "column", width: "100%" }}
+                          >
                             <Typography
-                              variant="body2"
-                              style={{ opacity: 0.7 }}
+                              variant="h6"
+                              style={{ fontWeight: 600 }}
                             >
-                              {comment &&
-                                calculateDateInterval(comment.timestamp)}
+                              {comment.user && comment.user.first_name}{" "}
+                              {comment.user && comment.user.last_name}
                             </Typography>
-                            {comment && checkIfOwnerOfComment(comment.user.id) && (
-                              <div
+                            <div style={{ display: "flex" }}>
+                              <Typography
+                                variant="body2"
+                                style={{ opacity: 0.7 }}
+                              >
+                                {comment &&
+                                  calculateDateInterval(comment.timestamp)}
+                              </Typography>
+                              {comment &&
+                                checkIfOwnerOfComment(comment.user.id) && (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      order: 2,
+                                      marginLeft: "auto",
+                                    }}
+                                  >
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setReferencedCommentId(comment.id);
+                                        setCommentDialogValue({
+                                          comment: comment.comment,
+                                        });
+                                        setEditCommentDialog(true);
+                                      }}
+                                    >
+                                      <Edit />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setReferencedCommentId(comment.id);
+                                        setDeleteCommentDialog(true);
+                                      }}
+                                    >
+                                      <Delete />
+                                    </IconButton>
+                                  </div>
+                                )}
+                            </div>
+
+                            <Typography
+                              variant="body1"
+                              style={{
+                                paddingTop: "5px",
+                                paddingBottom: "10px",
+                              }}
+                            >
+                              {comment.comment}
+                            </Typography>
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <Typography
+                                variant="body2"
                                 style={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  opacity: 0.7,
+                                  paddingRight: "20px",
+                                }}
+                              >
+                                Likes: {comment.likes}
+                              </Typography>
+                              <IconButton
+                                size="small"
+                                onClick={() =>
+                                  handleLikeUnlikeComment(
+                                    comment.id,
+                                    comment.current_member_liked
+                                  )
+                                }
+                              >
+                                <ThumbUp
+                                  color={
+                                    comment.current_member_liked
+                                      ? "primary"
+                                      : "inherit"
+                                  }
+                                />
+                              </IconButton>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                style={{
                                   order: 2,
                                   marginLeft: "auto",
                                 }}
+                                onClick={() => {
+                                  setReferencedCommentId(comment.id);
+                                  setReplyCommentDialog(true);
+                                }}
                               >
-                                <IconButton
-                                  size="small"
-                                  onClick={() => {
-                                    setReferencedCommentId(comment.id);
-                                    setCommentDialogValue({
-                                      comment: comment.comment,
-                                    });
-                                    setEditCommentDialog(true);
-                                  }}
-                                >
-                                  <Edit />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  onClick={() => {
-                                    setReferencedCommentId(comment.id);
-                                    setDeleteCommentDialog(true);
-                                  }}
-                                >
-                                  <Delete />
-                                </IconButton>
-                              </div>
-                            )}
-                          </div>
-
-                          <Typography
-                            variant="body1"
-                            style={{ paddingTop: "5px", paddingBottom: "10px" }}
-                          >
-                            {comment.comment}
-                          </Typography>
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <Typography
-                              variant="body2"
-                              style={{
-                                opacity: 0.7,
-                                paddingRight: "20px",
-                              }}
-                            >
-                              Likes: {comment.likes}
-                            </Typography>
-                            <IconButton
-                              size="small"
-                              onClick={() =>
-                                handleLikeUnlikeComment(
-                                  comment.id,
-                                  comment.current_member_liked
-                                )
-                              }
-                            >
-                              <ThumbUp
-                                color={
-                                  comment.current_member_liked ? "primary" : ""
-                                }
-                              />
-                            </IconButton>
-                            <Typography
-                              variant="body2"
-                              style={{
-                                opacity: 0.7,
-                                order: 2,
-                                marginLeft: "auto",
-                              }}
-                            >
-                              Replies:{" "}
-                              {comment.replies && comment.replies.length}
-                            </Typography>
+                                <Typography variant="body2">Reply</Typography>
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                        {comment.replies &&
+                          comment.replies.length > 0 &&
+                          comment.replies.map((reply, replyIndex) => {
+                            if (reply.user) {
+                              return (
+                                <div
+                                  key={`reply` + replyIndex}
+                                  className={classes.childComment}
+                                >
+                                  {reply.user.profile_photo ? (
+                                    <Avatar
+                                      style={{ marginRight: "15px" }}
+                                      src={reply.user.profile_photo}
+                                    />
+                                  ) : (
+                                    <Avatar style={{ marginRight: "15px" }}>
+                                      {reply.user.first_name.charAt(0)}
+                                    </Avatar>
+                                  )}
+
+                                  <div
+                                    style={{
+                                      flexDirection: "column",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="h6"
+                                      style={{ fontWeight: 600 }}
+                                    >
+                                      {reply.user && reply.user.first_name}{" "}
+                                      {reply.user && reply.user.last_name}
+                                    </Typography>
+                                    <div style={{ display: "flex" }}>
+                                      <Typography
+                                        variant="body2"
+                                        style={{ opacity: 0.7 }}
+                                      >
+                                        {reply &&
+                                          calculateDateInterval(
+                                            reply.timestamp
+                                          )}
+                                      </Typography>
+                                      {reply &&
+                                        checkIfOwnerOfComment(
+                                          reply.user.id
+                                        ) && (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                              order: 2,
+                                              marginLeft: "auto",
+                                            }}
+                                          >
+                                            <IconButton
+                                              size="small"
+                                              onClick={() => {
+                                                setReferencedCommentId(
+                                                  reply.id
+                                                );
+                                                setCommentDialogValue({
+                                                  comment: reply.comment,
+                                                });
+                                                setEditCommentDialog(true);
+                                              }}
+                                            >
+                                              <Edit />
+                                            </IconButton>
+                                            <IconButton
+                                              size="small"
+                                              onClick={() => {
+                                                setReferencedCommentId(
+                                                  reply.id
+                                                );
+                                                setDeleteCommentDialog(true);
+                                              }}
+                                            >
+                                              <Delete />
+                                            </IconButton>
+                                          </div>
+                                        )}
+                                    </div>
+
+                                    <Typography
+                                      variant="body1"
+                                      style={{
+                                        paddingTop: "5px",
+                                        paddingBottom: "10px",
+                                      }}
+                                    >
+                                      {reply.comment}
+                                    </Typography>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        variant="body2"
+                                        style={{
+                                          opacity: 0.7,
+                                          paddingRight: "20px",
+                                        }}
+                                      >
+                                        Likes: {reply.likes}
+                                      </Typography>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                          handleLikeUnlikeComment(
+                                            reply.id,
+                                            reply.current_member_liked
+                                          )
+                                        }
+                                      >
+                                        <ThumbUp
+                                          color={
+                                            reply.current_member_liked
+                                              ? "primary"
+                                              : "inherit"
+                                          }
+                                        />
+                                      </IconButton>
+                                      <Button
+                                        variant="contained"
+                                        color="primary"
+                                        style={{
+                                          order: 2,
+                                          marginLeft: "auto",
+                                        }}
+                                        onClick={() => {
+                                          setReferencedCommentId(reply.id);
+                                          setReplyCommentDialog(true);
+                                        }}
+                                      >
+                                        <Typography variant="body2">
+                                          View Replies
+                                        </Typography>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            } else {
+                              return deletedChildComment;
+                            }
+                          })}
+                      </Fragment>
                     );
                   } else {
-                    return (
-                      <div
-                        style={{
-                          display: "flex",
-                          marginBottom: "20px",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          border: "2px solid lightgrey",
-                          borderRadius: "6px",
-                          padding: "20px",
-                        }}
-                      >
-                        <Block style={{ marginRight: "10px" }} />
-                        <Typography variant="body2">
-                          This comment has been deleted
-                        </Typography>
-                      </div>
-                    );
+                    return deletedParentComment;
                   }
                 })}
               </div>
@@ -407,6 +640,59 @@ const CommentsSection = ({ materialId }) => {
             }}
           >
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={replyCommentDialog}
+        onClose={() => setReplyCommentDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Reply To Comment</DialogTitle>
+        <DialogContent>
+          <label htmlFor="comment">
+            <Typography variant="body1">Enter your reply below</Typography>
+          </label>
+          <TextField
+            id="comment"
+            variant="outlined"
+            margin="dense"
+            fullWidth
+            placeholder="Your reply here"
+            multiline
+            rows={4}
+            value={commentDialogValue && commentDialogValue.comment}
+            onChange={(e) =>
+              setCommentDialogValue({
+                comment: e.target.value,
+              })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setReplyCommentDialog(false);
+              setCommentDialogValue("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleReplyComment(materialId, referencedCommentId);
+            }}
+          >
+            Reply
           </Button>
         </DialogActions>
       </Dialog>
