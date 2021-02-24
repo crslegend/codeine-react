@@ -159,7 +159,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
 
   const handleUpdateChaptersOrdering = (courseId, newColumnOrder) => {
     Service.client
-      .patch(`/courses/${courseId}/orderChapters`, newColumnOrder)
+      .patch(`/courses/${courseId}/order-chapters`, newColumnOrder)
       .then((res) => {
         console.log(res);
         getCourse();
@@ -172,7 +172,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
     newTaskIds
   ) => {
     Service.client
-      .patch(`/chapters/${chapterId}/orderMaterials`, newTaskIds)
+      .patch(`/chapters/${chapterId}/order-materials`, newTaskIds)
       .then((res) => {
         console.log(res);
         getCourse();
@@ -184,7 +184,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
 
   const handleUpdateQuestionOrdering = (quizId, newSubtaskIds) => {
     Service.client
-      .patch(`/quiz/${quizId}/orderQuestions`, newSubtaskIds)
+      .patch(`/quiz/${quizId}/order-questions`, newSubtaskIds)
       .then((res) => {
         console.log(res);
         getCourse();

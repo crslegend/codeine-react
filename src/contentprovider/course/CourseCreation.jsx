@@ -367,7 +367,7 @@ const CourseCreation = () => {
 
     if (chosenId) {
       Service.client
-        .get(`/privateCourses/${chosenId}`)
+        .get(`/private-courses/${chosenId}`)
         .then((res) => {
           console.log(res);
           setCourseDetails({
