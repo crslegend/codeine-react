@@ -18,6 +18,7 @@ import LandingPageRoute from "./components/LandingPageRoute";
 import ViewAllCourses from "./member/course/ViewAllCourses";
 import ViewCourseDetails from "./member/course/ViewCourseDetails";
 import EnrollCourse from "./member/course/EnrollCourse";
+import BookConsult from "./member/course/BookConsult";
 import PaymentSuccess from "./components/PaymentSuccess";
 
 const App = () => {
@@ -61,6 +62,13 @@ const App = () => {
         strict
         sensitive
         component={EnrollCourse}
+      />
+      <Route
+        exact
+        path="/courses/enroll/consultation/:id"
+        strict
+        sensitive
+        component={BookConsult}
       />
       <PrivateRoute
         path="/member/home"
