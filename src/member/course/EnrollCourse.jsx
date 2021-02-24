@@ -149,7 +149,7 @@ const EnrollCourse = () => {
   const getCourse = () => {
     if (Cookies.get("t1")) {
       Service.client
-        .get(`/privateCourses/${id}`)
+        .get(`/private-courses/${id}`)
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
