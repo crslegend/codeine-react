@@ -500,7 +500,18 @@ const ViewCourseDetails = () => {
                         key={index}
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
-                        <Avatar style={{ marginRight: "15px" }} />
+                        {review.member.profile_photo &&
+                        review.member.profile_photo ? (
+                          <Avatar
+                            style={{ marginRight: "15px" }}
+                            src={review.member.profile_photo}
+                          />
+                        ) : (
+                          <Avatar style={{ marginRight: "15px" }}>
+                            {review.member.first_name.charAt(0)}
+                          </Avatar>
+                        )}
+
                         <div style={{ flexDirection: "column" }}>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             {review.member && review.member.first_name}{" "}
