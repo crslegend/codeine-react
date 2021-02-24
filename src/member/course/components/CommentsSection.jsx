@@ -12,7 +12,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import Service from "../../../AxiosService";
-import { Block, Chat, Delete, Edit, ThumbUp } from "@material-ui/icons";
+import {
+  Block,
+  Chat,
+  Delete,
+  Edit,
+  FiberPin,
+  ThumbUp,
+} from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -40,7 +47,7 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const CommentsSection = ({ materialId }) => {
+const CommentsSection = ({ materialId, user }) => {
   const classes = styles();
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -244,6 +251,26 @@ const CommentsSection = ({ materialId }) => {
     return false;
   };
 
+  const handlePinComment = (id) => {
+    Service.client
+      .patch(`/course-comments/${id}/pin`)
+      .then((res) => {
+        console.log(res);
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUnpinComment = (id) => {
+    Service.client
+      .patch(`/course-comments/${id}/unpin`)
+      .then((res) => {
+        console.log(res);
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const deletedParentComment = (
     <div
       style={{
@@ -323,7 +350,7 @@ const CommentsSection = ({ materialId }) => {
           <Typography variant="h6" style={{ fontWeight: 600 }}>
             Comments Section
           </Typography>
-          {pageNum && pageNum === 1 && (
+          {pageNum && user && user === "member" && pageNum === 1 && (
             <Button
               variant="contained"
               color="primary"
@@ -407,6 +434,38 @@ const CommentsSection = ({ materialId }) => {
                                     </IconButton>
                                   </div>
                                 )}
+                              {!user && user !== "member" && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    order: 2,
+                                    marginLeft: "auto",
+                                  }}
+                                >
+                                  {comment && comment.pinned ? (
+                                    <Button
+                                      variant="outlined"
+                                      onClick={() => {
+                                        handleUnpinComment(comment.id);
+                                      }}
+                                      style={{ height: 30 }}
+                                    >
+                                      Unpin Comment
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outlined"
+                                      onClick={() => {
+                                        handlePinComment(comment.id);
+                                      }}
+                                      style={{ height: 30 }}
+                                    >
+                                      Pin Comment
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             <Typography

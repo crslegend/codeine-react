@@ -4,8 +4,24 @@ import PageTitle from "../../components/PageTitle";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Chip, IconButton, Typography } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Avatar,
+  Chip,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import {
+  ArrowBack,
+  Assignment,
+  AttachFile,
+  ExpandMore,
+  Movie,
+} from "@material-ui/icons";
+import LinkMui from "@material-ui/core/Link";
+import CommentsSection from "../../member/course/components/CommentsSection";
 
 const styles = makeStyles((theme) => ({
   titleSection: {
@@ -26,6 +42,9 @@ const styles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(10),
     height: theme.spacing(10),
+  },
+  linkMui: {
+    cursor: "pointer",
   },
 }));
 
@@ -49,6 +68,14 @@ const ReplyToComments = () => {
   const [course, setCourse] = useState();
   const [comments, setComments] = useState([]);
 
+  const [expanded, setExpanded] = useState(false);
+
+  const [chosenCourseMaterialId, setChosenCourseMaterialId] = useState();
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
   const getCourse = () => {
     Service.client
       .get(`/private-courses/${id}`)
@@ -63,6 +90,10 @@ const ReplyToComments = () => {
     getCourse();
   }, []);
   console.log(course);
+
+  const handleChooseCourseMaterial = (mId) => {
+    setChosenCourseMaterialId(mId);
+  };
 
   const publishedChip = (
     <Chip
@@ -126,6 +157,145 @@ const ReplyToComments = () => {
             })()}
           </Typography>
         </div>
+      </div>
+      <Typography
+        variant="h5"
+        style={{
+          fontWeight: 600,
+          paddingTop: "10px",
+          paddingBottom: "15px",
+          textAlign: "center",
+        }}
+      >
+        Course Materials
+      </Typography>
+      {course &&
+        course.chapters.length > 0 &&
+        course.chapters.map((chapter, index) => {
+          return (
+            <Accordion
+              expanded={expanded === `${index}`}
+              onChange={handleChange(`${index}`)}
+              key={index}
+              style={{
+                width: "80%",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                id={`${index}`}
+                style={{ backgroundColor: "#F4F4F4" }}
+              >
+                <Typography>{chapter.title}</Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "20px",
+                }}
+              >
+                <Typography variant="body2" style={{ paddingBottom: "15px" }}>
+                  {chapter.course_materials &&
+                  chapter.course_materials.length === 1
+                    ? "1 Course Material"
+                    : `${chapter.course_materials.length} Course Materials`}
+                </Typography>
+                {chapter.course_materials &&
+                  chapter.course_materials.length > 0 &&
+                  chapter.course_materials.map((material, index) => {
+                    if (material.material_type === "FILE") {
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: "15px",
+                          }}
+                        >
+                          <AttachFile
+                            fontSize="small"
+                            style={{ marginRight: "10px" }}
+                          />
+                          <LinkMui
+                            className={classes.linkMui}
+                            onClick={() =>
+                              handleChooseCourseMaterial(material.id)
+                            }
+                          >
+                            {material.title}
+                          </LinkMui>
+                        </div>
+                      );
+                    } else if (material.material_type === "VIDEO") {
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: "15px",
+                          }}
+                        >
+                          <Movie
+                            fontSize="small"
+                            style={{ marginRight: "10px" }}
+                          />
+                          <LinkMui
+                            className={classes.linkMui}
+                            onClick={() =>
+                              handleChooseCourseMaterial(material.id)
+                            }
+                          >
+                            {material.title}
+                          </LinkMui>
+                        </div>
+                      );
+                    } else if (material.material_type === "QUIZ") {
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: "15px",
+                          }}
+                        >
+                          <Assignment
+                            fontSize="small"
+                            style={{ marginRight: "10px" }}
+                          />
+                          <LinkMui
+                            className={classes.linkMui}
+                            onClick={() =>
+                              handleChooseCourseMaterial(material.id)
+                            }
+                          >
+                            {material.title}
+                          </LinkMui>
+                        </div>
+                      );
+                    }
+                  })}
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+      <div
+        style={{
+          marginTop: "20px",
+          width: "70%",
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginBottom: "30px",
+        }}
+      >
+        <CommentsSection
+          materialId={chosenCourseMaterialId && chosenCourseMaterialId}
+        />
       </div>
     </Fragment>
   );
