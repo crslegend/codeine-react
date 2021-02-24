@@ -287,7 +287,7 @@ const ReplyToComments = () => {
       <div
         style={{
           marginTop: "20px",
-          width: "70%",
+          width: "75%",
           marginLeft: "auto",
           marginRight: "auto",
           marginBottom: "30px",

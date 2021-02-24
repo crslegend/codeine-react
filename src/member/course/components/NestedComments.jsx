@@ -55,6 +55,7 @@ const NestedComments = ({
   setCommentDialogValue,
   deletedParentComment,
   deletedChildComment,
+  user,
 }) => {
   const classes = styles();
 
@@ -277,21 +278,25 @@ const NestedComments = ({
                       >
                         Likes: {comment.likes}
                       </Typography>
-                      <IconButton
-                        size="small"
-                        onClick={() =>
-                          handleLikeUnlikeComment(
-                            comment.id,
-                            comment.current_member_liked
-                          )
-                        }
-                      >
-                        <ThumbUp
-                          color={
-                            comment.current_member_liked ? "primary" : "inherit"
+                      {user && user === "member" && (
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleLikeUnlikeComment(
+                              comment.id,
+                              comment.current_member_liked
+                            )
                           }
-                        />
-                      </IconButton>
+                        >
+                          <ThumbUp
+                            color={
+                              comment.current_member_liked
+                                ? "primary"
+                                : "inherit"
+                            }
+                          />
+                        </IconButton>
+                      )}
                       <Button
                         variant="contained"
                         color="primary"
@@ -414,23 +419,25 @@ const NestedComments = ({
                               >
                                 Likes: {reply.likes}
                               </Typography>
-                              <IconButton
-                                size="small"
-                                onClick={() =>
-                                  handleLikeUnlikeComment(
-                                    reply.id,
-                                    reply.current_member_liked
-                                  )
-                                }
-                              >
-                                <ThumbUp
-                                  color={
-                                    reply.current_member_liked
-                                      ? "primary"
-                                      : "inherit"
+                              {user && user === "member" && (
+                                <IconButton
+                                  size="small"
+                                  onClick={() =>
+                                    handleLikeUnlikeComment(
+                                      reply.id,
+                                      reply.current_member_liked
+                                    )
                                   }
-                                />
-                              </IconButton>
+                                >
+                                  <ThumbUp
+                                    color={
+                                      reply.current_member_liked
+                                        ? "primary"
+                                        : "inherit"
+                                    }
+                                  />
+                                </IconButton>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -553,23 +560,25 @@ const NestedComments = ({
                               >
                                 Likes: {reply.likes}
                               </Typography>
-                              <IconButton
-                                size="small"
-                                onClick={() =>
-                                  handleLikeUnlikeComment(
-                                    reply.id,
-                                    reply.current_member_liked
-                                  )
-                                }
-                              >
-                                <ThumbUp
-                                  color={
-                                    reply.current_member_liked
-                                      ? "primary"
-                                      : "inherit"
+                              {user && user === "member" && (
+                                <IconButton
+                                  size="small"
+                                  onClick={() =>
+                                    handleLikeUnlikeComment(
+                                      reply.id,
+                                      reply.current_member_liked
+                                    )
                                   }
-                                />
-                              </IconButton>
+                                >
+                                  <ThumbUp
+                                    color={
+                                      reply.current_member_liked
+                                        ? "primary"
+                                        : "inherit"
+                                    }
+                                  />
+                                </IconButton>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -712,7 +721,7 @@ const NestedComments = ({
           },
         }}
       >
-        <DialogTitle>Delete Comment</DialogTitle>
+        <DialogTitle>Delete Comment?</DialogTitle>
         <DialogContent>
           <Typography variant="body1">
             This action cannot be reverted.
