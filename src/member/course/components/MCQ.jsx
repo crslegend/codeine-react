@@ -57,7 +57,7 @@ const MCQ = ({
     };
 
     Service.client
-      .put(`/quizResults/${resultObj.id}`, data)
+      .put(`/quiz-results/${resultObj.id}`, data)
       .then((res) => {
         console.log(res);
         setResultObj(res.data);
@@ -73,12 +73,12 @@ const MCQ = ({
     };
 
     Service.client
-      .put(`/quizResults/${resultObj.id}`, data)
+      .put(`/quiz-results/${resultObj.id}`, data)
       .then((res) => {
         console.log(res);
 
         Service.client
-          .patch(`/quizResults/${resultObj.id}/submit`)
+          .patch(`/quiz-results/${resultObj.id}/submit`)
           .then((res) => {
             console.log(res);
             setResultObj(res.data);
