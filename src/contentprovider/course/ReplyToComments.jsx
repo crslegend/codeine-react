@@ -71,6 +71,7 @@ const ReplyToComments = () => {
   const [expanded, setExpanded] = useState(false);
 
   const [chosenCourseMaterialId, setChosenCourseMaterialId] = useState();
+  const [chosenMaterialName, setChosenMaterialName] = useState();
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -222,9 +223,10 @@ const ReplyToComments = () => {
                           />
                           <LinkMui
                             className={classes.linkMui}
-                            onClick={() =>
-                              handleChooseCourseMaterial(material.id)
-                            }
+                            onClick={() => {
+                              handleChooseCourseMaterial(material.id);
+                              setChosenMaterialName(material.title);
+                            }}
                           >
                             {material.title}
                           </LinkMui>
@@ -246,9 +248,10 @@ const ReplyToComments = () => {
                           />
                           <LinkMui
                             className={classes.linkMui}
-                            onClick={() =>
-                              handleChooseCourseMaterial(material.id)
-                            }
+                            onClick={() => {
+                              handleChooseCourseMaterial(material.id);
+                              setChosenMaterialName(material.title);
+                            }}
                           >
                             {material.title}
                           </LinkMui>
@@ -270,9 +273,10 @@ const ReplyToComments = () => {
                           />
                           <LinkMui
                             className={classes.linkMui}
-                            onClick={() =>
-                              handleChooseCourseMaterial(material.id)
-                            }
+                            onClick={() => {
+                              handleChooseCourseMaterial(material.id);
+                              setChosenMaterialName(material.title);
+                            }}
                           >
                             {material.title}
                           </LinkMui>
@@ -284,6 +288,17 @@ const ReplyToComments = () => {
             </Accordion>
           );
         })}
+
+      {chosenMaterialName && chosenMaterialName && (
+        <Typography
+          variant="h6"
+          style={{ fontWeight: 600, textAlign: "center", paddingTop: "20px" }}
+        >
+          Chosen Course Material:{" "}
+          <span style={{ fontWeight: 500 }}>{chosenMaterialName}</span>
+        </Typography>
+      )}
+
       <div
         style={{
           marginTop: "20px",
