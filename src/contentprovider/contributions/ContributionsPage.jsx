@@ -19,6 +19,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
+import { DataGrid } from "@material-ui/data-grid";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +56,39 @@ const ContributionsPage = () => {
   const [paymentAmount, setPaymentAmount] = useState();
   const [month, setMonth] = useState(1);
 
-  const handleStripePaymentGateway = async (amount, email, userId) => {
+  const [contributions, setContributions] = useState([]);
+
+  const getAllContributions = () => {
+    Service.client
+      .get(`/contributions`)
+      .then((res) => {
+        console.log(res);
+
+        let arr = [];
+        for (let i = 0; i < res.data.length; i++) {
+          const obj = {
+            id: res.data[i].id,
+            payment_amount: res.data[i].payment_transaction.payment_amount,
+            payment_type: res.data[i].payment_transaction.payment_type,
+            payment_status: res.data[i].payment_transaction.payment_status,
+            timestamp: res.data[i].payment_transaction.timestamp,
+            expiry_date: res.data[i].expiry_date,
+          };
+          arr.push(obj);
+        }
+
+        setContributions(arr);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleStripePaymentGateway = async (
+    amount,
+    email,
+    userId,
+    numOfMonths,
+    contributionId
+  ) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
@@ -64,6 +97,8 @@ const ContributionsPage = () => {
       email: email,
       description: "Monthly Contributions",
       pId: userId,
+      numOfMonths: numOfMonths,
+      contribution: contributionId,
     };
 
     axios
@@ -74,7 +109,7 @@ const ContributionsPage = () => {
           sessionId: res.data.id,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   };
 
   const handlePaymentDialog = () => {
@@ -113,6 +148,7 @@ const ContributionsPage = () => {
       .get(`/auth/partners/${decoded.user_id}`)
       .then((res) => {
         console.log(res);
+        const emailAdd = res.data.email;
 
         if (
           res.data.partner.organization &&
@@ -135,14 +171,73 @@ const ContributionsPage = () => {
           }
         }
 
-        handleStripePaymentGateway(
-          paymentAmount,
-          res.data.email,
-          decoded.user_id
-        );
+        let data = {
+          contribution: paymentAmount.toString(),
+          payment_type: "Credit Card",
+          month_duration: month,
+        };
+        console.log(data);
+
+        Service.client
+          .post(`contributions`, data)
+          .then((res) => {
+            console.log(res);
+
+            handleStripePaymentGateway(
+              paymentAmount,
+              emailAdd,
+              decoded.user_id,
+              month,
+              res.data.id
+            );
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    getAllContributions();
+  }, []);
+
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 250 },
+    {
+      field: "payment_amount",
+      headerName: "Contribution Amount",
+      valueFormatter: (params) => `$${params.value}`,
+      width: 200,
+    },
+    { field: "payment_type", headerName: "Paid By", width: 200 },
+    { field: "payment_status", headerName: "Status", width: 200 },
+    {
+      field: "timestamp",
+      headerName: "Paid On",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 200,
+    },
+    {
+      field: "expiry_date",
+      headerName: "Contributed Till",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 200,
+    },
+  ];
 
   return (
     <Fragment>
@@ -158,6 +253,9 @@ const ContributionsPage = () => {
           Make A Contribution
         </Button>
       </div>
+
+      <DataGrid rows={contributions} columns={columns} pageSize={10} />
+
       <Dialog
         open={paymentDialog}
         onClose={() => setPaymentDialog(false)}

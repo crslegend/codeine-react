@@ -35,11 +35,11 @@ app.post("/create-checkout-session", async (req, res) => {
             },
             unit_amount: parseFloat(transaction.total_price) * 100,
           },
-          quantity: 1,
+          quantity: transaction.numOfMonths,
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&pId=${transaction.pId}`,
+      success_url: `http://localhost:3000/payment/success?sessionid={CHECKOUT_SESSION_ID}&pId=${transaction.pId}&contribution=${transaction.contribution}`,
       cancel_url: `http://localhost:3000/partner/home/contributions`,
     });
     res.json({ id: session.id });
