@@ -12,7 +12,15 @@ import {
   Typography,
 } from "@material-ui/core";
 import Service from "../../../AxiosService";
-import { Block, Chat, Delete, Edit, ThumbUp } from "@material-ui/icons";
+import {
+  Block,
+  Chat,
+  Delete,
+  Edit,
+  FiberPin,
+  SubdirectoryArrowRight,
+  ThumbUp,
+} from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -40,7 +48,7 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const CommentsSection = ({ materialId }) => {
+const CommentsSection = ({ materialId, user }) => {
   const classes = styles();
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -244,6 +252,26 @@ const CommentsSection = ({ materialId }) => {
     return false;
   };
 
+  const handlePinComment = (id) => {
+    Service.client
+      .patch(`/course-comments/${id}/pin`)
+      .then((res) => {
+        console.log(res);
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUnpinComment = (id) => {
+    Service.client
+      .patch(`/course-comments/${id}/unpin`)
+      .then((res) => {
+        console.log(res);
+        getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const deletedParentComment = (
     <div
       style={{
@@ -262,26 +290,16 @@ const CommentsSection = ({ materialId }) => {
   );
 
   const deletedChildComment = (
-    <div
-      style={{
-        display: "flex",
-        marginBottom: "20px",
-        justifyContent: "center",
-        alignItems: "center",
-        border: "2px solid lightgrey",
-        borderRadius: "6px",
-        padding: "10px",
-        width: "90%",
-        marginLeft: "auto",
-      }}
-    >
-      <Block style={{ marginRight: "10px" }} />
-      <Typography variant="body2">This comment has been deleted</Typography>
-    </div>
-  );
-
-  const deletedChildCommentWithButton = (id) => {
-    return (
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          width: "10%",
+        }}
+      >
+        <SubdirectoryArrowRight fontSize="large" color="primary" />
+      </div>
       <div
         style={{
           display: "flex",
@@ -297,20 +315,52 @@ const CommentsSection = ({ materialId }) => {
       >
         <Block style={{ marginRight: "10px" }} />
         <Typography variant="body2">This comment has been deleted</Typography>
-        <Button
-          variant="contained"
-          color="primary"
+      </div>
+    </div>
+  );
+
+  const deletedChildCommentWithButton = (id) => {
+    return (
+      <div style={{ display: "flex" }}>
+        <div
           style={{
-            order: 2,
-            marginLeft: "auto",
-          }}
-          onClick={() => {
-            setReferencedCommentId(id);
-            setPageNum(2);
+            display: "flex",
+            justifyContent: "center",
+            width: "10%",
           }}
         >
-          <Typography variant="body2">View Replies</Typography>
-        </Button>
+          <SubdirectoryArrowRight fontSize="large" color="primary" />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            marginBottom: "20px",
+            justifyContent: "center",
+            alignItems: "center",
+            border: "2px solid lightgrey",
+            borderRadius: "6px",
+            padding: "10px",
+            width: "90%",
+            marginLeft: "auto",
+          }}
+        >
+          <Block style={{ marginRight: "10px" }} />
+          <Typography variant="body2">This comment has been deleted</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              order: 2,
+              marginLeft: "auto",
+            }}
+            onClick={() => {
+              setReferencedCommentId(id);
+              setPageNum(2);
+            }}
+          >
+            <Typography variant="body2">View Replies</Typography>
+          </Button>
+        </div>
       </div>
     );
   };
@@ -323,7 +373,7 @@ const CommentsSection = ({ materialId }) => {
           <Typography variant="h6" style={{ fontWeight: 600 }}>
             Comments Section
           </Typography>
-          {pageNum && pageNum === 1 && (
+          {pageNum && user && user === "member" && pageNum === 1 && (
             <Button
               variant="contained"
               color="primary"
@@ -407,6 +457,38 @@ const CommentsSection = ({ materialId }) => {
                                     </IconButton>
                                   </div>
                                 )}
+                              {!user && user !== "member" && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    order: 2,
+                                    marginLeft: "auto",
+                                  }}
+                                >
+                                  {comment && comment.pinned ? (
+                                    <Button
+                                      variant="outlined"
+                                      onClick={() => {
+                                        handleUnpinComment(comment.id);
+                                      }}
+                                      style={{ height: 30 }}
+                                    >
+                                      Unpin Comment
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outlined"
+                                      onClick={() => {
+                                        handlePinComment(comment.id);
+                                      }}
+                                      style={{ height: 30 }}
+                                    >
+                                      Pin Comment
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             <Typography
@@ -430,23 +512,25 @@ const CommentsSection = ({ materialId }) => {
                               >
                                 Likes: {comment.likes}
                               </Typography>
-                              <IconButton
-                                size="small"
-                                onClick={() =>
-                                  handleLikeUnlikeComment(
-                                    comment.id,
-                                    comment.current_member_liked
-                                  )
-                                }
-                              >
-                                <ThumbUp
-                                  color={
-                                    comment.current_member_liked
-                                      ? "primary"
-                                      : "inherit"
+                              {user && user === "member" && (
+                                <IconButton
+                                  size="small"
+                                  onClick={() =>
+                                    handleLikeUnlikeComment(
+                                      comment.id,
+                                      comment.current_member_liked
+                                    )
                                   }
-                                />
-                              </IconButton>
+                                >
+                                  <ThumbUp
+                                    color={
+                                      comment.current_member_liked
+                                        ? "primary"
+                                        : "inherit"
+                                    }
+                                  />
+                                </IconButton>
+                              )}
                               <Button
                                 variant="contained"
                                 color="primary"
@@ -464,153 +548,171 @@ const CommentsSection = ({ materialId }) => {
                             </div>
                           </div>
                         </div>
+
                         {comment.replies &&
                           comment.replies.length > 0 &&
                           comment.replies.map((reply, replyIndex) => {
                             if (reply.user) {
                               return (
-                                <div
-                                  key={`reply` + replyIndex}
-                                  className={classes.childComment}
-                                >
-                                  {reply.user.profile_photo ? (
-                                    <Avatar
-                                      style={{ marginRight: "15px" }}
-                                      src={reply.user.profile_photo}
-                                    />
-                                  ) : (
-                                    <Avatar style={{ marginRight: "15px" }}>
-                                      {reply.user.first_name.charAt(0)}
-                                    </Avatar>
-                                  )}
-
+                                <div style={{ display: "flex" }}>
                                   <div
                                     style={{
-                                      flexDirection: "column",
-                                      width: "100%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      width: "10%",
                                     }}
                                   >
-                                    <Typography
-                                      variant="h6"
-                                      style={{ fontWeight: 600 }}
-                                    >
-                                      {reply.user && reply.user.first_name}{" "}
-                                      {reply.user && reply.user.last_name}
-                                    </Typography>
-                                    <div style={{ display: "flex" }}>
-                                      <Typography variant="body2">
-                                        Reply to #{reply.reply_to.display_id}
-                                      </Typography>
-                                      <Typography
-                                        variant="body2"
-                                        style={{
-                                          paddingLeft: "10px",
-                                          opacity: 0.7,
-                                        }}
-                                      >
-                                        {reply &&
-                                          calculateDateInterval(
-                                            reply.timestamp
-                                          )}
-                                      </Typography>
-                                      {reply &&
-                                        checkIfOwnerOfComment(
-                                          reply.user.id
-                                        ) && (
-                                          <div
-                                            style={{
-                                              display: "flex",
-                                              alignItems: "center",
-                                              order: 2,
-                                              marginLeft: "auto",
-                                            }}
-                                          >
-                                            <IconButton
-                                              size="small"
-                                              onClick={() => {
-                                                setReferencedCommentId(
-                                                  reply.id
-                                                );
-                                                setCommentDialogValue({
-                                                  comment: reply.comment,
-                                                });
-                                                setEditCommentDialog(true);
-                                              }}
-                                            >
-                                              <Edit />
-                                            </IconButton>
-                                            <IconButton
-                                              size="small"
-                                              onClick={() => {
-                                                setReferencedCommentId(
-                                                  reply.id
-                                                );
-                                                setDeleteCommentDialog(true);
-                                              }}
-                                            >
-                                              <Delete />
-                                            </IconButton>
-                                          </div>
-                                        )}
-                                    </div>
+                                    <SubdirectoryArrowRight
+                                      fontSize="large"
+                                      color="primary"
+                                    />
+                                  </div>
+                                  <div
+                                    key={`reply` + replyIndex}
+                                    className={classes.childComment}
+                                  >
+                                    {reply.user.profile_photo ? (
+                                      <Avatar
+                                        style={{ marginRight: "15px" }}
+                                        src={reply.user.profile_photo}
+                                      />
+                                    ) : (
+                                      <Avatar style={{ marginRight: "15px" }}>
+                                        {reply.user.first_name.charAt(0)}
+                                      </Avatar>
+                                    )}
 
-                                    <Typography
-                                      variant="body1"
-                                      style={{
-                                        paddingTop: "5px",
-                                        paddingBottom: "10px",
-                                      }}
-                                    >
-                                      {reply.comment}
-                                    </Typography>
                                     <div
                                       style={{
-                                        display: "flex",
-                                        alignItems: "center",
+                                        flexDirection: "column",
+                                        width: "100%",
                                       }}
                                     >
                                       <Typography
-                                        variant="body2"
-                                        style={{
-                                          opacity: 0.7,
-                                          paddingRight: "20px",
-                                        }}
+                                        variant="h6"
+                                        style={{ fontWeight: 600 }}
                                       >
-                                        Likes: {reply.likes}
+                                        {reply.user && reply.user.first_name}{" "}
+                                        {reply.user && reply.user.last_name}
                                       </Typography>
-                                      <IconButton
-                                        size="small"
-                                        onClick={() =>
-                                          handleLikeUnlikeComment(
-                                            reply.id,
-                                            reply.current_member_liked
-                                          )
-                                        }
-                                      >
-                                        <ThumbUp
-                                          color={
-                                            reply.current_member_liked
-                                              ? "primary"
-                                              : "inherit"
-                                          }
-                                        />
-                                      </IconButton>
-                                      <Button
-                                        variant="contained"
-                                        color="primary"
-                                        style={{
-                                          order: 2,
-                                          marginLeft: "auto",
-                                        }}
-                                        onClick={() => {
-                                          setReferencedCommentId(reply.id);
-                                          setPageNum(2);
-                                        }}
-                                      >
+                                      <div style={{ display: "flex" }}>
                                         <Typography variant="body2">
-                                          View Replies
+                                          Reply to #{reply.reply_to.display_id}
                                         </Typography>
-                                      </Button>
+                                        <Typography
+                                          variant="body2"
+                                          style={{
+                                            paddingLeft: "10px",
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {reply &&
+                                            calculateDateInterval(
+                                              reply.timestamp
+                                            )}
+                                        </Typography>
+                                        {reply &&
+                                          checkIfOwnerOfComment(
+                                            reply.user.id
+                                          ) && (
+                                            <div
+                                              style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                order: 2,
+                                                marginLeft: "auto",
+                                              }}
+                                            >
+                                              <IconButton
+                                                size="small"
+                                                onClick={() => {
+                                                  setReferencedCommentId(
+                                                    reply.id
+                                                  );
+                                                  setCommentDialogValue({
+                                                    comment: reply.comment,
+                                                  });
+                                                  setEditCommentDialog(true);
+                                                }}
+                                              >
+                                                <Edit />
+                                              </IconButton>
+                                              <IconButton
+                                                size="small"
+                                                onClick={() => {
+                                                  setReferencedCommentId(
+                                                    reply.id
+                                                  );
+                                                  setDeleteCommentDialog(true);
+                                                }}
+                                              >
+                                                <Delete />
+                                              </IconButton>
+                                            </div>
+                                          )}
+                                      </div>
+
+                                      <Typography
+                                        variant="body1"
+                                        style={{
+                                          paddingTop: "5px",
+                                          paddingBottom: "10px",
+                                        }}
+                                      >
+                                        {reply.comment}
+                                      </Typography>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <Typography
+                                          variant="body2"
+                                          style={{
+                                            opacity: 0.7,
+                                            paddingRight: "20px",
+                                          }}
+                                        >
+                                          Likes: {reply.likes}
+                                        </Typography>
+                                        {user && user === "member" && (
+                                          <IconButton
+                                            size="small"
+                                            onClick={() =>
+                                              handleLikeUnlikeComment(
+                                                reply.id,
+                                                reply.current_member_liked
+                                              )
+                                            }
+                                          >
+                                            <ThumbUp
+                                              color={
+                                                reply.current_member_liked
+                                                  ? "primary"
+                                                  : "inherit"
+                                              }
+                                            />
+                                          </IconButton>
+                                        )}
+                                        <Button
+                                          variant="contained"
+                                          color="primary"
+                                          style={{
+                                            order: 2,
+                                            marginLeft: "auto",
+                                          }}
+                                          onClick={() => {
+                                            setReferencedCommentId(reply.id);
+                                            setPageNum(2);
+                                          }}
+                                        >
+                                          <Typography variant="body2">
+                                            View Replies
+                                          </Typography>
+                                        </Button>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -645,6 +747,7 @@ const CommentsSection = ({ materialId }) => {
             setCommentDialogValue={setCommentDialogValue}
             deletedParentComment={deletedParentComment}
             deletedChildComment={deletedChildComment}
+            user={user}
           />
         )}
       </div>
@@ -824,7 +927,7 @@ const CommentsSection = ({ materialId }) => {
           },
         }}
       >
-        <DialogTitle>Delete Comment</DialogTitle>
+        <DialogTitle>Delete Comment?</DialogTitle>
         <DialogContent>
           <Typography variant="body1">
             This action cannot be reverted.

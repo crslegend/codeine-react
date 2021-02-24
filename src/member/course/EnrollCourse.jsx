@@ -448,7 +448,10 @@ const EnrollCourse = () => {
               chosenCourseMaterial.material_type !== "FINAL" &&
               chosenCourseMaterial.material_type !== "INTRO" && (
                 <div style={{ marginTop: "20px" }}>
-                  <CommentsSection materialId={chosenCourseMaterial.id} />
+                  <CommentsSection
+                    materialId={chosenCourseMaterial.id}
+                    user={"member"}
+                  />
                 </div>
               )}
           </div>
