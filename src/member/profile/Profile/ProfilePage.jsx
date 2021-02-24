@@ -250,7 +250,9 @@ const Profile = (props) => {
                   name="id"
                   autoComplete="id"
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={profileDetails.id}
                 />
               </div>
@@ -321,7 +323,9 @@ const Profile = (props) => {
                   autoComplete="date_joined"
                   required
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={formatDate(profileDetails.date_joined)}
                 />
               </div>

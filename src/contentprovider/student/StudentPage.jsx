@@ -54,7 +54,12 @@ const StudentPage = () => {
     return "";
   };
 
-  // Member data
+  useEffect(() => {
+    getAllStudents();
+    getAllCoursesByPartner();
+  }, []);
+
+  // Enrolled Course Student data
   const [allStudentList, setAllStudentList] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({
     id: "",
@@ -68,8 +73,16 @@ const StudentPage = () => {
 
   const studentColumns = [
     { field: "id", headerName: "ID", width: 300 },
-    { field: "first_name", headerName: "First name", width: 130 },
-    { field: "last_name", headerName: "Last name", width: 130 },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      width: 130,
+    },
+    {
+      field: "last_name",
+      headerName: "Last Name",
+      width: 160,
+    },
     {
       field: "email",
       headerName: "Email",
@@ -103,50 +116,50 @@ const StudentPage = () => {
 
   let studentRows = allStudentList;
 
+  for (let i = 0; i < allStudentList.length; i++) {
+    studentRows[i].id = allStudentList[i].user.id;
+    studentRows[i].first_name = allStudentList[i].user.first_name;
+    studentRows[i].last_name = allStudentList[i].user.last_name;
+    studentRows[i].email = allStudentList[i].user.email;
+    studentRows[i].is_active = allStudentList[i].user.is_active;
+    studentRows[i].profile_photo = allStudentList[i].user.profile_photo;
+    studentRows[i].date_joined = allStudentList[i].user.date_joined;
+  }
+
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
 
-  const getAllStudents = (sort) => {
+  const getAllStudents = (filter) => {
     let queryParams = {
       search: searchValue,
     };
-    console.log(sort);
+    console.log(filter);
 
-    if (sort !== undefined) {
-      if (sort === "rating" || sort === "-rating") {
-        queryParams = {
-          ...queryParams,
-          sortRating: sort,
-        };
-      }
-
-      if (sort === "published_date" || sort === "-published_date") {
-        queryParams = {
-          ...queryParams,
-          sortDate: sort,
-        };
-      }
-    } else {
-      if (sortMethod === "rating" || sortMethod === "-rating") {
-        queryParams = {
-          ...queryParams,
-          sortRating: sortMethod,
-        };
-      }
-
-      if (sortMethod === "published_date" || sortMethod === "-published_date") {
-        queryParams = {
-          ...queryParams,
-          sortDate: sortMethod,
-        };
-      }
+    if (filter !== undefined) {
+      queryParams = {
+        ...queryParams,
+        courseId: filter,
+      };
     }
 
     Service.client
-      .get(`/privateCourses`, { params: { ...queryParams } })
+      .get(`/enrolled-members`, { params: { ...queryParams } })
+      .then((res) => {
+        console.log("members: " + res.data[0].user.id);
+        setAllStudentList(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const [allCourseList, setAllCourseList] = useState([]);
+
+  const getAllCoursesByPartner = () => {
+    Service.client
+      .get(`/private-courses`)
       .then((res) => {
         console.log(res);
-        setAllStudentList(res.data.results);
+        setAllCourseList(res.data.results);
+        //console.log("course list : " + res.data.results[0]);
       })
       .catch((err) => console.log(err));
   };
@@ -184,28 +197,24 @@ const StudentPage = () => {
           />
         </Grid>
         <Grid item xs={5}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel>Sort By</InputLabel>
-            <Select
-              label="Sort By"
-              value={sortMethod}
-              onChange={(event) => {
-                onSortChange(event);
-              }}
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="-published_date">
-                Published Date (Least Recent)
-              </MenuItem>
-              <MenuItem value="published_date">
-                Published Date (Most Recent)
-              </MenuItem>
-              <MenuItem value="rating">Rating (Ascending)</MenuItem>
-              <MenuItem value="-rating">Rating (Descending)</MenuItem>
-            </Select>
-          </FormControl>
+          {allCourseList && (
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel>Filter By Courses</InputLabel>
+              <Select
+                label="Sort By"
+                value={sortMethod}
+                onChange={(event) => {
+                  onSortChange(event);
+                }}
+              >
+                {allCourseList.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </Grid>
       </Grid>
       <Grid
