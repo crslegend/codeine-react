@@ -280,6 +280,41 @@ const CommentsSection = ({ materialId }) => {
     </div>
   );
 
+  const deletedChildCommentWithButton = (id) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          marginBottom: "20px",
+          justifyContent: "center",
+          alignItems: "center",
+          border: "2px solid lightgrey",
+          borderRadius: "6px",
+          padding: "10px",
+          width: "90%",
+          marginLeft: "auto",
+        }}
+      >
+        <Block style={{ marginRight: "10px" }} />
+        <Typography variant="body2">This comment has been deleted</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{
+            order: 2,
+            marginLeft: "auto",
+          }}
+          onClick={() => {
+            setReferencedCommentId(id);
+            setPageNum(2);
+          }}
+        >
+          <Typography variant="body2">View Replies</Typography>
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -581,7 +616,7 @@ const CommentsSection = ({ materialId }) => {
                                 </div>
                               );
                             } else {
-                              return deletedChildComment;
+                              return deletedChildCommentWithButton(reply.id);
                             }
                           })}
                       </Fragment>
