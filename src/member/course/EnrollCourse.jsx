@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -93,6 +93,18 @@ const styles = makeStyles((theme) => ({
   reviews: {},
   linkMui: {
     cursor: "pointer",
+  },
+  buttonPaper: {
+    width: "60%",
+    backgroundColor: "#F4F4F4",
+    height: "10vh",
+  },
+  consultationButton: {
+    marginRight: "15px",
+    marginTop: "45px",
+    float: "right",
+    color: "#FFFFFF",
+    textTransform: "none",
   },
 }));
 
@@ -455,6 +467,7 @@ const EnrollCourse = () => {
                 </div>
               )}
           </div>
+
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
             <Typography variant="h6">Your Progress</Typography>
@@ -839,7 +852,19 @@ const EnrollCourse = () => {
             </Accordion>
           </div>
         </div>
+        <Paper elevation={0} className={classes.buttonPaper}>
+          <Button
+            className={classes.consultationButton}
+            color="primary"
+            variant="contained"
+            component={Link}
+            to={`/courses/enroll/consultation/${course && course.partner.id}`}
+          >
+            Book consultation
+          </Button>
+        </Paper>
       </div>
+
       <Footer />
 
       <Dialog

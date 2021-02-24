@@ -146,7 +146,7 @@ const Calendar = () => {
   const { consultations, loading } = state;
 
   const [currentViewName, setCurrentViewName] = useState("week");
-  const currentDate = new Date();
+  const currentDate = usaTime(new Date());
   console.log(currentDate);
   const [allowDeleting, setAllowDeleting] = useState(true);
   const [allowUpdating, setAllowUpdating] = useState(true);
@@ -287,10 +287,12 @@ const Calendar = () => {
     if (appointmentData.endDate < currentDate) {
       setAllowUpdating(false);
       setAllowDeleting(false);
+      console.log("correct");
     } else {
       setAllowUpdating(true);
+      setAllowDeleting(true);
     }
-
+    console.log(allowUpdating);
     return (
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
@@ -317,7 +319,7 @@ const Calendar = () => {
         <AppointmentForm.TextEditor
           value={appointmentData.price_per_pax}
           onValueChange={onRateChange}
-          readOnly={!allowDeleting || !allowUpdating}
+          readOnly={appointmentData.member.length !== 0}
           placeholder="Enter price per hour e.g. 100.50"
         />
         <AppointmentForm.Label
