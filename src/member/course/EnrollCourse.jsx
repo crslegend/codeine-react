@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   Checkbox,
   Dialog,
@@ -12,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  LinearProgress,
   Paper,
   TextField,
   Typography,
@@ -38,6 +40,7 @@ import TakeQuiz from "./components/TakeQuiz";
 import Toast from "../../components/Toast.js";
 import { Rating } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
+import CommentsSection from "./components/CommentsSection";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -127,6 +130,9 @@ const EnrollCourse = () => {
   const [pageNum, setPageNum] = useState(-1);
   const [resultObj, setResultObj] = useState();
 
+  const [progressArr, setProgressArr] = useState([]);
+  const [progress, setProgress] = useState(0);
+
   const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -151,6 +157,19 @@ const EnrollCourse = () => {
             material_type: "INTRO",
             introduction_video_url: res.data.introduction_video_url,
           });
+
+          Service.client
+            .get(`enrollments`, { params: { courseId: id } })
+            .then((res) => {
+              console.log(res);
+              setProgress(res.data[0].progress);
+              if (!res.data[0].materials_done) {
+                setProgressArr([]);
+              } else {
+                setProgressArr(res.data[0].materials_done);
+              }
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     }
@@ -226,6 +245,29 @@ const EnrollCourse = () => {
     // console.log(duration);
   };
 
+  const handleVideoProgress = (state, videoId) => {
+    // console.log(state);
+    // console.log(videoId);
+    if (progressArr.includes(videoId)) {
+      return;
+    }
+
+    if (state.played >= 0.9) {
+      // console.log("FINISH");
+
+      let arr = [...progressArr];
+      arr.push(videoId);
+      setProgressArr(arr);
+      Service.client
+        .patch(`/courses/${id}/enrollments`, arr)
+        .then((res) => {
+          console.log(res);
+          setProgress(res.data.progress);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   const handleCreateQuizResult = (quizId) => {
     Service.client
       .post(`/quiz/${quizId}/results`)
@@ -242,8 +284,33 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleCheckMaterial = (e, materialId) => {
+    let arr = [];
+    if (progressArr.length > 0) {
+      arr = [...progressArr];
+    }
+
+    if (e.target.checked) {
+      arr.push(materialId);
+      setProgressArr(arr);
+    } else {
+      arr = arr.filter((id) => id !== materialId);
+      console.log(arr);
+      setProgressArr(arr);
+    }
+
+    Service.client
+      .patch(`/courses/${id}/enrollments`, arr)
+      .then((res) => {
+        console.log(res);
+        setProgress(res.data.progress);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Navbar
         logo={components.navLogo}
         bgColor="#fff"
@@ -324,6 +391,9 @@ const EnrollCourse = () => {
                       width="100%"
                       height="500px"
                       onDuration={handleDuration}
+                      onProgress={(state) =>
+                        handleVideoProgress(state, chosenCourseMaterial.id)
+                      }
                       controls
                     />
                   </div>
@@ -347,10 +417,16 @@ const EnrollCourse = () => {
                       resultObj={resultObj}
                       setResultObj={setResultObj}
                       handleCreateQuizResult={handleCreateQuizResult}
+                      materialId={chosenCourseMaterial.id}
+                      progressArr={progressArr}
+                      setProgressArr={setProgressArr}
+                      courseId={id}
+                      progress={progress}
+                      setProgress={setProgress}
                     />
                   </div>
                 );
-              } else {
+              } else if (chosenCourseMaterial.material_type === "INTRO") {
                 return (
                   <div>
                     <ReactPlayer
@@ -363,11 +439,34 @@ const EnrollCourse = () => {
                     />
                   </div>
                 );
+              } else {
+                return null;
               }
             })()}
+            {chosenCourseMaterial &&
+              chosenCourseMaterial.material_type !== "FINAL" &&
+              chosenCourseMaterial.material_type !== "INTRO" && (
+                <div style={{ marginTop: "20px" }}>
+                  <CommentsSection materialId={chosenCourseMaterial.id} />
+                </div>
+              )}
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
+            <Typography variant="h6">Your Progress</Typography>
+            <div style={{ width: "100%", marginBottom: "20px" }}>
+              <Box display="flex" alignItems="center">
+                <Box width="100%" mr={1}>
+                  <LinearProgress variant="determinate" value={progress} />
+                </Box>
+                <Box minWidth={35}>
+                  <Typography variant="body2">
+                    {progress && parseInt(progress).toFixed() + "%"}
+                  </Typography>
+                </Box>
+              </Box>
+            </div>
+
             <Accordion
               expanded={expanded === `overview`}
               onChange={handleChange(`overview`)}
@@ -463,7 +562,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
@@ -490,7 +599,14 @@ const EnrollCourse = () => {
                                     </Typography>
 
                                     <AttachFile fontSize="small" />
-                                    {material.title}
+                                    <LinkMui
+                                      className={classes.linkMui}
+                                      onClick={() =>
+                                        handleChosenCourseMaterial(material)
+                                      }
+                                    >
+                                      {material.title}
+                                    </LinkMui>
                                     <Button
                                       variant="outlined"
                                       style={{
@@ -532,7 +648,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
@@ -590,7 +716,17 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox style={{ marginBottom: "20px" }} />
+                                <Checkbox
+                                  style={{ marginBottom: "20px" }}
+                                  checked={
+                                    progressArr &&
+                                    progressArr.length > 0 &&
+                                    progressArr.includes(material.id)
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckMaterial(e, material.id)
+                                  }
+                                />
                                 <div
                                   style={{
                                     display: "flex",
@@ -685,9 +821,10 @@ const EnrollCourse = () => {
                 <LinkMui
                   className={classes.linkMui}
                   onClick={() => {
-                    setChosenCourseMaterial({
+                    handleChosenCourseMaterial({
                       material_type: "FINAL",
                       quiz: course.assessment,
+                      id: course.assessment.id,
                     });
                     handleCreateQuizResult(course.assessment.id);
                   }}
