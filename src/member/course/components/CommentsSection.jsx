@@ -326,9 +326,12 @@ const CommentsSection = ({ materialId }) => {
                               {comment.user && comment.user.last_name}
                             </Typography>
                             <div style={{ display: "flex" }}>
+                              <Typography variant="body2">
+                                #{comment.display_id}
+                              </Typography>
                               <Typography
                                 variant="body2"
-                                style={{ opacity: 0.7 }}
+                                style={{ paddingLeft: "10px", opacity: 0.7 }}
                               >
                                 {comment &&
                                   calculateDateInterval(comment.timestamp)}
@@ -457,9 +460,15 @@ const CommentsSection = ({ materialId }) => {
                                       {reply.user && reply.user.last_name}
                                     </Typography>
                                     <div style={{ display: "flex" }}>
+                                      <Typography variant="body2">
+                                        Reply to #{reply.reply_to.display_id}
+                                      </Typography>
                                       <Typography
                                         variant="body2"
-                                        style={{ opacity: 0.7 }}
+                                        style={{
+                                          paddingLeft: "10px",
+                                          opacity: 0.7,
+                                        }}
                                       >
                                         {reply &&
                                           calculateDateInterval(
