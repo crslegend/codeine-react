@@ -18,6 +18,7 @@ import {
   Chat,
   Delete,
   Edit,
+  SubdirectoryArrowRight,
   ThumbUp,
 } from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
@@ -319,125 +320,140 @@ const NestedComments = ({
                   comment.replies.map((reply, replyIndex) => {
                     if (reply.user) {
                       return (
-                        <div
-                          key={`reply` + replyIndex}
-                          className={classes.childComment}
-                        >
-                          {reply.user.profile_photo ? (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={reply.user.profile_photo}
-                            />
-                          ) : (
-                            <Avatar style={{ marginRight: "15px" }}>
-                              {reply.user.first_name.charAt(0)}
-                            </Avatar>
-                          )}
-
+                        <div style={{ display: "flex" }}>
                           <div
                             style={{
-                              flexDirection: "column",
-                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              width: "10%",
                             }}
                           >
-                            <Typography
-                              variant="h6"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {reply.user && reply.user.first_name}{" "}
-                              {reply.user && reply.user.last_name}
-                            </Typography>
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="body2">
-                                Reply to #{reply.reply_to.display_id}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                style={{
-                                  paddingLeft: "10px",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {reply &&
-                                  calculateDateInterval(reply.timestamp)}
-                              </Typography>
-                              {reply && checkIfOwnerOfComment(reply.user.id) && (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    order: 2,
-                                    marginLeft: "auto",
-                                  }}
-                                >
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                      setChosenCommentId(reply.id);
-                                      setCommentDialogValue({
-                                        comment: reply.comment,
-                                      });
-                                      setEditNestedCommentDialog(true);
-                                    }}
-                                  >
-                                    <Edit />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                      setChosenCommentId(reply.id);
-                                      setDeleteNestedCommentDialog(true);
-                                    }}
-                                  >
-                                    <Delete />
-                                  </IconButton>
-                                </div>
-                              )}
-                            </div>
+                            <SubdirectoryArrowRight
+                              fontSize="large"
+                              color="primary"
+                            />
+                          </div>
+                          <div
+                            key={`reply` + replyIndex}
+                            className={classes.childComment}
+                          >
+                            {reply.user.profile_photo ? (
+                              <Avatar
+                                style={{ marginRight: "15px" }}
+                                src={reply.user.profile_photo}
+                              />
+                            ) : (
+                              <Avatar style={{ marginRight: "15px" }}>
+                                {reply.user.first_name.charAt(0)}
+                              </Avatar>
+                            )}
 
-                            <Typography
-                              variant="body1"
-                              style={{
-                                paddingTop: "5px",
-                                paddingBottom: "10px",
-                              }}
-                            >
-                              {reply.comment}
-                            </Typography>
                             <div
                               style={{
-                                display: "flex",
-                                alignItems: "center",
+                                flexDirection: "column",
+                                width: "100%",
                               }}
                             >
                               <Typography
-                                variant="body2"
+                                variant="h6"
+                                style={{ fontWeight: 600 }}
+                              >
+                                {reply.user && reply.user.first_name}{" "}
+                                {reply.user && reply.user.last_name}
+                              </Typography>
+                              <div style={{ display: "flex" }}>
+                                <Typography variant="body2">
+                                  Reply to #{reply.reply_to.display_id}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  style={{
+                                    paddingLeft: "10px",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {reply &&
+                                    calculateDateInterval(reply.timestamp)}
+                                </Typography>
+                                {reply && checkIfOwnerOfComment(reply.user.id) && (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      order: 2,
+                                      marginLeft: "auto",
+                                    }}
+                                  >
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setChosenCommentId(reply.id);
+                                        setCommentDialogValue({
+                                          comment: reply.comment,
+                                        });
+                                        setEditNestedCommentDialog(true);
+                                      }}
+                                    >
+                                      <Edit />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setChosenCommentId(reply.id);
+                                        setDeleteNestedCommentDialog(true);
+                                      }}
+                                    >
+                                      <Delete />
+                                    </IconButton>
+                                  </div>
+                                )}
+                              </div>
+
+                              <Typography
+                                variant="body1"
                                 style={{
-                                  opacity: 0.7,
-                                  paddingRight: "20px",
+                                  paddingTop: "5px",
+                                  paddingBottom: "10px",
                                 }}
                               >
-                                Likes: {reply.likes}
+                                {reply.comment}
                               </Typography>
-                              {user && user === "member" && (
-                                <IconButton
-                                  size="small"
-                                  onClick={() =>
-                                    handleLikeUnlikeComment(
-                                      reply.id,
-                                      reply.current_member_liked
-                                    )
-                                  }
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  style={{
+                                    opacity: 0.7,
+                                    paddingRight: "20px",
+                                  }}
                                 >
-                                  <ThumbUp
-                                    color={
-                                      reply.current_member_liked
-                                        ? "primary"
-                                        : "inherit"
+                                  Likes: {reply.likes}
+                                </Typography>
+                                {user && user === "member" && (
+                                  <IconButton
+                                    size="small"
+                                    onClick={() =>
+                                      handleLikeUnlikeComment(
+                                        reply.id,
+                                        reply.current_member_liked
+                                      )
                                     }
-                                  />
-                                </IconButton>
-                              )}
+                                  >
+                                    <ThumbUp
+                                      color={
+                                        reply.current_member_liked
+                                          ? "primary"
+                                          : "inherit"
+                                      }
+                                    />
+                                  </IconButton>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -460,125 +476,140 @@ const NestedComments = ({
                   comment.replies.map((reply, replyIndex) => {
                     if (reply.user) {
                       return (
-                        <div
-                          key={`reply` + replyIndex}
-                          className={classes.childComment}
-                        >
-                          {reply.user.profile_photo ? (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={reply.user.profile_photo}
-                            />
-                          ) : (
-                            <Avatar style={{ marginRight: "15px" }}>
-                              {reply.user.first_name.charAt(0)}
-                            </Avatar>
-                          )}
-
+                        <div style={{ display: "flex" }}>
                           <div
                             style={{
-                              flexDirection: "column",
-                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              width: "10%",
                             }}
                           >
-                            <Typography
-                              variant="h6"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {reply.user && reply.user.first_name}{" "}
-                              {reply.user && reply.user.last_name}
-                            </Typography>
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="body2">
-                                Reply to #{reply.reply_to.display_id}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                style={{
-                                  paddingLeft: "10px",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {reply &&
-                                  calculateDateInterval(reply.timestamp)}
-                              </Typography>
-                              {reply && checkIfOwnerOfComment(reply.user.id) && (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    order: 2,
-                                    marginLeft: "auto",
-                                  }}
-                                >
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                      setChosenCommentId(reply.id);
-                                      setCommentDialogValue({
-                                        comment: reply.comment,
-                                      });
-                                      setEditNestedCommentDialog(true);
-                                    }}
-                                  >
-                                    <Edit />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                      setChosenCommentId(reply.id);
-                                      setDeleteNestedCommentDialog(true);
-                                    }}
-                                  >
-                                    <Delete />
-                                  </IconButton>
-                                </div>
-                              )}
-                            </div>
+                            <SubdirectoryArrowRight
+                              fontSize="large"
+                              color="primary"
+                            />
+                          </div>
+                          <div
+                            key={`reply` + replyIndex}
+                            className={classes.childComment}
+                          >
+                            {reply.user.profile_photo ? (
+                              <Avatar
+                                style={{ marginRight: "15px" }}
+                                src={reply.user.profile_photo}
+                              />
+                            ) : (
+                              <Avatar style={{ marginRight: "15px" }}>
+                                {reply.user.first_name.charAt(0)}
+                              </Avatar>
+                            )}
 
-                            <Typography
-                              variant="body1"
-                              style={{
-                                paddingTop: "5px",
-                                paddingBottom: "10px",
-                              }}
-                            >
-                              {reply.comment}
-                            </Typography>
                             <div
                               style={{
-                                display: "flex",
-                                alignItems: "center",
+                                flexDirection: "column",
+                                width: "100%",
                               }}
                             >
                               <Typography
-                                variant="body2"
+                                variant="h6"
+                                style={{ fontWeight: 600 }}
+                              >
+                                {reply.user && reply.user.first_name}{" "}
+                                {reply.user && reply.user.last_name}
+                              </Typography>
+                              <div style={{ display: "flex" }}>
+                                <Typography variant="body2">
+                                  Reply to #{reply.reply_to.display_id}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  style={{
+                                    paddingLeft: "10px",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {reply &&
+                                    calculateDateInterval(reply.timestamp)}
+                                </Typography>
+                                {reply && checkIfOwnerOfComment(reply.user.id) && (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      order: 2,
+                                      marginLeft: "auto",
+                                    }}
+                                  >
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setChosenCommentId(reply.id);
+                                        setCommentDialogValue({
+                                          comment: reply.comment,
+                                        });
+                                        setEditNestedCommentDialog(true);
+                                      }}
+                                    >
+                                      <Edit />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setChosenCommentId(reply.id);
+                                        setDeleteNestedCommentDialog(true);
+                                      }}
+                                    >
+                                      <Delete />
+                                    </IconButton>
+                                  </div>
+                                )}
+                              </div>
+
+                              <Typography
+                                variant="body1"
                                 style={{
-                                  opacity: 0.7,
-                                  paddingRight: "20px",
+                                  paddingTop: "5px",
+                                  paddingBottom: "10px",
                                 }}
                               >
-                                Likes: {reply.likes}
+                                {reply.comment}
                               </Typography>
-                              {user && user === "member" && (
-                                <IconButton
-                                  size="small"
-                                  onClick={() =>
-                                    handleLikeUnlikeComment(
-                                      reply.id,
-                                      reply.current_member_liked
-                                    )
-                                  }
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  style={{
+                                    opacity: 0.7,
+                                    paddingRight: "20px",
+                                  }}
                                 >
-                                  <ThumbUp
-                                    color={
-                                      reply.current_member_liked
-                                        ? "primary"
-                                        : "inherit"
+                                  Likes: {reply.likes}
+                                </Typography>
+                                {user && user === "member" && (
+                                  <IconButton
+                                    size="small"
+                                    onClick={() =>
+                                      handleLikeUnlikeComment(
+                                        reply.id,
+                                        reply.current_member_liked
+                                      )
                                     }
-                                  />
-                                </IconButton>
-                              )}
+                                  >
+                                    <ThumbUp
+                                      color={
+                                        reply.current_member_liked
+                                          ? "primary"
+                                          : "inherit"
+                                      }
+                                    />
+                                  </IconButton>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
