@@ -128,7 +128,7 @@ const PartnerPasswordPage = () => {
     }
 
     Service.client
-      .patch(`/auth/partners/${partnerId}/changePassword`, passwordDetails)
+      .patch(`/auth/partners/${partnerId}/change-password`, passwordDetails)
       .then((res) => {
         setSbOpen(true);
         setSnackbar({

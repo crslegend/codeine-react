@@ -102,11 +102,23 @@ const MemberLoginPage = () => {
         setLoading(false);
         console.log(err);
         setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Incorrect email address or password. Please try again!",
-          severity: "error",
-        });
+
+        if (err.response.status === 403) {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message:
+              "Your account is still unactivated, please check your email to activate your account.",
+            severity: "error",
+          });
+        } else {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Incorrect email address or password. Please try again!",
+            severity: "error",
+          });
+        }
       });
   };
 
