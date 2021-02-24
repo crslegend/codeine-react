@@ -164,29 +164,6 @@ const BookConsult = () => {
     []
   );
 
-  const Header = withStyles({ name: "Header" })(
-    ({ children, appointmentData, classes, ...restProps }) => (
-      <AppointmentTooltip.Header
-        {...restProps}
-        appointmentData={appointmentData}
-      >
-        <Button
-          /* eslint-disable-next-line no-alert */
-          onClick={() => alert(JSON.stringify(appointmentData))}
-          style={{
-            textTransform: "none",
-            marginTop: "5px",
-            marginRight: "5px",
-          }}
-          variant="contained"
-          color="primary"
-        >
-          Book Now
-        </Button>
-      </AppointmentTooltip.Header>
-    )
-  );
-
   const Content = withStyles({ name: "Content" })(
     ({ children, appointmentData, classes, ...restProps }) => (
       <AppointmentTooltip.Content
@@ -196,7 +173,7 @@ const BookConsult = () => {
         <Grid
           container
           style={{
-            marginTop: "15px",
+            marginTop: "10px",
             padding: "10px 0",
             backgroundColor: "#F4F4F4",
           }}
@@ -215,6 +192,19 @@ const BookConsult = () => {
             {appointmentData.max_members - appointmentData.curr_members} <br />
           </Grid>
         </Grid>
+        <Button
+          /* eslint-disable-next-line no-alert */
+          onClick={() => alert(JSON.stringify(appointmentData))}
+          style={{
+            textTransform: "none",
+            margin: "15px 0px 15px 0px",
+            float: "right",
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Book Now
+        </Button>
       </AppointmentTooltip.Content>
     )
   );
@@ -255,10 +245,7 @@ const BookConsult = () => {
               <DateNavigator />
               <TodayButton />
               <Appointments />
-              <AppointmentTooltip
-                headerComponent={Header}
-                contentComponent={Content}
-              />
+              <AppointmentTooltip contentComponent={Content} />
             </Scheduler>
           </Paper>
         </Grid>
