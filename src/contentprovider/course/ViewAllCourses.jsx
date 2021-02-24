@@ -377,7 +377,14 @@ const ViewAllCourses = () => {
                         }}
                       >
                         <div className={classes.popoverContents}>
-                          <Button className={classes.popoverButtons}>
+                          <Button
+                            className={classes.popoverButtons}
+                            component={Link}
+                            to={
+                              course &&
+                              `/partner/home/content/view/comments/${course.id}`
+                            }
+                          >
                             Reply Comments
                           </Button>
                           <Button
