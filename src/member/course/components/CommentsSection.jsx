@@ -16,6 +16,7 @@ import { Block, Chat, Delete, Edit, ThumbUp } from "@material-ui/icons";
 import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import NestedComments from "./NestedComments";
 
 const styles = makeStyles((theme) => ({
   dialogButtons: {
@@ -566,7 +567,7 @@ const CommentsSection = ({ materialId }) => {
                                         }}
                                         onClick={() => {
                                           setReferencedCommentId(reply.id);
-                                          setReplyCommentDialog(true);
+                                          setPageNum(2);
                                         }}
                                       >
                                         <Typography variant="body2">
@@ -596,7 +597,10 @@ const CommentsSection = ({ materialId }) => {
             )}
           </Fragment>
         ) : (
-          <div></div>
+          <NestedComments
+            referencedCommentId={referencedCommentId}
+            setPageNum={setPageNum}
+          />
         )}
       </div>
 
