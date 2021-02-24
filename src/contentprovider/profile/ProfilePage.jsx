@@ -82,6 +82,11 @@ const PartnerProfilePage = (props) => {
       job_title: "",
       bio: "",
       consultation_rate: "",
+      organization: {
+        id: "",
+        organization_name: "",
+        organization_photo: "",
+      },
     },
   });
 
@@ -161,10 +166,6 @@ const PartnerProfilePage = (props) => {
     formData.append("data_joined", profileDetails.date_joined);
     formData.append("job_title", profileDetails.partner.job_title);
     formData.append("bio", profileDetails.partner.bio);
-    formData.append(
-      "consultation_rate",
-      profileDetails.partner.consultation_rate
-    );
 
     // submit form-data as per usual
     Service.client
@@ -185,6 +186,50 @@ const PartnerProfilePage = (props) => {
         console.log(err);
       });
     setLoading(false);
+  };
+
+  const handleOrganizationSubmit = (e) => {
+    e.preventDefault();
+    const formdataOrg = new FormData();
+
+    if (profileDetails.partner.organization) {
+      formdataOrg.append("id", profileDetails.partner.organization.id);
+      formdataOrg.append(
+        "organization_name",
+        profileDetails.partner.organization.organization_name
+      );
+    } else {
+    }
+
+    if (profileDetails.partner.organization) {
+      Service.client
+        .put(
+          `/auth/organizations/${profileDetails.partner.organization.id}`,
+          formdataOrg
+        )
+        .then((res) => {
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Profile Updated!",
+            severity: "success",
+          });
+          console.log(res.data);
+          setProfileDetails({
+            ...profileDetails,
+            partner: {
+              ...profileDetails.partner,
+              organization: res.data,
+            },
+          });
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setLoading(false);
+    } else {
+    }
   };
 
   const handleUploadProfileImage = (e) => {
@@ -230,22 +275,79 @@ const PartnerProfilePage = (props) => {
       });
   };
 
+  const [organizationPhoto, setOrganizationPhoto] = useState();
+  const [uploadOrgOpen, setUploadOrgOpen] = useState(false);
+
+  const handleUploadOrganizationImage = (e) => {
+    // instantiate form-data
+    e.preventDefault();
+
+    if (!organizationPhoto) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please upload an image!",
+        severity: "error",
+      });
+      return;
+    }
+    setUploadOrgOpen(false);
+    const formData = new FormData();
+
+    // appending data to form-data
+    Object.keys(profileDetails).forEach((key) =>
+      formData.append(key, profileDetails[key])
+    );
+
+    if (organizationPhoto.length > 0) {
+      formData.append("organization_photo", organizationPhoto[0].file);
+    }
+
+    // submit form-data as per usual
+    Service.client
+      .put(
+        `/auth/organizations/${profileDetails.partner.organization.id}`,
+        formData
+      )
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Organization photo updated successfully!",
+          severity: "success",
+        });
+        setProfileDetails({
+          ...profileDetails,
+          partner: {
+            ...profileDetails.partner,
+            organization: res.data,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
-        <Paper elevation={0} className={classes.paper}>
-          <Grid container>
-            <Grid item xs={6}>
+
+      <Paper elevation={0} className={classes.paper}>
+        <Grid container>
+          <Grid item xs={6}>
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
               <div>
                 <TextField
                   margin="normal"
                   id="id"
-                  label="ID"
+                  label="Profile ID"
                   name="id"
                   autoComplete="id"
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={profileDetails.id}
                 />
               </div>
@@ -316,7 +418,9 @@ const PartnerProfilePage = (props) => {
                   autoComplete="date_joined"
                   required
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={formatDate(profileDetails.date_joined)}
                 />
               </div>
@@ -368,37 +472,6 @@ const PartnerProfilePage = (props) => {
                 />
               </div>
 
-              <div>
-                <TextField
-                  margin="normal"
-                  id="consultation_rate"
-                  label="Consultation Rate"
-                  name="consultation_rate"
-                  autoComplete="consultation_rate"
-                  type="number"
-                  required
-                  fullWidth
-                  value={profileDetails.partner.consultation_rate}
-                  InputProps={{
-                    inputProps: { min: 0 },
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AttachMoney style={{ fontSize: "large" }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      partner: {
-                        ...profileDetails.partner,
-                        consultation_rate: event.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-
               <Button
                 disabled={loading}
                 variant="contained"
@@ -412,61 +485,197 @@ const PartnerProfilePage = (props) => {
                   "Save Changes"
                 )}
               </Button>
-            </Grid>
-            <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-              <br />
-              <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
-                {!profileDetails.profile_photo ? (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    className={classes.avatar}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar className={classes.avatar}>
-                      {profileDetails.first_name.charAt(0)}
-                    </Avatar>
-                  </Badge>
-                ) : (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar
-                      alt="Pic"
-                      src={
-                        !profilePhoto
-                          ? profileDetails.profile_photo
-                          : profilePhoto[0].data
-                      }
-                      className={classes.avatar}
+            </form>
+
+            {profileDetails.partner.organization ? (
+              <div>
+                <form
+                  onSubmit={handleOrganizationSubmit}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <div>
+                    <TextField
+                      margin="normal"
+                      id="organisation_id"
+                      label="Organisation ID"
+                      name="id"
+                      autoComplete="organisation_id"
+                      required
+                      fullWidth
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      value={profileDetails.partner.organization.id}
                     />
-                  </Badge>
-                )}
-              </a>
-            </Grid>
+                  </div>
+                  <div>
+                    <TextField
+                      margin="normal"
+                      id="organisation_name"
+                      label="Organisation Name"
+                      name="organisation_name"
+                      autoComplete="Organisation Name"
+                      required
+                      fullWidth
+                      value={
+                        profileDetails.partner.organization.organization_name
+                      }
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          partner: {
+                            ...profileDetails.partner,
+                            organization: {
+                              ...profileDetails.partner.organization,
+                              organization_name: event.target.value,
+                            },
+                          },
+                        })
+                      }
+                    />
+                  </div>
+
+                  <Button
+                    disabled={loading}
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: "20px" }}
+                    type="submit"
+                  >
+                    {loading ? (
+                      <CircularProgress
+                        size="1.5rem"
+                        style={{ color: "#FFF" }}
+                      />
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </form>
+              </div>
+            ) : (
+              ""
+            )}
           </Grid>
-        </Paper>
-      </form>
+          <Grid item xs={6} style={{ paddingLeft: "25px" }}>
+            <br />
+            <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+              {!profileDetails.profile_photo ? (
+                <Badge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  className={classes.avatar}
+                  badgeContent={
+                    <SmallAvatar
+                      alt=""
+                      src={EditIcon}
+                      style={{ backgroundColor: "#d1d1d1" }}
+                    />
+                  }
+                >
+                  <Avatar className={classes.avatar}>
+                    {profileDetails.first_name.charAt(0)}
+                  </Avatar>
+                </Badge>
+              ) : (
+                <Badge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  badgeContent={
+                    <SmallAvatar
+                      alt=""
+                      src={EditIcon}
+                      style={{ backgroundColor: "#d1d1d1" }}
+                    />
+                  }
+                >
+                  <Avatar
+                    alt="Pic"
+                    src={
+                      !profilePhoto
+                        ? profileDetails.profile_photo
+                        : profilePhoto[0].data
+                    }
+                    className={classes.avatar}
+                  />
+                </Badge>
+              )}
+            </a>
+
+            {profileDetails.partner.organization ? (
+              <div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <a
+                  href="#organisation_photo"
+                  onClick={(e) => setUploadOrgOpen(true)}
+                >
+                  {!profileDetails.partner.organization.organization_photo ? (
+                    <Badge
+                      overlap="circle"
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      className={classes.avatar}
+                      badgeContent={
+                        <SmallAvatar
+                          alt=""
+                          src={EditIcon}
+                          style={{ backgroundColor: "#d1d1d1" }}
+                        />
+                      }
+                    >
+                      <Avatar className={classes.avatar}>
+                        {profileDetails.partner.organization.organization_name.charAt(
+                          0
+                        )}
+                      </Avatar>
+                    </Badge>
+                  ) : (
+                    <Badge
+                      overlap="circle"
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      badgeContent={
+                        <SmallAvatar
+                          alt=""
+                          src={EditIcon}
+                          style={{ backgroundColor: "#d1d1d1" }}
+                        />
+                      }
+                    >
+                      <Avatar
+                        alt="Pic"
+                        src={
+                          !organizationPhoto
+                            ? profileDetails.partner.organization
+                                .organization_photo
+                            : organizationPhoto[0].data
+                        }
+                        className={classes.avatar}
+                      />
+                    </Badge>
+                  )}
+                </a>
+              </div>
+            ) : (
+              ""
+            )}
+          </Grid>
+        </Grid>
+      </Paper>
 
       {/* upload photo dialog here */}
       <Dialog onClose={() => setUploadOpen(false)} open={uploadOpen}>
@@ -524,6 +733,69 @@ const PartnerProfilePage = (props) => {
             color="primary"
             onClick={(e) => {
               handleUploadProfileImage(e);
+            }}
+          >
+            Update
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* upload organisation photo dialog here */}
+      <Dialog onClose={() => setUploadOrgOpen(false)} open={uploadOrgOpen}>
+        <DialogTitle>
+          <Typography style={{ textTransform: "capitalize", fontSize: "19px" }}>
+            Upload Organisation Photo
+          </Typography>
+          <IconButton
+            style={{ right: "12px", top: "8px", position: "absolute" }}
+            onClick={() => {
+              setOrganizationPhoto();
+              setUploadOrgOpen(false);
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent>
+          <DropzoneAreaBase
+            dropzoneClass={classes.dropzone}
+            dropzoneText="&nbsp;Drag and drop an image or click here&nbsp;"
+            acceptedFiles={["image/*"]}
+            filesLimit={1}
+            fileObjects={organizationPhoto}
+            useChipsForPreview={true}
+            maxFileSize={5000000}
+            onAdd={(newPhoto) => {
+              setOrganizationPhoto(newPhoto);
+            }}
+            onDelete={(deletePhotoObj) => {
+              setOrganizationPhoto();
+            }}
+            previewGridProps={{
+              item: {
+                xs: "auto",
+              },
+            }}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            className={classes.button}
+            onClick={() => {
+              setProfilePhoto();
+              setUploadOrgOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            className={classes.button}
+            color="primary"
+            onClick={(e) => {
+              handleUploadOrganizationImage(e);
             }}
           >
             Update
