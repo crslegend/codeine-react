@@ -245,7 +245,12 @@ const MemberLanding = () => {
         .get(`/auth/members/${decoded.user_id}`)
         .then((res) => {
           // console.log(res);
-          setUser(res.data);
+
+          if (!res.data.member) {
+            history.push("/404");
+          } else {
+            setUser(res.data);
+          }
         })
         .catch((err) => console.log(err));
     }

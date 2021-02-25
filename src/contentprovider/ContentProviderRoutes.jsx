@@ -269,7 +269,12 @@ const ContentProviderHome = () => {
         .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
           console.log(res);
-          setUser(res.data);
+
+          if (!res.data.partner) {
+            history.push("/404");
+          } else {
+            setUser(res.data);
+          }
         })
         .catch((err) => console.log(err));
     }
