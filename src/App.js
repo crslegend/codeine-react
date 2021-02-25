@@ -23,6 +23,7 @@ import PaymentSuccess from "./components/PaymentSuccess";
 import AdminRoute from "./components/AdminRoute";
 import PartnerRoute from "./components/PartnerRoute";
 import MemberRoute from "./components/MemberRoute";
+import MemberAndPublicRoute from "./components/MemberAndPublicRoute";
 
 const App = () => {
   return (
@@ -50,9 +51,9 @@ const App = () => {
         render={() => <ContentProviderRegisterPage />}
         user="partner"
       />
-      <Route exact path="/" component={MemberLandingPage} />
-      <Route exact path="/courses" component={ViewAllCourses} />
-      <Route
+      <MemberAndPublicRoute exact path="/" component={MemberLandingPage} />
+      <MemberAndPublicRoute exact path="/courses" component={ViewAllCourses} />
+      <MemberAndPublicRoute
         exact
         path="/courses/:id"
         strict
