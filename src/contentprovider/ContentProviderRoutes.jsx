@@ -151,6 +151,22 @@ const ContentProviderHome = () => {
 
   const sidebarList = (
     <Fragment>
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "10px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            Navigation
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/partner/home/dashboard"
@@ -169,7 +185,7 @@ const ContentProviderHome = () => {
         button
       >
         <NoteAdd className={classes.listIcon} />
-        <Typography variant="body1">Content Management</Typography>
+        <Typography variant="body1">My Courses</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -179,7 +195,7 @@ const ContentProviderHome = () => {
         button
       >
         <SchoolOutlinedIcon className={classes.listIcon} />
-        <Typography variant="body1">Course Student</Typography>
+        <Typography variant="body1">My Students</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -201,7 +217,23 @@ const ContentProviderHome = () => {
         <HelpOutlineOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
-      <Divider />
+      {/* <Divider /> */}
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "20px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            User Settings
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/partner/home/profile"
@@ -222,6 +254,22 @@ const ContentProviderHome = () => {
         <LockOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Password</Typography>
       </ListItem>
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "20px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            Transactions
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/partner/home/contributions"
