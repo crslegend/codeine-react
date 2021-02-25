@@ -258,7 +258,7 @@ const StudentPage = () => {
     <Fragment>
       <PageTitle title="My Students" />
       <Grid container>
-        <Grid item xs={7} className={classes.searchSection}>
+        <Grid item xs={9} className={classes.searchSection}>
           <SearchBar
             style={{
               marginBottom: "20px",
@@ -274,10 +274,10 @@ const StudentPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={3}>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Filter By</InputLabel>
+              <InputLabel style={{ top: -1 }}>Filter</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
@@ -302,7 +302,7 @@ const StudentPage = () => {
       <Grid
         item
         xs={12}
-        style={{ height: "calc(100vh - 200px)", width: "100%" }}
+        style={{ height: "calc(100vh - 280px)", width: "100%" }}
       >
         <DataGrid
           rows={studentRows}

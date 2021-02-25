@@ -576,10 +576,10 @@ const AdminHumanResourcePage = () => {
       {/* Members Tab */}
       <TabPanel value={value} index={0}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "50%",
+                width: "70%",
                 marginBottom: "20px",
                 elavation: "0px",
               }}
@@ -704,10 +704,10 @@ const AdminHumanResourcePage = () => {
       {/* Partners Tab */}
       <TabPanel value={value} index={1}>
         <Grid container>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "60%",
+                width: "70%",
                 marginBottom: "20px",
               }}
               placeholder="Search partners"
@@ -717,7 +717,7 @@ const AdminHumanResourcePage = () => {
               onCancelSearch={() => setSearchValuePartner("")}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Button variant="contained" color="primary">
               Email Selected Partners
             </Button>
@@ -817,6 +817,11 @@ const AdminHumanResourcePage = () => {
               </Grid>
 
               <Grid container className={classes.border}>
+                <Grid item xs={12} style={{ marginBottom: "10px" }}>
+                  <Typography style={{ fontSize: "16spx" }}>
+                    <strong>Organisation Details</strong>
+                  </Typography>
+                </Grid>
                 <Grid item xs={2}>
                   {selectedPartner.partner.organization && (
                     <Fragment>
@@ -887,10 +892,10 @@ const AdminHumanResourcePage = () => {
       {/* Admin Tab */}
       <TabPanel value={value} index={2}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "50%",
+                width: "70%",
                 marginBottom: "20px",
               }}
               placeholder="Search admin"

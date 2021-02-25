@@ -264,7 +264,7 @@ const ViewAllCourses = () => {
         </Button>
       </div>
       <Grid container>
-        <Grid item xs={7}>
+        <Grid item xs={9}>
           <SearchBar
             placeholder="Search Courses"
             value={searchValue}
@@ -277,7 +277,7 @@ const ViewAllCourses = () => {
             }}
           />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={3}>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
             <Select

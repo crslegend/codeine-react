@@ -7,6 +7,7 @@ import {
   CardContent,
   CardMedia,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -56,12 +57,6 @@ const styles = makeStyles((theme) => ({
     alignItems: "center",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-  },
-  searchBar: {
-    width: 350,
-  },
-  input: {
-    fontWeight: 600,
   },
   formControl: {
     marginLeft: theme.spacing(5),
@@ -192,42 +187,46 @@ const CoursesPage = () => {
         </Typography>
       </Box>
       <div className={classes.content}>
-        <div className={classes.searchSection}>
-          <SearchBar
-            placeholder="Search Courses"
-            value={searchValue}
-            onChange={(newValue) => setSearchValue(newValue)}
-            onCancelSearch={handleCancelSearch}
-            onRequestSearch={handleRequestSearch}
-            className={classes.searchBar}
-            classes={{
-              input: classes.input,
-            }}
-          />
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
-            <Select
-              label="Sort By"
-              value={sortMethod}
-              onChange={(event) => {
-                onSortChange(event);
+        <Grid container>
+          <Grid item xs={9}>
+            <SearchBar
+              placeholder="Search Courses"
+              value={searchValue}
+              onChange={(newValue) => setSearchValue(newValue)}
+              onCancelSearch={handleCancelSearch}
+              onRequestSearch={handleRequestSearch}
+              className={classes.searchBar}
+              classes={{
+                input: classes.input,
               }}
-              style={{ height: 47, backgroundColor: "#fff" }}
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="-published_date">
-                Published Date (Least Recent)
-              </MenuItem>
-              <MenuItem value="published_date">
-                Published Date (Most Recent)
-              </MenuItem>
-              <MenuItem value="rating">Rating (Ascending)</MenuItem>
-              <MenuItem value="-rating">Rating (Descending)</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
+              <Select
+                label="Sort By"
+                value={sortMethod}
+                onChange={(event) => {
+                  onSortChange(event);
+                }}
+                style={{ height: 47, backgroundColor: "#fff" }}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="-published_date">
+                  Published Date (Least Recent)
+                </MenuItem>
+                <MenuItem value="published_date">
+                  Published Date (Most Recent)
+                </MenuItem>
+                <MenuItem value="rating">Rating (Ascending)</MenuItem>
+                <MenuItem value="-rating">Rating (Descending)</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
         <div className={classes.courses}>
           {allCourses && allCourses.length > 0 ? (
             allCourses
