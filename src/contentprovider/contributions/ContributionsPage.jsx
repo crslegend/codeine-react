@@ -2,10 +2,12 @@ import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Paper,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -36,6 +38,13 @@ const useStyles = makeStyles((theme) => ({
       color: "#000",
     },
   },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3),
+    width: "70%",
+    margin: "40px auto",
+  },
 }));
 
 const ContributionsPage = () => {
@@ -58,7 +67,9 @@ const ContributionsPage = () => {
 
   const [contributions, setContributions] = useState([]);
 
-  const getAllContributions = () => {
+  const [latestContribution, setLatestContribution] = useState();
+
+  const getAllContributions = async () => {
     Service.client
       .get(`/contributions`)
       .then((res) => {
@@ -78,6 +89,25 @@ const ContributionsPage = () => {
         }
 
         setContributions(arr);
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/contributions`, { params: { latest: 1 } })
+      .then((res) => {
+        console.log(res);
+
+        if (res.data.expiry_date) {
+          const futureDate = new Date(res.data.expiry_date);
+          const currentDate = new Date();
+          const diffTime = futureDate - currentDate;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays > 35) {
+            // check = false;
+            setLatestContribution(res.data);
+          }
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -216,6 +246,22 @@ const ContributionsPage = () => {
     return "";
   };
 
+  const formatDateToReturnWithoutTime = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 250 },
     {
@@ -234,7 +280,7 @@ const ContributionsPage = () => {
     },
     {
       field: "expiry_date",
-      headerName: "Contributed Till",
+      headerName: "Expires On",
       valueFormatter: (params) => formatDate(params.value),
       width: 250,
     },
@@ -254,6 +300,92 @@ const ContributionsPage = () => {
           Make A Contribution
         </Button>
       </div>
+
+      <Paper className={classes.paper}>
+        <Typography
+          variant="h5"
+          style={{ fontWeight: 600, paddingBottom: "20px" }}
+        >
+          Current Active Contribution
+        </Typography>
+        {latestContribution && latestContribution ? (
+          <Fragment>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <Typography
+                variant="body1"
+                style={{ marginRight: "10px", fontWeight: 600 }}
+              >
+                Status:{" "}
+              </Typography>
+              <Chip
+                label="Active"
+                style={{ backgroundColor: "green", color: "#fff" }}
+                size="small"
+              />
+            </div>
+
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              <span style={{ fontWeight: 600 }}>Paid On: </span>
+              {formatDate(latestContribution.payment_transaction.timestamp)}
+            </Typography>
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              <span style={{ fontWeight: 600 }}>Paid By: </span>
+              {latestContribution.payment_transaction.payment_type}
+            </Typography>
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              <span style={{ fontWeight: 600 }}>Payment Amount: </span>$
+              {latestContribution.payment_transaction.payment_amount}
+            </Typography>
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              <span style={{ fontWeight: 600 }}>Expires On: </span>
+              {formatDateToReturnWithoutTime(latestContribution.expiry_date)}
+            </Typography>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <Typography
+                variant="body1"
+                style={{ marginRight: "10px", fontWeight: 600 }}
+              >
+                Status:{" "}
+              </Typography>
+              <Chip
+                label="Inactive"
+                style={{ backgroundColor: "#C74343", color: "#fff" }}
+                size="small"
+              />
+            </div>
+
+            <Typography variant="body1">
+              You have yet to make contribution for this month.
+            </Typography>
+          </Fragment>
+        )}
+      </Paper>
+
+      <Typography
+        variant="h5"
+        style={{
+          fontWeight: 600,
+          paddingTop: "10px",
+          paddingBottom: "10px",
+        }}
+      >
+        Contribution History
+      </Typography>
 
       <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
         <DataGrid rows={contributions} columns={columns} pageSize={10} />
