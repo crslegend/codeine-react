@@ -141,7 +141,11 @@ const BookConsult = () => {
     // Edit endpoint to get upcoming consultation
     Service.client
       .get("/consultations", {
-        params: { partner_id: id, is_cancelled: "False" },
+        params: {
+          partner_id: id,
+          is_cancelled: "False",
+          search_date: currentDate,
+        },
       })
       .then((res) => {
         setTimeout(() => {
