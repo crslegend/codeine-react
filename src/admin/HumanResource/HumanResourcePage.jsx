@@ -52,6 +52,13 @@ const styles = makeStyles((theme) => ({
     width: "100px",
     height: "100px",
   },
+  border: {
+    border: "1px solid",
+    borderRadius: "5px",
+    borderColor: "#437FC7",
+    marginTop: "15px",
+    padding: "10px",
+  },
 }));
 
 function TabPanel(props) {
@@ -569,14 +576,14 @@ const AdminHumanResourcePage = () => {
       {/* Members Tab */}
       <TabPanel value={value} index={0}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "50%",
+                width: "70%",
                 marginBottom: "20px",
                 elavation: "0px",
               }}
-              placeholder="Search members..."
+              placeholder="Search members"
               value={searchValueMember}
               onChange={(newValue) => setSearchValueMember(newValue)}
               onRequestSearch={getMemberData}
@@ -623,32 +630,6 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedMember.id} <br />
-                  {selectedMember.first_name} <br />
-                  {selectedMember.last_name} <br />
-                  {selectedMember.email} <br />
-                </Typography>
-                {selectedMember.is_active ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedMember.date_joined)} <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
                 {selectedMember.profile_photo ? (
                   <Avatar
                     src={selectedMember.profile_photo}
@@ -660,6 +641,41 @@ const AdminHumanResourcePage = () => {
                     {selectedMember.email.charAt(0)}
                   </Avatar>
                 )}
+              </Grid>
+              <Grid item xs={10}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Typography style={{ fontSize: "20px" }}>
+                    <strong>
+                      {selectedMember.first_name} {selectedMember.last_name}{" "}
+                    </strong>
+                  </Typography>
+                  {selectedMember.is_active ? (
+                    <Typography style={{ color: "green" }}>
+                      {"\u00A0"}(Active){" "}
+                    </Typography>
+                  ) : (
+                    <Typography style={{ color: "red" }}>
+                      {"\u00A0"}(Deactived)
+                    </Typography>
+                  )}
+                </div>
+                <Typography style={{ color: "black" }}>
+                  {selectedMember.email} <br />
+                </Typography>
+                <Typography
+                  style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
+                >
+                  Joined on {formatDate(selectedMember.date_joined)}
+                </Typography>
+                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
+                  ID: {selectedMember.id}
+                </Typography>
               </Grid>
             </Grid>
             <br /> <br />
@@ -688,21 +704,23 @@ const AdminHumanResourcePage = () => {
       {/* Partners Tab */}
       <TabPanel value={value} index={1}>
         <Grid container>
-          <Grid item xs={10}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "60%",
+                width: "70%",
                 marginBottom: "20px",
               }}
-              placeholder="Search partners..."
+              placeholder="Search partners"
               value={searchValuePartner}
               onChange={(newValue) => setSearchValuePartner(newValue)}
               onRequestSearch={getPartnerData}
               onCancelSearch={() => setSearchValuePartner("")}
             />
           </Grid>
-          <Grid item xs={2}>
-            <Button>Email Selected Partners</Button>
+          <Grid item xs={3}>
+            <Button variant="contained" color="primary">
+              Email Selected Partners
+            </Button>
           </Grid>
 
           <Grid
@@ -742,95 +760,113 @@ const AdminHumanResourcePage = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <Grid container>
-              <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                </Typography>
-
-                <br />
-
-                {selectedPartner.partner.organization ? (
-                  <Typography>
-                    Job Title <br />
-                    Bio <br />
-                    Organisation <br />
-                  </Typography>
-                ) : (
-                  ""
-                )}
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedPartner.id} <br />
-                  {selectedPartner.first_name
-                    ? selectedPartner.first_name
-                    : "-"}{" "}
-                  <br />
-                  {selectedPartner.last_name
-                    ? selectedPartner.last_name
-                    : "-"}{" "}
-                  <br />
-                  {selectedPartner.email} <br />
-                </Typography>
-                {selectedPartner.is_active ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedPartner.date_joined)} <br />
-                </Typography>
-                <br />
-                {selectedPartner.partner.organization ? (
-                  <Typography>
-                    {selectedPartner.partner.job_title}
-                    <br />
-                    {selectedPartner.partner.bio} <br />
-                    {selectedPartner.partner.organization.organization_name}
-                    <br />
-                  </Typography>
-                ) : (
-                  ""
-                )}
-              </Grid>
-              <Grid item xs={4}>
-                {selectedPartner.profile_photo ? (
-                  <Avatar
-                    src={selectedPartner.profile_photo}
-                    alt=""
-                    className={classes.avatar}
-                  />
-                ) : (
-                  <Avatar className={classes.avatar}>
-                    {selectedPartner.email.charAt(0)}
-                  </Avatar>
-                )}
-
-                <br />
-                <br />
-                <br />
-
-                {selectedPartner.partner.organization ? (
-                  <Fragment>
-                    <img
-                      src={
-                        selectedPartner.partner.organization.organization_photo
-                      }
+            <div>
+              <Grid container>
+                <Grid item xs={2}>
+                  {selectedPartner.profile_photo ? (
+                    <Avatar
+                      src={selectedPartner.profile_photo}
                       alt=""
-                      width="200px"
-                    ></img>
-                  </Fragment>
-                ) : (
-                  ""
-                )}
+                      className={classes.avatar}
+                    />
+                  ) : (
+                    <Avatar className={classes.avatar}>
+                      {selectedPartner.email.charAt(0)}
+                    </Avatar>
+                  )}
+                </Grid>
+                <Grid item xs={10}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Typography style={{ fontSize: "20px" }}>
+                      <strong>
+                        {selectedPartner.first_name} {selectedPartner.last_name}{" "}
+                      </strong>
+                    </Typography>
+                    {selectedPartner.is_active ? (
+                      <Typography style={{ color: "green" }}>
+                        {"\u00A0"}(Active){" "}
+                      </Typography>
+                    ) : (
+                      <Typography style={{ color: "red" }}>
+                        {"\u00A0"}(Deactived)
+                      </Typography>
+                    )}
+                  </div>
+                  <Typography style={{ color: "black" }}>
+                    {selectedPartner.email} <br />
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "14px",
+                      marginTop: "0px",
+                      color: "black",
+                    }}
+                  >
+                    Joined on {formatDate(selectedPartner.date_joined)}
+                  </Typography>
+                  <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
+                    ID: {selectedPartner.id}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
+
+              <Grid container className={classes.border}>
+                <Grid item xs={12} style={{ marginBottom: "10px" }}>
+                  <Typography style={{ fontSize: "16spx" }}>
+                    <strong>Organisation Details</strong>
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  {selectedPartner.partner.organization && (
+                    <Fragment>
+                      {selectedPartner.partner.organization
+                        .organization_photo ? (
+                        <Avatar
+                          src={
+                            selectedPartner.partner.organization
+                              .organization_photo
+                          }
+                          alt=""
+                          className={classes.avatar}
+                        />
+                      ) : (
+                        <Avatar className={classes.avatar}>
+                          {selectedPartner.partner.organization.organization_name.charAt(
+                            0
+                          )}
+                        </Avatar>
+                      )}
+                    </Fragment>
+                  )}
+                </Grid>
+                <Grid item xs={10}>
+                  {selectedPartner.partner.organization && (
+                    <div>
+                      <Typography>
+                        <strong>{selectedPartner.partner.job_title}</strong>
+                        {"\u00A0"}@{" "}
+                        <strong>
+                          {
+                            selectedPartner.partner.organization
+                              .organization_name
+                          }
+                        </strong>
+                      </Typography>
+                      <Typography style={{ color: "#437FC7" }}>
+                        <strong>Bio</strong>
+                      </Typography>
+                      {selectedPartner.partner.bio}
+                    </div>
+                  )}
+                </Grid>
+              </Grid>
+            </div>
             <br />
           </DialogContent>
           <DialogActions>
@@ -856,13 +892,13 @@ const AdminHumanResourcePage = () => {
       {/* Admin Tab */}
       <TabPanel value={value} index={2}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "50%",
+                width: "70%",
                 marginBottom: "20px",
               }}
-              placeholder="Search admin..."
+              placeholder="Search admin"
               value={searchValueAdmin}
               onChange={(newValue) => setSearchValueAdmin(newValue)}
               onRequestSearch={getAdminData}
@@ -908,33 +944,6 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedAdmin.id} <br />
-                  {selectedAdmin.first_name} <br />
-                  {selectedAdmin.last_name} <br />
-                  {selectedAdmin.email} <br />
-                </Typography>
-                {selectedAdmin.is_active ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedAdmin.date_joined)} <br />
-                </Typography>
-                <br />
-              </Grid>
-              <Grid item xs={4}>
                 {selectedAdmin.profile_photo ? (
                   <Avatar
                     src={selectedAdmin.profile_photo}
@@ -947,8 +956,43 @@ const AdminHumanResourcePage = () => {
                   </Avatar>
                 )}
               </Grid>
+              <Grid item xs={10}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Typography style={{ fontSize: "20px" }}>
+                    <strong>
+                      {selectedAdmin.first_name} {selectedAdmin.last_name}{" "}
+                    </strong>
+                  </Typography>
+                  {selectedAdmin.is_active ? (
+                    <Typography style={{ color: "green" }}>
+                      {"\u00A0"}(Active){" "}
+                    </Typography>
+                  ) : (
+                    <Typography style={{ color: "red" }}>
+                      {"\u00A0"}(Deactived)
+                    </Typography>
+                  )}
+                </div>
+                <Typography style={{ color: "black" }}>
+                  {selectedAdmin.email} <br />
+                </Typography>
+                <Typography
+                  style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
+                >
+                  Joined on {formatDate(selectedAdmin.date_joined)}
+                </Typography>
+                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
+                  ID: {selectedAdmin.id}
+                </Typography>
+                <br />
+              </Grid>
             </Grid>
-            <br />
           </DialogContent>
         </Dialog>
       </TabPanel>

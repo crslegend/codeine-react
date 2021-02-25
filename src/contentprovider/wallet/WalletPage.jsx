@@ -406,7 +406,7 @@ const WalletPage = () => {
       >
         My Earnings
       </Typography>
-      <div style={{ height: "calc(100vh - 300px)", width: "100%" }}>
+      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
         <DataGrid
           rows={transactionRows}
           columns={transactionColumns.map((column) => ({

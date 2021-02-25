@@ -233,7 +233,7 @@ const PartnerProfilePage = (props) => {
     // instantiate form-data
     e.preventDefault();
 
-    if (!profilePhoto) {
+    if (profilePhoto && profilePhoto.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -266,6 +266,9 @@ const PartnerProfilePage = (props) => {
         });
         setProfile(res.data);
         setProfileDetails(res.data);
+        if (profilePhoto) {
+          setProfilePhoto([]);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -279,7 +282,7 @@ const PartnerProfilePage = (props) => {
     // instantiate form-data
     e.preventDefault();
 
-    if (!organizationPhoto) {
+    if (organizationPhoto && organizationPhoto.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -320,6 +323,9 @@ const PartnerProfilePage = (props) => {
             organization: res.data,
           },
         });
+        if (organizationPhoto) {
+          setOrganizationPhoto([]);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -531,11 +537,7 @@ const PartnerProfilePage = (props) => {
               >
                 <Avatar
                   alt="Pic"
-                  src={
-                    !profilePhoto
-                      ? profileDetails.profile_photo
-                      : profilePhoto[0].data
-                  }
+                  src={profileDetails.profile_photo}
                   className={classes.avatar}
                 />
               </Badge>
@@ -665,10 +667,7 @@ const PartnerProfilePage = (props) => {
                     <Avatar
                       alt="Pic"
                       src={
-                        !organizationPhoto
-                          ? profileDetails.partner.organization
-                              .organization_photo
-                          : organizationPhoto[0].data
+                        profileDetails.partner.organization.organization_photo
                       }
                       className={classes.avatar}
                     />

@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     padding: theme.spacing(3),
     width: "50%",
-    margin: "40px auto",
+    margin: "20px auto",
   },
   dataGrid: {
     backgroundColor: "#fff",
@@ -393,7 +393,7 @@ const ContributionsPage = () => {
         Contribution History
       </Typography>
 
-      <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
+      <div style={{ height: "calc(100vh - 450px)", width: "100%" }}>
         <DataGrid
           rows={contributions}
           columns={columns}
