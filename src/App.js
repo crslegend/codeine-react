@@ -20,6 +20,9 @@ import ViewCourseDetails from "./member/course/ViewCourseDetails";
 import EnrollCourse from "./member/course/EnrollCourse";
 import BookConsult from "./member/course/BookConsult";
 import PaymentSuccess from "./components/PaymentSuccess";
+import AdminRoute from "./components/AdminRoute";
+import PartnerRoute from "./components/PartnerRoute";
+import MemberRoute from "./components/MemberRoute";
 
 const App = () => {
   return (
@@ -30,7 +33,7 @@ const App = () => {
         render={() => <ContentProviderLanding />}
         user="partner"
       />
-      <PrivateRoute
+      <PartnerRoute
         path="/partner/home"
         render={() => <ContentProviderHome />}
         user="partner"
@@ -56,14 +59,14 @@ const App = () => {
         sensitive
         component={ViewCourseDetails}
       />
-      <Route
+      <MemberRoute
         exact
         path="/courses/enroll/:id"
         strict
         sensitive
         component={EnrollCourse}
       />
-      <Route
+      <MemberRoute
         exact
         path="/courses/enroll/consultation/:id"
         strict
@@ -79,7 +82,7 @@ const App = () => {
       <Route exact path="/member/register" component={MemberRegisterPage} />
       <Route exact path="/industry" component={IndustryLanding} />
       <Route exact path="/admin/login" component={AdminLoginPage} />
-      <PrivateRoute path="/admin" component={AdminRoutesPage} user="admin" />
+      <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
       <Route path="/payment/success" component={PaymentSuccess} />
       <Route component={NotFound} />
