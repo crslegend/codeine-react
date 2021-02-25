@@ -51,6 +51,7 @@ const AddConsultation = () => {
 
   const [titleAlertOpen, setTitleAlertOpen] = useState(false);
   const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
+  const [dateAlertOpen, setDateAlertOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
 
   // const fetchUpdate = () => {
@@ -80,6 +81,13 @@ const AddConsultation = () => {
       return;
     }
     setMeetingLinkAlertOpen(false);
+  };
+
+  const handleDateAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setDateAlertOpen(false);
   };
 
   const handleTitleAlertClose = (e, reason) => {
@@ -158,6 +166,11 @@ const AddConsultation = () => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
+    } else if (
+      slot.start_time <= currentDate ||
+      slot.start_time >= slot.end_time
+    ) {
+      setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
     } else {
@@ -303,6 +316,17 @@ const AddConsultation = () => {
         <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
           <Typography variant="body1">
             Please enter a consultation title!
+          </Typography>
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={dateAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleDateAlertClose}
+      >
+        <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
+          <Typography variant="body1">
+            Please enter a valid consultation date and time!
           </Typography>
         </Alert>
       </Snackbar>
