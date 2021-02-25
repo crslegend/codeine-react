@@ -18,8 +18,12 @@ import {
   AppointmentTooltip,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Toast from "../../components/Toast.js";
+import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 import Service from "../../AxiosService";
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -64,7 +68,7 @@ const mapAppointmentData = (item) => ({
   startDate: usaTime(item.start_time),
   endDate: usaTime(item.end_time),
   //meeting_link: item.meeting_link,
-  //member: handleMemberList(item.confirmed_applications),
+  members: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
   curr_members: item.confirmed_applications.length,
@@ -111,6 +115,8 @@ const BookConsult = () => {
   const { consultations, loading } = state;
   const currentDate = new Date();
 
+  console.log(consultations);
+
   const setConsultations = React.useCallback(
     (nextConsultations) =>
       dispatch({
@@ -131,14 +137,15 @@ const BookConsult = () => {
 
   const handleGetAllConsultations = (id, setConsultations, setLoading) => {
     setLoading(true);
-    // if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-    //   const userid = jwt_decode(Service.getJWT()).user_id;
-    // }
 
     // Edit endpoint to get upcoming consultation
     Service.client
       .get("/consultations", {
-        params: { partner_id: id, is_cancelled: "False" },
+        params: {
+          partner_id: id,
+          is_cancelled: "False",
+          search_date: currentDate,
+        },
       })
       .then((res) => {
         setTimeout(() => {
@@ -149,6 +156,69 @@ const BookConsult = () => {
       .catch((error) => {
         setConsultations(null);
       });
+  };
+
+  const handlePaymentDialog = (slot) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+
+    for (let i = 0; i < slot.members.length; i++) {
+      console.log(slot.members[i].member);
+      if (decoded.user_id === slot.members[i].member.id) {
+        console.log("yo");
+        setSbOpen(true);
+        setSnackbar({
+          message: "You have already signed up for this consultation slot.",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+    }
+
+    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+      const emailAdd = res.data.email;
+
+      handleStripePaymentGateway(
+        slot.price_per_pax,
+        emailAdd,
+        decoded.user_id,
+        slot.id
+      );
+    });
+  };
+
+  const handleStripePaymentGateway = async (
+    amount,
+    email,
+    userId,
+    consultationId
+  ) => {
+    // Get Stripe.js instance
+    const stripe = await stripePromise;
+
+    const data = {
+      total_price: amount,
+      email: email,
+      description: "Book a consultation",
+      mId: userId,
+      pId: id,
+      consultation: consultationId,
+    };
+    console.log(data);
+
+    axios
+      .post("/create-consultation-checkout-session", data)
+      .then((res) => {
+        console.log(res);
+        stripe.redirectToCheckout({
+          sessionId: res.data.id,
+        });
+      })
+      .catch((err) => console.log(err.response));
   };
 
   // handles retrieval of all consultations
@@ -194,7 +264,8 @@ const BookConsult = () => {
         </Grid>
         <Button
           /* eslint-disable-next-line no-alert */
-          onClick={() => alert(JSON.stringify(appointmentData))}
+          //onClick={() => alert(JSON.stringify(appointmentData))}
+          onClick={() => handlePaymentDialog(appointmentData)}
           style={{
             textTransform: "none",
             margin: "15px 0px 15px 0px",
@@ -203,7 +274,7 @@ const BookConsult = () => {
           variant="contained"
           color="primary"
         >
-          Book Now
+          Book now
         </Button>
       </AppointmentTooltip.Content>
     )
