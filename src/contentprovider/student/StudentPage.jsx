@@ -347,7 +347,7 @@ const StudentPage = () => {
                   </Avatar>
                 )}
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={10}>
                 <div
                   style={{
                     display: "flex",
