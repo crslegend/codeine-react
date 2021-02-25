@@ -380,13 +380,10 @@ const ViewCourseDetailsPage = () => {
                       }}
                     >
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         style={{ paddingBottom: "15px" }}
                       >
-                        {chapter.course_materials &&
-                        chapter.course_materials.length === 1
-                          ? "1 Course Material"
-                          : `${chapter.course_materials.length} Course Materials`}
+                        {chapter.overview && chapter.overview}
                       </Typography>
                       {chapter.course_materials &&
                         chapter.course_materials.length > 0 &&
