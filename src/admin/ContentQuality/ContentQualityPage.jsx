@@ -1,26 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Avatar,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  IconButton,
-  AppBar,
-  Tabs,
-  Tab,
-  Box,
-  Grid,
-} from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import { Typography, AppBar, Tabs, Tab, Box, Grid } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
-import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
-import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -83,6 +68,8 @@ function a11yProps(index) {
 
 const AdminContentQualityPage = () => {
   const classes = styles();
+  const history = useHistory();
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -102,6 +89,10 @@ const AdminContentQualityPage = () => {
   });
 
   const formatDate = (date) => {
+    if (!date) {
+      return "-";
+    }
+
     const options = {
       year: "numeric",
       month: "long",
@@ -118,7 +109,23 @@ const AdminContentQualityPage = () => {
 
   const formatStatus = (status) => {
     if (status) {
-      return "Active";
+      return "Yes";
+    } else {
+      return "No";
+    }
+  };
+
+  const formatPubStatus = (status) => {
+    if (status) {
+      return "Published";
+    } else {
+      return "Unpublished";
+    }
+  };
+
+  const formatActStatus = (status) => {
+    if (status) {
+      return "Activated";
     } else {
       return "Deactivated";
     }
@@ -152,44 +159,71 @@ const AdminContentQualityPage = () => {
 
   const coruseColumns = [
     { field: "id", headerName: "ID", width: 300 },
-    { field: "title", headerName: "Title", width: 130 },
+    { field: "title", headerName: "Title", width: 200 },
+    {
+      field: "published_date",
+      headerName: "Date Uploaded",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 170,
+    },
     {
       field: "is_published",
       headerName: "Published Status",
-      width: 200,
-    },
-    {
-      field: "date_published",
-      headerName: "Date Uploaded",
-      valueFormatter: (params) => formatDate(params.value),
-      width: 200,
-    },
-    {
-      field: "is_activated",
-      headerName: "Status",
       renderCell: (params) => (
         <strong>
           {params.value ? (
             <Typography style={{ color: "green" }}>
-              {formatStatus(params.value)}
+              {formatPubStatus(params.value)}
             </Typography>
           ) : (
             <Typography style={{ color: "red" }}>
-              {formatStatus(params.value)}
+              {formatPubStatus(params.value)}
+            </Typography>
+          )}
+        </strong>
+      ),
+      width: 170,
+    },
+    {
+      field: "is_available",
+      headerName: "Activation Status",
+      renderCell: (params) => (
+        <strong>
+          {params.value ? (
+            <Typography style={{ color: "green" }}>
+              {formatActStatus(params.value)}
+            </Typography>
+          ) : (
+            <Typography style={{ color: "red" }}>
+              {formatActStatus(params.value)}
             </Typography>
           )}
         </strong>
       ),
       width: 160,
     },
+    {
+      field: "is_deleted",
+      headerName: "Deleted Status",
+      valueFormatter: (params) => formatStatus(params.value),
+      width: 170,
+    },
   ];
 
   let courseRows = allCourseList;
 
   const getCourseData = () => {
+    let queryParams;
+
+    if (searchValue !== "") {
+      queryParams = {
+        search: searchValue,
+      };
+    }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       Service.client
-        .get(`/courses`)
+        .get(`/private-courses`, { params: { ...queryParams } })
         .then((res) => {
           setAllCourseList(res.data.results);
           courseRows = allCourseList;
@@ -200,7 +234,7 @@ const AdminContentQualityPage = () => {
     }
   };
 
-  const handleMemberStatus = (e, status, courseid) => {
+  const handleCourseStatus = (e, status, courseid) => {
     e.preventDefault();
     if (status) {
       Service.client.patch(`/courses/${courseid}/deactivate`).then(() => {
@@ -277,7 +311,7 @@ const AdminContentQualityPage = () => {
               placeholder="Search courses..."
               value={searchValue}
               onChange={(newValue) => setSearchValue(newValue)}
-              //onRequestSearch={getSearchResults}
+              onRequestSearch={getCourseData}
               onCancelSearch={() => setSearchValue("")}
             />
           </Grid>
@@ -285,7 +319,7 @@ const AdminContentQualityPage = () => {
           <Grid
             item
             xs={12}
-            style={{ height: "calc(100vh - 250px)", width: "100%" }}
+            style={{ height: "calc(100vh - 300px)", width: "100%" }}
           >
             <DataGrid
               rows={courseRows}
@@ -296,90 +330,12 @@ const AdminContentQualityPage = () => {
               pageSize={10}
               //checkboxSelection
               disableSelectionOnClick
-              onRowClick={(e) => handleClickOpenCourse(e)}
+              onRowClick={(e) =>
+                history.push(`/admin/contentquality/courses/${e.row.id}`)
+              }
             />
           </Grid>
         </Grid>
-
-        <Dialog
-          open={openCourseDialog}
-          onClose={handleCloseCourse}
-          aria-labelledby="form-dialog-title"
-          maxWidth="md"
-          fullWidth={true}
-        >
-          <DialogTitle id="form-dialog-title">
-            Member Detail
-            <IconButton
-              aria-label="close"
-              className={classes.closeButton}
-              onClick={handleCloseCourse}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <Grid container>
-              <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  Title <br />
-                  Is Published <br />
-                  Date Uploaded <br />
-                  Status <br />
-                  Date Published <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedCourse.id} <br />
-                  {selectedCourse.title} <br />
-                  {selectedCourse.date_published} <br />
-                  {selectedCourse.is_publish} <br />=
-                </Typography>
-                {selectedCourse.is_activated ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedCourse.date_joined)} <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                {selectedCourse.thumbnail ? (
-                  <Avatar
-                    src={selectedCourse.thumbnail}
-                    alt=""
-                    className={classes.avatar}
-                  />
-                ) : (
-                  <Avatar className={classes.avatar}>
-                    {selectedCourse.title.charAt(0)}
-                  </Avatar>
-                )}
-              </Grid>
-            </Grid>
-            <br /> <br />
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={(e) =>
-                handleMemberStatus(
-                  e,
-                  selectedCourse.is_activated,
-                  selectedCourse.id
-                )
-              }
-            >
-              {selectedCourse.is_activated ? (
-                <div style={{ color: "red" }}>Deactivate</div>
-              ) : (
-                <div style={{ color: "green" }}>Activate</div>
-              )}
-            </Button>
-          </DialogActions>
-        </Dialog>
       </TabPanel>
       <TabPanel value={value} index={1}>
         Article

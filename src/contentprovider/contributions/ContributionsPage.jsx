@@ -255,7 +255,9 @@ const ContributionsPage = () => {
         </Button>
       </div>
 
-      <DataGrid rows={contributions} columns={columns} pageSize={10} />
+      <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
+        <DataGrid rows={contributions} columns={columns} pageSize={10} />
+      </div>
 
       <Dialog
         open={paymentDialog}

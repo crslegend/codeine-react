@@ -177,7 +177,7 @@ const AdminProfilePage = (props) => {
     // instantiate form-data
     e.preventDefault();
 
-    if (!profilePhoto) {
+    if (profilePhoto && profilePhoto.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -213,6 +213,9 @@ const AdminProfilePage = (props) => {
           .then((res) => {
             setProfile(res.data);
             setProfileDetails(res.data);
+            if (profilePhoto) {
+              setProfilePhoto([]);
+            }
           })
           .catch();
       })
@@ -236,7 +239,9 @@ const AdminProfilePage = (props) => {
                   name="id"
                   autoComplete="id"
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={profileDetails.id}
                 />
               </div>
@@ -307,7 +312,9 @@ const AdminProfilePage = (props) => {
                   autoComplete="date_joined"
                   required
                   fullWidth
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   value={formatDate(profileDetails.date_joined)}
                 />
               </div>
@@ -366,11 +373,7 @@ const AdminProfilePage = (props) => {
                   >
                     <Avatar
                       alt="Pic"
-                      src={
-                        !profilePhoto
-                          ? profileDetails.profile_photo
-                          : profilePhoto[0].data
-                      }
+                      src={profileDetails.profile_photo}
                       className={classes.avatar}
                     />
                   </Badge>

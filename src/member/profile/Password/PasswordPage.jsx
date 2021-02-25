@@ -145,7 +145,7 @@ const Password = () => {
     }
 
     Service.client
-      .patch(`/auth/members/${memberId}/changePassword`, passwordDetails)
+      .patch(`/auth/members/${memberId}/change-password`, passwordDetails)
       .then((res) => {
         setSbOpen(true);
         setSnackbar({
