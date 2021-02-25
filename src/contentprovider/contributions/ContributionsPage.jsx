@@ -14,12 +14,12 @@ import Service from "../../AxiosService";
 import PageTitle from "../../components/PageTitle";
 import { Add } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
-import { DataGrid } from "@material-ui/data-grid";
 
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
+import { DataGrid } from "@material-ui/data-grid";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
@@ -56,7 +56,39 @@ const ContributionsPage = () => {
   const [paymentAmount, setPaymentAmount] = useState();
   const [month, setMonth] = useState(1);
 
-  const handleStripePaymentGateway = async (amount, email, userId) => {
+  const [contributions, setContributions] = useState([]);
+
+  const getAllContributions = () => {
+    Service.client
+      .get(`/contributions`)
+      .then((res) => {
+        console.log(res);
+
+        let arr = [];
+        for (let i = 0; i < res.data.length; i++) {
+          const obj = {
+            id: res.data[i].id,
+            payment_amount: res.data[i].payment_transaction.payment_amount,
+            payment_type: res.data[i].payment_transaction.payment_type,
+            payment_status: res.data[i].payment_transaction.payment_status,
+            timestamp: res.data[i].payment_transaction.timestamp,
+            expiry_date: res.data[i].expiry_date,
+          };
+          arr.push(obj);
+        }
+
+        setContributions(arr);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleStripePaymentGateway = async (
+    amount,
+    email,
+    userId,
+    numOfMonths,
+    contributionId
+  ) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
@@ -65,6 +97,8 @@ const ContributionsPage = () => {
       email: email,
       description: "Monthly Contributions",
       pId: userId,
+      numOfMonths: numOfMonths,
+      contribution: contributionId,
     };
 
     axios
@@ -75,7 +109,7 @@ const ContributionsPage = () => {
           sessionId: res.data.id,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   };
 
   const handlePaymentDialog = () => {
@@ -114,6 +148,7 @@ const ContributionsPage = () => {
       .get(`/auth/partners/${decoded.user_id}`)
       .then((res) => {
         console.log(res);
+        const emailAdd = res.data.email;
 
         if (
           res.data.partner.organization &&
@@ -136,55 +171,74 @@ const ContributionsPage = () => {
           }
         }
 
-        handleStripePaymentGateway(
-          paymentAmount,
-          res.data.email,
-          decoded.user_id
-        );
+        let data = {
+          contribution: paymentAmount.toString(),
+          payment_type: "Credit Card",
+          month_duration: month,
+        };
+        console.log(data);
+
+        Service.client
+          .post(`contributions`, data)
+          .then((res) => {
+            console.log(res);
+
+            handleStripePaymentGateway(
+              paymentAmount,
+              emailAdd,
+              decoded.user_id,
+              month,
+              res.data.id
+            );
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
   };
 
-  // Contributions datagrid
-  const [allContributionList, setAllContributionList] = useState([]);
-  const [selectedContribution, setSelectedContribution] = useState({
-    id: "",
-    date: "",
-    amount: "",
-  });
+  useEffect(() => {
+    getAllContributions();
+  }, []);
 
-  const contributionColumns = [
-    { field: "id", headerName: "Contribution ID", width: 300 },
-    { field: "date", headerName: "Contribution Date", width: 180 },
-    { field: "amount", headerName: "Amount", width: 130 },
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate + " " + newDateTime;
+    }
+    return "";
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 250 },
     {
-      field: "duration",
-      headerName: "Duration",
-      width: 130,
+      field: "payment_amount",
+      headerName: "Contribution Amount",
+      valueFormatter: (params) => `$${params.value}`,
+      width: 150,
+    },
+    { field: "payment_type", headerName: "Paid By", width: 150 },
+    { field: "payment_status", headerName: "Status", width: 150 },
+    {
+      field: "timestamp",
+      headerName: "Paid On",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 250,
     },
     {
-      field: "payment_status",
-      headerName: "Payment Status",
-      width: 130,
+      field: "expiry_date",
+      headerName: "Contributed Till",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 250,
     },
   ];
-
-  let contributionRows = allContributionList;
-  const [searchValueContribution, setSearchValueContribution] = useState("");
-
-  const getContributionData = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      Service.client
-        .get(`/contributions`)
-        .then((res) => {
-          setAllContributionList(res.data);
-          contributionRows = allContributionList;
-        })
-        .catch((err) => {
-          //setProfile(null);
-        });
-    }
-  };
 
   return (
     <Fragment>
@@ -201,24 +255,8 @@ const ContributionsPage = () => {
         </Button>
       </div>
 
-      <div>
-        <Typography>Contribution Status</Typography>
-        <Typography style={{ color: "green" }}>Active</Typography>
-        <Typography style={{ color: "red" }}>Inactive</Typography>
-      </div>
-
-      <div style={{ height: "calc(100vh - 300px)", width: "100%" }}>
-        <DataGrid
-          rows={contributionRows}
-          columns={contributionColumns.map((column) => ({
-            ...column,
-            //disableClickEventBubbling: true,
-          }))}
-          pageSize={10}
-          //checkboxSelection
-          disableSelectionOnClick
-          //onRowClick={(e) => handleClickOpenAdmin(e)}
-        />
+      <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
+        <DataGrid rows={contributions} columns={columns} pageSize={10} />
       </div>
 
       <Dialog

@@ -317,7 +317,12 @@ const ViewCourseDetailsPage = () => {
               >
                 Course Content
               </Typography>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to={`/partner/home/content/view/quizzes/${id}`}
+              >
                 View All Quizzes
               </Button>
             </div>
@@ -512,10 +517,21 @@ const ViewCourseDetailsPage = () => {
                       key={index}
                       style={{ display: "flex", marginBottom: "20px" }}
                     >
-                      <Avatar style={{ marginRight: "15px" }} />
+                      {review.member.profile_photo &&
+                      review.member.profile_photo ? (
+                        <Avatar
+                          style={{ marginRight: "15px" }}
+                          src={review.member.profile_photo}
+                        />
+                      ) : (
+                        <Avatar style={{ marginRight: "15px" }}>
+                          {review.member.first_name.charAt(0)}
+                        </Avatar>
+                      )}
                       <div style={{ flexDirection: "column" }}>
                         <Typography variant="h6" style={{ fontWeight: 600 }}>
-                          Name here
+                          {review.member && review.member.first_name}{" "}
+                          {review.member && review.member.last_name}
                         </Typography>
                         <div style={{ display: "flex", marginBottom: "10px" }}>
                           <Rating

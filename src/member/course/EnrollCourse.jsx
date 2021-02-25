@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -55,6 +55,7 @@ const styles = makeStyles((theme) => ({
     minHeight: "calc(100vh - 10px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
+    paddingBottom: theme.spacing(10),
   },
   unenrollButton: {
     marginLeft: "25px",
@@ -92,6 +93,18 @@ const styles = makeStyles((theme) => ({
   reviews: {},
   linkMui: {
     cursor: "pointer",
+  },
+  buttonPaper: {
+    width: "60%",
+    backgroundColor: "#F4F4F4",
+    height: "10vh",
+  },
+  consultationButton: {
+    marginRight: "15px",
+    marginTop: "45px",
+    float: "right",
+    color: "#FFFFFF",
+    textTransform: "none",
   },
 }));
 
@@ -447,10 +460,14 @@ const EnrollCourse = () => {
               chosenCourseMaterial.material_type !== "FINAL" &&
               chosenCourseMaterial.material_type !== "INTRO" && (
                 <div style={{ marginTop: "20px" }}>
-                  <CommentsSection materialId={chosenCourseMaterial.id} />
+                  <CommentsSection
+                    materialId={chosenCourseMaterial.id}
+                    user={"member"}
+                  />
                 </div>
               )}
           </div>
+
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
             <Typography variant="h6">Your Progress</Typography>
@@ -835,7 +852,19 @@ const EnrollCourse = () => {
             </Accordion>
           </div>
         </div>
+        <Paper elevation={0} className={classes.buttonPaper}>
+          <Button
+            className={classes.consultationButton}
+            color="primary"
+            variant="contained"
+            component={Link}
+            to={`/courses/enroll/consultation/${course && course.partner.id}`}
+          >
+            Book consultation
+          </Button>
+        </Paper>
       </div>
+
       <Footer />
 
       <Dialog

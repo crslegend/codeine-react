@@ -249,7 +249,7 @@ const AddConsultation = () => {
             <TextField
               margin="dense"
               id="name"
-              label="Max no. of members"
+              label="Max no. of signups"
               value={maxMembers}
               onChange={(e) => handleMaxMemberChange(e.target.value)}
               type="number"
@@ -260,7 +260,7 @@ const AddConsultation = () => {
             <TextField
               margin="dense"
               id="name"
-              label="Price per pax (per hour)"
+              label="Price (per pax)"
               value={pricePerPax}
               onChange={(e) => handlePriceChange(e.target.value)}
               type="number"

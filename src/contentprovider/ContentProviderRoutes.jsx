@@ -40,6 +40,8 @@ import Wallet from "./wallet/WalletPage";
 import Student from "./student/StudentPage";
 import DashboardPage from "./dashboard/DashboardPage";
 import ContributionsPage from "./contributions/ContributionsPage";
+import ReplyToComments from "./course/ReplyToComments";
+import ViewAllQuizzes from "./course/ViewAllQuizzes";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -300,6 +302,18 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/content/new"
               render={() => <CourseCreation />}
+            />
+            <PrivateRoute
+              path="/partner/home/content/view/comments/:id"
+              strict
+              sensitive
+              render={(match) => <ReplyToComments match={match} />}
+            />
+            <PrivateRoute
+              path="/partner/home/content/view/quizzes/:id"
+              strict
+              sensitive
+              render={(match) => <ViewAllQuizzes match={match} />}
             />
             <PrivateRoute
               path="/partner/home/content/view/:id"

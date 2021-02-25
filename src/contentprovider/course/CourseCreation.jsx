@@ -638,18 +638,36 @@ const CourseCreation = () => {
 
   const handleLastPageSave = () => {
     if (isPublished === "true") {
-      const check = true; // to check whether partner paid
-      if (check) {
-        setPaymentDialog(true);
-      } else {
-        Service.client
-          .patch(`/courses/${courseId}/publish`)
-          .then((res) => {
+      let check = true;
+      Service.client
+        .get(`/contributions`, { params: { latest: 1 } })
+        .then((res) => {
+          console.log(res);
+
+          if (res.data.expiry_date) {
+            const futureDate = new Date(res.data.expiry_date);
+            const currentDate = new Date();
+            const diffTime = Math.abs(futureDate - currentDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays > 35) {
+              check = false;
+            }
+          }
+
+          if (check) {
             localStorage.removeItem("courseId");
-            history.push(`/partner/home/content`);
-          })
-          .catch((err) => console.log(err));
-      }
+            setPaymentDialog(true);
+          } else {
+            Service.client
+              .patch(`/courses/${courseId}/publish`)
+              .then((res) => {
+                localStorage.removeItem("courseId");
+                history.push(`/partner/home/content`);
+              })
+              .catch((err) => console.log(err));
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       Service.client
         .patch(`/courses/${courseId}/unpublish`)
