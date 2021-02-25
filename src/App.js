@@ -81,7 +81,7 @@ const App = () => {
       />
       <Route exact path="/member/login" component={MemberLoginPage} />
       <Route exact path="/member/register" component={MemberRegisterPage} />
-      <Route exact path="/industry" component={IndustryLanding} />
+      {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
