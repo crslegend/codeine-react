@@ -89,8 +89,21 @@ const ContentProviderLoginPage = () => {
       .post("/api/token/", loginDetails)
       .then((res) => {
         // console.log(res);
-        Service.storeCredentials(res.data);
-        history.push("/partner/home/dashboard");
+
+        if (res.data.user.partner) {
+          Service.storeCredentials(res.data);
+          history.push("/partner/home/dashboard");
+        } else {
+          setLoading(false);
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message:
+              "The email address entered is not a registered partner. Please register first!",
+            severity: "error",
+          });
+          return;
+        }
       })
       .catch((err) => {
         setLoading(false);
