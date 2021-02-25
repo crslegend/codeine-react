@@ -209,8 +209,9 @@ const ContributionsPage = () => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
+      const newDateTime = new Date(date).toLocaleTimeString("en-SG");
       // console.log(newDate);
-      return newDate;
+      return newDate + " " + newDateTime;
     }
     return "";
   };
@@ -221,21 +222,21 @@ const ContributionsPage = () => {
       field: "payment_amount",
       headerName: "Contribution Amount",
       valueFormatter: (params) => `$${params.value}`,
-      width: 200,
+      width: 150,
     },
-    { field: "payment_type", headerName: "Paid By", width: 200 },
-    { field: "payment_status", headerName: "Status", width: 200 },
+    { field: "payment_type", headerName: "Paid By", width: 150 },
+    { field: "payment_status", headerName: "Status", width: 150 },
     {
       field: "timestamp",
       headerName: "Paid On",
       valueFormatter: (params) => formatDate(params.value),
-      width: 200,
+      width: 250,
     },
     {
       field: "expiry_date",
       headerName: "Contributed Till",
       valueFormatter: (params) => formatDate(params.value),
-      width: 200,
+      width: 250,
     },
   ];
 
@@ -254,7 +255,9 @@ const ContributionsPage = () => {
         </Button>
       </div>
 
-      <DataGrid rows={contributions} columns={columns} pageSize={10} />
+      <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
+        <DataGrid rows={contributions} columns={columns} pageSize={10} />
+      </div>
 
       <Dialog
         open={paymentDialog}

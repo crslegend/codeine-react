@@ -28,6 +28,8 @@ import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPa
 import AnalyticsPage from "./Analytics/AnalyticsPage";
 import ProfilePage from "./Profile/ProfilePage";
 import PasswordPage from "./Password/PasswordPage";
+import ViewCourseDetail from "./ContentQuality/course/ViewCourseDetails";
+import ViewCourseContent from "./ContentQuality/course/EnrollCourse";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 
@@ -259,6 +261,20 @@ const AdminRoutesPage = () => {
             exact
             path="/admin/contentquality"
             render={() => <ContentQualityPage />}
+          />
+          <Route
+            exact
+            path="/admin/contentquality/courses/:id"
+            strict
+            sensitive
+            render={() => <ViewCourseDetail />}
+          />
+          <Route
+            exact
+            path="/admin/contentquality/courses/view/:id"
+            strict
+            sensitive
+            render={() => <ViewCourseContent />}
           />
           <Route exact path="/admin/helpdesk" render={() => <HelpdeskPage />} />
           <Route

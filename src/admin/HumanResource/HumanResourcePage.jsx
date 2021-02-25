@@ -950,16 +950,6 @@ const AdminHumanResourcePage = () => {
             </Grid>
             <br />
           </DialogContent>
-          {/* <DialogActions>
-            <Button
-              onClick={(e) =>
-                handleAdminStatus(e, selectedAdmin.is_active, selectedAdmin.id)
-              }
-              color="secondary"
-            >
-              {selectedAdmin.is_active === true ? "Deactivate" : "Activate"}
-            </Button>
-          </DialogActions> */}
         </Dialog>
       </TabPanel>
     </Fragment>
