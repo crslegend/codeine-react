@@ -128,7 +128,10 @@ const ContributionsPage = () => {
     const data = {
       total_price: amount,
       email: email,
-      description: "Monthly Contributions",
+      description:
+        numOfMonths && numOfMonths === 1
+          ? `Monthly Contributions for 1 Month`
+          : `Monthly Contributions for ${numOfMonths} Months`,
       pId: userId,
       numOfMonths: numOfMonths,
       contribution: contributionId,
