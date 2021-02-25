@@ -174,7 +174,7 @@ const ContributionsPage = () => {
         let data = {
           contribution: paymentAmount.toString(),
           payment_type: "Credit Card",
-          month_duration: month,
+          month_duration: parseInt(month),
         };
         console.log(data);
 
