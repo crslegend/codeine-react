@@ -258,19 +258,6 @@ const ViewCourseDetails = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
       <div className={classes.mainSection}>
         <div style={{ marginTop: "20px" }}>
           <IconButton onClick={() => history.push("/admin/contentquality")}>

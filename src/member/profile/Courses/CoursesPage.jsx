@@ -205,13 +205,14 @@ const CoursesPage = () => {
             }}
           />
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel>Sort By</InputLabel>
+            <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
             <Select
               label="Sort By"
               value={sortMethod}
               onChange={(event) => {
                 onSortChange(event);
               }}
+              style={{ height: 47, backgroundColor: "#fff" }}
             >
               <MenuItem value="">
                 <em>None</em>

@@ -335,7 +335,11 @@ const AdminProfilePage = (props) => {
             </Grid>
             <Grid item xs={6} style={{ paddingLeft: "25px" }}>
               <br />
-              <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+              <a
+                href="#profile_photo"
+                onClick={(e) => setUploadOpen(true)}
+                style={{ textDecoration: "none" }}
+              >
                 {!profileDetails.profile_photo ? (
                   <Badge
                     overlap="circle"

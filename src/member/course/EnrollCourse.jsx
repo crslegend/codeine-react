@@ -60,6 +60,7 @@ const styles = makeStyles((theme) => ({
     marginLeft: "25px",
     marginRight: "25px",
     backgroundColor: theme.palette.red.main,
+    textTransform: "none",
     color: "#fff",
     "&:hover": {
       color: "#000",
@@ -89,7 +90,6 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
-  reviews: {},
   linkMui: {
     cursor: "pointer",
   },
@@ -100,8 +100,8 @@ const styles = makeStyles((theme) => ({
   },
   consultationButton: {
     marginRight: "15px",
-    marginTop: "45px",
-    float: "right",
+    // marginTop: "45px",
+    // float: "right",
     color: "#FFFFFF",
     textTransform: "none",
   },
@@ -348,8 +348,22 @@ const EnrollCourse = () => {
             <ArrowBack />
           </IconButton>
           <div>
+            <Button
+              className={classes.consultationButton}
+              color="primary"
+              variant="contained"
+              component={Link}
+              to={`/courses/enroll/consultation/${course && course.partner.id}`}
+            >
+              Book consultation
+            </Button>
             {givenCourseReview && givenCourseReview ? (
-              <Button variant="contained" color="primary" disabled>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled
+                style={{ textTransform: "none" }}
+              >
                 Course Review Given
               </Button>
             ) : (
@@ -357,6 +371,7 @@ const EnrollCourse = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => setReviewDialog(true)}
+                style={{ textTransform: "none" }}
               >
                 Give Course Review
               </Button>
@@ -851,17 +866,6 @@ const EnrollCourse = () => {
             </Accordion>
           </div>
         </div>
-        <Paper elevation={0} className={classes.buttonPaper}>
-          <Button
-            className={classes.consultationButton}
-            color="primary"
-            variant="contained"
-            component={Link}
-            to={`/courses/enroll/consultation/${course && course.partner.id}`}
-          >
-            Book consultation
-          </Button>
-        </Paper>
       </div>
 
       <Footer />

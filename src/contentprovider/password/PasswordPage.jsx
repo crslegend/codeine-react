@@ -17,6 +17,7 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import PageTitle from "../../components/PageTitle.js";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -162,6 +163,7 @@ const PartnerPasswordPage = () => {
   return (
     <div>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <PageTitle title="Change Password" />
       <form onSubmit={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={6}>

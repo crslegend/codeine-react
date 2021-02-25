@@ -24,6 +24,7 @@ import Toast from "../../components/Toast.js";
 import validator from "validator";
 import Badge from "@material-ui/core/Badge";
 import EditIcon from "../../assets/editIcon.svg";
+import PageTitle from "../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -328,7 +329,7 @@ const PartnerProfilePage = (props) => {
   return (
     <div>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-
+      <PageTitle title="My Profile" />
       <Grid container>
         <Grid item xs={6}>
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
@@ -488,7 +489,11 @@ const PartnerProfilePage = (props) => {
         </Grid>
 
         <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-          <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+          <a
+            href="#profile_photo"
+            onClick={(e) => setUploadOpen(true)}
+            style={{ textDecoration: "none" }}
+          >
             {!profileDetails.profile_photo ? (
               <Badge
                 overlap="circle"
@@ -618,6 +623,7 @@ const PartnerProfilePage = (props) => {
               <a
                 href="#organisation_photo"
                 onClick={(e) => setUploadOrgOpen(true)}
+                style={{ textDecoration: "none" }}
               >
                 {!profileDetails.partner.organization.organization_photo ? (
                   <Badge

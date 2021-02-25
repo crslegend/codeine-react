@@ -45,7 +45,7 @@ const TakeQuiz = ({
   // };
 
   const handleRetryQuiz = () => {
-    handleCreateQuizResult(quiz && quiz.id);
+    // handleCreateQuizResult(quiz && quiz.id);
     setPageNum(-1);
   };
 
@@ -159,53 +159,13 @@ const TakeQuiz = ({
           >
             End of Quiz
           </Typography>
-          {quizType && quizType === "QUIZ" ? (
-            <Fragment>
-              <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-                {resultObj && resultObj.passed
-                  ? "Well Done! You passed the quiz!"
-                  : "You did not pass the quiz. Try Again!"}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleRetryQuiz()}
-              >
-                Re-try Quiz
-              </Button>
-            </Fragment>
-          ) : (
-            <Fragment>
-              {resultObj && resultObj.passed && (
-                <div>
-                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
-                    Result: <span style={{ color: "green" }}>Passed</span>
-                  </Typography>
-                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-                    Congratulations! You have cleared this course!
-                  </Typography>
-                </div>
-              )}
-
-              {resultObj && !resultObj.passed && (
-                <div>
-                  <Typography variant="h6" style={{ paddingBottom: "5px" }}>
-                    Result: <span style={{ color: "red" }}>Failed</span>
-                  </Typography>
-                  <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-                    You did not pass the final quiz. Try Again!
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleRetryQuiz()}
-                  >
-                    Re-try Quiz
-                  </Button>
-                </div>
-              )}
-            </Fragment>
-          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleRetryQuiz()}
+          >
+            Re-try Quiz
+          </Button>
         </Paper>
       ) : null}
     </Fragment>

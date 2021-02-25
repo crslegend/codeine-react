@@ -90,12 +90,25 @@ const MemberLoginPage = () => {
       .post("/api/token/", loginDetails)
       .then((res) => {
         console.log(res);
-        Service.storeCredentials(res.data);
 
-        if (state) {
-          history.push(`/courses/${state.courseId}`);
+        if (res.data.user.member) {
+          Service.storeCredentials(res.data);
+          if (state) {
+            // login to view course
+            history.push(`/courses/${state.courseId}`);
+          } else {
+            history.push("/");
+          }
         } else {
-          history.push("/");
+          setLoading(false);
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message:
+              "The email address entered is not a registered member. Please register first!",
+            severity: "error",
+          });
+          return;
         }
       })
       .catch((err) => {

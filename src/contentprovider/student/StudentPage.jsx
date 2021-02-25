@@ -12,12 +12,17 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
+import PageTitle from "../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -25,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     marginLeft: theme.spacing(5),
-    minWidth: 200,
+    minWidth: 250,
   },
   closeButton: {
     position: "absolute",
@@ -37,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "50px",
     width: "100px",
     height: "100px",
+  },
+  dataGrid: {
+    backgroundColor: "#fff",
   },
 }));
 
@@ -60,7 +68,6 @@ const StudentPage = () => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -88,7 +95,7 @@ const StudentPage = () => {
     {
       field: "first_name",
       headerName: "First Name",
-      width: 130,
+      width: 160,
     },
     {
       field: "last_name",
@@ -101,15 +108,15 @@ const StudentPage = () => {
       width: 200,
     },
     {
-      field: "Course Title",
-      headerName: "Course",
+      field: "numOfCourses",
+      headerName: "No. of Courses",
       width: 160,
     },
     {
       field: "date_joined",
       headerName: "Date Joined",
       valueFormatter: (params) => formatDate(params.value),
-      width: 200,
+      width: 160,
     },
     {
       field: "is_active",
@@ -131,15 +138,29 @@ const StudentPage = () => {
     },
   ];
 
+  const getListOfCourseEnrolledByStudent = (studentId) => {
+    let listOfEnrolledCourses = [];
+
+    for (let i in allStudentList) {
+      if (allStudentList[i].member.id === studentId) {
+        listOfEnrolledCourses.push(allStudentList[i].course);
+      }
+    }
+    return listOfEnrolledCourses;
+  };
+
   const removeDuplicateStudent = (arrayList) => {
     for (let i = 0; i < arrayList.length; i++) {
-      arrayList[i].id = arrayList[i].user.id;
-      arrayList[i].first_name = arrayList[i].user.first_name;
-      arrayList[i].last_name = arrayList[i].user.last_name;
-      arrayList[i].email = arrayList[i].user.email;
-      arrayList[i].is_active = arrayList[i].user.is_active;
-      arrayList[i].profile_photo = arrayList[i].user.profile_photo;
-      arrayList[i].date_joined = arrayList[i].user.date_joined;
+      arrayList[i].id = arrayList[i].member.id;
+      arrayList[i].first_name = arrayList[i].member.first_name;
+      arrayList[i].last_name = arrayList[i].member.last_name;
+      arrayList[i].email = arrayList[i].member.email;
+      arrayList[i].is_active = arrayList[i].member.is_active;
+      arrayList[i].profile_photo = arrayList[i].member.profile_photo;
+      arrayList[i].date_joined = arrayList[i].member.date_joined;
+      arrayList[i].numOfCourses = getListOfCourseEnrolledByStudent(
+        arrayList[i].member.id
+      ).length;
     }
 
     let newArray = [];
@@ -155,37 +176,36 @@ const StudentPage = () => {
     for (let i in uniqueStudent) {
       newArray.push(uniqueStudent[i]);
     }
-    console.log(newArray);
     return newArray;
   };
 
   let studentRows = removeDuplicateStudent(allStudentList);
 
   const [searchValue, setSearchValue] = useState("");
-  const [sortMethod, setSortMethod] = useState("");
+  const [sortMethod, setSortMethod] = useState("None");
 
   const getAllStudents = (filter) => {
     let queryParams = {
       search: searchValue,
     };
 
-    if (filter !== undefined) {
+    if (filter !== "None") {
       queryParams = {
         ...queryParams,
         courseId: filter,
       };
     }
 
+    console.log("courseid: " + queryParams.courseId);
+
     Service.client
       .get(`/enrolled-members`, { params: { ...queryParams } })
       .then((res) => {
-        console.log("members: " + res.data[0].member);
-        console.log("course: " + res.data[0].course);
-        //setAllStudentList(res.data);
+        console.log(res.data);
+        setAllStudentList(res.data);
+        studentRows = removeDuplicateStudent(allStudentList);
       })
       .catch((err) => console.log(err));
-
-    for (var i = 0; i < allStudentList.length; i++) {}
   };
 
   const [allCourseList, setAllCourseList] = useState([]);
@@ -194,19 +214,19 @@ const StudentPage = () => {
     Service.client
       .get(`/private-courses`)
       .then((res) => {
-        console.log(res);
         setAllCourseList(res.data.results);
-        //console.log("course list : " + res.data.results);
       })
       .catch((err) => console.log(err));
   };
 
   const handleRequestSearch = () => {
     getAllStudents();
+    setSortMethod("None");
   };
 
   const handleCancelSearch = () => {
     setSearchValue("");
+    setSortMethod("None");
   };
 
   const onSortChange = (e) => {
@@ -228,13 +248,14 @@ const StudentPage = () => {
 
   return (
     <Fragment>
+      <PageTitle title="My Students" />
       <Grid container>
         <Grid item xs={7} className={classes.searchSection}>
           <SearchBar
             style={{
               marginBottom: "20px",
             }}
-            placeholder="Search Students"
+            placeholder="Search Students..."
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
@@ -248,14 +269,18 @@ const StudentPage = () => {
         <Grid item xs={5}>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel>Filter By Courses</InputLabel>
+              <InputLabel style={{ top: -4 }}>Filter By</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
                 onChange={(event) => {
                   onSortChange(event);
                 }}
+                style={{ height: 47, backgroundColor: "#fff" }}
               >
+                <MenuItem key={null} value={"None"}>
+                  -None-
+                </MenuItem>
                 {allCourseList.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
                     {item.title}
@@ -275,12 +300,12 @@ const StudentPage = () => {
           rows={studentRows}
           columns={studentColumns.map((column) => ({
             ...column,
-            //disableClickEventBubbling: true,
           }))}
           pageSize={10}
           //checkboxSelection
           disableSelectionOnClick
           onRowClick={(e) => handleClickOpen(e)}
+          className={classes.dataGrid}
         />
         <Dialog
           open={openDialog}
@@ -290,7 +315,7 @@ const StudentPage = () => {
           fullWidth={true}
         >
           <DialogTitle id="form-dialog-title">
-            Admin Detail
+            Enrolled Student Detail
             <IconButton
               aria-label="close"
               className={classes.closeButton}
@@ -326,8 +351,8 @@ const StudentPage = () => {
                 )}{" "}
                 <Typography>
                   {formatDate(selectedStudent.date_joined)} <br />
+                  {getListOfCourseEnrolledByStudent(selectedStudent.id).length}
                 </Typography>
-                <br />
               </Grid>
               <Grid item xs={4}>
                 {selectedStudent.profile_photo ? (
@@ -341,6 +366,22 @@ const StudentPage = () => {
                     {selectedStudent.email.charAt(0)}
                   </Avatar>
                 )}
+              </Grid>
+              <Grid item xs={12}>
+                <List>
+                  {getListOfCourseEnrolledByStudent(selectedStudent.id).map(
+                    (value) => {
+                      return (
+                        <ListItem key={value.id}>
+                          <ListItemAvatar>
+                            <Avatar alt="logo" src={value.thumbnail} />
+                          </ListItemAvatar>
+                          <ListItemText id={value.id} primary={value.title} />
+                        </ListItem>
+                      );
+                    }
+                  )}
+                </List>
               </Grid>
             </Grid>
             <br />
