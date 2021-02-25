@@ -8,7 +8,7 @@ import {
   Radio,
   Typography,
 } from "@material-ui/core";
-import { ArrowBack, Assignment } from "@material-ui/icons";
+import { ArrowBack, Assignment, Edit } from "@material-ui/icons";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../../AxiosService";
 
@@ -63,6 +63,7 @@ const ViewAllQuizzes = () => {
 
   const [materialQuiz, setMaterialQuiz] = useState([]);
   const [assessment, setAssessment] = useState();
+  const [materialQuizNames, setMaterialQuizNames] = useState([]);
 
   const getAllQuizzes = () => {
     Service.client
@@ -72,11 +73,21 @@ const ViewAllQuizzes = () => {
 
         let arr = [];
         let obj;
+        let arrNames = [];
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].course) {
             obj = res.data[i];
           } else {
             arr.push(res.data[i]);
+
+            Service.client
+              .get(`/materials/${res.data[i].course_material}`)
+              .then((res) => {
+                console.log(res);
+                arrNames.push(res.data.title);
+                setMaterialQuizNames(arrNames);
+              })
+              .catch((err) => console.log(err));
           }
         }
 
@@ -86,8 +97,8 @@ const ViewAllQuizzes = () => {
       .catch((err) => console.log(err));
   };
 
-  console.log(assessment);
-  console.log(materialQuiz);
+  // console.log(assessment);
+  // console.log(materialQuizNames);
 
   useEffect(() => {
     getAllQuizzes();
@@ -183,6 +194,14 @@ const ViewAllQuizzes = () => {
           <ArrowBack />
         </IconButton>
         <PageTitle title="View All Quizzes" />
+        <IconButton
+          style={{ order: 2, marginLeft: "auto", marginRight: "5vw" }}
+          onClick={() => {
+            history.push(`/partner/home/content/${id}`);
+          }}
+        >
+          <Edit />
+        </IconButton>
       </div>
       <div className={classes.materialSection}>
         <Typography
@@ -197,7 +216,9 @@ const ViewAllQuizzes = () => {
               <div key={index} className={classes.quiz}>
                 <div style={{ paddingBottom: "10px" }}>
                   <Typography variant="h6" style={{ fontWeight: 600 }}>
-                    {`Quiz ${index + 1}`}
+                    {`Quiz Title: ${
+                      materialQuizNames.length > 0 && materialQuizNames[index]
+                    }`}
                   </Typography>
                   <Typography variant="h6" style={{ fontWeight: 600 }}>
                     Instructions:{" "}
