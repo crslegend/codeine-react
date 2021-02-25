@@ -106,7 +106,7 @@ const ContributionsPage = () => {
           const diffTime = futureDate - currentDate;
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-          if (diffDays > 35) {
+          if (diffDays > 29) {
             // check = false;
             setLatestContribution(res.data);
           }
@@ -128,7 +128,10 @@ const ContributionsPage = () => {
     const data = {
       total_price: amount,
       email: email,
-      description: "Monthly Contributions",
+      description:
+        numOfMonths && numOfMonths === 1
+          ? `Monthly Contributions for 1 Month`
+          : `Monthly Contributions for ${numOfMonths} Months`,
       pId: userId,
       numOfMonths: numOfMonths,
       contribution: contributionId,

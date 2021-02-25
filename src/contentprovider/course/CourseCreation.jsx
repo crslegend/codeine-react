@@ -649,7 +649,7 @@ const CourseCreation = () => {
             const currentDate = new Date();
             const diffTime = futureDate - currentDate;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays > 35) {
+            if (diffDays > 29) {
               check = false;
             }
           }

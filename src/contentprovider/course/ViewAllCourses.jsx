@@ -373,7 +373,7 @@ const ViewAllCourses = () => {
                         }}
                         transformOrigin={{
                           vertical: "top",
-                          horizontal: "center",
+                          horizontal: "right",
                         }}
                       >
                         <div className={classes.popoverContents}>

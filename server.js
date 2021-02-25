@@ -35,7 +35,7 @@ app.post("/create-checkout-session", async (req, res) => {
             },
             unit_amount: parseFloat(transaction.total_price) * 100,
           },
-          quantity: transaction.numOfMonths,
+          quantity: 1,
         },
       ],
       mode: "payment",
