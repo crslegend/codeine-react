@@ -13,6 +13,10 @@ import {
   CardHeader,
   CardContent,
   CircularProgress,
+  InputLabel,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { CountryDropdown } from "react-country-region-selector";
 import Service from "../../AxiosService";
@@ -152,7 +156,7 @@ const WalletPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // submit form-data as per usual
+
     const {
       bank_name,
       bank_account,
@@ -227,26 +231,37 @@ const WalletPage = () => {
                 />
                 <CardContent style={{ paddingTop: "0px" }}>
                   <div>
-                    <TextField
-                      id="bank_name"
-                      label="Bank Name*"
-                      name="bank_name"
-                      style={{ width: "90%" }}
-                      value={bankDetails.bank_name || ""}
-                      onChange={(e) =>
-                        setBankDetails({
-                          ...bankDetails,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                    />
+                    <FormControl style={{ width: "50%" }}>
+                      <InputLabel>Bank Name</InputLabel>
+                      <Select
+                        label="Bank Name*"
+                        name="bank_name"
+                        value={bankDetails.bank_name || ""}
+                        onChange={(e) =>
+                          setBankDetails({
+                            ...bankDetails,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        <MenuItem value="DBS">DBS</MenuItem>
+                        <MenuItem value="OCBC">OCBC</MenuItem>
+                        <MenuItem value="UOB">UOB</MenuItem>
+                        <MenuItem value="UOB">HSBC</MenuItem>
+                        <MenuItem value="SC">Standard Chartered</MenuItem>
+                        <MenuItem value="CIMB">CIMB</MenuItem>
+                      </Select>
+                    </FormControl>
                   </div>
                   <div>
                     <TextField
                       id="bank_account"
                       label="Bank Account*"
                       name="bank_account"
-                      style={{ width: "90%" }}
+                      style={{ width: "50%" }}
                       value={bankDetails.bank_account || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -261,7 +276,7 @@ const WalletPage = () => {
                       id="swift_code"
                       label="Swift Code*"
                       name="swift_code"
-                      style={{ width: "90%" }}
+                      style={{ width: "50%" }}
                       value={bankDetails.swift_code || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -272,26 +287,34 @@ const WalletPage = () => {
                     />
                   </div>
                   <div>
-                    <TextField
-                      id="bank_country"
-                      label="Bank Country*"
-                      name="bank_country"
-                      style={{ width: "90%" }}
-                      value={bankDetails.bank_country || ""}
-                      onChange={(e) =>
-                        setBankDetails({
-                          ...bankDetails,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                    />
+                    <FormControl style={{ width: "50%" }}>
+                      <InputLabel>Bank Country</InputLabel>
+                      <Select
+                        value={bankDetails.bank_country || ""}
+                        label="Bank Country*"
+                        name="bank_country"
+                        onChange={(e) =>
+                          setBankDetails({
+                            ...bankDetails,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        <MenuItem value="Singapore">Singapore</MenuItem>
+                        <MenuItem value="Malaysia">Malaysia</MenuItem>
+                        <MenuItem value="China">China</MenuItem>
+                      </Select>
+                    </FormControl>
                   </div>
                   <div>
                     <TextField
                       id="bank_address"
                       label="Bank Address*"
                       name="bank_address"
-                      style={{ width: "90%" }}
+                      style={{ width: "50%" }}
                       value={bankDetails.bank_address || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -348,18 +371,29 @@ const WalletPage = () => {
         <DialogTitle>Add Bank Account</DialogTitle>
         <DialogContent>
           <div>
-            <TextField
-              id="bank_name"
-              label="Bank Name*"
-              name="bank_name"
-              fullWidth
-              onChange={(e) =>
-                setNewBankDetails({
-                  ...newBankDetails,
-                  [e.target.name]: e.target.value,
-                })
-              }
-            />
+            <FormControl fullWidth>
+              <InputLabel>Bank Name</InputLabel>
+              <Select
+                label="Bank Name*"
+                name="bank_name"
+                onChange={(e) =>
+                  setNewBankDetails({
+                    ...newBankDetails,
+                    [e.target.name]: e.target.value,
+                  })
+                }
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="DBS">DBS</MenuItem>
+                <MenuItem value="OCBC">OCBC</MenuItem>
+                <MenuItem value="UOB">UOB</MenuItem>
+                <MenuItem value="UOB">HSBC</MenuItem>
+                <MenuItem value="SC">Standard Chartered</MenuItem>
+                <MenuItem value="CIMB">CIMB</MenuItem>
+              </Select>
+            </FormControl>
           </div>
           <div>
             <TextField
@@ -390,18 +424,26 @@ const WalletPage = () => {
             />
           </div>
           <div>
-            <TextField
-              id="bank_country"
-              label="Bank Country*"
-              name="bank_country"
-              fullWidth
-              onChange={(e) =>
-                setNewBankDetails({
-                  ...newBankDetails,
-                  [e.target.name]: e.target.value,
-                })
-              }
-            />
+            <FormControl fullWidth>
+              <InputLabel>Bank Country</InputLabel>
+              <Select
+                label="Bank Country*"
+                name="bank_country"
+                onChange={(e) =>
+                  setNewBankDetails({
+                    ...newBankDetails,
+                    [e.target.name]: e.target.value,
+                  })
+                }
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="Singapore">Singapore</MenuItem>
+                <MenuItem value="Malaysia">Malaysia</MenuItem>
+                <MenuItem value="China">China</MenuItem>
+              </Select>
+            </FormControl>
           </div>
           <div>
             <TextField
