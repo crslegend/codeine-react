@@ -162,6 +162,18 @@ const ConsultationApplication = () => {
       field: "meeting_link",
       headerName: "Meeting Link",
       width: 220,
+      renderCell: (params) => {
+        //console.log(params.row.meeting_link);
+        return (
+          <a
+            href={params.row.meeting_link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {params.row.meeting_link}
+          </a>
+        );
+      },
     },
     {
       field: "start_time",
@@ -396,7 +408,7 @@ const ConsultationApplication = () => {
           </Typography>
         </DialogTitle>
         <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
-          Press confirm to proceed. Note that action cannot be undone.
+          Press confirm to proceed. Note that your action cannot be undone.
         </DialogContent>
         <DialogActions style={{ paddingBottom: "20px", marginRight: "5px" }}>
           <Button

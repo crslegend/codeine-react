@@ -157,18 +157,18 @@ const EnrollCourse = () => {
             introduction_video_url: res.data.introduction_video_url,
           });
 
-          Service.client
-            .get(`enrollments`, { params: { courseId: id } })
-            .then((res) => {
-              console.log(res);
-              setProgress(res.data[0].progress);
-              if (!res.data[0].materials_done) {
-                setProgressArr([]);
-              } else {
-                setProgressArr(res.data[0].materials_done);
-              }
-            })
-            .catch((err) => console.log(err));
+          // Service.client
+          //   .get(`enrollments`, { params: { courseId: id } })
+          //   .then((res) => {
+          //     console.log(res);
+          //     setProgress(res.data[0].progress);
+          //     if (!res.data[0].materials_done) {
+          //       setProgressArr([]);
+          //     } else {
+          //       setProgressArr(res.data[0].materials_done);
+          //     }
+          //   })
+          //   .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     }
@@ -310,19 +310,6 @@ const EnrollCourse = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
       <div className={classes.mainSection}>
         <div
           style={{
@@ -446,7 +433,7 @@ const EnrollCourse = () => {
           </div>
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
-            <Typography variant="h6">Your Progress</Typography>
+            {/* <Typography variant="h6">Your Progress</Typography>
             <div style={{ width: "100%", marginBottom: "20px" }}>
               <Box display="flex" alignItems="center">
                 <Box width="100%" mr={1}>
@@ -458,7 +445,7 @@ const EnrollCourse = () => {
                   </Typography>
                 </Box>
               </Box>
-            </div>
+            </div> */}
 
             <Accordion
               expanded={expanded === `overview`}
@@ -555,7 +542,7 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
+                                {/* <Checkbox
                                   style={{ marginBottom: "20px" }}
                                   checked={
                                     progressArr &&
@@ -565,7 +552,7 @@ const EnrollCourse = () => {
                                   onChange={(e) =>
                                     handleCheckMaterial(e, material.id)
                                   }
-                                />
+                                /> */}
                                 <div
                                   style={{
                                     display: "flex",
@@ -641,7 +628,7 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
+                                {/* <Checkbox
                                   style={{ marginBottom: "20px" }}
                                   checked={
                                     progressArr &&
@@ -651,7 +638,7 @@ const EnrollCourse = () => {
                                   onChange={(e) =>
                                     handleCheckMaterial(e, material.id)
                                   }
-                                />
+                                /> */}
                                 <div
                                   style={{
                                     display: "flex",
@@ -709,7 +696,7 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
+                                {/* <Checkbox
                                   style={{ marginBottom: "20px" }}
                                   checked={
                                     progressArr &&
@@ -719,7 +706,7 @@ const EnrollCourse = () => {
                                   onChange={(e) =>
                                     handleCheckMaterial(e, material.id)
                                   }
-                                />
+                                /> */}
                                 <div
                                   style={{
                                     display: "flex",
@@ -830,7 +817,7 @@ const EnrollCourse = () => {
         </div>
       </div>
 
-      <Dialog
+      {/* <Dialog
         open={unenrollDialog}
         onClose={() => setUnenrollDialog(false)}
         PaperProps={{
@@ -934,7 +921,7 @@ const EnrollCourse = () => {
             Give Review
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

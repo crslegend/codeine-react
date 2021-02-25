@@ -76,17 +76,17 @@ const MemberLandingPage = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/partner" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Personal
+            Partners
           </Typography>
         </Link>
       </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/industry" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Partners for Enterprise
           </Typography>
         </Link>
-      </ListItem>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/member/login" style={{ textDecoration: "none" }}>
           <Typography

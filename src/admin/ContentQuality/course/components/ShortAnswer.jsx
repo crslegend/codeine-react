@@ -187,7 +187,7 @@ const ShortAnswer = ({
           <Button
             variant="contained"
             onClick={() => {
-              handleSaveResponse();
+              // handleSaveResponse();
               setPageNum(index - 1);
             }}
           >
@@ -198,7 +198,7 @@ const ShortAnswer = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleFinishQuiz();
+                setPageNum(index + 1);
               }}
             >
               Finish
@@ -208,7 +208,7 @@ const ShortAnswer = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleSaveResponse();
+                // handleSaveResponse();
                 setPageNum(index + 1);
               }}
             >

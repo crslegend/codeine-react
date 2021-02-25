@@ -51,6 +51,7 @@ const PaymentSuccess = () => {
       history.push(`/partner/home/contributions`);
     } else {
       // return to member consult
+      history.push(`/member/home/consultations`);
     }
   };
 
@@ -75,7 +76,38 @@ const PaymentSuccess = () => {
         })
         .catch((err) => console.log(err));
     }
+
+    // in future create consultation application for member
+    if (new URLSearchParams(location.search).get("consultation") !== null) {
+      const consultationId = new URLSearchParams(location.search).get(
+        "consultation"
+      );
+
+      Service.client
+        .post(`/consultations/${consultationId}/apply`)
+        .then((res) => {
+          console.log(res.data);
+          handlePaymentSuccess(
+            res.data.id,
+            res.data.consultation_slot.price_per_pax
+          );
+        })
+        .catch((err) => console.log(err));
+    }
   }, []);
+
+  const handlePaymentSuccess = (applicationId, price) => {
+    Service.client
+      .post(`/consultations/application/${applicationId}/payment`, {
+        payment_amount: price.toString(),
+        payment_type: "VISA",
+        payment_status: "COMPLETED",
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div>
@@ -115,7 +147,7 @@ const PaymentSuccess = () => {
             style={{ marginTop: "25px" }}
             onClick={() => handleRedirect()}
           >
-            Go Back To Consulations
+            Go Back To Consultations
           </Button>
         )}
       </Paper>

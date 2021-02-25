@@ -647,7 +647,7 @@ const CourseCreation = () => {
           if (res.data.expiry_date) {
             const futureDate = new Date(res.data.expiry_date);
             const currentDate = new Date();
-            const diffTime = Math.abs(futureDate - currentDate);
+            const diffTime = futureDate - currentDate;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if (diffDays > 35) {
               check = false;

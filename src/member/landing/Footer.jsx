@@ -58,11 +58,11 @@ const Footer = () => {
             Members
           </Link>
           <Link to="/partner" className={classes.footerLink}>
-            Partners for Personal
+            Partners
           </Link>
-          <Link to="/" className={classes.footerLink}>
+          {/* <Link to="/" className={classes.footerLink}>
             Partners for Enterprise
-          </Link>
+          </Link> */}
         </div>
         <div className={classes.rightCol}>
           <Link to="/" className={classes.footerLink}>
