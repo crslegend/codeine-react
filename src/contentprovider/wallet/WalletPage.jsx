@@ -279,7 +279,9 @@ const WalletPage = () => {
                 />
                 <CardContent style={{ paddingTop: "0px" }}>
                   <div>
-                    <FormControl style={{ width: "50%", paddingBottom: "10px" }}>
+                    <FormControl
+                      style={{ width: "50%", paddingBottom: "10px" }}
+                    >
                       <InputLabel>Bank Name*</InputLabel>
                       <Select
                         label="Bank Name*"
@@ -335,7 +337,9 @@ const WalletPage = () => {
                     />
                   </div>
                   <div>
-                    <FormControl style={{ width: "50%", paddingBottom: "10px" }}>
+                    <FormControl
+                      style={{ width: "50%", paddingBottom: "10px" }}
+                    >
                       <InputLabel>Bank Country*</InputLabel>
                       <Select
                         value={bankDetails.bank_country || ""}
