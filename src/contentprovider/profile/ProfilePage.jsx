@@ -489,7 +489,11 @@ const PartnerProfilePage = (props) => {
         </Grid>
 
         <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-          <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+          <a
+            href="#profile_photo"
+            onClick={(e) => setUploadOpen(true)}
+            style={{ textDecoration: "none" }}
+          >
             {!profileDetails.profile_photo ? (
               <Badge
                 overlap="circle"
@@ -619,6 +623,7 @@ const PartnerProfilePage = (props) => {
               <a
                 href="#organisation_photo"
                 onClick={(e) => setUploadOrgOpen(true)}
+                style={{ textDecoration: "none" }}
               >
                 {!profileDetails.partner.organization.organization_photo ? (
                   <Badge
