@@ -63,7 +63,13 @@ const WalletPage = () => {
   const [loading, setLoading] = useState(false);
 
   // Bank Details
-  const [newBankDetails, setNewBankDetails] = useState();
+  const [newBankDetails, setNewBankDetails] = useState({
+    bank_name: "",
+    bank_account: "",
+    swift_code: "",
+    bank_country: "",
+    bank_address: "",
+  });
   const [bankDetails, setBankDetails] = useState();
   const [bankDialog, setBankDialog] = useState(false);
 
@@ -115,6 +121,27 @@ const WalletPage = () => {
   };
 
   const handleBankDialog = (e) => {
+    // validation to prevent user from submitting empty fields
+    if (
+      newBankDetails.bank_name === "" ||
+      newBankDetails.bank_account === "" ||
+      newBankDetails.swift_code === "" ||
+      newBankDetails.bank_country === "" ||
+      newBankDetails.bank_address === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "All bank account details must be filled!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 5000,
+      });
+      return;
+    }
+
     const {
       bank_name,
       bank_account,
@@ -156,6 +183,27 @@ const WalletPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // validation to prevent user from submitting empty fields
+    if (
+      bankDetails.bank_name === "" ||
+      bankDetails.bank_account === "" ||
+      bankDetails.swift_code === "" ||
+      bankDetails.bank_country === "" ||
+      bankDetails.bank_address === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "All bank account details must be filled!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 5000,
+      });
+      return;
+    }
 
     const {
       bank_name,
@@ -231,8 +279,8 @@ const WalletPage = () => {
                 />
                 <CardContent style={{ paddingTop: "0px" }}>
                   <div>
-                    <FormControl style={{ width: "50%" }}>
-                      <InputLabel>Bank Name</InputLabel>
+                    <FormControl style={{ width: "50%", paddingBottom: "10px" }}>
+                      <InputLabel>Bank Name*</InputLabel>
                       <Select
                         label="Bank Name*"
                         name="bank_name"
@@ -261,7 +309,7 @@ const WalletPage = () => {
                       id="bank_account"
                       label="Bank Account*"
                       name="bank_account"
-                      style={{ width: "50%" }}
+                      style={{ width: "50%", paddingBottom: "10px" }}
                       value={bankDetails.bank_account || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -276,7 +324,7 @@ const WalletPage = () => {
                       id="swift_code"
                       label="Swift Code*"
                       name="swift_code"
-                      style={{ width: "50%" }}
+                      style={{ width: "50%", paddingBottom: "10px" }}
                       value={bankDetails.swift_code || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -287,8 +335,8 @@ const WalletPage = () => {
                     />
                   </div>
                   <div>
-                    <FormControl style={{ width: "50%" }}>
-                      <InputLabel>Bank Country</InputLabel>
+                    <FormControl style={{ width: "50%", paddingBottom: "10px" }}>
+                      <InputLabel>Bank Country*</InputLabel>
                       <Select
                         value={bankDetails.bank_country || ""}
                         label="Bank Country*"
@@ -314,7 +362,7 @@ const WalletPage = () => {
                       id="bank_address"
                       label="Bank Address*"
                       name="bank_address"
-                      style={{ width: "50%" }}
+                      style={{ width: "50%", paddingBottom: "10px" }}
                       value={bankDetails.bank_address || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -372,7 +420,7 @@ const WalletPage = () => {
         <DialogContent>
           <div>
             <FormControl fullWidth>
-              <InputLabel>Bank Name</InputLabel>
+              <InputLabel>Bank Name*</InputLabel>
               <Select
                 label="Bank Name*"
                 name="bank_name"
@@ -425,7 +473,7 @@ const WalletPage = () => {
           </div>
           <div>
             <FormControl fullWidth>
-              <InputLabel>Bank Country</InputLabel>
+              <InputLabel>Bank Country*</InputLabel>
               <Select
                 label="Bank Country*"
                 name="bank_country"
