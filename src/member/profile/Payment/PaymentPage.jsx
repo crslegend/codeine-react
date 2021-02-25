@@ -2,6 +2,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
 import { Box, Typography } from "@material-ui/core";
+import jwt_decode from "jwt-decode";
+import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -16,21 +18,36 @@ const useStyles = makeStyles((theme) => ({
 const Payment = () => {
   const classes = useStyles();
   const [allTransactions, setAllTransactions] = useState([]);
+  const [application, setApplication] = useState();
+
+  const getTransactionData = () => {
+    Service.client
+      .get("/consultations/member/payments")
+      .then((res) => {
+        setAllTransactions(res.data);
+      })
+      .catch((error) => {
+        setAllTransactions(null);
+      });
+  };
+  console.log(allTransactions);
+
+  useEffect(() => {
+    getTransactionData();
+  }, [setAllTransactions]);
 
   const formatStatus = (status) => {
-    if (status === "Confirmed") {
-      return "green";
-    } else if (status === "Rejected") {
-      return "red";
+    if (status === "Payment") {
+      return "blue";
     } else {
-      return "orange";
+      return "green";
     }
   };
 
   const transactionColumns = [
     { field: "id", headerName: "Transaction ID", width: 400 },
     {
-      field: "start_time",
+      field: "date",
       headerName: "Payment Date",
       type: "date",
       width: 250,
@@ -39,27 +56,23 @@ const Payment = () => {
       field: "title",
       headerName: "Consultation Title",
       width: 300,
-      renderCell: (params) => {
-        //console.log(params.row.meeting_link);
-        return (
-          <a
-            href={params.row.meeting_link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {params.row.meeting_link}
-          </a>
-        );
-      },
     },
     {
-      field: "payment_amount",
+      field: "partner",
+      headerName: "Consultation Held By",
+      width: 200,
+    },
+    {
+      field: "amount",
       headerName: "Amount",
+      renderCell: (params) => (
+        <Typography variant="body2">${params.value}</Typography>
+      ),
       width: 150,
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: "type",
+      headerName: "Transaction Type",
       renderCell: (params) => (
         <strong>
           <Typography style={{ color: formatStatus(params.value) }}>
@@ -67,12 +80,45 @@ const Payment = () => {
           </Typography>
         </strong>
       ),
-      width: 150,
+      width: 200,
     },
   ];
 
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
   const transactionRows = allTransactions;
 
+  for (var h = 0; h < allTransactions.length; h++) {
+    //transactionRows[h].title = allTransactions[h].application.title;
+    //transactionRows[h].partner = allTransactions[h].application.partner;
+
+    transactionRows[h].date = formatDate(
+      allTransactions[h].payment_transaction.timestamp
+    );
+    transactionRows[h].amount =
+      allTransactions[h].payment_transaction.payment_amount;
+
+    if (allTransactions[h].payment_transaction.payment_status === "COMPLETED") {
+      transactionRows[h].type = "Payment";
+    } else {
+      transactionRows[h].type = "Refund";
+    }
+  }
   return (
     <Fragment>
       <Box className={classes.heading}>
