@@ -208,7 +208,7 @@ const MCQ = ({
           <Button
             variant="contained"
             onClick={() => {
-              handleSaveResponse();
+              // handleSaveResponse();
               setPageNum(index - 1);
             }}
           >
@@ -219,7 +219,7 @@ const MCQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleFinishQuiz();
+                setPageNum(index + 1);
               }}
             >
               Finish
@@ -229,7 +229,7 @@ const MCQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleSaveResponse();
+                // handleSaveResponse();
                 setPageNum(index + 1);
               }}
             >
