@@ -124,7 +124,7 @@ const FeaturedCourses = () => {
                       >
                         <Rating
                           name="read-only"
-                          value="3.5"
+                          value={parseFloat("3.5")}
                           precision={0.1}
                           readOnly
                         />
@@ -199,7 +199,7 @@ const FeaturedCourses = () => {
                       >
                         <Rating
                           name="read-only"
-                          value="4.5"
+                          value={parseFloat("4.5")}
                           precision={0.1}
                           readOnly
                         />
@@ -274,7 +274,7 @@ const FeaturedCourses = () => {
                       >
                         <Rating
                           name="read-only"
-                          value="3.5"
+                          value={parseFloat("3.5")}
                           precision={0.1}
                           readOnly
                         />
