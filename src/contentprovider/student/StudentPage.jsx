@@ -22,6 +22,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
+import PageTitle from "../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "50px",
     width: "100px",
     height: "100px",
+  },
+  dataGrid: {
+    backgroundColor: "#fff",
   },
 }));
 
@@ -244,6 +248,7 @@ const StudentPage = () => {
 
   return (
     <Fragment>
+      <PageTitle title="My Students" />
       <Grid container>
         <Grid item xs={7} className={classes.searchSection}>
           <SearchBar
@@ -300,6 +305,7 @@ const StudentPage = () => {
           //checkboxSelection
           disableSelectionOnClick
           onRowClick={(e) => handleClickOpen(e)}
+          className={classes.dataGrid}
         />
         <Dialog
           open={openDialog}

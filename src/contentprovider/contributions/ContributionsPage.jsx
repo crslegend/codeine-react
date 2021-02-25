@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     width: "50%",
     margin: "40px auto",
   },
+  dataGrid: {
+    backgroundColor: "#fff",
+  },
 }));
 
 const ContributionsPage = () => {
@@ -290,7 +293,7 @@ const ContributionsPage = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.topSection}>
-        <PageTitle title={`Your Contributions`} />
+        <PageTitle title={`Contributions`} />
         <Button
           variant="contained"
           startIcon={<Add />}
@@ -388,7 +391,12 @@ const ContributionsPage = () => {
       </Typography>
 
       <div style={{ height: "calc(100vh - 200px)", width: "100%" }}>
-        <DataGrid rows={contributions} columns={columns} pageSize={10} />
+        <DataGrid
+          rows={contributions}
+          columns={columns}
+          pageSize={10}
+          className={classes.dataGrid}
+        />
       </div>
 
       <Dialog

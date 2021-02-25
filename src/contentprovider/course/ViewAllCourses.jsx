@@ -257,7 +257,7 @@ const ViewAllCourses = () => {
   return (
     <Fragment>
       <div className={classes.titleSection}>
-        <PageTitle title="Your Courses" />
+        <PageTitle title="My Courses" />
         <Button
           variant="contained"
           startIcon={<Add />}

@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: "calc(100vh - 115px)",
   },
+  dataGrid: {
+    backgroundColor: "#fff",
+  },
 }));
 
 const WalletPage = () => {
@@ -265,7 +268,7 @@ const WalletPage = () => {
         )}
       </div>
       {bankDetails ? (
-        <Grid container>
+        <Grid container style={{ marginBottom: "50px" }}>
           <Grid item xs>
             <form onSubmit={handleSubmit}>
               <Card className={classes.root}>
@@ -397,6 +400,12 @@ const WalletPage = () => {
           </Grid>
         </Grid>
       ) : null}
+      <Typography
+        variant="h5"
+        style={{ fontWeight: 600, paddingBottom: "10px" }}
+      >
+        My Earnings
+      </Typography>
       <div style={{ height: "calc(100vh - 300px)", width: "100%" }}>
         <DataGrid
           rows={transactionRows}
@@ -408,6 +417,7 @@ const WalletPage = () => {
           //checkboxSelection
           disableSelectionOnClick
           //onRowClick={(e) => handleClickOpenAdmin(e)}
+          className={classes.dataGrid}
         />
       </div>
       <Dialog
