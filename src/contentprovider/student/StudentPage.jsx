@@ -1,20 +1,21 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   Typography,
   Grid,
+  Avatar,
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
+import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 
@@ -25,6 +26,17 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     marginLeft: theme.spacing(5),
     minWidth: 200,
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  avatar: {
+    fontSize: "50px",
+    width: "100px",
+    height: "100px",
   },
 }));
 
@@ -89,6 +101,11 @@ const StudentPage = () => {
       width: 200,
     },
     {
+      field: "Course Title",
+      headerName: "Course",
+      width: 160,
+    },
+    {
       field: "date_joined",
       headerName: "Date Joined",
       valueFormatter: (params) => formatDate(params.value),
@@ -110,21 +127,39 @@ const StudentPage = () => {
           )}
         </strong>
       ),
-      width: 160,
+      width: 130,
     },
   ];
 
-  let studentRows = allStudentList;
+  const removeDuplicateStudent = (arrayList) => {
+    for (let i = 0; i < arrayList.length; i++) {
+      arrayList[i].id = arrayList[i].user.id;
+      arrayList[i].first_name = arrayList[i].user.first_name;
+      arrayList[i].last_name = arrayList[i].user.last_name;
+      arrayList[i].email = arrayList[i].user.email;
+      arrayList[i].is_active = arrayList[i].user.is_active;
+      arrayList[i].profile_photo = arrayList[i].user.profile_photo;
+      arrayList[i].date_joined = arrayList[i].user.date_joined;
+    }
 
-  for (let i = 0; i < allStudentList.length; i++) {
-    studentRows[i].id = allStudentList[i].user.id;
-    studentRows[i].first_name = allStudentList[i].user.first_name;
-    studentRows[i].last_name = allStudentList[i].user.last_name;
-    studentRows[i].email = allStudentList[i].user.email;
-    studentRows[i].is_active = allStudentList[i].user.is_active;
-    studentRows[i].profile_photo = allStudentList[i].user.profile_photo;
-    studentRows[i].date_joined = allStudentList[i].user.date_joined;
-  }
+    let newArray = [];
+
+    let uniqueStudent = {};
+
+    for (let i in arrayList) {
+      let studentID = arrayList[i].id;
+
+      uniqueStudent[studentID] = arrayList[i];
+    }
+
+    for (let i in uniqueStudent) {
+      newArray.push(uniqueStudent[i]);
+    }
+    console.log(newArray);
+    return newArray;
+  };
+
+  let studentRows = removeDuplicateStudent(allStudentList);
 
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
@@ -133,7 +168,6 @@ const StudentPage = () => {
     let queryParams = {
       search: searchValue,
     };
-    console.log(filter);
 
     if (filter !== undefined) {
       queryParams = {
@@ -145,10 +179,13 @@ const StudentPage = () => {
     Service.client
       .get(`/enrolled-members`, { params: { ...queryParams } })
       .then((res) => {
-        console.log("members: " + res.data[0].user.id);
-        setAllStudentList(res.data);
+        console.log("members: " + res.data[0].member);
+        console.log("course: " + res.data[0].course);
+        //setAllStudentList(res.data);
       })
       .catch((err) => console.log(err));
+
+    for (var i = 0; i < allStudentList.length; i++) {}
   };
 
   const [allCourseList, setAllCourseList] = useState([]);
@@ -159,7 +196,7 @@ const StudentPage = () => {
       .then((res) => {
         console.log(res);
         setAllCourseList(res.data.results);
-        //console.log("course list : " + res.data.results[0]);
+        //console.log("course list : " + res.data.results);
       })
       .catch((err) => console.log(err));
   };
@@ -175,6 +212,18 @@ const StudentPage = () => {
   const onSortChange = (e) => {
     setSortMethod(e.target.value);
     getAllStudents(e.target.value);
+    console.log("onsortchange: " + e.target.value);
+  };
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleClickOpen = (e) => {
+    setSelectedStudent(e.row);
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -207,8 +256,8 @@ const StudentPage = () => {
                   onSortChange(event);
                 }}
               >
-                {allCourseList.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
+                {allCourseList.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
                     {item.title}
                   </MenuItem>
                 ))}
@@ -229,10 +278,74 @@ const StudentPage = () => {
             //disableClickEventBubbling: true,
           }))}
           pageSize={10}
-          checkboxSelection
+          //checkboxSelection
           disableSelectionOnClick
-          //onRowClick={(e) => handleClickOpenStudent(e)}
+          onRowClick={(e) => handleClickOpen(e)}
         />
+        <Dialog
+          open={openDialog}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+          maxWidth="md"
+          fullWidth={true}
+        >
+          <DialogTitle id="form-dialog-title">
+            Admin Detail
+            <IconButton
+              aria-label="close"
+              className={classes.closeButton}
+              onClick={handleClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <Grid container>
+              <Grid item xs={2}>
+                <Typography>
+                  ID <br />
+                  First Name <br />
+                  Last Name <br />
+                  Email <br />
+                  Status <br />
+                  Date Joined <br />
+                  Courses Joined <br />
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography>
+                  {selectedStudent.id} <br />
+                  {selectedStudent.first_name} <br />
+                  {selectedStudent.last_name} <br />
+                  {selectedStudent.email} <br />
+                </Typography>
+                {selectedStudent.is_active ? (
+                  <Typography style={{ color: "green" }}>Active</Typography>
+                ) : (
+                  <Typography style={{ color: "red" }}>Deactived</Typography>
+                )}{" "}
+                <Typography>
+                  {formatDate(selectedStudent.date_joined)} <br />
+                </Typography>
+                <br />
+              </Grid>
+              <Grid item xs={4}>
+                {selectedStudent.profile_photo ? (
+                  <Avatar
+                    src={selectedStudent.profile_photo}
+                    alt=""
+                    className={classes.avatar}
+                  />
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {selectedStudent.email.charAt(0)}
+                  </Avatar>
+                )}
+              </Grid>
+            </Grid>
+            <br />
+          </DialogContent>
+        </Dialog>
       </Grid>
     </Fragment>
   );

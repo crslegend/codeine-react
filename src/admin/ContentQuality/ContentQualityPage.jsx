@@ -1,27 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import {
-  Typography,
-  Avatar,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  IconButton,
-  AppBar,
-  Tabs,
-  Tab,
-  Box,
-  Grid,
-} from "@material-ui/core";
+import { Typography, AppBar, Tabs, Tab, Box, Grid } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
-import CloseIcon from "@material-ui/icons/Close";
 import Service from "../../AxiosService";
-import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   root: {

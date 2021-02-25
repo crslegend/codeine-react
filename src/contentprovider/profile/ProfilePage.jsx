@@ -3,23 +3,23 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Button,
   CircularProgress,
-  Paper,
   TextField,
   Typography,
   Grid,
   Avatar,
-  InputAdornment,
+  Divider,
   DialogActions,
   Dialog,
   DialogContent,
   DialogTitle,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { AttachMoney } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import validator from "validator";
 import Badge from "@material-ui/core/Badge";
@@ -33,10 +33,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "16px",
       },
     },
-  },
-  paper: {
-    height: "calc(100vh - 115px)",
-    backgroundColor: "#fafafa",
   },
   avatar: {
     fontSize: "80px",
@@ -333,349 +329,350 @@ const PartnerProfilePage = (props) => {
     <div>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
 
-      <Paper elevation={0} className={classes.paper}>
-        <Grid container>
-          <Grid item xs={6}>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off">
-              <div>
-                <TextField
-                  margin="normal"
-                  id="id"
-                  label="Profile ID"
-                  name="id"
-                  autoComplete="id"
-                  fullWidth
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  value={profileDetails.id}
-                />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="first_name"
-                  label="First Name"
-                  name="first_name"
-                  autoComplete="first_name"
-                  required
-                  fullWidth
-                  value={profileDetails.first_name}
-                  // error={firstNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      first_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="last_name"
-                  label="Last Name"
-                  name="last_name"
-                  autoComplete="last_name"
-                  required
-                  fullWidth
-                  value={profileDetails.last_name}
-                  // error={lastNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      last_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="email"
-                  label="Email"
-                  name="email"
-                  autoComplete="email"
-                  required
-                  fullWidth
-                  value={profileDetails.email}
-                  // error={emailError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      email: event.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div>
-                <TextField
-                  margin="normal"
-                  id="date_joined"
-                  label="Date Joined"
-                  name="date_joined"
-                  autoComplete="date_joined"
-                  required
-                  fullWidth
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  value={formatDate(profileDetails.date_joined)}
-                />
-              </div>
-
-              <div>
-                <TextField
-                  margin="normal"
-                  id="job_title"
-                  label="Job Title"
-                  name="job_title"
-                  autoComplete="job_title"
-                  required
-                  fullWidth
-                  value={profileDetails.partner.job_title}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      partner: {
-                        ...profileDetails.partner,
-                        job_title: event.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-
-              <div>
-                <TextField
-                  margin="normal"
-                  id="bio"
-                  label="Bio"
-                  name="bio"
-                  autoComplete="bio"
-                  required
-                  fullWidth
-                  multiline
-                  rows={3}
-                  value={profileDetails.partner.bio}
-                  // error={emailError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      partner: {
-                        ...profileDetails.partner,
-                        bio: event.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-
-              <Button
-                disabled={loading}
-                variant="contained"
-                color="primary"
-                style={{ marginTop: "20px" }}
-                type="submit"
-              >
-                {loading ? (
-                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
-            </form>
-
-            {profileDetails.partner.organization ? (
-              <div>
-                <form
-                  onSubmit={handleOrganizationSubmit}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="organisation_id"
-                      label="Organisation ID"
-                      name="id"
-                      autoComplete="organisation_id"
-                      required
-                      fullWidth
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                      value={profileDetails.partner.organization.id}
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      margin="normal"
-                      id="organisation_name"
-                      label="Organisation Name"
-                      name="organisation_name"
-                      autoComplete="Organisation Name"
-                      required
-                      fullWidth
-                      value={
-                        profileDetails.partner.organization.organization_name
-                      }
-                      onChange={(event) =>
-                        setProfileDetails({
-                          ...profileDetails,
-                          partner: {
-                            ...profileDetails.partner,
-                            organization: {
-                              ...profileDetails.partner.organization,
-                              organization_name: event.target.value,
-                            },
-                          },
-                        })
-                      }
-                    />
-                  </div>
-
-                  <Button
-                    disabled={loading}
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: "20px" }}
-                    type="submit"
-                  >
-                    {loading ? (
-                      <CircularProgress
-                        size="1.5rem"
-                        style={{ color: "#FFF" }}
-                      />
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </form>
-              </div>
-            ) : (
-              ""
-            )}
-          </Grid>
-          <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-            <br />
-            <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
-              {!profileDetails.profile_photo ? (
-                <Badge
-                  overlap="circle"
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  className={classes.avatar}
-                  badgeContent={
-                    <SmallAvatar
-                      alt=""
-                      src={EditIcon}
-                      style={{ backgroundColor: "#d1d1d1" }}
-                    />
-                  }
-                >
-                  <Avatar className={classes.avatar}>
-                    {profileDetails.first_name.charAt(0)}
-                  </Avatar>
-                </Badge>
-              ) : (
-                <Badge
-                  overlap="circle"
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  badgeContent={
-                    <SmallAvatar
-                      alt=""
-                      src={EditIcon}
-                      style={{ backgroundColor: "#d1d1d1" }}
-                    />
-                  }
-                >
-                  <Avatar
-                    alt="Pic"
-                    src={
-                      !profilePhoto
-                        ? profileDetails.profile_photo
-                        : profilePhoto[0].data
-                    }
-                    className={classes.avatar}
+      <Grid container>
+        <Grid item xs={6}>
+          <form onSubmit={handleSubmit} noValidate autoComplete="off">
+            <Card className={classes.root}>
+              <CardContent>
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="id"
+                    label="Profile ID"
+                    name="id"
+                    autoComplete="id"
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={profileDetails.id}
                   />
-                </Badge>
-              )}
-            </a>
+                </div>
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="first_name"
+                    label="First Name"
+                    name="first_name"
+                    autoComplete="first_name"
+                    required
+                    fullWidth
+                    value={profileDetails.first_name}
+                    // error={firstNameError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        first_name: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="last_name"
+                    label="Last Name"
+                    name="last_name"
+                    autoComplete="last_name"
+                    required
+                    fullWidth
+                    value={profileDetails.last_name}
+                    // error={lastNameError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        last_name: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="email"
+                    label="Email"
+                    name="email"
+                    autoComplete="email"
+                    required
+                    fullWidth
+                    value={profileDetails.email}
+                    // error={emailError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        email: event.target.value,
+                      })
+                    }
+                  />
+                </div>
 
-            {profileDetails.partner.organization ? (
-              <div>
-                <br />
-                <br />
-                <br />
-                <br />
-                <a
-                  href="#organisation_photo"
-                  onClick={(e) => setUploadOrgOpen(true)}
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="date_joined"
+                    label="Date Joined"
+                    name="date_joined"
+                    autoComplete="date_joined"
+                    required
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={formatDate(profileDetails.date_joined)}
+                  />
+                </div>
+
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="job_title"
+                    label="Job Title"
+                    name="job_title"
+                    autoComplete="job_title"
+                    required
+                    fullWidth
+                    value={profileDetails.partner.job_title}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        partner: {
+                          ...profileDetails.partner,
+                          job_title: event.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <TextField
+                    margin="normal"
+                    id="bio"
+                    label="Bio"
+                    name="bio"
+                    autoComplete="bio"
+                    required
+                    fullWidth
+                    multiline
+                    rows={3}
+                    value={profileDetails.partner.bio}
+                    // error={emailError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        partner: {
+                          ...profileDetails.partner,
+                          bio: event.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  style={{ marginTop: "10px" }}
+                  type="submit"
                 >
-                  {!profileDetails.partner.organization.organization_photo ? (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      className={classes.avatar}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar className={classes.avatar}>
-                        {profileDetails.partner.organization.organization_name.charAt(
-                          0
-                        )}
-                      </Avatar>
-                    </Badge>
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
                   ) : (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar
-                        alt="Pic"
-                        src={
-                          !organizationPhoto
-                            ? profileDetails.partner.organization
-                                .organization_photo
-                            : organizationPhoto[0].data
-                        }
-                        className={classes.avatar}
-                      />
-                    </Badge>
+                    "Save Changes"
                   )}
-                </a>
-              </div>
-            ) : (
-              ""
-            )}
-          </Grid>
+                </Button>
+              </CardContent>
+            </Card>
+          </form>
         </Grid>
-      </Paper>
+
+        <Grid item xs={6} style={{ paddingLeft: "25px" }}>
+          <a href="#profile_photo" onClick={(e) => setUploadOpen(true)}>
+            {!profileDetails.profile_photo ? (
+              <Badge
+                overlap="circle"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                className={classes.avatar}
+                badgeContent={
+                  <SmallAvatar
+                    alt=""
+                    src={EditIcon}
+                    style={{ backgroundColor: "#d1d1d1" }}
+                  />
+                }
+              >
+                <Avatar className={classes.avatar}>
+                  {profileDetails.first_name.charAt(0)}
+                </Avatar>
+              </Badge>
+            ) : (
+              <Badge
+                overlap="circle"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                badgeContent={
+                  <SmallAvatar
+                    alt=""
+                    src={EditIcon}
+                    style={{ backgroundColor: "#d1d1d1" }}
+                  />
+                }
+              >
+                <Avatar
+                  alt="Pic"
+                  src={
+                    !profilePhoto
+                      ? profileDetails.profile_photo
+                      : profilePhoto[0].data
+                  }
+                  className={classes.avatar}
+                />
+              </Badge>
+            )}
+          </a>
+        </Grid>
+        <Grid item xs={12} style={{ marginBottom: "20px" }}></Grid>
+        <Grid item xs={6}>
+          {profileDetails.partner.organization && (
+            <Card className={classes.root}>
+              <CardContent>
+                <div>
+                  <form
+                    onSubmit={handleOrganizationSubmit}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <div>
+                      <TextField
+                        margin="normal"
+                        id="organisation_id"
+                        label="Organisation ID"
+                        name="id"
+                        autoComplete="organisation_id"
+                        required
+                        fullWidth
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        value={profileDetails.partner.organization.id}
+                      />
+                    </div>
+                    <div>
+                      <TextField
+                        margin="normal"
+                        id="organisation_name"
+                        label="Organisation Name"
+                        name="organisation_name"
+                        autoComplete="Organisation Name"
+                        required
+                        fullWidth
+                        value={
+                          profileDetails.partner.organization.organization_name
+                        }
+                        onChange={(event) =>
+                          setProfileDetails({
+                            ...profileDetails,
+                            partner: {
+                              ...profileDetails.partner,
+                              organization: {
+                                ...profileDetails.partner.organization,
+                                organization_name: event.target.value,
+                              },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+
+                    <Button
+                      disabled={loading}
+                      variant="contained"
+                      color="primary"
+                      style={{ marginTop: "10px" }}
+                      type="submit"
+                    >
+                      {loading ? (
+                        <CircularProgress
+                          size="1.5rem"
+                          style={{ color: "#FFF" }}
+                        />
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </Button>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </Grid>
+        <Grid item xs={6} style={{ paddingLeft: "25px" }}>
+          {profileDetails.partner.organization && (
+            <div>
+              <a
+                href="#organisation_photo"
+                onClick={(e) => setUploadOrgOpen(true)}
+              >
+                {!profileDetails.partner.organization.organization_photo ? (
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    className={classes.avatar}
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar className={classes.avatar}>
+                      {profileDetails.partner.organization.organization_name.charAt(
+                        0
+                      )}
+                    </Avatar>
+                  </Badge>
+                ) : (
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar
+                      alt="Pic"
+                      src={
+                        !organizationPhoto
+                          ? profileDetails.partner.organization
+                              .organization_photo
+                          : organizationPhoto[0].data
+                      }
+                      className={classes.avatar}
+                    />
+                  </Badge>
+                )}
+              </a>
+            </div>
+          )}
+        </Grid>
+      </Grid>
 
       {/* upload photo dialog here */}
       <Dialog onClose={() => setUploadOpen(false)} open={uploadOpen}>

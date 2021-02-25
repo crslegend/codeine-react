@@ -177,7 +177,7 @@ const AdminProfilePage = (props) => {
     // instantiate form-data
     e.preventDefault();
 
-    if (!profilePhoto) {
+    if (profilePhoto && profilePhoto.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -213,6 +213,9 @@ const AdminProfilePage = (props) => {
           .then((res) => {
             setProfile(res.data);
             setProfileDetails(res.data);
+            if (profilePhoto) {
+              setProfilePhoto([]);
+            }
           })
           .catch();
       })
@@ -370,11 +373,7 @@ const AdminProfilePage = (props) => {
                   >
                     <Avatar
                       alt="Pic"
-                      src={
-                        !profilePhoto
-                          ? profileDetails.profile_photo
-                          : profilePhoto[0].data
-                      }
+                      src={profileDetails.profile_photo}
                       className={classes.avatar}
                     />
                   </Badge>
