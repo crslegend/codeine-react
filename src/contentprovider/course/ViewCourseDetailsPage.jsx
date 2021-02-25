@@ -317,7 +317,12 @@ const ViewCourseDetailsPage = () => {
               >
                 Course Content
               </Typography>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to={`/partner/home/content/view/quizzes/${id}`}
+              >
                 View All Quizzes
               </Button>
             </div>
