@@ -21,7 +21,8 @@ const styles = makeStyles((theme) => ({
     marginTop: "10px",
   },
   assessmentSection: {
-    marginTop: "10px",
+    marginTop: "30px",
+    marginBottom: "30px",
   },
   quiz: {
     width: "85%",
@@ -39,7 +40,7 @@ const styles = makeStyles((theme) => ({
     marginLeft: "auto",
     marginRight: "auto",
     border: "2px solid lightgrey",
-    borderRadius: "6px",
+    borderRadius: "10px",
     marginBottom: "15px",
     display: "flex",
     flexDirection: "column",
@@ -49,7 +50,7 @@ const styles = makeStyles((theme) => ({
   },
   question: {
     border: "2px solid lightgrey",
-    borderRadius: "2px",
+    borderRadius: "6px",
     marginBottom: "10px",
     padding: theme.spacing(2),
   },
@@ -238,7 +239,53 @@ const ViewAllQuizzes = () => {
           </div>
         )}
       </div>
-      <div className={classes.assessmentSection}></div>
+      <div className={classes.assessmentSection}>
+        <Typography
+          variant="h5"
+          style={{ textAlign: "center", paddingBottom: "20px" }}
+        >
+          Final Assessment
+        </Typography>
+        {assessment && assessment && (
+          <div className={classes.quiz}>
+            <div style={{ paddingBottom: "10px" }}>
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                Final Assessment
+              </Typography>
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                Instructions:{" "}
+              </Typography>
+              <Typography variant="h6">{assessment.instructions}</Typography>
+            </div>
+
+            <div style={{ display: "flex", paddingBottom: "10px" }}>
+              <Typography variant="h6">
+                <span style={{ fontWeight: 600 }}>Passing Marks:</span>{" "}
+                {assessment.passing_marks}
+              </Typography>
+            </div>
+            {assessment.questions &&
+              assessment.questions.length > 0 &&
+              assessment.questions.map((question, index1) => {
+                return (
+                  <div key={index1} className={classes.question}>
+                    {(() => {
+                      if (question.mcq) {
+                        return MCQ(question, index1);
+                      } else if (question.mrq) {
+                        return MRQ(question, index1);
+                      } else if (question.shortanswer) {
+                        return ShortAnswer(question, index1);
+                      } else {
+                        return null;
+                      }
+                    })()}
+                  </div>
+                );
+              })}
+          </div>
+        )}
+      </div>
     </Fragment>
   );
 };
