@@ -105,8 +105,8 @@ const ContributionsPage = () => {
           const currentDate = new Date();
           const diffTime = futureDate - currentDate;
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-          if (diffDays > 35) {
+          console.log(diffDays);
+          if (diffDays > 30) {
             // check = false;
             setLatestContribution(res.data);
           }
