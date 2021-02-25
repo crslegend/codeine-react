@@ -35,7 +35,7 @@ const styles = makeStyles((theme) => ({
   },
   courses: {
     paddingTop: "65px",
-    minHeight: "calc(100vh - 130px)",
+    minHeight: "calc(100vh - 220px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(15),
   },
