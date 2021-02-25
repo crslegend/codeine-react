@@ -264,13 +264,14 @@ const StudentPage = () => {
         <Grid item xs={5}>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel>Filter By</InputLabel>
+              <InputLabel style={{ top: -4 }}>Filter By</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
                 onChange={(event) => {
                   onSortChange(event);
                 }}
+                style={{ height: 47, backgroundColor: "#fff" }}
               >
                 <MenuItem key={null} value={"None"}>
                   -None-

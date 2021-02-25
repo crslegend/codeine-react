@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     padding: theme.spacing(3),
-    width: "70%",
+    width: "50%",
     margin: "40px auto",
   },
 }));
