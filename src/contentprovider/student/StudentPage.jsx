@@ -30,9 +30,21 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: "calc(100vh - 115px)",
   },
+  searchSection: {
+    display: "flex",
+    // alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    width: "100%",
+  },
   formControl: {
     marginLeft: theme.spacing(5),
-    minWidth: 250,
+    width: "250px",
+    maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
   },
   closeButton: {
     position: "absolute",
@@ -99,7 +111,12 @@ const StudentPage = () => {
   });
 
   const studentColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     {
       field: "first_name",
       headerName: "First Name",
@@ -257,8 +274,8 @@ const StudentPage = () => {
   return (
     <Fragment>
       <PageTitle title="My Students" />
-      <Grid container>
-        <Grid item xs={9} className={classes.searchSection}>
+      <div className={classes.searchSection}>
+        <div className={classes.searchBar}>
           <SearchBar
             style={{
               marginBottom: "20px",
@@ -268,13 +285,13 @@ const StudentPage = () => {
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
             onRequestSearch={handleRequestSearch}
-            className={classes.searchBar}
+            // className={classes.searchBar}
             classes={{
               input: classes.input,
             }}
           />
-        </Grid>
-        <Grid item xs={3}>
+        </div>
+        <div>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel style={{ top: -1 }}>Filter</InputLabel>
@@ -297,8 +314,8 @@ const StudentPage = () => {
               </Select>
             </FormControl>
           )}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       <Grid
         item
         xs={12}
@@ -378,9 +395,6 @@ const StudentPage = () => {
                 >
                   Joined on {formatDate(selectedStudent.date_joined)}
                 </Typography>
-                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
-                  ID: {selectedStudent.id}
-                </Typography>
               </Grid>
 
               <Grid item xs={12} className={classes.border}>
@@ -406,7 +420,9 @@ const StudentPage = () => {
                           <ListItemText
                             id={value.id}
                             primary={value.title}
-                            secondary={value.published_date}
+                            secondary={
+                              `Enrolled In: ` + formatDate(value.published_date)
+                            }
                           />
                         </ListItem>
                       );
