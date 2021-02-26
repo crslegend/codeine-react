@@ -10,13 +10,7 @@ import {
   useHistory,
 } from "react-router-dom";
 import PrivateRoute from "../components/PrivateRoute";
-import {
-  Avatar,
-  Button,
-  Divider,
-  ListItem,
-  Typography,
-} from "@material-ui/core";
+import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";

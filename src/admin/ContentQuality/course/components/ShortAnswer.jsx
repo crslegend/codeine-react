@@ -1,10 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+//import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
-import Service from "../../../../AxiosService";
+//import Service from "../../../../AxiosService";
 
-const styles = makeStyles((theme) => ({}));
+//const styles = makeStyles((theme) => ({}));
 
 const ShortAnswer = ({
   question,
@@ -21,7 +21,7 @@ const ShortAnswer = ({
   progress,
   setProgress,
 }) => {
-  const classes = styles();
+  //const classes = styles();
   console.log(question);
 
   const [enteredAnswer, setEnteredAnswer] = useState("");
@@ -38,75 +38,75 @@ const ShortAnswer = ({
     setCorrect(result);
   };
 
-  const handleSaveResponse = () => {
-    const data = {
-      response: enteredAnswer,
-      responses: null,
-      question: question.id,
-    };
+  // const handleSaveResponse = () => {
+  //   const data = {
+  //     response: enteredAnswer,
+  //     responses: null,
+  //     question: question.id,
+  //   };
 
-    Service.client
-      .put(`/quizResults/${resultObj.id}`, data)
-      .then((res) => {
-        console.log(res);
-        setResultObj(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+  //   Service.client
+  //     .put(`/quizResults/${resultObj.id}`, data)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setResultObj(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
-  const handleFinishQuiz = () => {
-    const data = {
-      response: enteredAnswer,
-      responses: null,
-      question: question.id,
-    };
+  // const handleFinishQuiz = () => {
+  //   const data = {
+  //     response: enteredAnswer,
+  //     responses: null,
+  //     question: question.id,
+  //   };
 
-    Service.client
-      .put(`/quizResults/${resultObj.id}`, data)
-      .then((res) => {
-        console.log(res);
+  //   Service.client
+  //     .put(`/quizResults/${resultObj.id}`, data)
+  //     .then((res) => {
+  //       console.log(res);
 
-        Service.client
-          .patch(`/quizResults/${resultObj.id}/submit`)
-          .then((res) => {
-            console.log(res);
-            setResultObj(res.data);
-            setPageNum(index + 1);
+  //       Service.client
+  //         .patch(`/quizResults/${resultObj.id}/submit`)
+  //         .then((res) => {
+  //           console.log(res);
+  //           setResultObj(res.data);
+  //           setPageNum(index + 1);
 
-            if (
-              res.data.passed &&
-              !progressArr.includes(materialId) &&
-              quizType === "QUIZ"
-            ) {
-              let arr = [...progressArr];
-              arr.push(materialId);
-              setProgressArr(arr);
+  //           if (
+  //             res.data.passed &&
+  //             !progressArr.includes(materialId) &&
+  //             quizType === "QUIZ"
+  //           ) {
+  //             let arr = [...progressArr];
+  //             arr.push(materialId);
+  //             setProgressArr(arr);
 
-              Service.client
-                .patch(`/courses/${courseId}/enrollments`, arr)
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => console.log(err));
-            } else if (res.data.passed && quizType === "FINAL") {
-              Service.client
-                .get(`enrollments`, { params: { courseId: courseId } })
-                .then((res) => {
-                  console.log(res);
-                  setProgress(res.data[0].progress);
-                  if (!res.data[0].materials_done) {
-                    setProgressArr([]);
-                  } else {
-                    setProgressArr(res.data[0].materials_done);
-                  }
-                })
-                .catch((err) => console.log(err));
-            }
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
-  };
+  //             Service.client
+  //               .patch(`/courses/${courseId}/enrollments`, arr)
+  //               .then((res) => {
+  //                 console.log(res);
+  //               })
+  //               .catch((err) => console.log(err));
+  //           } else if (res.data.passed && quizType === "FINAL") {
+  //             Service.client
+  //               .get(`enrollments`, { params: { courseId: courseId } })
+  //               .then((res) => {
+  //                 console.log(res);
+  //                 setProgress(res.data[0].progress);
+  //                 if (!res.data[0].materials_done) {
+  //                   setProgressArr([]);
+  //                 } else {
+  //                   setProgressArr(res.data[0].materials_done);
+  //                 }
+  //               })
+  //               .catch((err) => console.log(err));
+  //           }
+  //         })
+  //         .catch((err) => console.log(err));
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const loadPrevAnswer = (response) => {
     setEnteredAnswer(response);
