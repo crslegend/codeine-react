@@ -644,6 +644,66 @@ const QuestionDialog = ({
             </Fragment>
           )}
 
+          {questionType &&
+            questionType !== "shortanswer" &&
+            (editMode || addQuestionDialog) && (
+              <Typography
+                variant="body1"
+                style={{ paddingTop: "10px", paddingBottom: "5px" }}
+              >
+                Enter option(s) below in the field
+              </Typography>
+            )}
+
+          {options &&
+            options.map((option, index) => {
+              if (questionType === "mcq" || questionType === "mrq") {
+                return (
+                  <Fragment>
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TextField
+                        value={option}
+                        placeholder="Enter option"
+                        style={{ marginBottom: "10px" }}
+                        onChange={(e) => handleOptionInputChange(e, index)}
+                      />
+
+                      {options && options.length > 1 && (
+                        <IconButton
+                          size="small"
+                          style={{ marginLeft: "25px" }}
+                          onClick={() => {
+                            handleDeleteOption(index);
+                          }}
+                        >
+                          <Clear />
+                        </IconButton>
+                      )}
+                      {options && index === options.length - 1 && (
+                        <IconButton
+                          size="small"
+                          style={{ marginLeft: "5px" }}
+                          onClick={() => {
+                            handleAddOption();
+                          }}
+                        >
+                          <Add />
+                        </IconButton>
+                      )}
+                    </div>
+                  </Fragment>
+                );
+              } else {
+                return null;
+              }
+            })}
+
           {options && correctAnswer && questionType === "mcq" && (
             <FormControl
               fullWidth
@@ -722,63 +782,6 @@ const QuestionDialog = ({
               />
             </Fragment>
           )}
-
-          {questionType &&
-            questionType !== "shortanswer" &&
-            (editMode || addQuestionDialog) && (
-              <Typography style={{ fontSize: "12px", paddingBottom: "5px" }}>
-                Enter option(s) below in the field
-              </Typography>
-            )}
-
-          {options &&
-            options.map((option, index) => {
-              if (questionType === "mcq" || questionType === "mrq") {
-                return (
-                  <Fragment>
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <TextField
-                        value={option}
-                        placeholder="Enter option"
-                        style={{ marginBottom: "10px" }}
-                        onChange={(e) => handleOptionInputChange(e, index)}
-                      />
-
-                      {options && options.length > 1 && (
-                        <IconButton
-                          size="small"
-                          style={{ marginLeft: "25px" }}
-                          onClick={() => {
-                            handleDeleteOption(index);
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      )}
-                      {options && index === options.length - 1 && (
-                        <IconButton
-                          size="small"
-                          style={{ marginLeft: "5px" }}
-                          onClick={() => {
-                            handleAddOption();
-                          }}
-                        >
-                          <Add />
-                        </IconButton>
-                      )}
-                    </div>
-                  </Fragment>
-                );
-              } else {
-                return null;
-              }
-            })}
         </DialogContent>
         <DialogActions>
           <Button

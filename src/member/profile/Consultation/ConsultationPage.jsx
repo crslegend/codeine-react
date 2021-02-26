@@ -78,11 +78,12 @@ const Consultation = () => {
   };
 
   const handleCancel = (applicationId) => {
+    const transactionId = "";
     setOpenCancelDialog(false);
-    cancelConsultation(applicationId);
+    cancelConsultation(applicationId, transactionId);
   };
 
-  const cancelConsultation = (applicationId) => {
+  const cancelConsultation = (applicationId, transactionId) => {
     Service.client
       .patch(`/consultations/application/${applicationId}/cancel`)
       .then((res) => {
@@ -95,7 +96,11 @@ const Consultation = () => {
         getApplicationData();
       });
 
-    console.log("Application is deleted");
+    Service.client
+      .patch(`/consultations/payment/${transactionId}/refund`)
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   const formatStatus = (status) => {
@@ -113,7 +118,7 @@ const Consultation = () => {
     {
       field: "meeting_link",
       headerName: "Meeting Link",
-      width: 400,
+      width: 380,
       renderCell: (params) => {
         //console.log(params.row.meeting_link);
         return (
@@ -149,12 +154,12 @@ const Consultation = () => {
           </Typography>
         </strong>
       ),
-      width: 150,
+      width: 140,
     },
     {
-      width: 150,
+      width: 180,
       field: "is_cancelled",
-      headerName: "Remove",
+      headerName: "Cancel Booking",
       renderCell: (params) => (
         <Button
           color="primary"
@@ -257,7 +262,12 @@ const Consultation = () => {
               color="primary"
               variant="outlined"
               style={{ color: "#437FC7" }}
-              onClick={(e) => handleCancel(application.id)}
+              onClick={(e) =>
+                handleCancel(
+                  application.id
+                  //application.transaction_id
+                )
+              }
             >
               Confirm
             </Button>

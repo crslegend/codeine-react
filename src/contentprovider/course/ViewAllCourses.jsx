@@ -80,13 +80,18 @@ const useStyles = makeStyles((theme) => ({
   searchSection: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
+    width: "100%",
   },
   formControl: {
     marginLeft: theme.spacing(5),
-    minWidth: 250,
+    width: "250px",
     maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
   },
   paginationSection: {
     float: "right",
@@ -233,6 +238,22 @@ const ViewAllCourses = () => {
 
   console.log(allCourses);
 
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
   const publishedChip = (
     <Chip
       label="Published"
@@ -263,21 +284,20 @@ const ViewAllCourses = () => {
           Create New Course
         </Button>
       </div>
-      <Grid container>
-        <Grid item xs={9}>
+      <div className={classes.searchSection}>
+        <div className={classes.searchBar}>
           <SearchBar
             placeholder="Search Courses"
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
             onRequestSearch={handleRequestSearch}
-            className={classes.searchBar}
             classes={{
               input: classes.input,
             }}
           />
-        </Grid>
-        <Grid item xs={3}>
+        </div>
+        <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
             <Select
@@ -292,17 +312,17 @@ const ViewAllCourses = () => {
                 <em>None</em>
               </MenuItem>
               <MenuItem value="-published_date">
-                Published Date (Least Recent)
+                Published Date (Most Recent)
               </MenuItem>
               <MenuItem value="published_date">
-                Published Date (Most Recent)
+                Published Date (Least Recent)
               </MenuItem>
               <MenuItem value="rating">Rating (Ascending)</MenuItem>
               <MenuItem value="-rating">Rating (Descending)</MenuItem>
             </Select>
           </FormControl>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       <div className={classes.courses}>
         {allCourses && allCourses.length > 0 ? (
           allCourses
@@ -337,6 +357,19 @@ const ViewAllCourses = () => {
                           return unPublishedChip;
                         }
                       })()}
+                      <Typography
+                        variant="body2"
+                        style={{
+                          opacity: 0.7,
+                          paddingBottom: "10px",
+                          paddingTop: "10px",
+                        }}
+                      >
+                        Pusblished On:
+                        <br />
+                        {course.published_date &&
+                          formatDate(course.published_date)}
+                      </Typography>
                     </CardContent>
                   </CardActionArea>
                   <CardActions

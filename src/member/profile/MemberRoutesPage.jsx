@@ -34,6 +34,7 @@ import Cookies from "js-cookie";
 import Consultation from "./Consultation/ConsultationPage";
 import Profile from "./Profile/ProfilePage";
 import Password from "./Password/PasswordPage";
+import Transaction from "./Payment/PaymentPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
 import CoursesPage from "./Courses/CoursesPage";
 
@@ -354,7 +355,7 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/transaction"
-              render={() => <div></div>}
+              render={() => <Transaction />}
             />
             <Redirect from="/member/home" to="/member/home/dashboard" />
           </Switch>
