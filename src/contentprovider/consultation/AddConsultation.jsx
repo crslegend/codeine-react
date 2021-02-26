@@ -20,26 +20,16 @@ import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
-    // color: "#fff",
-    // backgroundColor: theme.palette.primary.main,
-    // height: 35,
-    padding: "15px 10px",
-    lineHeight: "18px",
-    [theme.breakpoints.down("md")]: {
-      padding: "5px 10px",
-      height: "8vh",
-    },
+    color: "#fff",
+    backgroundColor: theme.palette.primary.main,
+    height: 35,
   },
 }));
 
 const AddConsultation = ({ handleGetAllConsultations }) => {
   const classes = useStyles();
   const date = new Date();
-  const currentDate = new Date(
-    date.getTime() - date.getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .substr(0, 16);
+  const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substr(0, 16);
 
   const [slot, setSlot] = useState({
     start_time: currentDate,
@@ -195,21 +185,23 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         startIcon={<Add />}
         onClick={handleDialogOpen}
       >
-        Add slot
+        New Consultation Slot
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">
-          Create a new consultation slot
-        </DialogTitle>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Create a new consultation slot</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the start and end time of your preference, with a conference
-            link attached.
+            Enter the start and end time of your preference, with a conference link attached.
           </DialogContentText>
+          <TextField
+            required
+            margin="dense"
+            id="name"
+            label="Title"
+            value={slot.title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            fullWidth
+          />
           <KeyboardDateTimePicker
             variant="inline"
             label="Start Time"
@@ -224,15 +216,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
             onChange={handleEndTimeChange}
             style={{ float: "right" }}
             className={classes.textField}
-          />
-          <TextField
-            required
-            margin="dense"
-            id="name"
-            label="Title"
-            value={slot.title}
-            onChange={(e) => handleTitleChange(e.target.value)}
-            fullWidth
           />
           <TextField
             required
@@ -295,58 +278,29 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <Button onClick={handleBankAlertClose} color="primary">
             Cancel
           </Button>
-          <Button
-            onClick={(e) => history.push(`/partner/home/wallet`)}
-            color="primary"
-          >
+          <Button onClick={(e) => history.push(`/partner/home/wallet`)} color="primary">
             Proceed
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={successAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleSuccessAlertClose}
-      >
-        <Alert
-          onClose={handleSuccessAlertClose}
-          elevation={6}
-          severity="success"
-        >
-          <Typography variant="body1">
-            Consultation slot has been added
-          </Typography>
+      <Snackbar open={successAlertOpen} autoHideDuration={4000} onClose={handleSuccessAlertClose}>
+        <Alert onClose={handleSuccessAlertClose} elevation={6} severity="success">
+          <Typography variant="body1">Consultation slot has been added</Typography>
         </Alert>
       </Snackbar>
-      <Snackbar
-        open={titleAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleTitleAlertClose}
-      >
+      <Snackbar open={titleAlertOpen} autoHideDuration={4000} onClose={handleTitleAlertClose}>
         <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">
-            Please enter a consultation title!
-          </Typography>
+          <Typography variant="body1">Please enter a consultation title!</Typography>
         </Alert>
       </Snackbar>
 
-      <Snackbar
-        open={dateAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleDateAlertClose}
-      >
+      <Snackbar open={dateAlertOpen} autoHideDuration={4000} onClose={handleDateAlertClose}>
         <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">
-            Please enter a valid consultation date and time!
-          </Typography>
+          <Typography variant="body1">Please enter a valid consultation date and time!</Typography>
         </Alert>
       </Snackbar>
-      <Snackbar
-        open={meetingLinkAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleLinkAlertClose}
-      >
+      <Snackbar open={meetingLinkAlertOpen} autoHideDuration={4000} onClose={handleLinkAlertClose}>
         <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
           <Typography variant="body1">Please enter a meeting link!</Typography>
         </Alert>

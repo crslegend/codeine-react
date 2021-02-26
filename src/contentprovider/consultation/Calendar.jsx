@@ -1,8 +1,8 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
-import { ViewState, EditingState, IntegratedEditing } from "@devexpress/dx-react-scheduler";
+import { ViewState, EditingState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
@@ -12,19 +12,8 @@ import {
   Toolbar,
   TodayButton,
   DateNavigator,
-  AppointmentForm,
-  AppointmentTooltip,
-  ConfirmationDialog,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Service from "../../AxiosService";
-import jwt_decode from "jwt-decode";
-
-const messages = {
-  detailsLabel: "Edit Consultation",
-  moreInformationLabel: "",
-  repeatLabel: "",
-  allDayLabel: "",
-};
 
 const styles = {
   toolbarRoot: {
@@ -38,22 +27,6 @@ const styles = {
   },
 };
 
-const TextEditor = (props) => {
-  // eslint-disable-next-line react/destructuring-assignment
-  if (props.type === "multilineTextEditor") {
-    return null;
-  }
-  return <AppointmentForm.TextEditor {...props} />;
-};
-
-const BooleanEditor = (props) => {
-  // eslint-disable-next-line react/destructuring-assignment
-  if (props.label === "") {
-    return null;
-  }
-  return <AppointmentForm.BooleanEditor {...props} />;
-};
-
 const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(({ children, classes, ...restProps }) => (
   <div className={classes.toolbarRoot}>
     <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
@@ -63,16 +36,22 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(({ children, 
 
 const usaTime = (date) => new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
 
-const Calendar = ({ consultations, loading, setConsultations, setLoading, handleGetAllConsultations }) => {
+const Calendar = ({
+  consultations,
+  loading,
+  setConsultations,
+  setLoading,
+  handleGetAllConsultations,
+  setSelectedConsultation,
+}) => {
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = usaTime(new Date());
   console.log(currentDate);
-  const [allowDeleting, setAllowDeleting] = useState(true);
-  const [allowUpdating, setAllowUpdating] = useState(true);
 
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(setConsultations, setLoading);
+    // eslint-disable-next-line
   }, []);
 
   // handles updating of consultation slot
@@ -167,63 +146,6 @@ const Calendar = ({ consultations, loading, setConsultations, setLoading, handle
     []
   );
 
-  const BasicLayout = ({ onFieldChange, appointmentData, readOnly, ...restProps }) => {
-    console.log(appointmentData);
-    const onLinkChange = (nextValue) => {
-      onFieldChange({ meeting_link: nextValue });
-    };
-
-    const onRateChange = (nextValue) => {
-      onFieldChange({ price_per_pax: nextValue });
-    };
-
-    const onMaxMemberChange = (nextValue) => {
-      onFieldChange({ max_members: nextValue });
-    };
-
-    if (appointmentData.endDate < currentDate) {
-      setAllowUpdating(false);
-      setAllowDeleting(false);
-      console.log("correct");
-    } else {
-      setAllowUpdating(true);
-      setAllowDeleting(true);
-    }
-    console.log(allowUpdating);
-    return (
-      <AppointmentForm.BasicLayout
-        appointmentData={appointmentData}
-        onFieldChange={onFieldChange}
-        readOnly={!allowDeleting || !allowUpdating}
-        {...restProps}
-      >
-        <AppointmentForm.Label style={{ marginTop: "10px" }} text="Conference Link" type="title" />
-        <AppointmentForm.TextEditor
-          value={appointmentData.meeting_link}
-          onValueChange={onLinkChange}
-          readOnly={!allowDeleting || !allowUpdating}
-          placeholder="Enter conference link"
-        />
-        <AppointmentForm.Label style={{ marginTop: "10px" }} text="Rate per pax ($)" type="title" />
-        <AppointmentForm.TextEditor
-          value={appointmentData.price_per_pax}
-          onValueChange={onRateChange}
-          readOnly={appointmentData.member.length !== 0}
-          placeholder="Enter price per hour e.g. 100.50"
-        />
-        <AppointmentForm.Label style={{ marginTop: "10px" }} text="Max no. of pax" type="title" />
-        <AppointmentForm.TextEditor
-          value={appointmentData.max_members}
-          onValueChange={onMaxMemberChange}
-          readOnly={!allowDeleting || !allowUpdating}
-          placeholder="Enter maximum number of bookings allowed"
-        />
-        <AppointmentForm.Label style={{ marginTop: "10px" }} text="Member" type="title" />
-        <AppointmentForm.TextEditor value={appointmentData.member} readOnly />
-      </AppointmentForm.BasicLayout>
-    );
-  };
-
   const handleCurrentViewChange = (newViewName) => {
     setCurrentViewName(newViewName);
   };
@@ -265,24 +187,16 @@ const Calendar = ({ consultations, loading, setConsultations, setLoading, handle
 
   const AppointmentProps = ({ children, ...restProps }) => {
     return (
-      <Appointments.Appointment onClick={(e) => console.log(e)} {...restProps}>
+      <Appointments.Appointment
+        onClick={(e) => {
+          setSelectedConsultation(e.data);
+        }}
+        {...restProps}
+      >
         {children}
       </Appointments.Appointment>
     );
   };
-
-  const CommandButton = React.useCallback(
-    ({ id, ...restProps }) => {
-      if (id === "deleteButton") {
-        return <AppointmentForm.CommandButton id={id} {...restProps} disabled={!allowDeleting} />;
-      }
-      if (id === "saveButton") {
-        return <AppointmentForm.CommandButton id={id} {...restProps} disabled={!allowUpdating} />;
-      }
-      return <AppointmentForm.CommandButton id={id} {...restProps} />;
-    },
-    [allowDeleting, allowUpdating]
-  );
 
   return (
     <Paper style={{ height: "60vh" }}>

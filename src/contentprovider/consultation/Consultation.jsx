@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Divider } from "@material-ui/core";
 import jwt_decode from "jwt-decode";
@@ -74,10 +74,13 @@ const reducer = (state, action) => {
 const Consultation = () => {
   const classes = useStyles();
 
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [selectedConsultation, setSelectedConsultation] = useState();
+  console.log(selectedConsultation);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { consultations, loading } = state;
 
-  const setConsultations = React.useCallback(
+  const setConsultations = useCallback(
     (nextConsultations) =>
       dispatch({
         type: "setConsultations",
@@ -86,7 +89,7 @@ const Consultation = () => {
     [dispatch]
   );
 
-  const setLoading = React.useCallback(
+  const setLoading = useCallback(
     (nextLoading) =>
       dispatch({
         type: "setLoading",
@@ -134,6 +137,7 @@ const Consultation = () => {
         setConsultations={setConsultations}
         setLoading={setLoading}
         handleGetAllConsultations={handleGetAllConsultations}
+        setSelectedConsultation={setSelectedConsultation}
       />
       <Divider className={classes.divider} />
       <ConsultationApplication />
