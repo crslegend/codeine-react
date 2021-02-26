@@ -151,8 +151,8 @@ const QuestionDialog = ({
       setCorrectAnswer(correctAnswer.filter((answer) => answer !== value));
     }
     let arr = [...options];
-    arr = arr.filter((option) => arr.indexOf(option) !== index);
-    console.log(arr);
+    arr.splice(index, 1); // use this instead of filter to cover the case where all values are the same
+    // console.log(arr);
     setOptions(arr);
   };
 
@@ -721,6 +721,7 @@ const QuestionDialog = ({
                 onChange={(e) => setCorrectAnswer(e.target.value)}
                 label="Select Correct Answer"
                 variant="outlined"
+                disabled={options && options.includes("")}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
@@ -747,6 +748,7 @@ const QuestionDialog = ({
                 renderValue={(selected) => {
                   return selected.join(", ");
                 }}
+                disabled={options && options.includes("")}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
