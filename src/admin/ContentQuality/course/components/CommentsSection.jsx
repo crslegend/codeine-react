@@ -17,7 +17,6 @@ import {
   Chat,
   Delete,
   Edit,
-  FiberPin,
   SubdirectoryArrowRight,
   ThumbUp,
 } from "@material-ui/icons";
@@ -88,6 +87,7 @@ const CommentsSection = ({ materialId, user }) => {
 
   useEffect(() => {
     getCourseMaterialComments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialId, pageNum]);
 
   const calculateDateInterval = (timestamp) => {
@@ -252,25 +252,25 @@ const CommentsSection = ({ materialId, user }) => {
     return false;
   };
 
-  const handlePinComment = (id) => {
-    Service.client
-      .patch(`/course-comments/${id}/pin`)
-      .then((res) => {
-        console.log(res);
-        getCourseMaterialComments();
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handlePinComment = (id) => {
+  //   Service.client
+  //     .patch(`/course-comments/${id}/pin`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       getCourseMaterialComments();
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
-  const handleUnpinComment = (id) => {
-    Service.client
-      .patch(`/course-comments/${id}/unpin`)
-      .then((res) => {
-        console.log(res);
-        getCourseMaterialComments();
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleUnpinComment = (id) => {
+  //   Service.client
+  //     .patch(`/course-comments/${id}/unpin`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       getCourseMaterialComments();
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const deletedParentComment = (
     <div

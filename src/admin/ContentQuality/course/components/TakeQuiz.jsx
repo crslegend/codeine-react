@@ -1,16 +1,15 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
 import MCQ from "./MCQ";
 import MRQ from "./MRQ";
 import ShortAnswer from "./ShortAnswer";
-import Service from "../../../../AxiosService";
 
-const styles = makeStyles((theme) => ({
-  button: {
-    width: 100,
-  },
-}));
+// const styles = makeStyles((theme) => ({
+//   button: {
+//     width: 100,
+//   },
+// }));
 
 const TakeQuiz = ({
   quiz,
@@ -28,8 +27,8 @@ const TakeQuiz = ({
   progress,
   setProgress,
 }) => {
-  const classes = styles();
-  console.log(resultObj);
+  //const classes = styles();
+  //console.log(resultObj);
 
   // const [pageNum, setPageNum] = useState(-1);
   // const [resultObj, setResultObj] = useState();

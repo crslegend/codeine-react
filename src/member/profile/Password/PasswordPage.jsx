@@ -118,7 +118,7 @@ const Password = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setLoading(true);
+    setLoading(true);
 
     if (
       passwordDetails.new_password === "" ||
@@ -131,6 +131,7 @@ const Password = () => {
         message: "All fields must be filled in.",
         severity: "error",
       });
+      setLoading(false);
       return;
     }
 
@@ -141,6 +142,7 @@ const Password = () => {
         message: "New password must match Repeat password",
         severity: "error",
       });
+      setLoading(false);
       return;
     }
 
@@ -156,6 +158,7 @@ const Password = () => {
         passwordDetails.old_password = "";
         passwordDetails.new_password = "";
         passwordDetails.repeat_password = "";
+        setLoading(false);
       })
       .catch((err) => {
         setSbOpen(true);
@@ -164,6 +167,7 @@ const Password = () => {
           message: "Current password is incorrect",
           severity: "error",
         });
+        setLoading(false);
       });
     passwordDetails.new_password = "";
     passwordDetails.repeat_password = "";

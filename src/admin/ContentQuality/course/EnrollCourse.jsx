@@ -1,25 +1,15 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../../components/Navbar";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Button,
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
-  LinearProgress,
   Paper,
-  TextField,
   Typography,
 } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
-//import Footer from "../landing/Footer";
+import { useHistory, useParams } from "react-router-dom";
 
 import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
@@ -29,16 +19,13 @@ import {
   Assignment,
   AttachFile,
   ExpandMore,
-  GetApp,
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import ReactPlayer from "react-player";
 
-import components from "./components/NavbarComponents";
 import TakeQuiz from "./components/TakeQuiz";
 import Toast from "../../../components/Toast.js";
-import { Rating } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
 import CommentsSection from "./components/CommentsSection";
 // import calculate from "./components/CalculateDuration";
@@ -99,17 +86,6 @@ const EnrollCourse = () => {
   const history = useHistory();
   const { id } = useParams();
 
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
-
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
   const [givenCourseReview, setGivenCourseReview] = useState(false);
@@ -118,13 +94,13 @@ const EnrollCourse = () => {
 
   const [expanded, setExpanded] = useState("overview");
 
-  const [unenrollDialog, setUnenrollDialog] = useState(false);
-  const [reviewDialog, setReviewDialog] = useState(false);
+  //const [unenrollDialog, setUnenrollDialog] = useState(false);
+  //const [reviewDialog, setReviewDialog] = useState(false);
 
-  const [review, setReview] = useState({
-    rating: 0,
-    description: "",
-  });
+  // const [review, setReview] = useState({
+  //   rating: 0,
+  //   description: "",
+  // });
 
   const [pageNum, setPageNum] = useState(-1);
   const [resultObj, setResultObj] = useState();
@@ -200,40 +176,40 @@ const EnrollCourse = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmitReview = () => {
-    if (review.rating === 0 || review.description === "") {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Please give a rating and description for the review!",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
-    }
+  // const handleSubmitReview = () => {
+  //   if (review.rating === 0 || review.description === "") {
+  //     setSbOpen(true);
+  //     setSnackbar({
+  //       message: "Please give a rating and description for the review!",
+  //       severity: "error",
+  //       anchorOrigin: {
+  //         vertical: "bottom",
+  //         horizontal: "center",
+  //       },
+  //       autoHideDuration: 3000,
+  //     });
+  //     return;
+  //   }
 
-    Service.client
-      .post(`/courses/${id}/reviews`, review)
-      .then((res) => {
-        console.log(res);
-        setReviewDialog(false);
-        setSbOpen(true);
-        setSnackbar({
-          message: "Course review submitted successfully!",
-          severity: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-        return;
-      })
-      .catch((err) => console.log(err));
-  };
+  //   Service.client
+  //     .post(`/courses/${id}/reviews`, review)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setReviewDialog(false);
+  //       setSbOpen(true);
+  //       setSnackbar({
+  //         message: "Course review submitted successfully!",
+  //         severity: "success",
+  //         anchorOrigin: {
+  //           vertical: "bottom",
+  //           horizontal: "center",
+  //         },
+  //         autoHideDuration: 3000,
+  //       });
+  //       return;
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
@@ -268,48 +244,48 @@ const EnrollCourse = () => {
   };
 
   const handleCreateQuizResult = (quizId) => {
-    Service.client
-      .post(`/quiz/${quizId}/results`)
-      .then((res) => {
-        console.log(res);
-        setResultObj(res.data);
-        setPageNum(-1);
-        // if (res.data.passed) {
-        //   setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
-        // } else {
-        //   setPageNum(-1);
-        // }
-      })
-      .catch((err) => console.log(err));
+    setPageNum(-1);
+    // Service.client
+    //   .post(`/quiz/${quizId}/results`)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setResultObj(res.data);
+
+    //     if (res.data.passed) {
+    //       setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
+    //     } else {
+    //       setPageNum(-1);
+    //     }
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
-  const handleCheckMaterial = (e, materialId) => {
-    let arr = [];
-    if (progressArr.length > 0) {
-      arr = [...progressArr];
-    }
+  // const handleCheckMaterial = (e, materialId) => {
+  //   let arr = [];
+  //   if (progressArr.length > 0) {
+  //     arr = [...progressArr];
+  //   }
 
-    if (e.target.checked) {
-      arr.push(materialId);
-      setProgressArr(arr);
-    } else {
-      arr = arr.filter((id) => id !== materialId);
-      console.log(arr);
-      setProgressArr(arr);
-    }
+  //   if (e.target.checked) {
+  //     arr.push(materialId);
+  //     setProgressArr(arr);
+  //   } else {
+  //     arr = arr.filter((id) => id !== materialId);
+  //     console.log(arr);
+  //     setProgressArr(arr);
+  //   }
 
-    Service.client
-      .patch(`/courses/${id}/enrollments`, arr)
-      .then((res) => {
-        console.log(res);
-        setProgress(res.data.progress);
-      })
-      .catch((err) => console.log(err));
-  };
+  //   Service.client
+  //     .patch(`/courses/${id}/enrollments`, arr)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setProgress(res.data.progress);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   return (
     <div className={classes.root}>
-      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.mainSection}>
         <div
           style={{
@@ -816,7 +792,6 @@ const EnrollCourse = () => {
           </div>
         </div>
       </div>
-
       {/* <Dialog
         open={unenrollDialog}
         onClose={() => setUnenrollDialog(false)}

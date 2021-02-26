@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, CircularProgress, Paper, Grid } from "@material-ui/core";
 import Toast from "../../components/Toast.js";
@@ -101,7 +101,7 @@ const AdminPasswordPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setLoading(true);
+    setLoading(true);
 
     if (
       passwordDetails.new_password === "" ||
@@ -114,6 +114,7 @@ const AdminPasswordPage = () => {
         message: "All fields must be filled in.",
         severity: "error",
       });
+      setLoading(false);
       return;
     }
 
@@ -124,6 +125,7 @@ const AdminPasswordPage = () => {
         message: "New password must match Repeat password",
         severity: "error",
       });
+      setLoading(false);
       return;
     }
 
@@ -136,6 +138,7 @@ const AdminPasswordPage = () => {
           message: "Password updated successfully!",
           severity: "success",
         });
+        setLoading(false);
         e.target.reset();
       })
       .catch((err) => {
@@ -145,13 +148,14 @@ const AdminPasswordPage = () => {
           message: "Current password is incorrect",
           severity: "error",
         });
+        setLoading(false);
       });
-      passwordDetails.new_password = "";
-      passwordDetails.repeat_password = "";
-      passwordDetails.old_password = "";
-      passwordDetails.showOldPassword = false;
-      passwordDetails.showNewPassword = false;
-      passwordDetails.showRepeatPassword = false;
+    passwordDetails.new_password = "";
+    passwordDetails.repeat_password = "";
+    passwordDetails.old_password = "";
+    passwordDetails.showOldPassword = false;
+    passwordDetails.showNewPassword = false;
+    passwordDetails.showRepeatPassword = false;
   };
 
   return (
