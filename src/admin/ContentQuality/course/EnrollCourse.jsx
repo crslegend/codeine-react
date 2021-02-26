@@ -244,19 +244,20 @@ const EnrollCourse = () => {
   };
 
   const handleCreateQuizResult = (quizId) => {
-    Service.client
-      .post(`/quiz/${quizId}/results`)
-      .then((res) => {
-        console.log(res);
-        setResultObj(res.data);
-        setPageNum(-1);
-        // if (res.data.passed) {
-        //   setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
-        // } else {
-        //   setPageNum(-1);
-        // }
-      })
-      .catch((err) => console.log(err));
+    setPageNum(-1);
+    // Service.client
+    //   .post(`/quiz/${quizId}/results`)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setResultObj(res.data);
+
+    //     if (res.data.passed) {
+    //       setPageNum(res.data.quiz_answers && res.data.quiz_answers.length);
+    //     } else {
+    //       setPageNum(-1);
+    //     }
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
   // const handleCheckMaterial = (e, materialId) => {
