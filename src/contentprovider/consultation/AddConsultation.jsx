@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -11,18 +11,20 @@ import {
   Snackbar,
   Typography,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import { useHistory } from "react-router-dom";
+import { KeyboardDateTimePicker } from "@material-ui/pickers";
+
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
-    textTransform: "none",
-    marginTop: "40px",
     padding: "15px 10px",
   },
 }));
 
-const AddConsultation = () => {
+const AddConsultation = ({ handleGetAllConsultations }) => {
   const classes = useStyles();
   const date = new Date();
   const currentDate = new Date(
@@ -31,45 +33,24 @@ const AddConsultation = () => {
     .toISOString()
     .substr(0, 16);
 
-  const [startTime, setStartTime] = useState(currentDate);
-  const [endTime, setEndTime] = useState(currentDate);
-  const [meetingLink, setMeetingLink] = useState("");
-  const [maxMembers, setMaxMembers] = useState(1);
-  const [pricePerPax, setPricePerPax] = useState(1);
-  const [title, setTitle] = useState("Open");
   const [slot, setSlot] = useState({
-    start_time: startTime,
-    end_time: endTime,
-    meeting_link: meetingLink,
-    title: title,
-    max_members: maxMembers,
-    price_per_pax: pricePerPax,
-    is_all_day: false,
-    r_rule: null,
+    start_time: currentDate,
+    end_time: currentDate,
+    meeting_link: "",
+    title: "Open",
+    max_members: 1,
+    price_per_pax: 0,
   });
   const [open, setOpen] = useState(false);
 
   const [titleAlertOpen, setTitleAlertOpen] = useState(false);
   const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
+  const [dateAlertOpen, setDateAlertOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [bankDialog, setBankDialog] = useState(false);
 
-  // const fetchUpdate = () => {
-  //   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-  //     const userid = jwt_decode(Service.getJWT()).user_id;
-  //     Service.client
-  //       .get("/consultations", { params: { search: userid } })
-  //       .then((res) => {
-  //         console.log(res.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUpdate();
-  // }, []);
+  // react router dom history hooks
+  const history = useHistory();
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -82,11 +63,25 @@ const AddConsultation = () => {
     setMeetingLinkAlertOpen(false);
   };
 
+  const handleDateAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setDateAlertOpen(false);
+  };
+
   const handleTitleAlertClose = (e, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setTitleAlertOpen(false);
+  };
+
+  const handleBankAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setBankDialog(false);
   };
 
   const handleSuccessAlertClose = (e, reason) => {
@@ -97,8 +92,6 @@ const AddConsultation = () => {
   };
 
   const handleStartTimeChange = (e) => {
-    setStartTime(e);
-
     setSlot({
       ...slot,
       start_time: e,
@@ -106,8 +99,6 @@ const AddConsultation = () => {
   };
 
   const handleEndTimeChange = (e) => {
-    setEndTime(e);
-
     setSlot({
       ...slot,
       end_time: e,
@@ -115,8 +106,6 @@ const AddConsultation = () => {
   };
 
   const handleTitleChange = (e) => {
-    setTitle(e);
-
     setSlot({
       ...slot,
       title: e,
@@ -124,8 +113,6 @@ const AddConsultation = () => {
   };
 
   const handleLinkChange = (e) => {
-    setMeetingLink(e);
-
     setSlot({
       ...slot,
       meeting_link: e,
@@ -133,8 +120,6 @@ const AddConsultation = () => {
   };
 
   const handleMaxMemberChange = (e) => {
-    setMaxMembers(e);
-
     setSlot({
       ...slot,
       max_members: e,
@@ -142,8 +127,6 @@ const AddConsultation = () => {
   };
 
   const handlePriceChange = (e) => {
-    setPricePerPax(e);
-
     setSlot({
       ...slot,
       price_per_pax: e,
@@ -158,28 +141,50 @@ const AddConsultation = () => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
+    } else if (slot.start_time <= date || slot.start_time >= slot.end_time) {
+      setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
     } else {
       setOpen(false);
-      Service.client
-        .post("/consultations", slot)
-        .then((res) => {
-          setSuccessAlertOpen(true);
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (slot.price_per_pax > 0) {
+        Service.client
+          .get(`/auth/bank-details`)
+          .then((res) => {
+            Service.client
+              .post("/consultations", slot)
+              .then((res) => {
+                setSuccessAlertOpen(true);
+                handleGetAllConsultations();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((err) => {
+            setBankDialog(true);
+          });
+      } else {
+        Service.client
+          .post("/consultations", slot)
+          .then((res) => {
+            setSuccessAlertOpen(true);
+            handleGetAllConsultations();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   };
 
   return (
-    <div>
+    <Fragment>
       <Button
         className={classes.opendialog}
         variant="contained"
         color="primary"
+        startIcon={<Add />}
         onClick={handleDialogOpen}
       >
         Create a consultation slot
@@ -197,36 +202,27 @@ const AddConsultation = () => {
             Enter the start and end time of your preference, with a conference
             link attached.
           </DialogContentText>
-          <TextField
-            id="datetime-local"
+          <KeyboardDateTimePicker
+            variant="inline"
             label="Start Time"
-            type="datetime-local"
-            defaultValue={currentDate}
-            value={startTime}
-            onChange={(e) => handleStartTimeChange(e.target.value)}
+            value={slot.start_time}
+            onChange={handleStartTimeChange}
             className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
           />
-          <TextField
-            id="datetime-local"
+          <KeyboardDateTimePicker
+            variant="inline"
             label="End Time"
-            type="datetime-local"
-            defaultValue={currentDate}
-            value={endTime}
-            onChange={(e) => handleEndTimeChange(e.target.value)}
+            value={slot.end_time}
+            onChange={handleEndTimeChange}
             style={{ float: "right" }}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            className={classes.textField}
           />
           <TextField
             required
             margin="dense"
             id="name"
             label="Title"
-            value={title}
+            value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
           />
@@ -235,7 +231,7 @@ const AddConsultation = () => {
             margin="dense"
             id="name"
             label="Conference link"
-            value={meetingLink}
+            value={slot.meeting_link}
             onChange={(e) => handleLinkChange(e.target.value)}
             type="url"
             fullWidth
@@ -250,7 +246,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Max no. of signups"
-              value={maxMembers}
+              value={slot.max_members}
               onChange={(e) => handleMaxMemberChange(e.target.value)}
               type="number"
               InputProps={{
@@ -261,7 +257,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Price (per pax)"
-              value={pricePerPax}
+              value={slot.price_per_pax}
               onChange={(e) => handlePriceChange(e.target.value)}
               type="number"
               InputProps={{
@@ -276,6 +272,26 @@ const AddConsultation = () => {
           </Button>
           <Button onClick={handleSubmit} color="primary">
             Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={bankDialog} onClose={handleBankAlertClose}>
+        <DialogTitle>You have not set up your bank account</DialogTitle>
+        <DialogContent>
+          A bank account is needed to collect your consultation earnings.
+          <br />
+          Press "Proceed" to add your bank account.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleBankAlertClose} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={(e) => history.push(`/partner/home/wallet`)}
+            color="primary"
+          >
+            Proceed
           </Button>
         </DialogActions>
       </Dialog>
@@ -306,6 +322,18 @@ const AddConsultation = () => {
           </Typography>
         </Alert>
       </Snackbar>
+
+      <Snackbar
+        open={dateAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleDateAlertClose}
+      >
+        <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
+          <Typography variant="body1">
+            Please enter a valid consultation date and time!
+          </Typography>
+        </Alert>
+      </Snackbar>
       <Snackbar
         open={meetingLinkAlertOpen}
         autoHideDuration={4000}
@@ -315,7 +343,7 @@ const AddConsultation = () => {
           <Typography variant="body1">Please enter a meeting link!</Typography>
         </Alert>
       </Snackbar>
-    </div>
+    </Fragment>
   );
 };
 
