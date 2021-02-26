@@ -35,7 +35,7 @@ const styles = makeStyles((theme) => ({
   },
   courses: {
     paddingTop: "65px",
-    minHeight: "calc(100vh - 130px)",
+    minHeight: "calc(100vh - 220px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(15),
   },
@@ -216,13 +216,14 @@ const ViewAllCourses = () => {
             }}
           />
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel>Sort By</InputLabel>
+            <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
             <Select
               label="Sort By"
               value={sortMethod}
               onChange={(event) => {
                 onSortChange(event);
               }}
+              style={{ height: 47, backgroundColor: "#fff" }}
             >
               <MenuItem value="">
                 <em>None</em>

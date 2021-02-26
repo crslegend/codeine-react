@@ -138,6 +138,22 @@ const MemberLanding = () => {
 
   const sidebarList = (
     <Fragment>
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "10px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            Navigation
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/member/home/dashboard"
@@ -188,7 +204,23 @@ const MemberLanding = () => {
         <HelpOutline className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
-      <Divider />
+      {/* <Divider /> */}
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "20px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            User Settings
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/member/home/profile"
@@ -209,6 +241,22 @@ const MemberLanding = () => {
         <LockOutlined className={classes.listIcon} />
         <Typography variant="body1">Password</Typography>
       </ListItem>
+      <div>
+        <label>
+          <Typography
+            style={{
+              textAlign: "center",
+              paddingTop: "20px",
+              paddingBottom: "5px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+            variant="body2"
+          >
+            Transactions
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/member/home/transaction"
@@ -217,7 +265,7 @@ const MemberLanding = () => {
         button
       >
         <Payment className={classes.listIcon} />
-        <Typography variant="body1">Payment Transaction</Typography>
+        <Typography variant="body1">My Payments</Typography>
       </ListItem>
     </Fragment>
   );
@@ -246,7 +294,12 @@ const MemberLanding = () => {
         .get(`/auth/members/${decoded.user_id}`)
         .then((res) => {
           // console.log(res);
-          setUser(res.data);
+
+          if (!res.data.member) {
+            history.push("/404");
+          } else {
+            setUser(res.data);
+          }
         })
         .catch((err) => console.log(err));
     }

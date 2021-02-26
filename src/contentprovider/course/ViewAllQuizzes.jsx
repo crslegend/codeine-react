@@ -53,6 +53,7 @@ const styles = makeStyles((theme) => ({
     borderRadius: "6px",
     marginBottom: "10px",
     padding: theme.spacing(2),
+    backgroundColor: "#fff",
   },
 }));
 

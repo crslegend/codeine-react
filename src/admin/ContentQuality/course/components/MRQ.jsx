@@ -227,7 +227,7 @@ const MRQ = ({
           <Button
             variant="contained"
             onClick={() => {
-              handleSaveResponse();
+              // handleSaveResponse();
               setPageNum(index - 1);
             }}
           >
@@ -238,7 +238,8 @@ const MRQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleFinishQuiz();
+                // handleFinishQuiz();
+                setPageNum(index + 1);
               }}
             >
               Finish
@@ -248,7 +249,7 @@ const MRQ = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                handleSaveResponse();
+                // handleSaveResponse();
                 setPageNum(index + 1);
               }}
             >

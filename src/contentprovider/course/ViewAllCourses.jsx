@@ -257,7 +257,7 @@ const ViewAllCourses = () => {
   return (
     <Fragment>
       <div className={classes.titleSection}>
-        <PageTitle title="Your Courses" />
+        <PageTitle title="My Courses" />
         <Button
           variant="contained"
           startIcon={<Add />}
@@ -281,13 +281,14 @@ const ViewAllCourses = () => {
           }}
         />
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel>Sort By</InputLabel>
+          <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
           <Select
             label="Sort By"
             value={sortMethod}
             onChange={(event) => {
               onSortChange(event);
             }}
+            style={{ height: 47, backgroundColor: "#fff" }}
           >
             <MenuItem value="">
               <em>None</em>
@@ -373,7 +374,7 @@ const ViewAllCourses = () => {
                         }}
                         transformOrigin={{
                           vertical: "top",
-                          horizontal: "center",
+                          horizontal: "right",
                         }}
                       >
                         <div className={classes.popoverContents}>

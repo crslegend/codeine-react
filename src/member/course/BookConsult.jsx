@@ -164,7 +164,6 @@ const BookConsult = () => {
     for (let i = 0; i < slot.members.length; i++) {
       console.log(slot.members[i].member);
       if (decoded.user_id === slot.members[i].member.id) {
-        console.log("yo");
         setSbOpen(true);
         setSnackbar({
           message: "You have already signed up for this consultation slot.",
