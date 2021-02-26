@@ -558,9 +558,9 @@ const QuestionDialog = ({
           <DialogTitle>
             Question {question && question.order}
             <div style={{ float: "right" }}>
-              <IconButton size="small" onClick={() => setEditMode(true)}>
+              {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 size="small"
                 onClick={() => setDeleteQuestionDialog(true)}
