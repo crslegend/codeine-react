@@ -293,7 +293,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
             Cancel
           </Button>
           <Button
-            onClick={(e) => history.push(`/partner/home/wallet`)}
+            onClick={(e) => history.push(`/partner/home/earnings`)}
             color="primary"
           >
             Proceed
