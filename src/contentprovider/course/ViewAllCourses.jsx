@@ -205,6 +205,7 @@ const ViewAllCourses = () => {
         console.log(res);
         setDeleteCourseDialog(false);
         setDeleteCourseId();
+        getAllCourses();
       })
       .catch((err) => console.log(err));
   };
@@ -335,6 +336,10 @@ const ViewAllCourses = () => {
                       history.push(`/partner/home/content/view/${course.id}`)
                     }
                     className={classes.cardActionArea}
+                    disabled={course && course.is_deleted}
+                    style={{
+                      opacity: course && course.is_deleted && 0.5,
+                    }}
                   >
                     <CardMedia
                       className={classes.media}
@@ -376,6 +381,7 @@ const ViewAllCourses = () => {
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
+                      opacity: course && course.is_deleted && 0.5,
                     }}
                   >
                     <div>
@@ -393,6 +399,7 @@ const ViewAllCourses = () => {
                       <IconButton
                         onClick={(e) => handleClick(e, course.id)}
                         size="small"
+                        disabled={course && course.is_deleted}
                       >
                         <MoreVert />
                       </IconButton>
@@ -432,6 +439,7 @@ const ViewAllCourses = () => {
                             onClick={() => {
                               setDeleteCourseId(course.id);
                               setDeleteCourseDialog(true);
+                              handleClose();
                             }}
                           >
                             <span style={{ color: "red" }}>Delete Course</span>
