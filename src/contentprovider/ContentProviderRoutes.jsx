@@ -10,7 +10,13 @@ import {
   useHistory,
 } from "react-router-dom";
 import PrivateRoute from "../components/PrivateRoute";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Divider,
+  ListItem,
+  Typography,
+} from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
@@ -85,6 +91,16 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% - 240px)",
     marginLeft: "240px",
   },
+  subheader: {
+    // textAlign: "center",
+    paddingLeft: theme.spacing(4),
+    paddingTop: "10px",
+    paddingBottom: "5px",
+    // opacity: 0.4,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    // color: theme.palette.primary.main,
+  },
 }));
 
 const ContentProviderHome = () => {
@@ -147,16 +163,7 @@ const ContentProviderHome = () => {
     <Fragment>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "10px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Navigation
           </Typography>
         </label>
@@ -214,16 +221,7 @@ const ContentProviderHome = () => {
       {/* <Divider /> */}
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             User Settings
           </Typography>
         </label>
@@ -250,16 +248,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Transactions
           </Typography>
         </label>
