@@ -102,7 +102,11 @@ const ContributionsPage = () => {
       .then((res) => {
         console.log(res);
 
-        if (res.data.expiry_date) {
+        if (
+          res.data.expiry_date &&
+          res.data.payment_transaction &&
+          res.data.payment_transaction.payment_status === "COMPLETED"
+        ) {
           const futureDate = new Date(res.data.expiry_date);
           const currentDate = new Date();
           const diffTime = futureDate - currentDate;
@@ -290,12 +294,12 @@ const ContributionsPage = () => {
             </Typography>
           ) : (
             <Typography variant="body2" style={{ color: "red" }}>
-              {params.value}
+              {`PENDING COMPLETION`}
             </Typography>
           )}
         </strong>
       ),
-      width: 150,
+      width: 200,
     },
     {
       field: "timestamp",
