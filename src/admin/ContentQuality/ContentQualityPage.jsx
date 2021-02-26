@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { Typography, AppBar, Tabs, Tab, Box, Grid } from "@material-ui/core";
+import {
+  Typography,
+  AppBar,
+  Tabs,
+  Tab,
+  Box,
+  Grid,
+  Avatar,
+} from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../AxiosService";
@@ -158,7 +166,12 @@ const AdminContentQualityPage = () => {
   });
 
   const coruseColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "thumbnail",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     { field: "title", headerName: "Title", width: 200 },
     {
       field: "published_date",

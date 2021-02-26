@@ -168,7 +168,12 @@ const AdminHumanResourcePage = () => {
   });
 
   const memberColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     { field: "first_name", headerName: "First name", width: 130 },
     { field: "last_name", headerName: "Last name", width: 130 },
     {
@@ -301,7 +306,12 @@ const AdminHumanResourcePage = () => {
   });
 
   const partnerColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     {
       field: "first_name",
       headerName: "First name",
@@ -448,7 +458,12 @@ const AdminHumanResourcePage = () => {
   });
 
   const adminColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     {
       field: "first_name",
       headerName: "First name",
