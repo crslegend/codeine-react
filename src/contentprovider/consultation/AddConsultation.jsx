@@ -21,6 +21,11 @@ import Service from "../../AxiosService";
 const useStyles = makeStyles((theme) => ({
   opendialog: {
     padding: "15px 10px",
+    lineHeight: "18px",
+    [theme.breakpoints.down("md")]: {
+      padding: "5px 10px",
+      height: "8vh",
+    },
   },
 }));
 
@@ -187,7 +192,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         startIcon={<Add />}
         onClick={handleDialogOpen}
       >
-        Create a consultation slot
+        Add slot
       </Button>
       <Dialog
         open={open}
