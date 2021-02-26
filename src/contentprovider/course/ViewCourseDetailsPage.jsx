@@ -327,14 +327,6 @@ const ViewCourseDetailsPage = () => {
               >
                 Course Content
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                component={Link}
-                to={`/partner/home/content/view/quizzes/${id}`}
-              >
-                View All Quizzes
-              </Button>
             </div>
 
             <Typography variant="body2" style={{ paddingBottom: "5px" }}>
@@ -455,6 +447,30 @@ const ViewCourseDetailsPage = () => {
                   </Accordion>
                 );
               })}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={`/partner/home/content/view/quizzes/${id}`}
+            >
+              View All Quizzes
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={`/partner/home/content/view/comments/${id}`}
+            >
+              Reply To Comments
+            </Button>
           </div>
           <div className={classes.requirement}>
             <Typography
