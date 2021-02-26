@@ -80,13 +80,18 @@ const useStyles = makeStyles((theme) => ({
   searchSection: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
+    width: "100%",
   },
   formControl: {
     marginLeft: theme.spacing(5),
-    minWidth: 250,
+    width: "250px",
     maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
   },
   paginationSection: {
     float: "right",
@@ -263,21 +268,20 @@ const ViewAllCourses = () => {
           Create New Course
         </Button>
       </div>
-      <Grid container>
-        <Grid item xs={9}>
+      <div className={classes.searchSection}>
+        <div className={classes.searchBar}>
           <SearchBar
             placeholder="Search Courses"
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
             onRequestSearch={handleRequestSearch}
-            className={classes.searchBar}
             classes={{
               input: classes.input,
             }}
           />
-        </Grid>
-        <Grid item xs={3}>
+        </div>
+        <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
             <Select
@@ -301,8 +305,8 @@ const ViewAllCourses = () => {
               <MenuItem value="-rating">Rating (Descending)</MenuItem>
             </Select>
           </FormControl>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       <div className={classes.courses}>
         {allCourses && allCourses.length > 0 ? (
           allCourses
