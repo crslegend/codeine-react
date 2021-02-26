@@ -85,6 +85,16 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% - 240px)",
     marginLeft: "240px",
   },
+  subheader: {
+    // textAlign: "center",
+    paddingLeft: theme.spacing(4),
+    paddingTop: "20px",
+    paddingBottom: "10px",
+    opacity: 0.9,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    // color: theme.palette.primary.main,
+  },
 }));
 
 const ContentProviderHome = () => {
@@ -147,16 +157,7 @@ const ContentProviderHome = () => {
     <Fragment>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "10px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Navigation
           </Typography>
         </label>
@@ -214,16 +215,7 @@ const ContentProviderHome = () => {
       {/* <Divider /> */}
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             User Settings
           </Typography>
         </label>
@@ -250,16 +242,7 @@ const ContentProviderHome = () => {
       </ListItem>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Transactions
           </Typography>
         </label>

@@ -162,10 +162,10 @@ const ContentProviderRegisterPage = () => {
   if (pageNum === 1) {
     return (
       <div>
-        <form onSubmit={handlePageChange}>
+        <form onSubmit={handleSubmit}>
           <Paper elevation={3} className={classes.paper}>
             <Link to="/partner" className={classes.codeineLogo}>
-              <img src={logo} alt="logo" width="90%" />
+              <img src={logo} alt="logo" width="110%" />
             </Link>
             <TextField
               variant="outlined"
@@ -185,6 +185,47 @@ const ContentProviderRegisterPage = () => {
               type="password"
               required
             />
+            <TextField
+              variant="outlined"
+              margin="dense"
+              placeholder="First Name"
+              value={registerDetails && registerDetails.first_name}
+              onChange={handleNameChange}
+              type="text"
+              required
+              name="first"
+            />
+            <TextField
+              variant="outlined"
+              margin="dense"
+              placeholder="Last Name"
+              value={registerDetails && registerDetails.last_name}
+              onChange={handleNameChange}
+              type="text"
+              required
+              name="last"
+            />
+            {enterprise && (
+              <TextField
+                variant="outlined"
+                margin="dense"
+                placeholder="Company"
+                value={registerDetails && registerDetails.company_name}
+                onChange={handleCompanyChange}
+                type="text"
+                required={enterprise}
+              />
+            )}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={enterprise}
+                  onChange={() => setEnterprise(!enterprise)}
+                  color="primary"
+                />
+              }
+              label="Register as Enterprise"
+            />
 
             <Button
               disabled={loading}
@@ -193,8 +234,22 @@ const ContentProviderRegisterPage = () => {
               className={classes.button}
               type="submit"
             >
-              Next Step
+              {loading ? (
+                <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+              ) : (
+                "Register"
+              )}
             </Button>
+
+            {/* <Button
+              disabled={loading}
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              type="submit"
+            >
+              Next Step
+            </Button> */}
 
             <Typography variant="body1">
               Already have an account? Click{" "}

@@ -770,8 +770,13 @@ const ViewCourseDetails = () => {
                   </Typography>
                   <Typography variant="body2">
                     {course && course.partner.partner.job_title
-                      ? course.partner.partner.job_title.concat(", ")
+                      ? course.partner.partner.job_title
                       : ""}
+                    {course &&
+                      course.partner.partner.organization &&
+                      course.partner.partner.organization.organization_name &&
+                      course.partner.partner.job_title &&
+                      ", "}
                     {course &&
                       course.partner.partner.organization &&
                       course.partner.partner.organization.organization_name}
@@ -783,7 +788,9 @@ const ViewCourseDetails = () => {
                   Bio
                 </Typography>
                 <Typography variant="body2">
-                  {course && course.partner.partner.bio}
+                  {course && course.partner.partner.bio
+                    ? course.partner.partner.bio
+                    : "-"}
                 </Typography>
               </div>
             </Card>

@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   leftCol: {
     display: "flex",
     flexDirection: "row",
-    // width: "90%",
+    width: "80%",
     // justifyContent: "center",
   },
   rightCol: {
@@ -46,7 +46,7 @@ const SecondSection = () => {
         <img
           src={image}
           alt="growing selection of in-demand courses"
-          width="90%"
+          width="80%"
         />
       </div>
       <div className={classes.rightCol}>

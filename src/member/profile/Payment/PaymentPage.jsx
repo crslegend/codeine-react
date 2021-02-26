@@ -37,15 +37,13 @@ const Payment = () => {
   }, [setAllTransactions]);
 
   const formatStatus = (status) => {
-    if (status === "Payment") {
-      return "blue";
-    } else {
+    if (status !== "Payment") {
       return "green";
     }
   };
 
   const transactionColumns = [
-    { field: "id", headerName: "Transaction ID", width: 400 },
+    { field: "id", headerName: "Transaction ID", width: 320 },
     {
       field: "date",
       headerName: "Payment Date",
@@ -58,29 +56,51 @@ const Payment = () => {
       width: 300,
     },
     {
+      field: "consultation_date",
+      headerName: "Consultation Date",
+      type: "date",
+      width: 250,
+    },
+    {
       field: "partner",
       headerName: "Consultation Held By",
       width: 200,
     },
-    {
-      field: "amount",
-      headerName: "Amount",
-      renderCell: (params) => (
-        <Typography variant="body2">${params.value}</Typography>
-      ),
-      width: 150,
-    },
+
     {
       field: "type",
       headerName: "Transaction Type",
       renderCell: (params) => (
         <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>
+          <Typography
+            variant="body2"
+            style={{ color: formatStatus(params.value) }}
+          >
             {params.value}
           </Typography>
         </strong>
       ),
       width: 200,
+    },
+    {
+      field: "debit",
+      headerName: "Debit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography variant="body2">${params.value}</Typography>
+        ),
+      width: 120,
+    },
+    {
+      field: "credit",
+      headerName: "Credit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography style={{ color: "green" }} variant="body2">
+            ${params.value}
+          </Typography>
+        ),
+      width: 120,
     },
   ];
 
@@ -104,19 +124,26 @@ const Payment = () => {
   const transactionRows = allTransactions;
 
   for (var h = 0; h < allTransactions.length; h++) {
-    //transactionRows[h].title = allTransactions[h].application.title;
-    //transactionRows[h].partner = allTransactions[h].application.partner;
+    transactionRows[h].title = allTransactions[h].consultation_slot.title;
+    transactionRows[h].partner =
+      allTransactions[h].consultation_slot.partner_name;
+
+    transactionRows[h].consultation_date = formatDate(
+      allTransactions[h].consultation_slot.start_time
+    );
 
     transactionRows[h].date = formatDate(
       allTransactions[h].payment_transaction.timestamp
     );
-    transactionRows[h].amount =
-      allTransactions[h].payment_transaction.payment_amount;
 
     if (allTransactions[h].payment_transaction.payment_status === "COMPLETED") {
       transactionRows[h].type = "Payment";
+      transactionRows[h].debit =
+        allTransactions[h].payment_transaction.payment_amount;
     } else {
       transactionRows[h].type = "Refund";
+      transactionRows[h].credit =
+        allTransactions[h].payment_transaction.payment_amount;
     }
   }
   return (

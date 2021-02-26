@@ -20,6 +20,8 @@ import {
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import CloseIcon from "@material-ui/icons/Close";
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
+import TodayIcon from "@material-ui/icons/Today";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import PageTitle from "../../components/PageTitle";
@@ -28,9 +30,21 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: "calc(100vh - 115px)",
   },
+  searchSection: {
+    display: "flex",
+    // alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    width: "100%",
+  },
   formControl: {
     marginLeft: theme.spacing(5),
-    minWidth: 250,
+    width: "250px",
+    maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
   },
   closeButton: {
     position: "absolute",
@@ -45,6 +59,12 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
+  },
+  border: {
+    border: "1px solid",
+    borderRadius: "5px",
+    borderColor: "#437FC7",
+    marginTop: "15px",
   },
 }));
 
@@ -91,7 +111,12 @@ const StudentPage = () => {
   });
 
   const studentColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     {
       field: "first_name",
       headerName: "First Name",
@@ -249,27 +274,27 @@ const StudentPage = () => {
   return (
     <Fragment>
       <PageTitle title="My Students" />
-      <Grid container>
-        <Grid item xs={7} className={classes.searchSection}>
+      <div className={classes.searchSection}>
+        <div className={classes.searchBar}>
           <SearchBar
             style={{
               marginBottom: "20px",
             }}
-            placeholder="Search Students..."
+            placeholder="Search Students"
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
             onRequestSearch={handleRequestSearch}
-            className={classes.searchBar}
+            // className={classes.searchBar}
             classes={{
               input: classes.input,
             }}
           />
-        </Grid>
-        <Grid item xs={5}>
+        </div>
+        <div>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Filter By</InputLabel>
+              <InputLabel style={{ top: -1 }}>Filter</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
@@ -279,7 +304,7 @@ const StudentPage = () => {
                 style={{ height: 47, backgroundColor: "#fff" }}
               >
                 <MenuItem key={null} value={"None"}>
-                  -None-
+                  None
                 </MenuItem>
                 {allCourseList.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
@@ -289,12 +314,12 @@ const StudentPage = () => {
               </Select>
             </FormControl>
           )}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       <Grid
         item
         xs={12}
-        style={{ height: "calc(100vh - 200px)", width: "100%" }}
+        style={{ height: "calc(100vh - 280px)", width: "100%" }}
       >
         <DataGrid
           rows={studentRows}
@@ -327,34 +352,6 @@ const StudentPage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                  Courses Joined <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedStudent.id} <br />
-                  {selectedStudent.first_name} <br />
-                  {selectedStudent.last_name} <br />
-                  {selectedStudent.email} <br />
-                </Typography>
-                {selectedStudent.is_active ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedStudent.date_joined)} <br />
-                  {getListOfCourseEnrolledByStudent(selectedStudent.id).length}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
                 {selectedStudent.profile_photo ? (
                   <Avatar
                     src={selectedStudent.profile_photo}
@@ -367,7 +364,51 @@ const StudentPage = () => {
                   </Avatar>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={10}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Typography style={{ fontSize: "20px" }}>
+                    <strong>
+                      {selectedStudent.first_name} {selectedStudent.last_name}{" "}
+                    </strong>
+                  </Typography>
+                  {selectedStudent.is_active ? (
+                    <Typography style={{ color: "green" }}>
+                      {"\u00A0"}(Active){" "}
+                    </Typography>
+                  ) : (
+                    <Typography style={{ color: "red" }}>
+                      {"\u00A0"}(Deactived)
+                    </Typography>
+                  )}
+                </div>
+                <Typography style={{ color: "black" }}>
+                  {selectedStudent.email} <br />
+                </Typography>
+                <Typography
+                  style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
+                >
+                  Joined on {formatDate(selectedStudent.date_joined)}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} className={classes.border}>
+                <Typography
+                  style={{
+                    fontSize: "18px",
+                    marginLeft: "15px",
+                    marginTop: "10px",
+                    color: "#437FC7",
+                  }}
+                >
+                  <strong>Enrolled Course</strong>
+                </Typography>
+
                 <List>
                   {getListOfCourseEnrolledByStudent(selectedStudent.id).map(
                     (value) => {
@@ -376,7 +417,13 @@ const StudentPage = () => {
                           <ListItemAvatar>
                             <Avatar alt="logo" src={value.thumbnail} />
                           </ListItemAvatar>
-                          <ListItemText id={value.id} primary={value.title} />
+                          <ListItemText
+                            id={value.id}
+                            primary={value.title}
+                            secondary={
+                              `Enrolled In: ` + formatDate(value.published_date)
+                            }
+                          />
                         </ListItem>
                       );
                     }

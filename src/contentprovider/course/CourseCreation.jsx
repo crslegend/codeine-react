@@ -616,6 +616,67 @@ const CourseCreation = () => {
           });
           return;
         }
+
+        if (
+          allChapters.columns[column].course_materials[material]
+            .material_type === "QUIZ" &&
+          allChapters.columns[column].course_materials[material].quiz.questions
+            .length > 0
+        ) {
+          let passingMarks =
+            allChapters.columns[column].course_materials[material].quiz
+              .passing_marks;
+          let totalMarks = 0;
+          for (
+            let j = 0;
+            j <
+            allChapters.columns[column].course_materials[material].quiz
+              .questions.length;
+            j++
+          ) {
+            if (
+              allChapters.columns[column].course_materials[material].quiz
+                .questions[j].mrq
+            ) {
+              totalMarks +=
+                allChapters.columns[column].course_materials[material].quiz
+                  .questions[j].mrq.marks;
+            }
+
+            if (
+              allChapters.columns[column].course_materials[material].quiz
+                .questions[j].mcq
+            ) {
+              totalMarks +=
+                allChapters.columns[column].course_materials[material].quiz
+                  .questions[j].mcq.marks;
+            }
+
+            if (
+              allChapters.columns[column].course_materials[material].quiz
+                .questions[j].shortanswer
+            ) {
+              totalMarks +=
+                allChapters.columns[column].course_materials[material].quiz
+                  .questions[j].shortanswer.marks;
+            }
+          }
+
+          if (passingMarks > totalMarks) {
+            setSbOpen(true);
+            setSnackbar({
+              message:
+                "Quiz passing mark should be lower than or equal to the total marks of quiz",
+              severity: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+            return;
+          }
+        }
       }
 
       if (pageNum === 2 && finalQuizQuestions.taskIds.length === 0) {
@@ -630,6 +691,36 @@ const CourseCreation = () => {
           autoHideDuration: 3000,
         });
         return;
+      }
+
+      if (pageNum === 2) {
+        let totalMarks = 0;
+        for (const obj in finalQuizQuestions.tasks) {
+          if (finalQuizQuestions.tasks[obj].mcq) {
+            totalMarks += finalQuizQuestions.tasks[obj].mcq.marks;
+          }
+          if (finalQuizQuestions.tasks[obj].mrq) {
+            totalMarks += finalQuizQuestions.tasks[obj].mrq.marks;
+          }
+          if (finalQuizQuestions.tasks[obj].shortanswer) {
+            totalMarks += finalQuizQuestions.tasks[obj].shortanswer.marks;
+          }
+        }
+
+        if (finalQuiz.passing_marks > totalMarks) {
+          setSbOpen(true);
+          setSnackbar({
+            message:
+              "Quiz passing mark should be lower than or equal to the total marks of quiz",
+            severity: "error",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
+          return;
+        }
       }
     }
 
@@ -680,10 +771,10 @@ const CourseCreation = () => {
   };
 
   const handleSaveFinalQuizDetails = () => {
-    if (finalQuiz.instructions === "" || finalQuiz.marks === "") {
+    if (finalQuiz.marks === "") {
       setSbOpen(true);
       setSnackbar({
-        message: "Please fill up all fields",
+        message: "Please fill up the required field",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -709,6 +800,7 @@ const CourseCreation = () => {
             instructions: "",
             passing_marks: 0,
           });
+          setEditMode(false);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -869,7 +961,7 @@ const CourseCreation = () => {
                     />
                     <label htmlFor="marks">
                       <Typography variant="body1" style={{ marginTop: "10px" }}>
-                        Passing Marks
+                        Passing Marks (Required)
                       </Typography>
                     </label>
                     <TextField

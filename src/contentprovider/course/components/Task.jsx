@@ -243,8 +243,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       if (
         editQuiz.title === "" ||
         editQuiz.description === "" ||
-        editQuiz.passing_marks === "" ||
-        editQuiz.instructions === ""
+        editQuiz.passing_marks === ""
       ) {
         setSbOpen(true);
         setSnackbar({
@@ -686,7 +685,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
               return (
                 <Fragment>
                   <label htmlFor="title">
-                    <Typography variant="body2">Title of Quiz</Typography>
+                    <Typography variant="body2">
+                      Title of Quiz (Required)
+                    </Typography>
                   </label>
                   <TextField
                     id="title"
@@ -705,7 +706,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="description">
-                    <Typography variant="body2">Description of Quiz</Typography>
+                    <Typography variant="body2">
+                      Description of Quiz (Required)
+                    </Typography>
                   </label>
                   <TextField
                     id="description"
@@ -726,7 +729,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="marks">
-                    <Typography variant="body2">Passing Marks</Typography>
+                    <Typography variant="body2">
+                      Passing Marks (Required)
+                    </Typography>
                   </label>
                   <TextField
                     id="marks"

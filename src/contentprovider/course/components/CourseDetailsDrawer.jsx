@@ -91,8 +91,8 @@ const CourseDetailsDrawer = ({
           {coursePicAvatar ? (
             <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
           ) : (
-            <Avatar className={classes.avatar}>
-              <Folder fontSize="large" />
+            <Avatar className={classes.avatar} style={{ padding: "10px" }}>
+              Upload Course Logo
             </Avatar>
           )}
         </IconButton>

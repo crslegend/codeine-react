@@ -20,7 +20,7 @@ import {
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import PageTitle from "../../components/PageTitle";
-import { Add, LaptopWindows } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import { DataGrid } from "@material-ui/data-grid";
 
@@ -83,33 +83,130 @@ const WalletPage = () => {
     amount: "",
   });
 
+  const getTransactionData = () => {
+    Service.client
+      .get("/consultations/partner/payments")
+      .then((res) => {
+        setAllTransactionList(res.data);
+      })
+      .catch((error) => {
+        setAllTransactionList(null);
+      });
+  };
+  console.log(allTransactionList);
+
+  useEffect(() => {
+    getTransactionData();
+  }, [setAllTransactionList]);
+
+  const formatStatus = (status) => {
+    if (status === "Earnings") {
+      return "green";
+    } else {
+      return "red";
+    }
+  };
+
   const transactionColumns = [
     { field: "id", headerName: "Transaction ID", width: 300 },
-    { field: "date", headerName: "Transaction Date", width: 180 },
-    { field: "amount", headerName: "Amount", width: 130 },
+    { field: "date", headerName: "Transaction Date", width: 220 },
     {
-      field: "duration",
-      headerName: "Duration",
-      width: 130,
+      field: "title",
+      headerName: "Consultation Title",
+      width: 250,
+    },
+    {
+      field: "start_date",
+      headerName: "Consultation Date",
+      width: 220,
+    },
+    {
+      field: "member",
+      headerName: "Booked By",
+      width: 200,
+    },
+    {
+      field: "type",
+      headerName: "Transaction Type",
+      renderCell: (params) => (
+        <strong>
+          <Typography
+            variant="body2"
+            style={{ color: formatStatus(params.value) }}
+          >
+            {params.value}
+          </Typography>
+        </strong>
+      ),
+      width: 200,
+    },
+    {
+      field: "debit",
+      headerName: "Debit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography style={{ color: "green" }} variant="body2">
+            ${params.value}
+          </Typography>
+        ),
+      width: 120,
+    },
+    {
+      field: "credit",
+      headerName: "Credit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography style={{ color: "red" }} variant="body2">
+            ${params.value}
+          </Typography>
+        ),
+      width: 120,
     },
   ];
 
-  let transactionRows = allTransactionList;
-  const [searchValueTransaction, setSearchValueTransaction] = useState("");
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
 
-  const getTransactionData = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      Service.client
-        .get(`/auth/members`)
-        .then((res) => {
-          setAllTransactionList(res.data);
-          transactionRows = allTransactionList;
-        })
-        .catch((err) => {
-          //setProfile(null);
-        });
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
     }
+    return "";
   };
+
+  const transactionRows = allTransactionList;
+  for (var h = 0; h < allTransactionList.length; h++) {
+    transactionRows[h].title = allTransactionList[h].consultation_slot.title;
+    transactionRows[h].start_date = formatDate(
+      allTransactionList[h].consultation_slot.start_time
+    );
+    transactionRows[h].member = allTransactionList[h].member_name;
+
+    transactionRows[h].date = formatDate(
+      allTransactionList[h].payment_transaction.timestamp
+    );
+    transactionRows[h].amount =
+      allTransactionList[h].payment_transaction.payment_amount;
+
+    if (
+      allTransactionList[h].payment_transaction.payment_status === "COMPLETED"
+    ) {
+      transactionRows[h].type = "Earnings";
+      transactionRows[h].debit =
+        allTransactionList[h].payment_transaction.payment_amount;
+    } else {
+      transactionRows[h].type = "Refund";
+      transactionRows[h].credit =
+        allTransactionList[h].payment_transaction.payment_amount;
+    }
+  }
 
   const getBankDetail = () => {
     Service.client
@@ -406,7 +503,7 @@ const WalletPage = () => {
       >
         My Earnings
       </Typography>
-      <div style={{ height: "calc(100vh - 300px)", width: "100%" }}>
+      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
         <DataGrid
           rows={transactionRows}
           columns={transactionColumns.map((column) => ({

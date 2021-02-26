@@ -134,7 +134,7 @@ const ContentProviderLoginPage = () => {
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/partner" className={classes.codeineLogo}>
-            <img src={logo} alt="logo" width="90%" />
+            <img src={logo} alt="logo" width="110%" />
           </Link>
           <TextField
             variant="outlined"
