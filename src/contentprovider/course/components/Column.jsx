@@ -284,8 +284,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       if (
         quiz.title === "" ||
         quiz.description === "" ||
-        quiz.passing_marks === "" ||
-        quiz.instructions === ""
+        quiz.passing_marks === ""
       ) {
         setSbOpen(true);
         setSnackbar({
@@ -760,7 +759,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   return (
                     <Fragment>
                       <label htmlFor="title">
-                        <Typography variant="body2">Title of Quiz</Typography>
+                        <Typography variant="body2">
+                          Title of Quiz (Required)
+                        </Typography>
                       </label>
                       <TextField
                         id="title"
@@ -780,7 +781,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                       />
                       <label htmlFor="description">
                         <Typography variant="body2">
-                          Description of Quiz
+                          Description of Quiz (Required)
                         </Typography>
                       </label>
                       <TextField
@@ -800,7 +801,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         style={{ marginBottom: "15px" }}
                       />
                       <label htmlFor="marks">
-                        <Typography variant="body2">Passing Marks</Typography>
+                        <Typography variant="body2">
+                          Passing Marks (Required)
+                        </Typography>
                       </label>
                       <TextField
                         id="marks"

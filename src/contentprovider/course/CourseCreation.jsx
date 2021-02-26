@@ -680,10 +680,10 @@ const CourseCreation = () => {
   };
 
   const handleSaveFinalQuizDetails = () => {
-    if (finalQuiz.instructions === "" || finalQuiz.marks === "") {
+    if (finalQuiz.marks === "") {
       setSbOpen(true);
       setSnackbar({
-        message: "Please fill up all fields",
+        message: "Please fill up the required field",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -869,7 +869,7 @@ const CourseCreation = () => {
                     />
                     <label htmlFor="marks">
                       <Typography variant="body1" style={{ marginTop: "10px" }}>
-                        Passing Marks
+                        Passing Marks (Required)
                       </Typography>
                     </label>
                     <TextField
