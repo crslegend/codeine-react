@@ -96,9 +96,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
     paddingTop: "10px",
     paddingBottom: "5px",
-    opacity: 0.4,
+    // opacity: 0.4,
     fontWeight: 600,
-    // textTransform: "uppercase",
+    textTransform: "uppercase",
+    // color: theme.palette.primary.main,
   },
 }));
 
