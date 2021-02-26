@@ -20,6 +20,8 @@ import {
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import CloseIcon from "@material-ui/icons/Close";
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
+import TodayIcon from "@material-ui/icons/Today";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import PageTitle from "../../components/PageTitle";
@@ -45,6 +47,12 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
+  },
+  border: {
+    border: "1px solid",
+    borderRadius: "5px",
+    borderColor: "#437FC7",
+    marginTop: "15px",
   },
 }));
 
@@ -250,12 +258,12 @@ const StudentPage = () => {
     <Fragment>
       <PageTitle title="My Students" />
       <Grid container>
-        <Grid item xs={7} className={classes.searchSection}>
+        <Grid item xs={9} className={classes.searchSection}>
           <SearchBar
             style={{
               marginBottom: "20px",
             }}
-            placeholder="Search Students..."
+            placeholder="Search Students"
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
             onCancelSearch={handleCancelSearch}
@@ -266,10 +274,10 @@ const StudentPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={3}>
           {allCourseList && (
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Filter By</InputLabel>
+              <InputLabel style={{ top: -1 }}>Filter</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
@@ -279,7 +287,7 @@ const StudentPage = () => {
                 style={{ height: 47, backgroundColor: "#fff" }}
               >
                 <MenuItem key={null} value={"None"}>
-                  -None-
+                  None
                 </MenuItem>
                 {allCourseList.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
@@ -294,7 +302,7 @@ const StudentPage = () => {
       <Grid
         item
         xs={12}
-        style={{ height: "calc(100vh - 200px)", width: "100%" }}
+        style={{ height: "calc(100vh - 280px)", width: "100%" }}
       >
         <DataGrid
           rows={studentRows}
@@ -327,34 +335,6 @@ const StudentPage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                <Typography>
-                  ID <br />
-                  First Name <br />
-                  Last Name <br />
-                  Email <br />
-                  Status <br />
-                  Date Joined <br />
-                  Courses Joined <br />
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  {selectedStudent.id} <br />
-                  {selectedStudent.first_name} <br />
-                  {selectedStudent.last_name} <br />
-                  {selectedStudent.email} <br />
-                </Typography>
-                {selectedStudent.is_active ? (
-                  <Typography style={{ color: "green" }}>Active</Typography>
-                ) : (
-                  <Typography style={{ color: "red" }}>Deactived</Typography>
-                )}{" "}
-                <Typography>
-                  {formatDate(selectedStudent.date_joined)} <br />
-                  {getListOfCourseEnrolledByStudent(selectedStudent.id).length}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
                 {selectedStudent.profile_photo ? (
                   <Avatar
                     src={selectedStudent.profile_photo}
@@ -367,7 +347,54 @@ const StudentPage = () => {
                   </Avatar>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={10}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Typography style={{ fontSize: "20px" }}>
+                    <strong>
+                      {selectedStudent.first_name} {selectedStudent.last_name}{" "}
+                    </strong>
+                  </Typography>
+                  {selectedStudent.is_active ? (
+                    <Typography style={{ color: "green" }}>
+                      {"\u00A0"}(Active){" "}
+                    </Typography>
+                  ) : (
+                    <Typography style={{ color: "red" }}>
+                      {"\u00A0"}(Deactived)
+                    </Typography>
+                  )}
+                </div>
+                <Typography style={{ color: "black" }}>
+                  {selectedStudent.email} <br />
+                </Typography>
+                <Typography
+                  style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
+                >
+                  Joined on {formatDate(selectedStudent.date_joined)}
+                </Typography>
+                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
+                  ID: {selectedStudent.id}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} className={classes.border}>
+                <Typography
+                  style={{
+                    fontSize: "18px",
+                    marginLeft: "15px",
+                    marginTop: "10px",
+                    color: "#437FC7",
+                  }}
+                >
+                  <strong>Enrolled Course</strong>
+                </Typography>
+
                 <List>
                   {getListOfCourseEnrolledByStudent(selectedStudent.id).map(
                     (value) => {
@@ -376,7 +403,11 @@ const StudentPage = () => {
                           <ListItemAvatar>
                             <Avatar alt="logo" src={value.thumbnail} />
                           </ListItemAvatar>
-                          <ListItemText id={value.id} primary={value.title} />
+                          <ListItemText
+                            id={value.id}
+                            primary={value.title}
+                            secondary={value.published_date}
+                          />
                         </ListItem>
                       );
                     }

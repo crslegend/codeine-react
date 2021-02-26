@@ -45,7 +45,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box p={0}>
           <Typography component={"span"}>{children}</Typography>
         </Box>
       )}
@@ -301,14 +301,14 @@ const AdminContentQualityPage = () => {
       </AppBar>
       <TabPanel value={value} index={0}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <SearchBar
               style={{
-                width: "50%",
+                width: "70%",
                 marginBottom: "20px",
                 elavation: "0px",
               }}
-              placeholder="Search courses..."
+              placeholder="Search courses"
               value={searchValue}
               onChange={(newValue) => setSearchValue(newValue)}
               onRequestSearch={getCourseData}
