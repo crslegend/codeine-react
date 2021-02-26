@@ -31,21 +31,13 @@ const AddConsultation = () => {
     .toISOString()
     .substr(0, 16);
 
-  const [startTime, setStartTime] = useState(currentDate);
-  const [endTime, setEndTime] = useState(currentDate);
-  const [meetingLink, setMeetingLink] = useState("");
-  const [maxMembers, setMaxMembers] = useState(1);
-  const [pricePerPax, setPricePerPax] = useState(1);
-  const [title, setTitle] = useState("Open");
   const [slot, setSlot] = useState({
-    start_time: startTime,
-    end_time: endTime,
-    meeting_link: meetingLink,
-    title: title,
-    max_members: maxMembers,
-    price_per_pax: pricePerPax,
-    is_all_day: false,
-    r_rule: null,
+    start_time: "",
+    end_time: "",
+    meeting_link: "",
+    title: "Open",
+    max_members: 1,
+    price_per_pax: 0,
   });
   const [open, setOpen] = useState(false);
 
@@ -105,8 +97,6 @@ const AddConsultation = () => {
   };
 
   const handleStartTimeChange = (e) => {
-    setStartTime(e);
-
     setSlot({
       ...slot,
       start_time: e,
@@ -114,8 +104,6 @@ const AddConsultation = () => {
   };
 
   const handleEndTimeChange = (e) => {
-    setEndTime(e);
-
     setSlot({
       ...slot,
       end_time: e,
@@ -123,8 +111,6 @@ const AddConsultation = () => {
   };
 
   const handleTitleChange = (e) => {
-    setTitle(e);
-
     setSlot({
       ...slot,
       title: e,
@@ -132,8 +118,6 @@ const AddConsultation = () => {
   };
 
   const handleLinkChange = (e) => {
-    setMeetingLink(e);
-
     setSlot({
       ...slot,
       meeting_link: e,
@@ -141,8 +125,6 @@ const AddConsultation = () => {
   };
 
   const handleMaxMemberChange = (e) => {
-    setMaxMembers(e);
-
     setSlot({
       ...slot,
       max_members: e,
@@ -150,8 +132,6 @@ const AddConsultation = () => {
   };
 
   const handlePriceChange = (e) => {
-    setPricePerPax(e);
-
     setSlot({
       ...slot,
       price_per_pax: e,
@@ -215,7 +195,7 @@ const AddConsultation = () => {
             label="Start Time"
             type="datetime-local"
             defaultValue={currentDate}
-            value={startTime}
+            value={slot.startTime}
             onChange={(e) => handleStartTimeChange(e.target.value)}
             className={classes.textField}
             InputLabelProps={{
@@ -227,7 +207,7 @@ const AddConsultation = () => {
             label="End Time"
             type="datetime-local"
             defaultValue={currentDate}
-            value={endTime}
+            value={slot.endTime}
             onChange={(e) => handleEndTimeChange(e.target.value)}
             style={{ float: "right" }}
             InputLabelProps={{
@@ -239,7 +219,7 @@ const AddConsultation = () => {
             margin="dense"
             id="name"
             label="Title"
-            value={title}
+            value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
           />
@@ -248,7 +228,7 @@ const AddConsultation = () => {
             margin="dense"
             id="name"
             label="Conference link"
-            value={meetingLink}
+            value={slot.meeting_link}
             onChange={(e) => handleLinkChange(e.target.value)}
             type="url"
             fullWidth
@@ -263,7 +243,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Max no. of signups"
-              value={maxMembers}
+              value={slot.max_members}
               onChange={(e) => handleMaxMemberChange(e.target.value)}
               type="number"
               InputProps={{
@@ -274,7 +254,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Price (per pax)"
-              value={pricePerPax}
+              value={slot.price_per_pax}
               onChange={(e) => handlePriceChange(e.target.value)}
               type="number"
               InputProps={{

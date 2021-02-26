@@ -83,33 +83,106 @@ const WalletPage = () => {
     amount: "",
   });
 
+  const getTransactionData = () => {
+    Service.client
+      .get("/consultations/partner/payments")
+      .then((res) => {
+        setAllTransactionList(res.data);
+      })
+      .catch((error) => {
+        setAllTransactionList(null);
+      });
+  };
+  console.log(allTransactionList);
+
+  useEffect(() => {
+    getTransactionData();
+  }, [setAllTransactionList]);
+
+  const formatStatus = (status) => {
+    if (status === "Earnings") {
+      return "green";
+    } else {
+      return "red";
+    }
+  };
+
   const transactionColumns = [
     { field: "id", headerName: "Transaction ID", width: 300 },
-    { field: "date", headerName: "Transaction Date", width: 180 },
-    { field: "amount", headerName: "Amount", width: 130 },
+    { field: "date", headerName: "Transaction Date", width: 220 },
     {
-      field: "duration",
-      headerName: "Duration",
-      width: 130,
+      field: "amount",
+      headerName: "Amount",
+      renderCell: (params) => (
+        <Typography variant="body2">${params.value}</Typography>
+      ),
+      width: 150,
+    },
+    {
+      field: "title",
+      headerName: "Consultation Title",
+      width: 250,
+    },
+    {
+      field: "start_date",
+      headerName: "Consultation Date",
+      width: 220,
+    },
+    {
+      field: "member",
+      headerName: "Booked By",
+      width: 200,
+    },
+    {
+      field: "type",
+      headerName: "Transaction Type",
+      renderCell: (params) => (
+        <strong>
+          <Typography style={{ color: formatStatus(params.value) }}>
+            {params.value}
+          </Typography>
+        </strong>
+      ),
+      width: 200,
     },
   ];
 
-  let transactionRows = allTransactionList;
-  const [searchValueTransaction, setSearchValueTransaction] = useState("");
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
 
-  const getTransactionData = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      Service.client
-        .get(`/auth/members`)
-        .then((res) => {
-          setAllTransactionList(res.data);
-          transactionRows = allTransactionList;
-        })
-        .catch((err) => {
-          //setProfile(null);
-        });
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
     }
+    return "";
   };
+
+  const transactionRows = allTransactionList;
+  for (var h = 0; h < allTransactionList.length; h++) {
+    //transactionRows[h].title = allTransactions[h].application.title;
+    //transactionRows[h].member = allTransactions[h].application.member;
+
+    transactionRows[h].date = formatDate(
+      allTransactionList[h].payment_transaction.timestamp
+    );
+    transactionRows[h].amount =
+      allTransactionList[h].payment_transaction.payment_amount;
+
+    if (
+      allTransactionList[h].payment_transaction.payment_status === "COMPLETED"
+    ) {
+      transactionRows[h].type = "Earnings";
+    } else {
+      transactionRows[h].type = "Refund";
+    }
+  }
 
   const getBankDetail = () => {
     Service.client

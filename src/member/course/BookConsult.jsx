@@ -178,16 +178,39 @@ const BookConsult = () => {
       }
     }
 
-    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
-      const emailAdd = res.data.email;
+    // free consultation will not go through stripe
+    if (slot.price_per_pax > 0) {
+      Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+        const emailAdd = res.data.email;
 
-      handleStripePaymentGateway(
-        slot.price_per_pax,
-        emailAdd,
-        decoded.user_id,
-        slot.id
-      );
-    });
+        handleStripePaymentGateway(
+          slot.price_per_pax,
+          emailAdd,
+          decoded.user_id,
+          slot.id
+        );
+      });
+    } else {
+      Service.client
+        .post(`/consultations/${slot.id}/apply`)
+        .then((res) => {
+          console.log(res.data);
+          handleGetAllConsultations(id, setConsultations, setLoading);
+          setSbOpen(true);
+          setSnackbar({
+            message:
+              "You have successfully signed up for this consultation slot.",
+            severity: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
+          return;
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const handleStripePaymentGateway = async (
