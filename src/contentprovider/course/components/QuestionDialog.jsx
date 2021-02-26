@@ -140,15 +140,20 @@ const QuestionDialog = ({
   const handleAddOption = () => {
     const values = [...options];
     values.push("");
+    console.log(values);
     setOptions(values);
   };
 
   const handleDeleteOption = (index) => {
+    console.log(index);
     if (questionType === "mrq") {
       const value = options[index];
       setCorrectAnswer(correctAnswer.filter((answer) => answer !== value));
     }
-    setOptions(options.filter((option) => options.indexOf(option) !== index));
+    let arr = [...options];
+    arr = arr.filter((option) => arr.indexOf(option) !== index);
+    console.log(arr);
+    setOptions(arr);
   };
 
   //   console.log(correctAnswer);
