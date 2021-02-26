@@ -191,11 +191,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
             style={{ float: "right" }}
             className={classes.textField}
           />
-          {/* <TextField
-            id="datetime-local"
-            type="datetime-local"
-            defaultValue={currentDate}
-          /> */}
           <TextField
             required
             margin="dense"
