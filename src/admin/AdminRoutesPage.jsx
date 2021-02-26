@@ -81,6 +81,16 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% - 240px)",
     marginLeft: "240px",
   },
+  subheader: {
+    // textAlign: "center",
+    paddingLeft: theme.spacing(4),
+    paddingTop: "20px",
+    paddingBottom: "10px",
+    opacity: 0.9,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    // color: theme.palette.primary.main,
+  },
 }));
 
 const AdminRoutesPage = () => {
@@ -166,6 +176,13 @@ const AdminRoutesPage = () => {
 
   const sidebarList = (
     <Fragment>
+      <div>
+        <label>
+          <Typography className={classes.subheader} variant="body2">
+            Navigation
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/admin/humanresource"
@@ -216,7 +233,13 @@ const AdminRoutesPage = () => {
         <BrokenImageOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Analytics</Typography>
       </ListItem>
-      <Divider />
+      <div>
+        <label>
+          <Typography className={classes.subheader} variant="body2">
+            User Settings
+          </Typography>
+        </label>
+      </div>
       <ListItem
         component={NavLink}
         to="/admin/profile"

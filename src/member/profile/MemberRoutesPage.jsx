@@ -8,20 +8,13 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import {
-  Avatar,
-  Button,
-  ListItem,
-  Typography,
-  Divider,
-} from "@material-ui/core";
+import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import PrivateRoute from "../../components/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
 import {
   Dashboard,
   Timeline,
   PublicOutlined,
-  Class,
   HelpOutline,
   LockOutlined,
   PersonOutlineOutlined,
@@ -84,6 +77,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     width: "calc(100% - 240px)",
     marginLeft: "240px",
+  },
+  subheader: {
+    // textAlign: "center",
+    paddingLeft: theme.spacing(4),
+    paddingTop: "20px",
+    paddingBottom: "10px",
+    opacity: 0.9,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    // color: theme.palette.primary.main,
   },
 }));
 
