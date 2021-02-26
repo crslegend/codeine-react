@@ -410,7 +410,7 @@ const ContributionsPage = () => {
         Contribution History
       </Typography>
 
-      <div style={{ height: "calc(100vh - 450px)", width: "100%" }}>
+      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
         <DataGrid
           rows={contributions}
           columns={columns}
