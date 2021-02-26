@@ -96,7 +96,9 @@ const ContributionsPage = () => {
       .catch((err) => console.log(err));
 
     Service.client
-      .get(`/contributions`, { params: { latest: 1 } })
+      .get(`/contributions`, {
+        params: { latest: 1, payment_status: "COMPLETED" },
+      })
       .then((res) => {
         console.log(res);
 
