@@ -77,13 +77,16 @@ const Consultation = () => {
     setOpenCancelDialog(false);
   };
 
-  const handleCancel = (applicationId) => {
-    const transactionId = "";
+  const handleCancel = (applicatio) => {
     setOpenCancelDialog(false);
-    cancelConsultation(applicationId, transactionId);
+    if (application.consultation_payments.length !== 0) {
+      cancelConsultation(application.id, application.consultation_payments);
+    } else {
+      cancelFreeConsultation(application.id);
+    }
   };
 
-  const cancelConsultation = (applicationId, transactionId) => {
+  const cancelFreeConsultation = (applicationId) => {
     Service.client
       .patch(`/consultations/application/${applicationId}/cancel`)
       .then((res) => {
@@ -95,11 +98,27 @@ const Consultation = () => {
         });
         getApplicationData();
       });
+  };
+
+  const cancelConsultation = (applicationId, transaction) => {
+    console.log(transaction[0].id);
 
     Service.client
-      .patch(`/consultations/payment/${transactionId}/refund`)
+      .post(`/consultations/payment/${transaction[0].id}/refund`)
       .then((res) => {
         console.log(res);
+      });
+
+    Service.client
+      .patch(`/consultations/application/${applicationId}/cancel`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "You have been removed from this consultation",
+          severity: "success",
+        });
+        getApplicationData();
       });
   };
 
@@ -114,7 +133,7 @@ const Consultation = () => {
   };
 
   const consultationColumns = [
-    { field: "title", headerName: "Title", width: 300 },
+    { field: "title", headerName: "Title", width: 280 },
     {
       field: "meeting_link",
       headerName: "Meeting Link",
@@ -143,6 +162,14 @@ const Consultation = () => {
       field: "partner",
       headerName: "Created By",
       width: 200,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      renderCell: (params) => (
+        <Typography variant="body2">${params.value}</Typography>
+      ),
+      width: 150,
     },
     {
       field: "status",
@@ -203,6 +230,8 @@ const Consultation = () => {
     );
 
     consultationRows[h].title = allConsultations[h].consultation_slot.title;
+    consultationRows[h].amount =
+      allConsultations[h].consultation_slot.price_per_pax;
     consultationRows[h].meeting_link =
       allConsultations[h].consultation_slot.meeting_link;
 
@@ -262,12 +291,7 @@ const Consultation = () => {
               color="primary"
               variant="outlined"
               style={{ color: "#437FC7" }}
-              onClick={(e) =>
-                handleCancel(
-                  application.id
-                  //application.transaction_id
-                )
-              }
+              onClick={(e) => handleCancel(application)}
             >
               Confirm
             </Button>
