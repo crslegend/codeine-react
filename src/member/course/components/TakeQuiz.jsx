@@ -80,7 +80,7 @@ const TakeQuiz = ({
               }}
               style={{ width: 150, alignSelf: "center" }}
             >
-              Enter Quiz
+              Start Quiz
             </Button>
           </Paper>
         </Fragment>

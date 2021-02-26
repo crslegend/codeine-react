@@ -341,7 +341,7 @@ const PartnerProfilePage = (props) => {
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
             <Card className={classes.root}>
               <CardContent>
-                <div>
+                {/* <div>
                   <TextField
                     margin="normal"
                     id="id"
@@ -354,7 +354,7 @@ const PartnerProfilePage = (props) => {
                     }}
                     value={profileDetails.id}
                   />
-                </div>
+                </div> */}
                 <div>
                   <TextField
                     margin="normal"
