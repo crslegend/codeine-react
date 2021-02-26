@@ -184,6 +184,22 @@ const ViewAllCourses = () => {
     } // eslint-disable-next-line
   }, [searchValue]);
 
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -232,10 +248,10 @@ const ViewAllCourses = () => {
                   <em>None</em>
                 </MenuItem>
                 <MenuItem value="-published_date">
-                  Published Date (Least Recent)
+                  Published Date (Most Recent)
                 </MenuItem>
                 <MenuItem value="published_date">
-                  Published Date (Most Recent)
+                  Published Date (Least Recent)
                 </MenuItem>
                 <MenuItem value="rating">Rating (Ascending)</MenuItem>
                 <MenuItem value="-rating">Rating (Descending)</MenuItem>
@@ -269,6 +285,15 @@ const ViewAllCourses = () => {
                         >
                           {course.partner && course.partner.first_name}{" "}
                           {course.partner && course.partner.last_name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          style={{ opacity: 0.7, paddingBottom: "10px" }}
+                        >
+                          Pusblished On:
+                          <br />
+                          {course.published_date &&
+                            formatDate(course.published_date)}
                         </Typography>
                         <Rating
                           size="small"
