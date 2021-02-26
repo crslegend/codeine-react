@@ -99,7 +99,12 @@ const StudentPage = () => {
   });
 
   const studentColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "profile_photo",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     {
       field: "first_name",
       headerName: "First Name",
@@ -377,9 +382,6 @@ const StudentPage = () => {
                   style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
                 >
                   Joined on {formatDate(selectedStudent.date_joined)}
-                </Typography>
-                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
-                  ID: {selectedStudent.id}
                 </Typography>
               </Grid>
 

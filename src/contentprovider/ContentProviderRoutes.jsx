@@ -94,9 +94,9 @@ const useStyles = makeStyles((theme) => ({
   subheader: {
     // textAlign: "center",
     paddingLeft: theme.spacing(4),
-    paddingTop: "10px",
-    paddingBottom: "5px",
-    // opacity: 0.4,
+    paddingTop: "20px",
+    paddingBottom: "10px",
+    opacity: 0.9,
     fontWeight: 600,
     textTransform: "uppercase",
     // color: theme.palette.primary.main,
