@@ -13,14 +13,15 @@ import {
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
+import { Add } from "@material-ui/icons";
 
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
-    textTransform: "none",
-    // marginTop: "40px",
-    padding: "15px 10px",
+    color: "#fff",
+    backgroundColor: theme.palette.primary.main,
+    height: 35,
   },
 }));
 
@@ -167,7 +168,13 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
 
   return (
     <Fragment>
-      <Button className={classes.opendialog} variant="contained" color="primary" onClick={handleDialogOpen}>
+      <Button
+        startIcon={<Add />}
+        className={classes.opendialog}
+        variant="contained"
+        color="primary"
+        onClick={handleDialogOpen}
+      >
         Create a consultation slot
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
