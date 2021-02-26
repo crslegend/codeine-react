@@ -277,7 +277,24 @@ const ContributionsPage = () => {
       width: 150,
     },
     { field: "payment_type", headerName: "Paid By", width: 150 },
-    { field: "payment_status", headerName: "Status", width: 150 },
+    {
+      field: "payment_status",
+      headerName: "Status",
+      renderCell: (params) => (
+        <strong>
+          {params.value && params.value === "COMPLETED" ? (
+            <Typography variant="body2" style={{ color: "green" }}>
+              {params.value}
+            </Typography>
+          ) : (
+            <Typography variant="body2" style={{ color: "red" }}>
+              {params.value}
+            </Typography>
+          )}
+        </strong>
+      ),
+      width: 150,
+    },
     {
       field: "timestamp",
       headerName: "Paid On",
