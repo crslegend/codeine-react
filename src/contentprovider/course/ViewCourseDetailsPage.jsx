@@ -255,7 +255,12 @@ const ViewCourseDetailsPage = () => {
             value={course && course.rating ? parseFloat(course.rating) : 0}
           />
           <Typography variant="body1" style={{ paddingBottom: "10px" }}>
-            Published on: {formatDate(course && course.published_date)}
+            Published on:{" "}
+            {course && course.published_date ? (
+              formatDate(course.published_date)
+            ) : (
+              <span style={{ color: "red" }}>Not Pubished</span>
+            )}
           </Typography>
           <div style={{ display: "flex" }}>
             <Language style={{ marginRight: "10px" }} />
