@@ -27,26 +27,19 @@ const useStyles = makeStyles((theme) => ({
 const AddConsultation = ({ handleGetAllConsultations }) => {
   const classes = useStyles();
   const date = new Date();
-  const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substr(0, 16);
+  const currentDate = new Date(
+    date.getTime() - date.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .substr(0, 16);
 
   const [slot, setSlot] = useState({
-<<<<<<< HEAD
-    start_time: "",
-    end_time: "",
+    start_time: currentDate,
+    end_time: currentDate,
     meeting_link: "",
     title: "Open",
     max_members: 1,
     price_per_pax: 0,
-=======
-    start_time: currentDate,
-    end_time: currentDate,
-    meeting_link: "",
-    title: "",
-    max_members: 1,
-    price_per_pax: 1,
-    is_all_day: false,
-    r_rule: null,
->>>>>>> ae1bd28a1305c48f29e0c467145de268a5fe362d
   });
   const [open, setOpen] = useState(false);
 
@@ -155,7 +148,10 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
-    } else if (slot.start_time <= currentDate || slot.start_time >= slot.end_time) {
+    } else if (
+      slot.start_time <= new Date() ||
+      slot.start_time >= slot.end_time
+    ) {
       setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
@@ -176,20 +172,31 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
 
   return (
     <Fragment>
-      <Button className={classes.opendialog} variant="contained" color="primary" onClick={handleDialogOpen}>
+      <Button
+        className={classes.opendialog}
+        variant="contained"
+        color="primary"
+        onClick={handleDialogOpen}
+      >
         Create a consultation slot
       </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Create a new consultation slot</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">
+          Create a new consultation slot
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the start and end time of your preference, with a conference link attached.
+            Enter the start and end time of your preference, with a conference
+            link attached.
           </DialogContentText>
           <KeyboardDateTimePicker
             variant="inline"
             label="Start Time"
-            type="datetime-local"
-            defaultValue={currentDate}
+            //type="datetime-local"
             // value={slot.startTime}
             // onChange={(e) => handleStartTimeChange(e.target.value)}
             value={slot.start_time}
@@ -199,8 +206,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <KeyboardDateTimePicker
             variant="inline"
             label="End Time"
-            type="datetime-local"
-            defaultValue={currentDate}
+            //type="datetime-local"
             // value={slot.endTime}
             // onChange={(e) => handleEndTimeChange(e.target.value)}
             value={slot.end_time}
@@ -267,22 +273,48 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={successAlertOpen} autoHideDuration={4000} onClose={handleSuccessAlertClose}>
-        <Alert onClose={handleSuccessAlertClose} elevation={6} severity="success">
-          <Typography variant="body1">Consultation slot has been added</Typography>
+      <Snackbar
+        open={successAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleSuccessAlertClose}
+      >
+        <Alert
+          onClose={handleSuccessAlertClose}
+          elevation={6}
+          severity="success"
+        >
+          <Typography variant="body1">
+            Consultation slot has been added
+          </Typography>
         </Alert>
       </Snackbar>
-      <Snackbar open={titleAlertOpen} autoHideDuration={4000} onClose={handleTitleAlertClose}>
+      <Snackbar
+        open={titleAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleTitleAlertClose}
+      >
         <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a consultation title!</Typography>
+          <Typography variant="body1">
+            Please enter a consultation title!
+          </Typography>
         </Alert>
       </Snackbar>
-      <Snackbar open={dateAlertOpen} autoHideDuration={4000} onClose={handleDateAlertClose}>
+      <Snackbar
+        open={dateAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleDateAlertClose}
+      >
         <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a valid consultation date and time!</Typography>
+          <Typography variant="body1">
+            Please enter a valid consultation date and time!
+          </Typography>
         </Alert>
       </Snackbar>
-      <Snackbar open={meetingLinkAlertOpen} autoHideDuration={4000} onClose={handleLinkAlertClose}>
+      <Snackbar
+        open={meetingLinkAlertOpen}
+        autoHideDuration={4000}
+        onClose={handleLinkAlertClose}
+      >
         <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
           <Typography variant="body1">Please enter a meeting link!</Typography>
         </Alert>
