@@ -362,19 +362,20 @@ const ViewAllCourses = () => {
                           return unPublishedChip;
                         }
                       })()}
-                      <Typography
-                        variant="body2"
-                        style={{
-                          opacity: 0.7,
-                          paddingBottom: "10px",
-                          paddingTop: "10px",
-                        }}
-                      >
-                        Pusblished On:
-                        <br />
-                        {course.published_date &&
-                          formatDate(course.published_date)}
-                      </Typography>
+                      {course.published_date && course.published_date && (
+                        <Typography
+                          variant="body2"
+                          style={{
+                            opacity: 0.7,
+                            paddingBottom: "10px",
+                            paddingTop: "10px",
+                          }}
+                        >
+                          Pusblished On:
+                          <br />
+                          {formatDate(course.published_date)}
+                        </Typography>
+                      )}
                     </CardContent>
                   </CardActionArea>
                   <CardActions

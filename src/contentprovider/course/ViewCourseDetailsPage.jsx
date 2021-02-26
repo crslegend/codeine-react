@@ -254,14 +254,19 @@ const ViewCourseDetailsPage = () => {
             readOnly
             value={course && course.rating ? parseFloat(course.rating) : 0}
           />
-          <Typography variant="body1" style={{ paddingBottom: "10px" }}>
-            Published on:{" "}
-            {course && course.published_date ? (
-              formatDate(course.published_date)
-            ) : (
-              <span style={{ color: "red" }}>Not Published</span>
-            )}
-          </Typography>
+          {course && course.published_date ? (
+            <Typography variant="body1" style={{ paddingBottom: "10px" }}>
+              Published on:{` ${formatDate(course.published_date)}`}
+            </Typography>
+          ) : (
+            <Typography
+              variant="body1"
+              style={{ color: "red", paddingBottom: "10px" }}
+            >
+              Not Published
+            </Typography>
+          )}
+
           <div style={{ display: "flex" }}>
             <Language style={{ marginRight: "10px" }} />
             {course &&
