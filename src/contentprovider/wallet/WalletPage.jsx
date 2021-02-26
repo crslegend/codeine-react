@@ -111,14 +111,6 @@ const WalletPage = () => {
     { field: "id", headerName: "Transaction ID", width: 300 },
     { field: "date", headerName: "Transaction Date", width: 220 },
     {
-      field: "amount",
-      headerName: "Amount",
-      renderCell: (params) => (
-        <Typography variant="body2">${params.value}</Typography>
-      ),
-      width: 150,
-    },
-    {
       field: "title",
       headerName: "Consultation Title",
       width: 250,
@@ -138,12 +130,37 @@ const WalletPage = () => {
       headerName: "Transaction Type",
       renderCell: (params) => (
         <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>
+          <Typography
+            variant="body2"
+            style={{ color: formatStatus(params.value) }}
+          >
             {params.value}
           </Typography>
         </strong>
       ),
       width: 200,
+    },
+    {
+      field: "debit",
+      headerName: "Debit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography style={{ color: "green" }} variant="body2">
+            ${params.value}
+          </Typography>
+        ),
+      width: 120,
+    },
+    {
+      field: "credit",
+      headerName: "Credit",
+      renderCell: (params) =>
+        params.value && (
+          <Typography style={{ color: "red" }} variant="body2">
+            ${params.value}
+          </Typography>
+        ),
+      width: 120,
     },
   ];
 
@@ -166,8 +183,11 @@ const WalletPage = () => {
 
   const transactionRows = allTransactionList;
   for (var h = 0; h < allTransactionList.length; h++) {
-    //transactionRows[h].title = allTransactions[h].application.title;
-    //transactionRows[h].member = allTransactions[h].application.member;
+    transactionRows[h].title = allTransactionList[h].consultation_slot.title;
+    transactionRows[h].start_date = formatDate(
+      allTransactionList[h].consultation_slot.start_time
+    );
+    transactionRows[h].member = allTransactionList[h].member_name;
 
     transactionRows[h].date = formatDate(
       allTransactionList[h].payment_transaction.timestamp
@@ -179,8 +199,12 @@ const WalletPage = () => {
       allTransactionList[h].payment_transaction.payment_status === "COMPLETED"
     ) {
       transactionRows[h].type = "Earnings";
+      transactionRows[h].debit =
+        allTransactionList[h].payment_transaction.payment_amount;
     } else {
       transactionRows[h].type = "Refund";
+      transactionRows[h].credit =
+        allTransactionList[h].payment_transaction.payment_amount;
     }
   }
 
