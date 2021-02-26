@@ -24,24 +24,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddConsultation = () => {
+const AddConsultation = ({ handleGetAllConsultations }) => {
   const classes = useStyles();
   const date = new Date();
   const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substr(0, 16);
 
-  const [startTime, setStartTime] = useState(currentDate);
-  const [endTime, setEndTime] = useState(currentDate);
-  const [meetingLink, setMeetingLink] = useState("");
-  const [maxMembers, setMaxMembers] = useState(1);
-  const [pricePerPax, setPricePerPax] = useState(1);
-  const [title, setTitle] = useState("Open");
   const [slot, setSlot] = useState({
-    start_time: startTime,
-    end_time: endTime,
-    meeting_link: meetingLink,
-    title: title,
-    max_members: maxMembers,
-    price_per_pax: pricePerPax,
+    start_time: currentDate,
+    end_time: currentDate,
+    meeting_link: "",
+    title: "",
+    max_members: 1,
+    price_per_pax: 1,
     is_all_day: false,
     r_rule: null,
   });
@@ -110,8 +104,6 @@ const AddConsultation = () => {
   };
 
   const handleEndTimeChange = (e) => {
-    setEndTime(e);
-
     setSlot({
       ...slot,
       end_time: e,
@@ -119,8 +111,6 @@ const AddConsultation = () => {
   };
 
   const handleTitleChange = (e) => {
-    setTitle(e);
-
     setSlot({
       ...slot,
       title: e,
@@ -128,8 +118,6 @@ const AddConsultation = () => {
   };
 
   const handleLinkChange = (e) => {
-    setMeetingLink(e);
-
     setSlot({
       ...slot,
       meeting_link: e,
@@ -137,8 +125,6 @@ const AddConsultation = () => {
   };
 
   const handleMaxMemberChange = (e) => {
-    setMaxMembers(e);
-
     setSlot({
       ...slot,
       max_members: e,
@@ -146,8 +132,6 @@ const AddConsultation = () => {
   };
 
   const handlePriceChange = (e) => {
-    setPricePerPax(e);
-
     setSlot({
       ...slot,
       price_per_pax: e,
@@ -172,7 +156,8 @@ const AddConsultation = () => {
         .post("/consultations", slot)
         .then((res) => {
           setSuccessAlertOpen(true);
-          window.location.reload();
+          handleGetAllConsultations();
+          // window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -194,16 +179,14 @@ const AddConsultation = () => {
           <KeyboardDateTimePicker
             variant="inline"
             label="Start Time"
-            defaultValue={currentDate}
-            value={startTime}
+            value={slot.start_time}
             onChange={handleStartTimeChange}
             className={classes.textField}
           />
           <KeyboardDateTimePicker
             variant="inline"
             label="End Time"
-            defaultValue={currentDate}
-            value={startTime}
+            value={slot.end_time}
             onChange={handleEndTimeChange}
             style={{ float: "right" }}
             className={classes.textField}
@@ -218,7 +201,7 @@ const AddConsultation = () => {
             margin="dense"
             id="name"
             label="Title"
-            value={title}
+            value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
           />
@@ -227,7 +210,7 @@ const AddConsultation = () => {
             margin="dense"
             id="name"
             label="Conference link"
-            value={meetingLink}
+            value={slot.meeting_link}
             onChange={(e) => handleLinkChange(e.target.value)}
             type="url"
             fullWidth
@@ -242,7 +225,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Max no. of signups"
-              value={maxMembers}
+              value={slot.max_members}
               onChange={(e) => handleMaxMemberChange(e.target.value)}
               type="number"
               InputProps={{
@@ -253,7 +236,7 @@ const AddConsultation = () => {
               margin="dense"
               id="name"
               label="Price (per pax)"
-              value={pricePerPax}
+              value={slot.price_per_pax}
               onChange={(e) => handlePriceChange(e.target.value)}
               type="number"
               InputProps={{
