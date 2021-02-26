@@ -14,7 +14,6 @@ import {
 import Service from "../../../../AxiosService";
 import {
   ArrowBack,
-  Block,
   Chat,
   Delete,
   Edit,
@@ -95,6 +94,7 @@ const NestedComments = ({
 
   useEffect(() => {
     getNestedComments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleReplyComment = (mId, cId) => {

@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { Typography, AppBar, Tabs, Tab, Box, Grid } from "@material-ui/core";
+import {
+  Typography,
+  AppBar,
+  Tabs,
+  Tab,
+  Box,
+  Grid,
+  Avatar,
+} from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../AxiosService";
@@ -76,18 +84,6 @@ const AdminContentQualityPage = () => {
     setValue(newValue);
   };
 
-  //Toast message
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
-
   const formatDate = (date) => {
     if (!date) {
       return "-";
@@ -131,34 +127,22 @@ const AdminContentQualityPage = () => {
     }
   };
 
-  const formatNull = (input) => {
-    if (input) {
-      if (input.organization_name) {
-        return input.organization_name;
-      }
-      return input;
-    } else {
-      return "-";
-    }
-  };
-
   useEffect(() => {
     getCourseData();
     //getArticleData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Member data
   const [allCourseList, setAllCourseList] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState({
-    id: "",
-    title: "",
-    is_activated: "",
-    date_published: "",
-    is_publish: "",
-  });
 
   const coruseColumns = [
-    { field: "id", headerName: "ID", width: 300 },
+    {
+      field: "thumbnail",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     { field: "title", headerName: "Title", width: 200 },
     {
       field: "published_date",
@@ -234,48 +218,38 @@ const AdminContentQualityPage = () => {
     }
   };
 
-  const handleCourseStatus = (e, status, courseid) => {
-    e.preventDefault();
-    if (status) {
-      Service.client.patch(`/courses/${courseid}/deactivate`).then(() => {
-        Service.client.get(`/courses/${courseid}`).then((res1) => {
-          setSelectedCourse(res1.data);
-          getCourseData();
-        });
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Course is deactivated",
-        severity: "success",
-      });
+  // const handleCourseStatus = (e, status, courseid) => {
+  //   e.preventDefault();
+  //   if (status) {
+  //     Service.client.patch(`/courses/${courseid}/deactivate`).then(() => {
+  //       Service.client.get(`/courses/${courseid}`).then((res1) => {
+  //         setSelectedCourse(res1.data);
+  //         getCourseData();
+  //       });
+  //     });
+  //     setSbOpen(true);
+  //     setSnackbar({
+  //       ...snackbar,
+  //       message: "Course is deactivated",
+  //       severity: "success",
+  //     });
 
-      console.log("course is deactivated");
-    } else {
-      Service.client.patch(`/course/${courseid}/activate`).then((res) => {
-        setSelectedCourse(res.data);
-        getCourseData();
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Course is activated",
-        severity: "success",
-      });
-    }
-  };
+  //     console.log("course is deactivated");
+  //   } else {
+  //     Service.client.patch(`/course/${courseid}/activate`).then((res) => {
+  //       setSelectedCourse(res.data);
+  //       getCourseData();
+  //     });
+  //     setSbOpen(true);
+  //     setSnackbar({
+  //       ...snackbar,
+  //       message: "Course is activated",
+  //       severity: "success",
+  //     });
+  //   }
+  // };
 
   const [searchValue, setSearchValue] = useState("");
-  const [openCourseDialog, setOpenCourseDialog] = useState(false);
-
-  const handleClickOpenCourse = (e) => {
-    setSelectedCourse(e.row);
-    setOpenCourseDialog(true);
-  };
-
-  const handleCloseCourse = () => {
-    setOpenCourseDialog(false);
-  };
 
   return (
     <div className={classes.root}>

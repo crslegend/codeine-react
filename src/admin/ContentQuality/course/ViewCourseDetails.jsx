@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../../components/Navbar";
 import {
   Accordion,
   AccordionDetails,
@@ -13,7 +12,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-//import Footer from "../../landing/Footer";
 import Toast from "../../../components/Toast.js";
 
 import Service from "../../../AxiosService";
@@ -29,7 +27,6 @@ import {
   RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
-import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
 
 const styles = makeStyles((theme) => ({
@@ -209,17 +206,17 @@ const ViewCourseDetails = () => {
     return `${days} days ago`;
   };
 
-  const handleEnrollment = () => {
-    if (Cookies.get("t1")) {
-      Service.client
-        .post(`/courses/${id}/enrollments`)
-        .then((res) => {
-          console.log(res);
-          history.push(`/courses/enroll/${id}`);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
+  // const handleEnrollment = () => {
+  //   if (Cookies.get("t1")) {
+  //     Service.client
+  //       .post(`/courses/${id}/enrollments`)
+  //       .then((res) => {
+  //         console.log(res);
+  //         history.push(`/courses/enroll/${id}`);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // };
 
   const handleDeactivation = () => {
     if (Cookies.get("t1")) {
