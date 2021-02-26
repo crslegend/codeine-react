@@ -320,6 +320,17 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleUnenrollment = () => {
+    Service.client
+      .delete(`/courses/${id}/enrollments`)
+      .then((res) => {
+        console.log(res);
+        // setProgress(res.data.progress);
+        history.push(`/courses/${id}`);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -899,7 +910,7 @@ const EnrollCourse = () => {
             className={classes.dialogButtons}
             onClick={() => {
               // to call unenroll endpoint
-              history.push(`/courses/${id}`);
+              handleUnenrollment();
             }}
           >
             Confirm
