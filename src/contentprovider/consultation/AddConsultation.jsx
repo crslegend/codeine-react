@@ -146,11 +146,15 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
-    } else if (slot.start_time <= date || slot.start_time >= slot.end_time) {
+    } else if (
+      slot.start_time <= currentDate ||
+      slot.start_time >= slot.end_time
+    ) {
       setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
     } else {
+      console.log(slot.start_time + " and " + slot.end_time);
       setOpen(false);
       if (slot.price_per_pax > 0) {
         Service.client

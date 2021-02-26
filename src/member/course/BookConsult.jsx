@@ -160,10 +160,10 @@ const BookConsult = () => {
 
   const handlePaymentDialog = (slot) => {
     const decoded = jwt_decode(Cookies.get("t1"));
-
+    console.log(decoded);
     for (let i = 0; i < slot.members.length; i++) {
-      console.log(slot.members[i].member);
-      if (decoded.user_id === slot.members[i].member.id) {
+      console.log(decoded.user_id);
+      if (decoded.user_id === slot.members[i].member) {
         setSbOpen(true);
         setSnackbar({
           message: "You have already signed up for this consultation slot.",
@@ -286,7 +286,9 @@ const BookConsult = () => {
         </Grid>
         <Button
           /* eslint-disable-next-line no-alert */
-          //onClick={() => alert(JSON.stringify(appointmentData))}
+          disabled={
+            appointmentData.max_members - appointmentData.curr_members <= 0
+          }
           onClick={() => handlePaymentDialog(appointmentData)}
           style={{
             textTransform: "none",
