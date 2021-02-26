@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SubTask = ({ task, subtask, getCourse, index }) => {
   const classes = useStyles();
-  // console.log(subtask);
+  console.log(index);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -72,6 +72,8 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
   const [correctAnswer, setCorrectAnswer] = useState();
 
   const [quizId, setQuizId] = useState();
+
+  const [questionNum, setQuestionNum] = useState();
 
   return (
     <Fragment>
@@ -117,7 +119,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                     setQuestionType("shortanswer");
                     setCorrectAnswer(subtask.shortanswer.keywords.join(","));
                   }
-
+                  setQuestionNum(index + 1);
                   setQuestion(subtask);
                   setQuizId(task.quiz.id);
                   setEditQuestionDialog(true);
@@ -150,6 +152,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
         setSbOpen={setSbOpen}
         snackbar={snackbar}
         setSnackbar={setSnackbar}
+        questionNum={questionNum}
       />
     </Fragment>
   );

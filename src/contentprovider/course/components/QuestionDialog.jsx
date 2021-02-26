@@ -63,9 +63,10 @@ const QuestionDialog = ({
   setSbOpen,
   snackbar,
   setSnackbar,
+  questionNum,
 }) => {
   const classes = useStyles();
-  //   console.log(question);
+  // console.log(question);
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -561,7 +562,7 @@ const QuestionDialog = ({
       >
         {editQuestionDialog && (
           <DialogTitle>
-            Question {question && question.order}
+            Question {questionNum && questionNum}
             <div style={{ float: "right" }}>
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
