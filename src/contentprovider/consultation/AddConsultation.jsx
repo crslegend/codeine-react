@@ -11,15 +11,15 @@ import {
   Snackbar,
   Typography,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import { useHistory } from "react-router-dom";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
-    textTransform: "none",
-    // marginTop: "40px",
     padding: "15px 10px",
   },
 }));
@@ -47,24 +47,10 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
   const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
   const [dateAlertOpen, setDateAlertOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [bankDialog, setBankDialog] = useState(false);
 
-  // const fetchUpdate = () => {
-  //   if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-  //     const userid = jwt_decode(Service.getJWT()).user_id;
-  //     Service.client
-  //       .get("/consultations", { params: { search: userid } })
-  //       .then((res) => {
-  //         console.log(res.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUpdate();
-  // }, []);
+  // react router dom history hooks
+  const history = useHistory();
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -89,6 +75,13 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       return;
     }
     setTitleAlertOpen(false);
+  };
+
+  const handleBankAlertClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setBankDialog(false);
   };
 
   const handleSuccessAlertClose = (e, reason) => {
@@ -148,25 +141,40 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
-    } else if (
-      slot.start_time <= new Date() ||
-      slot.start_time >= slot.end_time
-    ) {
+    } else if (slot.start_time <= date || slot.start_time >= slot.end_time) {
       setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
     } else {
       setOpen(false);
-      Service.client
-        .post("/consultations", slot)
-        .then((res) => {
-          setSuccessAlertOpen(true);
-          handleGetAllConsultations();
-          // window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (slot.price_per_pax > 0) {
+        Service.client
+          .get(`/auth/bank-details`)
+          .then((res) => {
+            Service.client
+              .post("/consultations", slot)
+              .then((res) => {
+                setSuccessAlertOpen(true);
+                handleGetAllConsultations();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((err) => {
+            setBankDialog(true);
+          });
+      } else {
+        Service.client
+          .post("/consultations", slot)
+          .then((res) => {
+            setSuccessAlertOpen(true);
+            handleGetAllConsultations();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   };
 
@@ -176,6 +184,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         className={classes.opendialog}
         variant="contained"
         color="primary"
+        startIcon={<Add />}
         onClick={handleDialogOpen}
       >
         Create a consultation slot
@@ -196,9 +205,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <KeyboardDateTimePicker
             variant="inline"
             label="Start Time"
-            //type="datetime-local"
-            // value={slot.startTime}
-            // onChange={(e) => handleStartTimeChange(e.target.value)}
             value={slot.start_time}
             onChange={handleStartTimeChange}
             className={classes.textField}
@@ -206,9 +212,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <KeyboardDateTimePicker
             variant="inline"
             label="End Time"
-            //type="datetime-local"
-            // value={slot.endTime}
-            // onChange={(e) => handleEndTimeChange(e.target.value)}
             value={slot.end_time}
             onChange={handleEndTimeChange}
             style={{ float: "right" }}
@@ -273,6 +276,26 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         </DialogActions>
       </Dialog>
 
+      <Dialog open={bankDialog} onClose={handleBankAlertClose}>
+        <DialogTitle>You have not set up your bank account</DialogTitle>
+        <DialogContent>
+          A bank account is needed to collect your consultation earnings.
+          <br />
+          Press "Proceed" to add your bank account.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleBankAlertClose} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={(e) => history.push(`/partner/home/wallet`)}
+            color="primary"
+          >
+            Proceed
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar
         open={successAlertOpen}
         autoHideDuration={4000}
@@ -299,6 +322,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           </Typography>
         </Alert>
       </Snackbar>
+
       <Snackbar
         open={dateAlertOpen}
         autoHideDuration={4000}
