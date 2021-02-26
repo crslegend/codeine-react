@@ -176,7 +176,10 @@ const Consultation = () => {
       headerName: "Status",
       renderCell: (params) => (
         <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>
+          <Typography
+            variant="body2"
+            style={{ color: formatStatus(params.value) }}
+          >
             {params.value}
           </Typography>
         </strong>
