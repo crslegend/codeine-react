@@ -259,7 +259,7 @@ const ViewCourseDetailsPage = () => {
             {course && course.published_date ? (
               formatDate(course.published_date)
             ) : (
-              <span style={{ color: "red" }}>Not Pubished</span>
+              <span style={{ color: "red" }}>Not Published</span>
             )}
           </Typography>
           <div style={{ display: "flex" }}>

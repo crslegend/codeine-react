@@ -289,6 +289,15 @@ const ReplyToComments = () => {
           );
         })}
 
+      {!chosenCourseMaterialId && (
+        <Typography
+          variant="h6"
+          style={{ textAlign: "center", paddingTop: "20px" }}
+        >
+          Please choose a course material above to view the comments
+        </Typography>
+      )}
+
       {chosenMaterialName && chosenMaterialName && (
         <Typography
           variant="h6"
@@ -299,19 +308,21 @@ const ReplyToComments = () => {
         </Typography>
       )}
 
-      <div
-        style={{
-          marginTop: "20px",
-          width: "75%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginBottom: "30px",
-        }}
-      >
-        <CommentsSection
-          materialId={chosenCourseMaterialId && chosenCourseMaterialId}
-        />
-      </div>
+      {chosenCourseMaterialId && chosenMaterialName && (
+        <div
+          style={{
+            marginTop: "20px",
+            width: "75%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginBottom: "30px",
+          }}
+        >
+          <CommentsSection
+            materialId={chosenCourseMaterialId && chosenCourseMaterialId}
+          />
+        </div>
+      )}
     </Fragment>
   );
 };
