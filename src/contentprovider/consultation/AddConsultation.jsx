@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -12,12 +12,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { KeyboardDateTimePicker } from "@material-ui/pickers";
+
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
     textTransform: "none",
-    marginTop: "40px",
+    // marginTop: "40px",
     padding: "15px 10px",
   },
 }));
@@ -25,11 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const AddConsultation = () => {
   const classes = useStyles();
   const date = new Date();
-  const currentDate = new Date(
-    date.getTime() - date.getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .substr(0, 16);
+  const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substr(0, 16);
 
   const [startTime, setStartTime] = useState(currentDate);
   const [endTime, setEndTime] = useState(currentDate);
@@ -105,8 +103,6 @@ const AddConsultation = () => {
   };
 
   const handleStartTimeChange = (e) => {
-    setStartTime(e);
-
     setSlot({
       ...slot,
       start_time: e,
@@ -166,10 +162,7 @@ const AddConsultation = () => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
       setMeetingLinkAlertOpen(true);
-    } else if (
-      slot.start_time <= currentDate ||
-      slot.start_time >= slot.end_time
-    ) {
+    } else if (slot.start_time <= currentDate || slot.start_time >= slot.end_time) {
       setDateAlertOpen(true);
     } else if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
@@ -188,52 +181,38 @@ const AddConsultation = () => {
   };
 
   return (
-    <div>
-      <Button
-        className={classes.opendialog}
-        variant="contained"
-        color="primary"
-        onClick={handleDialogOpen}
-      >
+    <Fragment>
+      <Button className={classes.opendialog} variant="contained" color="primary" onClick={handleDialogOpen}>
         Create a consultation slot
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">
-          Create a new consultation slot
-        </DialogTitle>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Create a new consultation slot</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the start and end time of your preference, with a conference
-            link attached.
+            Enter the start and end time of your preference, with a conference link attached.
           </DialogContentText>
-          <TextField
-            id="datetime-local"
+          <KeyboardDateTimePicker
+            variant="inline"
             label="Start Time"
-            type="datetime-local"
             defaultValue={currentDate}
             value={startTime}
-            onChange={(e) => handleStartTimeChange(e.target.value)}
+            onChange={handleStartTimeChange}
             className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
           />
-          <TextField
-            id="datetime-local"
+          <KeyboardDateTimePicker
+            variant="inline"
             label="End Time"
+            defaultValue={currentDate}
+            value={startTime}
+            onChange={handleEndTimeChange}
+            style={{ float: "right" }}
+            className={classes.textField}
+          />
+          {/* <TextField
+            id="datetime-local"
             type="datetime-local"
             defaultValue={currentDate}
-            value={endTime}
-            onChange={(e) => handleEndTimeChange(e.target.value)}
-            style={{ float: "right" }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
+          /> */}
           <TextField
             required
             margin="dense"
@@ -293,53 +272,27 @@ const AddConsultation = () => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={successAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleSuccessAlertClose}
-      >
-        <Alert
-          onClose={handleSuccessAlertClose}
-          elevation={6}
-          severity="success"
-        >
-          <Typography variant="body1">
-            Consultation slot has been added
-          </Typography>
+      <Snackbar open={successAlertOpen} autoHideDuration={4000} onClose={handleSuccessAlertClose}>
+        <Alert onClose={handleSuccessAlertClose} elevation={6} severity="success">
+          <Typography variant="body1">Consultation slot has been added</Typography>
         </Alert>
       </Snackbar>
-      <Snackbar
-        open={titleAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleTitleAlertClose}
-      >
+      <Snackbar open={titleAlertOpen} autoHideDuration={4000} onClose={handleTitleAlertClose}>
         <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">
-            Please enter a consultation title!
-          </Typography>
+          <Typography variant="body1">Please enter a consultation title!</Typography>
         </Alert>
       </Snackbar>
-      <Snackbar
-        open={dateAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleDateAlertClose}
-      >
+      <Snackbar open={dateAlertOpen} autoHideDuration={4000} onClose={handleDateAlertClose}>
         <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">
-            Please enter a valid consultation date and time!
-          </Typography>
+          <Typography variant="body1">Please enter a valid consultation date and time!</Typography>
         </Alert>
       </Snackbar>
-      <Snackbar
-        open={meetingLinkAlertOpen}
-        autoHideDuration={4000}
-        onClose={handleLinkAlertClose}
-      >
+      <Snackbar open={meetingLinkAlertOpen} autoHideDuration={4000} onClose={handleLinkAlertClose}>
         <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
           <Typography variant="body1">Please enter a meeting link!</Typography>
         </Alert>
       </Snackbar>
-    </div>
+    </Fragment>
   );
 };
 
