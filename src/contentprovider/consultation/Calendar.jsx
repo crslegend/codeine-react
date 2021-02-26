@@ -263,6 +263,14 @@ const Calendar = ({ consultations, loading, setConsultations, setLoading, handle
     []
   );
 
+  const AppointmentProps = ({ children, ...restProps }) => {
+    return (
+      <Appointments.Appointment onClick={(e) => console.log(e)} {...restProps}>
+        {children}
+      </Appointments.Appointment>
+    );
+  };
+
   const CommandButton = React.useCallback(
     ({ id, ...restProps }) => {
       if (id === "deleteButton") {
@@ -277,35 +285,23 @@ const Calendar = ({ consultations, loading, setConsultations, setLoading, handle
   );
 
   return (
-    <Fragment>
-      <Paper>
-        <Scheduler data={consultations} height="750">
-          <ViewState
-            defaultCurrentDate={currentDate}
-            currentViewName={currentViewName}
-            onCurrentViewNameChange={handleCurrentViewChange}
-          />
-          <EditingState onCommitChanges={onCommitChanges} />
-          <WeekView name="week" timeTableCellComponent={weekview} />
-          <MonthView name="month" timeTableCellComponent={monthview} />
-          <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
-          <DateNavigator />
-          <TodayButton />
-          <Appointments />
-          <IntegratedEditing />
-          {/* <AppointmentTooltip showOpenButton />
-          <AppointmentForm
-            commandButtonComponent={CommandButton}
-            basicLayoutComponent={BasicLayout}
-            textEditorComponent={TextEditor}
-            booleanEditorComponent={BooleanEditor}
-            messages={messages}
-          /> */}
-          <ViewSwitcher />
-          <ConfirmationDialog />
-        </Scheduler>
-      </Paper>
-    </Fragment>
+    <Paper style={{ height: "60vh" }}>
+      <Scheduler data={consultations} height="auto">
+        <ViewState
+          defaultCurrentDate={currentDate}
+          currentViewName={currentViewName}
+          onCurrentViewNameChange={handleCurrentViewChange}
+        />
+        <EditingState onCommitChanges={onCommitChanges} />
+        <WeekView name="week" timeTableCellComponent={weekview} />
+        <MonthView name="month" timeTableCellComponent={monthview} />
+        <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
+        <DateNavigator />
+        <TodayButton />
+        <Appointments appointmentComponent={AppointmentProps} />
+        <ViewSwitcher />
+      </Scheduler>
+    </Paper>
   );
 };
 
