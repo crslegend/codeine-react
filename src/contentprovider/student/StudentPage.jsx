@@ -406,7 +406,9 @@ const StudentPage = () => {
                           <ListItemText
                             id={value.id}
                             primary={value.title}
-                            secondary={value.published_date}
+                            secondary={
+                              `Enrolled In: ` + formatDate(value.published_date)
+                            }
                           />
                         </ListItem>
                       );
