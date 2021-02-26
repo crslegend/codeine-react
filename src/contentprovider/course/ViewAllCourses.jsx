@@ -132,6 +132,10 @@ const ViewAllCourses = () => {
     Math.ceil(allCourses.length / itemsPerPage)
   );
 
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [unpublishDialog, setUnpublishDialog] = useState(false);
+  const [unpublishCourseId, setUnpublishCourseId] = useState();
+
   const getAllCourses = (sort) => {
     let decoded;
     if (Cookies.get("t1")) {
@@ -238,6 +242,49 @@ const ViewAllCourses = () => {
   }, [searchValue]);
 
   console.log(allCourses);
+
+  const handlePublishCourse = (courseId) => {
+    let check = true;
+    Service.client
+      .get(`/contributions`, { params: { latest: 1 } })
+      .then((res) => {
+        console.log(res);
+
+        if (res.data.expiry_date) {
+          const futureDate = new Date(res.data.expiry_date);
+          const currentDate = new Date();
+          const diffTime = futureDate - currentDate;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays > 29) {
+            check = false;
+          }
+        }
+
+        if (check) {
+          localStorage.removeItem("courseId");
+          setPaymentDialog(true);
+        } else {
+          Service.client
+            .patch(`/courses/${courseId}/publish`)
+            .then((res) => {
+              getAllCourses();
+            })
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUnpublishCourse = () => {
+    Service.client
+      .patch(`/courses/${unpublishCourseId}/unpublish`)
+      .then((res) => {
+        setUnpublishCourseId();
+        setUnpublishDialog(false);
+        getAllCourses();
+      })
+      .catch((err) => console.log(err));
+  };
 
   const formatDate = (date) => {
     const options = {
@@ -418,16 +465,28 @@ const ViewAllCourses = () => {
                         }}
                       >
                         <div className={classes.popoverContents}>
-                          <Button
-                            className={classes.popoverButtons}
-                            component={Link}
-                            to={
-                              course &&
-                              `/partner/home/content/view/comments/${course.id}`
-                            }
-                          >
-                            Reply Comments
-                          </Button>
+                          {course && course.is_published ? (
+                            <Button
+                              className={classes.popoverButtons}
+                              onClick={() => {
+                                handleClose();
+                                setUnpublishCourseId(course.id);
+                                setUnpublishDialog(true);
+                              }}
+                            >
+                              Unpublish
+                            </Button>
+                          ) : (
+                            <Button
+                              className={classes.popoverButtons}
+                              onClick={() => {
+                                handleClose();
+                                handlePublishCourse(course.id);
+                              }}
+                            >
+                              Publish
+                            </Button>
+                          )}
                           <Button
                             className={classes.popoverButtons}
                             component={Link}
@@ -515,6 +574,66 @@ const ViewAllCourses = () => {
             onClick={() => {
               handleDeleteCourse(deleteCourseId);
             }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={paymentDialog}
+        onClose={() => setPaymentDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>You have yet to contribute for this month</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setPaymentDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(`/partner/home/contributions`)}
+          >
+            Go To Contributions
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={unpublishDialog}
+        onClose={() => setUnpublishDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Unpublish Course?</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setUnpublishDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleUnpublishCourse()}
           >
             Confirm
           </Button>

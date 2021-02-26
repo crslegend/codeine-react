@@ -116,7 +116,7 @@ const ReplyToComments = () => {
     <Fragment>
       <div className={classes.titleSection}>
         <IconButton
-          onClick={() => history.push("/partner/home/content")}
+          onClick={() => history.push(`/partner/home/content/view/${id}`)}
           style={{ marginRight: "30px" }}
         >
           <ArrowBack />
