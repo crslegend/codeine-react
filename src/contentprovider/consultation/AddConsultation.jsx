@@ -184,7 +184,7 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
       setSnackbarOpen(true);
       return;
     }
-    if (slot.price_per_pax <= 0) {
+    if (slot.price_per_pax < 0) {
       setSnackbar({
         message: "Price cannot be negative",
         severity: "error",
