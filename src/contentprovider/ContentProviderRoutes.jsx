@@ -18,6 +18,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -100,6 +101,17 @@ const useStyles = makeStyles((theme) => ({
 const ContentProviderHome = () => {
   const classes = useStyles();
   const history = useHistory();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [user, setUser] = useState({
     first_name: "Member",
@@ -314,6 +326,7 @@ const ContentProviderHome = () => {
 
   return (
     <BrowserRouter>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.root}>
         <Navbar logo={navLogo} navbarItems={loggedInNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
@@ -386,7 +399,13 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/password"
-              render={() => <Password />}
+              render={() => (
+                <Password
+                  snackbar={snackbar}
+                  setSbOpen={setSbOpen}
+                  setSnackbar={setSnackbar}
+                />
+              )}
               user="partner"
             />
             <PrivateRoute
