@@ -8,8 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Snackbar,
-  Typography,
   Switch,
   FormControlLabel,
   FormGroup,
@@ -21,7 +19,6 @@ import {
   InputLabel,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
 import { formatISO, addMinutes, addDays } from "date-fns";
@@ -171,15 +168,6 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
   };
 
   const handleSubmit = () => {
-    console.log(slot);
-    if (slot.meeting_link === "" || slot.meeting_link === undefined) {
-      setSnackbar({
-        message: "Please enter a meeting link!",
-        severity: "error",
-      });
-      setSnackbarOpen(true);
-      return;
-    }
     if (slot.title === "" || slot.title === undefined) {
       setSnackbar({
         message: "Please enter a consultation title!",
@@ -188,6 +176,23 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
       setSnackbarOpen(true);
       return;
     }
+    if (slot.meeting_link === "" || slot.meeting_link === undefined) {
+      setSnackbar({
+        message: "Please enter a meeting link!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+    if (slot.price_per_pax <= 0) {
+      setSnackbar({
+        message: "Price cannot be negative",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError) {
       return;
     }
@@ -413,20 +418,18 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
                 inputProps: { min: 1 },
               }}
             />
-            <FormControl className={classes.margin}>
-              <InputLabel htmlFor="price_pax">Price (per pax)</InputLabel>
-              <Input
-                margin="dense"
-                id="price_pax"
-                startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                value={slot.price_per_pax}
-                onChange={(e) => handlePriceChange(e.target.value)}
-                type="number"
-                InputProps={{
-                  inputProps: { min: 0 },
-                }}
-              />
-            </FormControl>
+            <TextField
+              margin="dense"
+              id="price_pax"
+              label="Price (per pax)"
+              value={slot.price_per_pax}
+              onChange={(e) => handlePriceChange(e.target.value)}
+              type="number"
+              InputProps={{
+                inputProps: { min: 0 },
+                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              }}
+            />
           </div>
         </DialogContent>
         <DialogActions>
