@@ -208,10 +208,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       setMeetingLinkAlertOpen(true);
       return;
     }
-    if (slot.start_time <= currentDate || slot.start_time >= slot.end_time) {
-      setDateAlertOpen(true);
-      return;
-    }
     if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
       return;
@@ -225,6 +221,14 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       start_time: appendTimeToDate(slot.date, slot.start_time),
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
+
+    if (
+      formattedSlot.start_time <= new Date(currentDate.toDateString()) ||
+      formattedSlot.start_time >= formattedSlot.end_time
+    ) {
+      setDateAlertOpen(true);
+      return;
+    }
 
     setOpen(false);
     if (slot.price_per_pax > 0) {
