@@ -231,7 +231,7 @@ const AdminProfilePage = (props) => {
         <Paper elevation={0} className={classes.paper}>
           <Grid container>
             <Grid item xs={6}>
-              <div>
+              {/* <div>
                 <TextField
                   margin="normal"
                   id="id"
@@ -244,7 +244,7 @@ const AdminProfilePage = (props) => {
                   }}
                   value={profileDetails.id}
                 />
-              </div>
+              </div> */}
               <div>
                 <TextField
                   margin="normal"

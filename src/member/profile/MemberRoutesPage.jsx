@@ -143,16 +143,7 @@ const MemberLanding = () => {
     <Fragment>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "10px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Navigation
           </Typography>
         </label>
@@ -210,16 +201,7 @@ const MemberLanding = () => {
       {/* <Divider /> */}
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             User Settings
           </Typography>
         </label>
@@ -246,16 +228,7 @@ const MemberLanding = () => {
       </ListItem>
       <div>
         <label>
-          <Typography
-            style={{
-              textAlign: "center",
-              paddingTop: "20px",
-              paddingBottom: "5px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-            }}
-            variant="body2"
-          >
+          <Typography className={classes.subheader} variant="body2">
             Transactions
           </Typography>
         </label>

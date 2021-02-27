@@ -132,6 +132,10 @@ const ViewAllCourses = () => {
     Math.ceil(allCourses.length / itemsPerPage)
   );
 
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [unpublishDialog, setUnpublishDialog] = useState(false);
+  const [unpublishCourseId, setUnpublishCourseId] = useState();
+
   const getAllCourses = (sort) => {
     let decoded;
     if (Cookies.get("t1")) {
@@ -205,6 +209,7 @@ const ViewAllCourses = () => {
         console.log(res);
         setDeleteCourseDialog(false);
         setDeleteCourseId();
+        getAllCourses();
       })
       .catch((err) => console.log(err));
   };
@@ -238,6 +243,90 @@ const ViewAllCourses = () => {
 
   console.log(allCourses);
 
+  const handlePublishCourse = (courseId) => {
+    let check = true;
+    Service.client
+      .get(`/contributions`, { params: { latest: 1 } })
+      .then((res) => {
+        console.log(res);
+
+        if (res.data.expiry_date) {
+          const futureDate = new Date(res.data.expiry_date);
+          const currentDate = new Date();
+          const diffTime = futureDate - currentDate;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays > 29) {
+            check = false;
+          }
+        }
+
+        if (check) {
+          localStorage.removeItem("courseId");
+          setPaymentDialog(true);
+        } else {
+          Service.client
+            .patch(`/courses/${courseId}/publish`)
+            .then((res) => {
+              getAllCourses();
+            })
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUnpublishCourse = () => {
+    Service.client
+      .patch(`/courses/${unpublishCourseId}/unpublish`)
+      .then((res) => {
+        setUnpublishCourseId();
+        setUnpublishDialog(false);
+        getAllCourses();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const checkIfCourseIsReadyToPublish = (course) => {
+    const assessment = course.assessment && course.assessment;
+    const chapters = course.chapters && course.chapters;
+    if (!assessment) {
+      return false;
+    } else {
+      // check assessement first
+      if (!assessment.questions || assessment.questions.length === 0) {
+        return false;
+      }
+
+      // check chapters
+      if (!chapters || chapters.length === 0) {
+        return false;
+      } else {
+        // check course materials in each chapter
+        for (let i = 0; i < chapters.length; i++) {
+          if (
+            !chapters[i].course_materials ||
+            chapters[i].course_materials.length === 0
+          ) {
+            return false;
+          } else {
+            for (let j = 0; j < chapters[i].course_materials.length; j++) {
+              if (chapters[i].course_materials[j].material_type === "QUIZ") {
+                if (
+                  !chapters[i].course_materials[j].quiz.questions ||
+                  chapters[i].course_materials[j].quiz.questions.length === 0
+                ) {
+                  return false;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -267,6 +356,14 @@ const ViewAllCourses = () => {
       label="Deleted"
       size="small"
       style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
+
+  const notReadyChip = (
+    <Chip
+      label="Incomplete Course"
+      size="small"
+      style={{ color: "#000", backgroundColor: "#fcdb03" }}
     />
   );
 
@@ -335,6 +432,10 @@ const ViewAllCourses = () => {
                       history.push(`/partner/home/content/view/${course.id}`)
                     }
                     className={classes.cardActionArea}
+                    disabled={course && course.is_deleted}
+                    style={{
+                      opacity: course && course.is_deleted && 0.5,
+                    }}
                   >
                     <CardMedia
                       className={classes.media}
@@ -354,28 +455,33 @@ const ViewAllCourses = () => {
                         } else if (course.is_published) {
                           return publishedChip;
                         } else if (!course.is_published) {
-                          return unPublishedChip;
+                          if (checkIfCourseIsReadyToPublish(course)) {
+                            return unPublishedChip;
+                          }
+                          return notReadyChip;
                         }
                       })()}
-                      <Typography
-                        variant="body2"
-                        style={{
-                          opacity: 0.7,
-                          paddingBottom: "10px",
-                          paddingTop: "10px",
-                        }}
-                      >
-                        Pusblished On:
-                        <br />
-                        {course.published_date &&
-                          formatDate(course.published_date)}
-                      </Typography>
+                      {course.published_date && course.published_date && (
+                        <Typography
+                          variant="body2"
+                          style={{
+                            opacity: 0.7,
+                            paddingBottom: "10px",
+                            paddingTop: "10px",
+                          }}
+                        >
+                          Pusblished On:
+                          <br />
+                          {formatDate(course.published_date)}
+                        </Typography>
+                      )}
                     </CardContent>
                   </CardActionArea>
                   <CardActions
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
+                      opacity: course && course.is_deleted && 0.5,
                     }}
                   >
                     <div>
@@ -393,6 +499,7 @@ const ViewAllCourses = () => {
                       <IconButton
                         onClick={(e) => handleClick(e, course.id)}
                         size="small"
+                        disabled={course && course.is_deleted}
                       >
                         <MoreVert />
                       </IconButton>
@@ -410,16 +517,28 @@ const ViewAllCourses = () => {
                         }}
                       >
                         <div className={classes.popoverContents}>
-                          <Button
-                            className={classes.popoverButtons}
-                            component={Link}
-                            to={
-                              course &&
-                              `/partner/home/content/view/comments/${course.id}`
-                            }
-                          >
-                            Reply Comments
-                          </Button>
+                          {course && course.is_published ? (
+                            <Button
+                              className={classes.popoverButtons}
+                              onClick={() => {
+                                handleClose();
+                                setUnpublishCourseId(course.id);
+                                setUnpublishDialog(true);
+                              }}
+                            >
+                              Unpublish
+                            </Button>
+                          ) : checkIfCourseIsReadyToPublish(course) ? (
+                            <Button
+                              className={classes.popoverButtons}
+                              onClick={() => {
+                                handleClose();
+                                handlePublishCourse(course.id);
+                              }}
+                            >
+                              Publish
+                            </Button>
+                          ) : null}
                           <Button
                             className={classes.popoverButtons}
                             component={Link}
@@ -432,6 +551,7 @@ const ViewAllCourses = () => {
                             onClick={() => {
                               setDeleteCourseId(course.id);
                               setDeleteCourseDialog(true);
+                              handleClose();
                             }}
                           >
                             <span style={{ color: "red" }}>Delete Course</span>
@@ -506,6 +626,66 @@ const ViewAllCourses = () => {
             onClick={() => {
               handleDeleteCourse(deleteCourseId);
             }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={paymentDialog}
+        onClose={() => setPaymentDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>You have yet to contribute for this month</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setPaymentDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(`/partner/home/contributions`)}
+          >
+            Go To Contributions
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={unpublishDialog}
+        onClose={() => setUnpublishDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Unpublish Course?</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setUnpublishDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleUnpublishCourse()}
           >
             Confirm
           </Button>

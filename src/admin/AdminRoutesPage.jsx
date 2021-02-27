@@ -233,6 +233,7 @@ const AdminRoutesPage = () => {
         <BrokenImageOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Analytics</Typography>
       </ListItem>
+      {/* <Divider /> */}
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">

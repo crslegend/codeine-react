@@ -209,7 +209,7 @@ const MRQ = ({
           <div style={{ marginTop: "10px" }}>
             <Button
               variant="contained"
-              disabled={!chosenOption}
+              disabled={!chosenOption || chosenOption.length === 0}
               onClick={() => handleCheckAnswer()}
             >
               Check Answer

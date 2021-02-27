@@ -63,9 +63,10 @@ const QuestionDialog = ({
   setSbOpen,
   snackbar,
   setSnackbar,
+  questionNum,
 }) => {
   const classes = useStyles();
-  //   console.log(question);
+  // console.log(question);
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -140,15 +141,20 @@ const QuestionDialog = ({
   const handleAddOption = () => {
     const values = [...options];
     values.push("");
+    console.log(values);
     setOptions(values);
   };
 
   const handleDeleteOption = (index) => {
+    console.log(index);
     if (questionType === "mrq") {
       const value = options[index];
       setCorrectAnswer(correctAnswer.filter((answer) => answer !== value));
     }
-    setOptions(options.filter((option) => options.indexOf(option) !== index));
+    let arr = [...options];
+    arr.splice(index, 1); // use this instead of filter to cover the case where all values are the same
+    // console.log(arr);
+    setOptions(arr);
   };
 
   //   console.log(correctAnswer);
@@ -556,11 +562,11 @@ const QuestionDialog = ({
       >
         {editQuestionDialog && (
           <DialogTitle>
-            Question {question && question.order}
+            Question {questionNum && questionNum}
             <div style={{ float: "right" }}>
-              <IconButton size="small" onClick={() => setEditMode(true)}>
+              {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 size="small"
                 onClick={() => setDeleteQuestionDialog(true)}
@@ -716,6 +722,7 @@ const QuestionDialog = ({
                 onChange={(e) => setCorrectAnswer(e.target.value)}
                 label="Select Correct Answer"
                 variant="outlined"
+                disabled={options && options.includes("")}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
@@ -742,6 +749,7 @@ const QuestionDialog = ({
                 renderValue={(selected) => {
                   return selected.join(", ");
                 }}
+                disabled={options && options.includes("")}
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
