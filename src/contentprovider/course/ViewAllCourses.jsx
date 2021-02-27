@@ -458,7 +458,11 @@ const ViewAllCourses = () => {
                         <div>
                           <Typography
                             variant="body1"
-                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                            style={{
+                              fontWeight: 600,
+                              paddingBottom: "10px",
+                              paddingTop: "10px",
+                            }}
                           >
                             {course && course.title}
                           </Typography>
