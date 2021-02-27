@@ -8,10 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router-dom";
-// import Service from "../AxiosService";
-// import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
 import MemberLogo from "../assets/CodeineLogos/Member.svg";
-// import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";
@@ -87,6 +84,30 @@ const NewPasswordPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+    if (
+      passwordDetails.reset_password === "" ||
+      passwordDetails.repeat_password === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "All fields must be filled in.",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (passwordDetails.reset_password !== passwordDetails.repeat_password) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "New password must match Repeat password",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
 
     axios
       .patch("http://localhost:8000/auth/reset-password", passwordDetails, {
@@ -123,7 +144,7 @@ const NewPasswordPage = () => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "This email does not exist. Please try again." + err.message,
+          message: "This email does not exist. Please try again.",
           severity: "error",
         });
       });
