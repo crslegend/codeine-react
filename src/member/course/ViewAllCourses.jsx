@@ -270,41 +270,59 @@ const ViewAllCourses = () => {
                       onClick={() => {
                         history.push(`/courses/${course.id}`);
                       }}
+                      style={{ height: "100%" }}
                     >
-                      <CardMedia
-                        className={classes.cardMedia}
-                        image={course.thumbnail && course.thumbnail}
-                        title={course && course.title}
-                      />
-                      <CardContent>
-                        <Typography variant="h6">{course.title}</Typography>
-                        <br />
-                        <Typography
-                          variant="body2"
-                          style={{ opacity: 0.7, paddingBottom: "10px" }}
-                        >
-                          {course.partner && course.partner.first_name}{" "}
-                          {course.partner && course.partner.last_name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          style={{ opacity: 0.7, paddingBottom: "10px" }}
-                        >
-                          Pusblished On:
-                          <br />
-                          {course.published_date &&
-                            formatDate(course.published_date)}
-                        </Typography>
-                        <Rating
-                          size="small"
-                          readOnly
-                          value={
-                            course && course.rating
-                              ? parseFloat(course.rating)
-                              : 0
-                          }
+                      <div style={{ height: "30%" }}>
+                        <CardMedia
+                          className={classes.cardMedia}
+                          image={course.thumbnail && course.thumbnail}
+                          title={course && course.title}
                         />
-                      </CardContent>
+                      </div>
+                      <div style={{ height: "5%" }} />
+                      <div style={{ height: "65%" }}>
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            height: "100%",
+                          }}
+                        >
+                          <div>
+                            <Typography variant="h6">{course.title}</Typography>
+                            <br />
+                          </div>
+
+                          <div>
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7, paddingBottom: "10px" }}
+                            >
+                              {course.partner && course.partner.first_name}{" "}
+                              {course.partner && course.partner.last_name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7, paddingBottom: "10px" }}
+                            >
+                              Pusblished On:
+                              <br />
+                              {course.published_date &&
+                                formatDate(course.published_date)}
+                            </Typography>
+                            <Rating
+                              size="small"
+                              readOnly
+                              value={
+                                course && course.rating
+                                  ? parseFloat(course.rating)
+                                  : 0
+                              }
+                            />
+                          </div>
+                        </CardContent>
+                      </div>
                     </CardActionArea>
                   </Card>
                 );
