@@ -322,75 +322,89 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/content"
               render={() => <ViewAllCourses />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/content/new"
               render={() => <CourseCreation />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/comments/:id"
               strict
               sensitive
               render={(match) => <ReplyToComments match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/quizzes/:id"
               strict
               sensitive
               render={(match) => <ViewAllQuizzes match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/:id"
               strict
               sensitive
               render={(match) => <ViewCourseDetailsPage match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/:id"
               strict
               sensitive
               render={(match) => <CourseCreation match={match} />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/student"
               render={() => <Student />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/helpdesk"
               render={() => <Helpdesk />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/password"
               render={() => <Password />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/profile"
               render={() => <Profile profile={user} setProfile={setUser} />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/wallet"
               render={() => <Wallet />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/contributions"
               render={() => <ContributionsPage />}
+              user="partner"
             />
             <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>

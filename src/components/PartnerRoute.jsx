@@ -21,7 +21,9 @@ const PartnerRoute = ({ render, path, user, ...rest }) => {
           }
         })
         .catch((err) => {
-          setAuth(false);
+          // token t1 and t2 expire
+          Service.removeCredentials();
+          setAuth(true);
           // return <Redirect to={`/404`} />;
         });
     } else {
