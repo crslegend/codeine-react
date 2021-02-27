@@ -90,6 +90,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
     autoHideDuration: 3000,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [editMode, setEditMode] = useState(false);
   const [courseMaterialDialog, setCourseMaterialDialog] = useState(false);
   const [materialType, setMaterialType] = useState();

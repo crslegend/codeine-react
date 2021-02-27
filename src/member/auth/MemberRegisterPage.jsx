@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     padding: "10px",
     width: "25%",
+    minWidth: "120px",
   },
   paper: {
     display: "flex",

@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
+import logo from "../../assets/CodeineLogos/Admin.svg";
 import Service from "../../AxiosService";
 import Toast from "../../components/Toast.js";
 
@@ -23,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     paddingRight: "20px",
     paddingBottom: "20px",
+    width: "25%",
+    minWidth: "120px",
   },
   paper: {
     display: "flex",
@@ -119,7 +122,7 @@ const AdminLoginPage = () => {
         <Paper elevation={3} className={classes.paper}>
           <Link to="/admin" className={classes.codeineLogo}>
             <Typography variant="h4">
-              <strong>codeine</strong>
+              <img src={logo} alt="logo" width="110%" />
             </Typography>
           </Link>
           <TextField
@@ -153,6 +156,13 @@ const AdminLoginPage = () => {
               "Login"
             )}
           </Button>
+          <Typography variant="body1">
+            <span>
+              <Link to="/resetPassword/admin" style={{ color: "#437FC7" }}>
+                Forget Password?
+              </Link>
+            </span>
+          </Typography>
         </Paper>
       </form>
     </div>

@@ -66,6 +66,7 @@ const WalletPage = () => {
     autoHideDuration: 3000,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
 
   // Bank Details
@@ -99,6 +100,7 @@ const WalletPage = () => {
 
   useEffect(() => {
     getTransactionData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatStatus = (status) => {

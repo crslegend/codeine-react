@@ -99,13 +99,14 @@ const PartnerPasswordPage = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setLoading(true);
+    setLoading(true);
 
     if (
       passwordDetails.new_password === "" ||
       passwordDetails.repeat_password === "" ||
       passwordDetails.old_password === ""
     ) {
+      setLoading(false);
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -116,6 +117,7 @@ const PartnerPasswordPage = (props) => {
     }
 
     if (passwordDetails.new_password !== passwordDetails.repeat_password) {
+      setLoading(false);
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
