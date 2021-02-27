@@ -109,12 +109,12 @@ const NewPasswordPage = () => {
             history.push("/member/login");
           } else if (res.data.partner) {
             //if partner, go to partner landing page
-            history.push("/partner");
+            history.push("/partner/login");
           } else {
             //if admin, go to admin login page
             history.push("/admin/login");
           }
-        }, 2000);
+        }, 1000);
       })
       .catch((err) => {
         setLoading(false);
