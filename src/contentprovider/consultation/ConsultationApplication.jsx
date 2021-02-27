@@ -196,7 +196,7 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     },
   ];
 
-  console.log(applications);
+  // console.log(applications);
 
   return (
     <div style={{ minHeight: "70vh" }}>

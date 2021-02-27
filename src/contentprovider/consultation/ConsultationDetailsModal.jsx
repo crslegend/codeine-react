@@ -85,7 +85,7 @@ const ConsultationDetailsModal = ({
     end_time: selectedConsultation.endDate,
   });
 
-  console.log(selectedConsultation);
+  // console.log(selectedConsultation);
 
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState({
@@ -335,11 +335,10 @@ const ConsultationDetailsModal = ({
 
   // handles deletion of consultation slot
   const handleDeleteConsultation = () => {
-    console.log();
     Service.client
       .patch(`/consultations/${slot.id}/cancel`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         handleGetAllConsultations();
       })
       .catch((error) => {
