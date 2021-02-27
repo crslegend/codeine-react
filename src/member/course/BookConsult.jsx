@@ -11,6 +11,8 @@ import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
+  MonthView,
+  ViewSwitcher,
   Appointments,
   Toolbar,
   TodayButton,
@@ -98,6 +100,7 @@ const BookConsult = () => {
   const history = useHistory();
   const { id } = useParams();
   console.log(id);
+  const [currentViewName, setCurrentViewName] = useState("week");
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -163,7 +166,7 @@ const BookConsult = () => {
     console.log(decoded);
     for (let i = 0; i < slot.members.length; i++) {
       console.log(decoded.user_id);
-      if (decoded.user_id === slot.members[i].member) {
+      if (decoded.user_id === slot.members[i].member_base_user_id) {
         setSbOpen(true);
         setSnackbar({
           message: "You have already signed up for this consultation slot.",
@@ -256,6 +259,18 @@ const BookConsult = () => {
     []
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const monthview = React.useCallback(
+    React.memo(({ onDoubleClick, ...restProps }) => (
+      <MonthView.TimeTableCell {...restProps} onDoubleClick={undefined} />
+    )),
+    []
+  );
+
+  const handleCurrentViewChange = (newViewName) => {
+    setCurrentViewName(newViewName);
+  };
+
   const Content = withStyles({ name: "Content" })(
     ({ children, appointmentData, classes, ...restProps }) => (
       <AppointmentTooltip.Content
@@ -331,9 +346,19 @@ const BookConsult = () => {
         </Grid>
         <Grid item xs={10}>
           <Paper>
-            <Scheduler data={consultations} height="750">
-              <ViewState defaultCurrentDate={currentDate} />
-              <WeekView name="week" timeTableCellComponent={weekview} />
+            <Scheduler data={consultations} height="auto">
+              <ViewState
+                defaultCurrentDate={currentDate}
+                currentViewName={currentViewName}
+                onCurrentViewNameChange={handleCurrentViewChange}
+              />
+              <WeekView
+                name="week"
+                timeTableCellComponent={weekview}
+                cellDuration={120}
+                startDayHour={6}
+              />
+              <MonthView name="month" timeTableCellComponent={monthview} />
               <Toolbar
                 {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
               />
@@ -341,6 +366,7 @@ const BookConsult = () => {
               <TodayButton />
               <Appointments />
               <AppointmentTooltip contentComponent={Content} />
+              <ViewSwitcher />
             </Scheduler>
           </Paper>
         </Grid>
