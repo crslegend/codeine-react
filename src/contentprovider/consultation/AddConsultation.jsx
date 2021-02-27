@@ -231,6 +231,15 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
       return;
     }
 
+    if (slot.max_members < 1) {
+      setSnackbar({
+        message: "You must accept at least 1 signup",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError.err) {
       return;
     }

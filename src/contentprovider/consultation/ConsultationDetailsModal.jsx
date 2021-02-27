@@ -82,6 +82,8 @@ const ConsultationDetailsModal = ({
     end_time: selectedConsultation.endDate,
   });
 
+  console.log(selectedConsultation);
+
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState({
     mon: false,
@@ -249,21 +251,32 @@ const ConsultationDetailsModal = ({
       return;
     }
 
+    if (slot.max_members < 1) {
+      setSnackbar({
+        message: "You must accept at least 1 signup",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError.err) {
       return;
     }
-    if (slot.price_per_pax > 0) {
-      Service.client
-        .get(`/auth/bank-details`)
-        .then((res) => {
-          setUpdateDialog(true);
-        })
-        .catch((err) => {
-          setBankDialog(true);
-        });
-    } else {
-      setUpdateDialog(true);
-    }
+
+    if (slot)
+      if (slot.price_per_pax > 0) {
+        Service.client
+          .get(`/auth/bank-details`)
+          .then((res) => {
+            setUpdateDialog(true);
+          })
+          .catch((err) => {
+            setBankDialog(true);
+          });
+      } else {
+        setUpdateDialog(true);
+      }
   };
 
   const handleSubmit = () => {
@@ -420,6 +433,7 @@ const ConsultationDetailsModal = ({
             value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
+            style={{ marginTop: 16 }}
           />
           <TextField
             required
