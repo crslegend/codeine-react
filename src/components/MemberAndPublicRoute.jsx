@@ -29,7 +29,10 @@ const MemberAndPublicRoute = ({ render, path, ...rest }) => {
           }
         })
         .catch((err) => {
-          setAuth(false);
+          // token t1 and t2 expire
+          Service.removeCredentials();
+          setAuth(true);
+          setUser("non-logged");
           // return <Redirect to={`/404`} />;
         });
     } else {
