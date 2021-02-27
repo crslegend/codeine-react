@@ -25,8 +25,6 @@ import { Add } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import { DataGrid } from "@material-ui/data-grid";
 
-import jwt_decode from "jwt-decode";
-
 const useStyles = makeStyles((theme) => ({
   topSection: {
     display: "flex",
@@ -35,11 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
   addButton: {
     color: "#fff",
-    backgroundColor: theme.palette.primary.main,
     height: 35,
-    "&:hover": {
-      color: "#000",
-    },
   },
   paper: {
     height: "40vh",
@@ -88,11 +82,6 @@ const WalletPage = () => {
 
   // Transactions datagrid
   const [allTransactionList, setAllTransactionList] = useState([]);
-  // const [selectedTransaction, setSelectedTransaction] = useState({
-  //   id: "",
-  //   date: "",
-  //   amount: "",
-  // });
 
   const getTransactionData = () => {
     Service.client
@@ -382,6 +371,7 @@ const WalletPage = () => {
           <Button
             style={{ float: "right" }}
             variant="contained"
+            color="primary"
             startIcon={<Add />}
             className={classes.addButton}
             onClick={() => setBankDialog(true)}

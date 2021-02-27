@@ -69,7 +69,6 @@ const mapAppointmentData = (item) => ({
   title: item.title,
   startDate: usaTime(item.start_time),
   endDate: usaTime(item.end_time),
-  //meeting_link: item.meeting_link,
   members: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,

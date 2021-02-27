@@ -32,11 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   addButton: {
     color: "#fff",
-    backgroundColor: theme.palette.primary.main,
     height: 35,
-    "&:hover": {
-      color: "#000",
-    },
   },
   paper: {
     display: "flex",
@@ -321,6 +317,7 @@ const ContributionsPage = () => {
       <div className={classes.topSection}>
         <PageTitle title={`Contributions`} />
         <Button
+          color="primary"
           variant="contained"
           startIcon={<Add />}
           className={classes.addButton}
