@@ -128,7 +128,7 @@ const ContributionsPage = () => {
     const stripe = await stripePromise;
 
     const data = {
-      total_price: amount,
+      total_price: amount * numOfMonths,
       email: email,
       description:
         numOfMonths && numOfMonths === 1
@@ -306,8 +306,8 @@ const ContributionsPage = () => {
     {
       field: "expiry_date",
       headerName: "Expires On",
-      valueFormatter: (params) => formatDate(params.value),
-      width: 250,
+      valueFormatter: (params) => formatDateToReturnWithoutTime(params.value),
+      width: 150,
     },
   ];
 
