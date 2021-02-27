@@ -91,7 +91,7 @@ const ReplyToComments = () => {
     getCourse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(course);
+  // console.log(course);
 
   const handleChooseCourseMaterial = (mId) => {
     setChosenCourseMaterialId(mId);

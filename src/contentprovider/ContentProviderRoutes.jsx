@@ -306,7 +306,7 @@ const ContentProviderHome = () => {
       Service.client
         .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
 
           if (!res.data.partner) {
             history.push("/404");

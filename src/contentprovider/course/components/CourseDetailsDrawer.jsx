@@ -564,7 +564,7 @@ const CourseDetailsDrawer = ({
               // setValidatePhoto(false);
             }}
             onDelete={(deletePhotoObj) => {
-              console.log("onDelete", deletePhotoObj);
+              // console.log("onDelete", deletePhotoObj);
               setCoursePic();
             }}
             previewGridProps={{
