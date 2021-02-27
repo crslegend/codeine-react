@@ -94,7 +94,7 @@ const Calendar = ({
           currentViewName={currentViewName}
           onCurrentViewNameChange={handleCurrentViewChange}
         />
-        <WeekView name="week" timeTableCellComponent={weekview} cellDuration={120} startDayHour={6} />
+        <WeekView name="week" timeTableCellComponent={weekview} cellDuration={60} startDayHour={6} />
         <MonthView name="month" timeTableCellComponent={monthview} />
         <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
         <DateNavigator />
