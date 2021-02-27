@@ -260,6 +260,15 @@ const ConsultationDetailsModal = ({
       return;
     }
 
+    if (slot.max_members < selectedConsultation.max_members) {
+      setSnackbar({
+        message: "You can only increase the number of signups",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError.err) {
       return;
     }
@@ -337,7 +346,7 @@ const ConsultationDetailsModal = ({
       >
         <DialogTitle id="form-dialog-title">Consultation Slot Details</DialogTitle>
         <DialogContent>
-          <DialogContentText>Edit here to update your consultation slot</DialogContentText>
+          <DialogContentText>Edit here to update your consultation slot.</DialogContentText>
           <div style={{ width: "100%" }}>
             <FormControlLabel
               style={{ margin: 0 }}
@@ -461,6 +470,7 @@ const ConsultationDetailsModal = ({
               InputProps={{
                 inputProps: { min: 1 },
               }}
+              helperText="You can only increase the no. of signups"
             />
             <TextField
               margin="dense"
