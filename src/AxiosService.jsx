@@ -75,6 +75,7 @@ client.interceptors.response.use(
   }
 );
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   client,
   storeCredentials,

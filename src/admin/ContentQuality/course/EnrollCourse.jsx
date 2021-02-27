@@ -86,9 +86,9 @@ const EnrollCourse = () => {
   const history = useHistory();
   const { id } = useParams();
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
-  const [givenCourseReview, setGivenCourseReview] = useState(false);
+  // const [givenCourseReview, setGivenCourseReview] = useState(false);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
@@ -115,11 +115,11 @@ const EnrollCourse = () => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
+  // const checkIfLoggedIn = () => {
+  //   if (Cookies.get("t1")) {
+  //     setLoggedIn(true);
+  //   }
+  // };
 
   const getCourse = () => {
     if (Cookies.get("t1")) {
@@ -159,7 +159,7 @@ const EnrollCourse = () => {
         if (res.data.length > 0) {
           for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].member.id === decoded.user_id) {
-              setGivenCourseReview(true);
+              // setGivenCourseReview(true);
               break;
             }
           }
@@ -170,7 +170,7 @@ const EnrollCourse = () => {
   console.log(course);
 
   useEffect(() => {
-    checkIfLoggedIn();
+    // checkIfLoggedIn();
     getCourse();
     getCourseReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
