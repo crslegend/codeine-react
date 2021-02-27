@@ -20,6 +20,7 @@ import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
 import { formatISO, addMinutes } from "date-fns";
 
 import Service from "../../AxiosService";
+import SmallMemberCard from "../../components/SmallMemberCard";
 
 const useStyles = makeStyles((theme) => ({
   opendialog: {
@@ -491,8 +492,13 @@ const ConsultationDetailsModal = ({
             </div>
           </DialogContent>
           <DialogContent style={{ paddingTop: 20, width: "30%" }}>
-            <DialogContentText>Applicants</DialogContentText>
-            <div style={{ overflow: "auto", maxHeight: "450px" }}></div>
+            <DialogContentText>Applicants ({selectedConsultation.applications.length})</DialogContentText>
+            <div style={{ overflow: "auto", maxHeight: "450px" }}>
+              {selectedConsultation &&
+                selectedConsultation.applications.map((application) => (
+                  <SmallMemberCard key={application.member.email} member={application.member} />
+                ))}
+            </div>
           </DialogContent>
         </div>
         <DialogActions style={{ justifyContent: "space-between", marginTop: 40 }}>
