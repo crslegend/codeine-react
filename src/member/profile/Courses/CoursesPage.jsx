@@ -161,10 +161,10 @@ const CoursesPage = () => {
     Service.client
       .get(`enrollments`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         let arr = res.data;
         arr = arr.filter((course) => course.course !== null);
-        console.log(arr);
+        // console.log(arr);
         setProgressArr(arr);
       })
       .catch((err) => console.log(err));
@@ -202,7 +202,7 @@ const CoursesPage = () => {
   const getProgress = (course) => {
     for (let i = 0; i < progressArr.length; i++) {
       if (course.id === progressArr[i].course.id) {
-        console.log(progressArr[i].progress);
+        // console.log(progressArr[i].progress);
         return progressArr[i].progress;
       }
     }
