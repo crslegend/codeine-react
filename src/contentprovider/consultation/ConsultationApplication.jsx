@@ -38,6 +38,11 @@ const styles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   rejectButton: {
+    color: theme.palette.error.main,
+    margin: theme.spacing(0.5),
+  },
+
+  containedRejectButton: {
     backgroundColor: theme.palette.error.main,
     color: "#FFF",
     "&:hover": {
@@ -288,23 +293,16 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
             </Typography>
           </DialogContent>
         )}
-        <DialogActions style={{ flexDirection: "column" }}>
-          <Button
-            color="primary"
-            href={selectedApplication && selectedApplication.meeting_link}
-            fullWidth
-            onClick={() => setOpenRejectDialog(true)}
-          >
-            Go to Meeting
-          </Button>
+        <DialogActions>
           <Button
             disabled={selectedApplication && selectedApplication.is_rejected}
             className={classes.rejectButton}
-            variant="contained"
-            fullWidth
             onClick={() => setOpenRejectDialog(true)}
           >
-            Reject Application
+            Reject
+          </Button>
+          <Button color="primary" href={selectedApplication && selectedApplication.meeting_link}>
+            Go To Meeting
           </Button>
         </DialogActions>
       </Dialog>
@@ -312,12 +310,12 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
         <DialogTitle>Confirm Rejection</DialogTitle>
         <DialogContent>This action cannot be undone.</DialogContent>
         <DialogActions style={{ margin: 8 }}>
-          <Button variant="outlined" onClick={() => setOpenRejectDialog(false)}>
+          <Button variant="outlined" color="primary" onClick={() => setOpenRejectDialog(false)}>
             Cancel
           </Button>
           <Button
+            className={classes.containedRejectButton}
             variant="contained"
-            className={classes.rejectButton}
             onClick={(e) => handleReject(selectedApplication.id)}
           >
             Confirm
