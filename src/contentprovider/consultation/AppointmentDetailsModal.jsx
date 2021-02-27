@@ -8,8 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Snackbar,
-  Typography,
   Switch,
   FormControlLabel,
   FormGroup,
@@ -17,7 +15,6 @@ import {
   FormHelperText,
   InputAdornment,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
 import { formatISO, addMinutes } from "date-fns";
@@ -95,7 +92,10 @@ const AppointmentDetailsModal = ({
     sat: false,
     sun: false,
   });
-  const [timeError, setTimeError] = useState(false);
+  const [timeError, setTimeError] = useState({
+    err: false,
+    errorMessage: "",
+  });
 
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
@@ -135,6 +135,28 @@ const AppointmentDetailsModal = ({
   };
 
   const handleStartTimeChange = (e) => {
+    if (e.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (slot.end_time.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e >= slot.end_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
+    } else {
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
+    }
+
     setSlot({
       ...slot,
       start_time: e,
@@ -142,10 +164,26 @@ const AppointmentDetailsModal = ({
   };
 
   const handleEndTimeChange = (e) => {
-    if (e <= slot.start_time) {
-      setTimeError(true);
+    if (slot.start_time.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (e.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e <= slot.start_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
     } else {
-      setTimeError(false);
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
     }
     setSlot({
       ...slot,
@@ -185,7 +223,7 @@ const AppointmentDetailsModal = ({
     setSelectedConsultation();
   };
 
-  const handleSubmit = () => {
+  const validateInput = () => {
     if (slot.title === "" || slot.title === undefined) {
       setSnackbar({
         message: "Please enter a consultation title!",
@@ -211,17 +249,20 @@ const AppointmentDetailsModal = ({
       return;
     }
 
-    if (timeError) {
+    if (timeError.err) {
       return;
     }
 
+    setUpdateDialog(true);
+  };
+
+  const handleSubmit = () => {
     const formattedSlot = {
       ...slot,
       start_time: appendTimeToDate(slot.date, slot.start_time),
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
 
-    setSelectedConsultation();
     if (slot.price_per_pax > 0) {
       Service.client
         .get(`/auth/bank-details`)
@@ -386,8 +427,8 @@ const AppointmentDetailsModal = ({
               className={classes.timeField}
             />
           </div>
-          {timeError ? (
-            <FormHelperText error>End time must be after start time</FormHelperText>
+          {timeError.err ? (
+            <FormHelperText error>{timeError.errorMessage}</FormHelperText>
           ) : (
             <FormHelperText>
               Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
@@ -443,7 +484,7 @@ const AppointmentDetailsModal = ({
             />
           </div>
         </DialogContent>
-        <DialogActions style={{ justifyContent: "space-between" }}>
+        <DialogActions style={{ justifyContent: "space-between", marginTop: 40 }}>
           <Button onClick={() => setCancelDialog(true)} className={classes.errorButton} variant="outlined">
             Cancel Consult
           </Button>
@@ -451,8 +492,8 @@ const AppointmentDetailsModal = ({
             <Button onClick={handleClose} color="primary" variant="outlined">
               Back
             </Button>
-            <Button onClick={() => setUpdateDialog(true)} color="primary" variant="contained">
-              Edit
+            <Button onClick={validateInput} color="primary" variant="contained">
+              Update
             </Button>
           </div>
         </DialogActions>
@@ -478,7 +519,7 @@ const AppointmentDetailsModal = ({
       <Dialog open={updateDialog} onClose={handleUpdateDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
         <DialogTitle>Confirm Update</DialogTitle>
         <DialogContent>
-          <b>Changes to prices will only apply to new applicants.</b>Your students will be notified of the updates.
+          <b>Price changes will only apply to new applicants.</b>Your students will be notified of the updates.
           <br />
           <br />
           Press "Proceed" to confirm.
