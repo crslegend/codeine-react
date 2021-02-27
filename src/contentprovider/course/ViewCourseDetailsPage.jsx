@@ -194,6 +194,47 @@ const ViewCourseDetailsPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const checkIfCourseIsReadyToPublish = () => {
+    const assessment = course && course.assessment;
+    const chapters = course && course.chapters;
+    if (!assessment) {
+      return false;
+    } else {
+      // check assessement first
+      if (!assessment.questions || assessment.questions.length === 0) {
+        return false;
+      }
+
+      // check chapters
+      if (!chapters || chapters.length === 0) {
+        return false;
+      } else {
+        // check course materials in each chapter
+        for (let i = 0; i < chapters.length; i++) {
+          if (
+            !chapters[i].course_materials ||
+            chapters[i].course_materials.length === 0
+          ) {
+            return false;
+          } else {
+            for (let j = 0; j < chapters[i].course_materials.length; j++) {
+              if (chapters[i].course_materials[j].material_type === "QUIZ") {
+                if (
+                  !chapters[i].course_materials[j].quiz.questions ||
+                  chapters[i].course_materials[j].quiz.questions.length === 0
+                ) {
+                  return false;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
   const publishedChip = (
     <Chip
       label="Published"
@@ -207,6 +248,14 @@ const ViewCourseDetailsPage = () => {
       label="Deleted"
       size="small"
       style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
+
+  const notReadyChip = (
+    <Chip
+      label="Incomplete Course"
+      size="small"
+      style={{ color: "#000", backgroundColor: "#fcdb03" }}
     />
   );
 
@@ -254,9 +303,26 @@ const ViewCourseDetailsPage = () => {
             readOnly
             value={course && course.rating ? parseFloat(course.rating) : 0}
           />
-          <Typography variant="body1" style={{ paddingBottom: "10px" }}>
-            Published on: {formatDate(course && course.published_date)}
-          </Typography>
+          {course && course.published_date ? (
+            <Typography variant="body1" style={{ paddingBottom: "10px" }}>
+              Published on:{` ${formatDate(course.published_date)}`}
+            </Typography>
+          ) : checkIfCourseIsReadyToPublish() ? (
+            <Typography
+              variant="body1"
+              style={{ color: "red", paddingBottom: "10px" }}
+            >
+              Not Published
+            </Typography>
+          ) : (
+            <Typography
+              variant="body1"
+              style={{ color: "red", paddingBottom: "10px" }}
+            >
+              Incomplete Course
+            </Typography>
+          )}
+
           <div style={{ display: "flex" }}>
             <Language style={{ marginRight: "10px" }} />
             {course &&
@@ -317,14 +383,6 @@ const ViewCourseDetailsPage = () => {
               >
                 Course Content
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                component={Link}
-                to={`/partner/home/content/view/quizzes/${id}`}
-              >
-                View All Quizzes
-              </Button>
             </div>
 
             <Typography variant="body2" style={{ paddingBottom: "5px" }}>
@@ -445,6 +503,30 @@ const ViewCourseDetailsPage = () => {
                   </Accordion>
                 );
               })}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={`/partner/home/content/view/quizzes/${id}`}
+            >
+              View All Quizzes
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={`/partner/home/content/view/comments/${id}`}
+            >
+              Reply To Comments
+            </Button>
           </div>
           <div className={classes.requirement}>
             <Typography
@@ -589,7 +671,10 @@ const ViewCourseDetailsPage = () => {
                       } else if (course.is_published) {
                         return publishedChip;
                       } else if (!course.is_published) {
-                        return unPublishedChip;
+                        if (checkIfCourseIsReadyToPublish(course)) {
+                          return unPublishedChip;
+                        }
+                        return notReadyChip;
                       }
                     }
                   })()}

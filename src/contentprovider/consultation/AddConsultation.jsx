@@ -449,7 +449,10 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <Button onClick={handleBankAlertClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={(e) => history.push(`/partner/home/wallet`)} color="primary">
+          <Button
+            onClick={(e) => history.push(`/partner/home/earnings`)}
+            color="primary"
+          >
             Proceed
           </Button>
         </DialogActions>
