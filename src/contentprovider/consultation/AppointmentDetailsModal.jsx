@@ -252,8 +252,18 @@ const AppointmentDetailsModal = ({
     if (timeError.err) {
       return;
     }
-
-    setUpdateDialog(true);
+    if (slot.price_per_pax > 0) {
+      Service.client
+        .get(`/auth/bank-details`)
+        .then((res) => {
+          setUpdateDialog(true);
+        })
+        .catch((err) => {
+          setBankDialog(true);
+        });
+    } else {
+      setUpdateDialog(true);
+    }
   };
 
   const handleSubmit = () => {
@@ -263,62 +273,30 @@ const AppointmentDetailsModal = ({
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
 
-    if (slot.price_per_pax > 0) {
-      Service.client
-        .get(`/auth/bank-details`)
-        .then((res) => {
-          Service.client
-            .put(`/consultations/${slot.id}`, formattedSlot)
-            .then((res) => {
-              setSnackbar({
-                message: "Consultation slot updated",
-                severity: "success",
-              });
-              setSnackbarOpen(true);
-
-              setSlot({
-                date: currentDate,
-                start_time: currentDate,
-                end_time: addMinutes(currentDate, 30),
-                meeting_link: "",
-                title: "",
-                max_members: 1,
-                price_per_pax: 0,
-              });
-              handleGetAllConsultations();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((err) => {
-          setBankDialog(true);
+    Service.client
+      .put(`/consultations/${slot.id}`, formattedSlot)
+      .then((res) => {
+        setSnackbar({
+          message: "Consultation slot updated",
+          severity: "success",
         });
-    } else {
-      Service.client
-        .put(`/consultations/${slot.id}`, formattedSlot)
-        .then((res) => {
-          setSnackbar({
-            message: "Consultation slot updated",
-            severity: "success",
-          });
-          setSnackbarOpen(true);
+        setSnackbarOpen(true);
 
-          setSlot({
-            date: currentDate,
-            start_time: currentDate,
-            end_time: addMinutes(currentDate, 30),
-            meeting_link: "",
-            title: "",
-            max_members: 1,
-            price_per_pax: 0,
-          });
-          handleGetAllConsultations();
-        })
-        .catch((error) => {
-          console.log(error);
+        setSlot({
+          date: currentDate,
+          start_time: currentDate,
+          end_time: addMinutes(currentDate, 30),
+          meeting_link: "",
+          title: "",
+          max_members: 1,
+          price_per_pax: 0,
         });
-    }
+        setSelectedConsultation();
+        handleGetAllConsultations();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // handles deletion of consultation slot
