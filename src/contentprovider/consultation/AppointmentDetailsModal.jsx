@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     width: "60%",
   },
+  secondaryDialogPaper: {
+    width: "60%",
+  },
   errorButton: {
     color: theme.palette.error.main,
     border: `1px solid ${theme.palette.error.main}`,
@@ -199,7 +202,7 @@ const AppointmentDetailsModal = ({
       setSnackbarOpen(true);
       return;
     }
-    if (slot.price_per_pax <= 0) {
+    if (slot.price_per_pax < 0) {
       setSnackbar({
         message: "Price cannot be negative",
         severity: "error",
@@ -472,7 +475,7 @@ const AppointmentDetailsModal = ({
         </DialogActions>
       </Dialog>
 
-      <Dialog open={updateDialog} onClose={handleUpdateDialogClose}>
+      <Dialog open={updateDialog} onClose={handleUpdateDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
         <DialogTitle>Confirm Update</DialogTitle>
         <DialogContent>
           <b>Changes to prices will only apply to new applicants.</b>Your students will be notified of the updates.
@@ -490,7 +493,7 @@ const AppointmentDetailsModal = ({
         </DialogActions>
       </Dialog>
 
-      <Dialog open={cancelDialog} onClose={handleCancelDialogClose}>
+      <Dialog open={cancelDialog} onClose={handleCancelDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
         <DialogTitle>Confirm Cancellation</DialogTitle>
         <DialogContent>
           This action is <b>non reversible</b>. Your students will be notified of the cancellation and will be refunded
