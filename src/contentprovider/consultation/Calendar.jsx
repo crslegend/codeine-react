@@ -100,7 +100,7 @@ const Calendar = ({
         <WeekView
           name="week"
           timeTableCellComponent={weekview}
-          cellDuration={120}
+          cellDuration={60}
           startDayHour={6}
         />
         <MonthView name="month" timeTableCellComponent={monthview} />
