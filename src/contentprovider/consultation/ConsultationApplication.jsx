@@ -111,7 +111,7 @@ const ConsultationApplication = () => {
 
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
-      console.log(userid);
+      // console.log(userid);
       Service.client
         .get("/consultations/partner/applications", {
           params: { ...queryParams },
@@ -125,7 +125,7 @@ const ConsultationApplication = () => {
     }
   };
 
-  console.log(applications);
+  // console.log(applications);
 
   const rejectConsultation = (applicationId) => {
     Service.client
@@ -141,7 +141,7 @@ const ConsultationApplication = () => {
         window.location.reload();
       });
 
-    console.log("Application is deleted");
+    // console.log("Application is deleted");
   };
 
   const formatStatus = (status) => {

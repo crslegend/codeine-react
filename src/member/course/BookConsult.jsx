@@ -52,24 +52,19 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
-  ({ children, classes, ...restProps }) => (
-    <div className={classes.toolbarRoot}>
-      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-      <LinearProgress className={classes.progress} />
-    </div>
-  )
-);
-
-const usaTime = (date) =>
-  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(({ children, classes, ...restProps }) => (
+  <div className={classes.toolbarRoot}>
+    <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+    <LinearProgress className={classes.progress} />
+  </div>
+));
 
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
-  startDate: usaTime(item.start_time),
-  endDate: usaTime(item.end_time),
-  members: item.confirmed_applications,
+  startDate: item.start_time,
+  endDate: item.end_time,
+  applications: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
   curr_members: item.confirmed_applications.length,
@@ -112,7 +107,6 @@ const BookConsult = () => {
     autoHideDuration: 3000,
   });
 
-  const [loggedIn, setLoggedIn] = useState(true);
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
   const currentDate = new Date();
@@ -163,9 +157,8 @@ const BookConsult = () => {
   const handlePaymentDialog = (slot) => {
     const decoded = jwt_decode(Cookies.get("t1"));
     console.log(decoded);
-    for (let i = 0; i < slot.members.length; i++) {
-      console.log(decoded.user_id);
-      if (decoded.user_id === slot.members[i].member_base_user_id) {
+    for (let i = 0; i < slot.applications.length; i++) {
+      if (decoded.user_id === slot.applications[i].member.id) {
         setSbOpen(true);
         setSnackbar({
           message: "You have already signed up for this consultation slot.",
@@ -185,12 +178,7 @@ const BookConsult = () => {
       Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
         const emailAdd = res.data.email;
 
-        handleStripePaymentGateway(
-          slot.price_per_pax,
-          emailAdd,
-          decoded.user_id,
-          slot.id
-        );
+        handleStripePaymentGateway(slot.price_per_pax, emailAdd, decoded.user_id, slot.id);
       });
     } else {
       Service.client
@@ -200,8 +188,7 @@ const BookConsult = () => {
           handleGetAllConsultations(id, setConsultations, setLoading);
           setSbOpen(true);
           setSnackbar({
-            message:
-              "You have successfully signed up for this consultation slot.",
+            message: "You have successfully signed up for this consultation slot.",
             severity: "success",
             anchorOrigin: {
               vertical: "bottom",
@@ -215,12 +202,7 @@ const BookConsult = () => {
     }
   };
 
-  const handleStripePaymentGateway = async (
-    amount,
-    email,
-    userId,
-    consultationId
-  ) => {
+  const handleStripePaymentGateway = async (amount, email, userId, consultationId) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
@@ -248,7 +230,8 @@ const BookConsult = () => {
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(id, setConsultations, setLoading);
-  }, [id, setConsultations, setLoading]);
+    // eslint-disable-next-line
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekview = React.useCallback(
@@ -270,53 +253,47 @@ const BookConsult = () => {
     setCurrentViewName(newViewName);
   };
 
-  const Content = withStyles({ name: "Content" })(
-    ({ children, appointmentData, classes, ...restProps }) => (
-      <AppointmentTooltip.Content
-        {...restProps}
-        appointmentData={appointmentData}
+  const Content = withStyles({ name: "Content" })(({ children, appointmentData, classes, ...restProps }) => (
+    <AppointmentTooltip.Content {...restProps} appointmentData={appointmentData}>
+      {console.log(appointmentData)}
+      <Grid
+        container
+        style={{
+          marginTop: "10px",
+          padding: "10px 0",
+          backgroundColor: "#F4F4F4",
+        }}
       >
-        <Grid
-          container
-          style={{
-            marginTop: "10px",
-            padding: "10px 0",
-            backgroundColor: "#F4F4F4",
-          }}
-        >
-          <Grid item xs={1} />
-          <Grid item xs={4}>
-            Price: <br />
-            Maximum intake: <br />
-            Availability:
-          </Grid>
-          <Grid item xs={2} />
-          <Grid item xs={4}>
-            ${appointmentData.price_per_pax}
-            <br />
-            {appointmentData.max_members} <br />
-            {appointmentData.max_members - appointmentData.curr_members} <br />
-          </Grid>
+        <Grid item xs={1} />
+        <Grid item xs={4}>
+          Price: <br />
+          Maximum intake: <br />
+          Availability:
         </Grid>
-        <Button
-          /* eslint-disable-next-line no-alert */
-          disabled={
-            appointmentData.max_members - appointmentData.curr_members <= 0
-          }
-          onClick={() => handlePaymentDialog(appointmentData)}
-          style={{
-            textTransform: "none",
-            margin: "15px 0px 15px 0px",
-            float: "right",
-          }}
-          variant="contained"
-          color="primary"
-        >
-          Book now
-        </Button>
-      </AppointmentTooltip.Content>
-    )
-  );
+        <Grid item xs={2} />
+        <Grid item xs={4}>
+          ${appointmentData.price_per_pax}
+          <br />
+          {appointmentData.max_members} <br />
+          {appointmentData.max_members - appointmentData.curr_members} <br />
+        </Grid>
+      </Grid>
+      <Button
+        /* eslint-disable-next-line no-alert */
+        disabled={appointmentData.max_members - appointmentData.curr_members <= 0}
+        onClick={() => handlePaymentDialog(appointmentData)}
+        style={{
+          textTransform: "none",
+          margin: "15px 0px 15px 0px",
+          float: "right",
+        }}
+        variant="contained"
+        color="primary"
+      >
+        Book now
+      </Button>
+    </AppointmentTooltip.Content>
+  ));
 
   return (
     <div className={classes.root}>
@@ -326,7 +303,6 @@ const BookConsult = () => {
         bgColor="#fff"
         navbarItems={components.loggedInNavbar(() => {
           Service.removeCredentials();
-          setLoggedIn(false);
           history.push("/");
         })}
       />
@@ -351,16 +327,9 @@ const BookConsult = () => {
                 currentViewName={currentViewName}
                 onCurrentViewNameChange={handleCurrentViewChange}
               />
-              <WeekView
-                name="week"
-                timeTableCellComponent={weekview}
-                cellDuration={120}
-                startDayHour={6}
-              />
+              <WeekView name="week" timeTableCellComponent={weekview} cellDuration={120} startDayHour={6} />
               <MonthView name="month" timeTableCellComponent={monthview} />
-              <Toolbar
-                {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
-              />
+              <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
               <DateNavigator />
               <TodayButton />
               <Appointments />
