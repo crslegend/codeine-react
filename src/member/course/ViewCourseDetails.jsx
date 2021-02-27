@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -6,10 +6,12 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
+  Box,
   Button,
   Card,
   Chip,
   IconButton,
+  LinearProgress,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -95,6 +97,7 @@ const ViewCourseDetails = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
   const [courseReviews, setCourseReviews] = useState([]);
+  const [progress, setProgress] = useState();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -117,6 +120,14 @@ const ViewCourseDetails = () => {
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`enrollments`, { params: { courseId: id } })
+        .then((res) => {
+          console.log(res);
+          setProgress(res.data[0].progress);
         })
         .catch((err) => console.log(err));
     } else {
@@ -599,19 +610,37 @@ const ViewCourseDetails = () => {
                   Enroll
                 </Button>
               ) : (
-                <Button
-                  variant="contained"
-                  style={{
-                    width: "80%",
-                    margin: "auto",
-                    marginBottom: "20px",
-                  }}
-                  color="primary"
-                  component={Link}
-                  to={`/courses/enroll/${id}`}
-                >
-                  Continue Course
-                </Button>
+                <Fragment>
+                  <Typography variant="h6">Your Progress</Typography>
+                  <div style={{ width: "100%", marginBottom: "20px" }}>
+                    <Box display="flex" alignItems="center">
+                      <Box width="100%" mr={1}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={progress}
+                        />
+                      </Box>
+                      <Box minWidth={35}>
+                        <Typography variant="body2">
+                          {progress && parseInt(progress).toFixed() + "%"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </div>
+                  <Button
+                    variant="contained"
+                    style={{
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "20px",
+                    }}
+                    color="primary"
+                    component={Link}
+                    to={`/courses/enroll/${id}`}
+                  >
+                    Continue Course
+                  </Button>
+                </Fragment>
               )}
 
               <div style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
