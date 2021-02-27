@@ -43,6 +43,7 @@ const styles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.error.dark,
     },
+    margin: theme.spacing(0.5),
   },
   dialogContent: {
     justifyContent: "center",
@@ -287,7 +288,15 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
             </Typography>
           </DialogContent>
         )}
-        <DialogActions style={{ margin: 8 }}>
+        <DialogActions style={{ flexDirection: "column" }}>
+          <Button
+            color="primary"
+            href={selectedApplication && selectedApplication.meeting_link}
+            fullWidth
+            onClick={() => setOpenRejectDialog(true)}
+          >
+            Go to Meeting
+          </Button>
           <Button
             disabled={selectedApplication && selectedApplication.is_rejected}
             className={classes.rejectButton}
