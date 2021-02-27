@@ -2,6 +2,7 @@ import React, { useCallback, useState, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Divider } from "@material-ui/core";
 import jwt_decode from "jwt-decode";
+import { addHours } from "date-fns";
 
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const usaTime = (date) => new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const toLocalTime = (date) => new Date(date);
 
 const handleMemberList = (list) => {
   const newList = [];
@@ -37,15 +38,14 @@ const handleMemberList = (list) => {
     }
     i++;
   });
-  console.log(newList);
   return newList;
 };
 
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
-  startDate: usaTime(item.start_time),
-  endDate: usaTime(item.end_time),
+  startDate: toLocalTime(item.start_time),
+  endDate: toLocalTime(item.end_time),
   meeting_link: item.meeting_link,
   member: handleMemberList(item.confirmed_applications),
   max_members: item.max_members,

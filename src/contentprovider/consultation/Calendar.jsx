@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
-import { ViewState, EditingState } from "@devexpress/dx-react-scheduler";
+import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
@@ -13,7 +13,7 @@ import {
   TodayButton,
   DateNavigator,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import Service from "../../AxiosService";
+// import Service from "../../AxiosService";
 
 const styles = {
   toolbarRoot: {
@@ -46,7 +46,6 @@ const Calendar = ({
 }) => {
   const [currentViewName, setCurrentViewName] = useState("week");
   const currentDate = usaTime(new Date());
-  console.log(currentDate);
 
   // handles retrieval of all consultations
   useEffect(() => {
@@ -55,119 +54,100 @@ const Calendar = ({
   }, []);
 
   // handles updating of consultation slot
-  const handleUpdate = React.useCallback((id, appointment) => {
-    let updateConsult = {};
+  // const handleUpdate = React.useCallback((id, appointment) => {
+  //   let updateConsult = {};
 
-    if (appointment.endDate !== undefined) {
-      appointment.endDate = new Date(appointment.endDate);
+  //   if (appointment.endDate !== undefined) {
+  //     appointment.endDate = new Date(appointment.endDate);
 
-      appointment.endDate = new Date(appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")).toISOString(
-        "en-US",
-        { timeZone: "UTC" }
-      );
+  //     appointment.endDate = new Date(appointment.endDate.toString().replace(/GMT.*$/, "GMT+0000")).toISOString(
+  //       "en-US",
+  //       { timeZone: "UTC" }
+  //     );
 
-      updateConsult = {
-        ...updateConsult,
-        end_time: appointment.endDate,
-      };
-    }
-    if (appointment.startDate !== undefined) {
-      appointment.startDate = new Date(appointment.startDate);
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       end_time: appointment.endDate,
+  //     };
+  //   }
+  //   if (appointment.startDate !== undefined) {
+  //     appointment.startDate = new Date(appointment.startDate);
 
-      appointment.startDate = new Date(
-        appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
-      ).toISOString("en-US", { timeZone: "UTC" });
+  //     appointment.startDate = new Date(
+  //       appointment.startDate.toString().replace(/GMT.*$/, "GMT+0000")
+  //     ).toISOString("en-US", { timeZone: "UTC" });
 
-      updateConsult = {
-        ...updateConsult,
-        start_time: appointment.startDate,
-      };
-    }
-    if (appointment.title !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        title: appointment.title,
-      };
-    }
-    if (appointment.meeting_link !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        meeting_link: appointment.meeting_link,
-      };
-    }
-    if (appointment.allDay !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        is_all_day: appointment.allDay,
-      };
-    }
-    if (appointment.max_members !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        max_members: appointment.max_members,
-      };
-    }
-    if (appointment.price_per_pax !== undefined) {
-      updateConsult = {
-        ...updateConsult,
-        price_per_pax: appointment.price_per_pax,
-      };
-    }
-    console.log(updateConsult);
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       start_time: appointment.startDate,
+  //     };
+  //   }
+  //   if (appointment.title !== undefined) {
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       title: appointment.title,
+  //     };
+  //   }
+  //   if (appointment.meeting_link !== undefined) {
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       meeting_link: appointment.meeting_link,
+  //     };
+  //   }
+  //   if (appointment.allDay !== undefined) {
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       is_all_day: appointment.allDay,
+  //     };
+  //   }
+  //   if (appointment.max_members !== undefined) {
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       max_members: appointment.max_members,
+  //     };
+  //   }
+  //   if (appointment.price_per_pax !== undefined) {
+  //     updateConsult = {
+  //       ...updateConsult,
+  //       price_per_pax: appointment.price_per_pax,
+  //     };
+  //   }
+  //   console.log(updateConsult);
 
-    Service.client
-      .put(`/consultations/${id}`, updateConsult)
-      .then((res) => {
-        console.log(res);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  //   Service.client
+  //     .put(`/consultations/${id}`, updateConsult)
+  //     .then((res) => {
+  //       console.log(res);
+  //       window.location.reload();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   // handles deletion of consultation slot
-  const handleDelete = React.useCallback(
-    (id) => {
-      console.log(id);
-      Service.client
-        .patch(`/consultations/${id}/cancel`)
-        .then((res) => {
-          console.log(res);
+  // const handleDelete = React.useCallback(
+  //   (id) => {
+  //     console.log(id);
+  //     Service.client
+  //       .patch(`/consultations/${id}/cancel`)
+  //       .then((res) => {
+  //         console.log(res);
 
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(id);
-          console.log(error);
-        });
-    },
+  //         window.location.reload();
+  //       })
+  //       .catch((error) => {
+  //         console.log(id);
+  //         console.log(error);
+  //       });
+  //   },
 
-    []
-  );
+  //   []
+  // );
 
   const handleCurrentViewChange = (newViewName) => {
     setCurrentViewName(newViewName);
   };
-
-  const onCommitChanges = React.useCallback(
-    ({ changed, deleted }) => {
-      if (changed) {
-        consultations.map((appointment) =>
-          changed[appointment.id] ? handleUpdate(appointment.id, changed[appointment.id]) : appointment
-        );
-      }
-      if (deleted !== undefined) {
-        consultations.forEach((appointment) => {
-          if (appointment.id === deleted) {
-            console.log(appointment.id);
-            handleDelete(deleted);
-          }
-        });
-      }
-    },
-    [consultations, handleUpdate, handleDelete]
-  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekview = React.useCallback(
@@ -206,8 +186,7 @@ const Calendar = ({
           currentViewName={currentViewName}
           onCurrentViewNameChange={handleCurrentViewChange}
         />
-        <EditingState onCommitChanges={onCommitChanges} />
-        <WeekView name="week" timeTableCellComponent={weekview} />
+        <WeekView name="week" timeTableCellComponent={weekview} cellDuration={120} startDayHour={6} />
         <MonthView name="month" timeTableCellComponent={monthview} />
         <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
         <DateNavigator />
