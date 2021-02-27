@@ -18,6 +18,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -101,6 +102,17 @@ const ContentProviderHome = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [user, setUser] = useState({
     first_name: "Member",
     email: "Member panel",
@@ -111,8 +123,9 @@ const ContentProviderHome = () => {
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
           onClick={() => {
@@ -307,12 +320,14 @@ const ContentProviderHome = () => {
 
   useEffect(() => {
     getUserDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // console.log(user);
 
   return (
     <BrowserRouter>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.root}>
         <Navbar logo={navLogo} navbarItems={loggedInNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
@@ -322,75 +337,95 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/content"
               render={() => <ViewAllCourses />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/content/new"
               render={() => <CourseCreation />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/comments/:id"
               strict
               sensitive
               render={(match) => <ReplyToComments match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/quizzes/:id"
               strict
               sensitive
               render={(match) => <ViewAllQuizzes match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/view/:id"
               strict
               sensitive
               render={(match) => <ViewCourseDetailsPage match={match} />}
+              user="partner"
             />
             <PrivateRoute
               path="/partner/home/content/:id"
               strict
               sensitive
               render={(match) => <CourseCreation match={match} />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/student"
               render={() => <Student />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/helpdesk"
               render={() => <Helpdesk />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/password"
-              render={() => <Password />}
+              render={() => (
+                <Password
+                  snackbar={snackbar}
+                  setSbOpen={setSbOpen}
+                  setSnackbar={setSnackbar}
+                />
+              )}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/profile"
               render={() => <Profile profile={user} setProfile={setUser} />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/earnings"
               render={() => <Wallet />}
+              user="partner"
             />
             <PrivateRoute
               exact
               path="/partner/home/contributions"
               render={() => <ContributionsPage />}
+              user="partner"
             />
             <Redirect from="/partner/home" to="/partner/home/dashboard" />
           </Switch>

@@ -13,14 +13,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import {
-  Add,
-  Assignment,
-  AttachFile,
-  Delete,
-  Edit,
-  Movie,
-} from "@material-ui/icons";
+import { Add, Assignment, AttachFile, Delete, Movie } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 

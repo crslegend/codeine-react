@@ -23,11 +23,11 @@ import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
 import validator from "validator";
 
-import jwt_decode from "jwt-decode";
-import Cookies from "js-cookie";
-import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
+// import jwt_decode from "jwt-decode";
+// import Cookies from "js-cookie";
+// import axios from "axios";
+// import { loadStripe } from "@stripe/stripe-js";
+// const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
   buttonSection: {
@@ -130,7 +130,7 @@ const CourseCreation = () => {
   // console.log(courseDetails);
 
   const [paymentDialog, setPaymentDialog] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState();
+  // const [paymentAmount, setPaymentAmount] = useState();
 
   const handleSaveCourseDetails = () => {
     console.log(coursePicAvatar);
@@ -822,6 +822,7 @@ const CourseCreation = () => {
 
   useEffect(() => {
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -1078,6 +1079,8 @@ const CourseCreation = () => {
         codeLanguage={codeLanguage}
         setCodeLanguage={setCodeLanguage}
         courseId={courseId}
+        setSbOpen={setSbOpen}
+        setSnackbar={setSnackbar}
       />
       <Dialog
         open={chapterDialog}

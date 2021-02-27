@@ -7,7 +7,6 @@ import {
   Typography,
   Grid,
   Avatar,
-  Divider,
   DialogActions,
   Dialog,
   DialogContent,
@@ -53,7 +52,7 @@ const SmallAvatar = withStyles((theme) => ({
 const PartnerProfilePage = (props) => {
   const classes = useStyles();
 
-  const { profile, setProfile } = props;
+  const { setProfile } = props;
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({

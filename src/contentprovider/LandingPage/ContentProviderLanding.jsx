@@ -51,9 +51,10 @@ const ContentProviderLanding = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           component={Link}
+          variant="contained"
+          color="primary"
           to="/partner/register"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
         >

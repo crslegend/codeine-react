@@ -10,7 +10,8 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
+import { Avatar, ListItem, Typography } from "@material-ui/core";
+import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/CodeineLogos/Admin.svg";
@@ -104,6 +105,17 @@ const AdminRoutesPage = () => {
     profile_photo: "",
   });
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const getOwnData = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
@@ -121,6 +133,7 @@ const AdminRoutesPage = () => {
 
   useEffect(() => {
     getOwnData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const memberNavbar = (
@@ -176,6 +189,7 @@ const AdminRoutesPage = () => {
 
   const sidebarList = (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">
@@ -318,7 +332,17 @@ const AdminRoutesPage = () => {
               <ProfilePage profile={profile} setProfile={setProfile} />
             )}
           />
-          <Route exact path="/admin/password" render={() => <PasswordPage />} />
+          <Route
+            exact
+            path="/admin/password"
+            render={() => (
+              <PasswordPage
+                snackbar={snackbar}
+                setSbOpen={setSbOpen}
+                setSnackbar={setSnackbar}
+              />
+            )}
+          />
           <Redirect from="/admin" to="/admin/humanresource" />
         </Switch>
       </main>

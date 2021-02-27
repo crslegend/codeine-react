@@ -60,10 +60,10 @@ const styles = makeStyles((theme) => ({
     marginLeft: "25px",
     marginRight: "25px",
     backgroundColor: theme.palette.red.main,
-    textTransform: "none",
+    // textTransform: "none",
     color: "#fff",
     "&:hover": {
-      color: "#000",
+      backgroundColor: "#8E0000",
     },
   },
   dialogButtons: {
@@ -99,11 +99,11 @@ const styles = makeStyles((theme) => ({
     height: "10vh",
   },
   consultationButton: {
-    marginRight: "15px",
+    marginRight: "25px",
     // marginTop: "45px",
     // float: "right",
     color: "#FFFFFF",
-    textTransform: "none",
+    // textTransform: "none",
   },
 }));
 
@@ -233,6 +233,7 @@ const EnrollCourse = () => {
       .then((res) => {
         console.log(res);
         setReviewDialog(false);
+        getCourseReviews();
         setSbOpen(true);
         setSnackbar({
           message: "Course review submitted successfully!",
@@ -369,12 +370,7 @@ const EnrollCourse = () => {
               Book consultation
             </Button>
             {givenCourseReview && givenCourseReview ? (
-              <Button
-                variant="contained"
-                color="primary"
-                disabled
-                style={{ textTransform: "none" }}
-              >
+              <Button variant="contained" color="primary" disabled>
                 Course Review Given
               </Button>
             ) : (
@@ -382,7 +378,6 @@ const EnrollCourse = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => setReviewDialog(true)}
-                style={{ textTransform: "none" }}
               >
                 Give Course Review
               </Button>

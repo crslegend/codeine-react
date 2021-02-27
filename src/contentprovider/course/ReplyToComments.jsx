@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PageTitle from "../../components/PageTitle";
-import Toast from "../../components/Toast.js";
+// import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -53,20 +53,20 @@ const ReplyToComments = () => {
   const history = useHistory();
   const { id } = useParams();
 
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
+  // const [sbOpen, setSbOpen] = useState(false);
+  // const [snackbar, setSnackbar] = useState({
+  //   message: "",
+  //   severity: "error",
+  //   anchorOrigin: {
+  //     vertical: "bottom",
+  //     horizontal: "center",
+  //   },
+  //   autoHideDuration: 3000,
+  // });
 
-  const [pageNum, setPageNum] = useState(1);
+  // const [pageNum, setPageNum] = useState(1);
   const [course, setCourse] = useState();
-  const [comments, setComments] = useState([]);
+  // const [comments, setComments] = useState([]);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -89,6 +89,7 @@ const ReplyToComments = () => {
 
   useEffect(() => {
     getCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   console.log(course);
 
@@ -282,6 +283,8 @@ const ReplyToComments = () => {
                           </LinkMui>
                         </div>
                       );
+                    } else {
+                      return null;
                     }
                   })}
               </AccordionDetails>

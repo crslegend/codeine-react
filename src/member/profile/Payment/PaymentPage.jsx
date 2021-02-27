@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
 import { Box, Typography } from "@material-ui/core";
-import jwt_decode from "jwt-decode";
+// import jwt_decode from "jwt-decode";
 import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const Payment = () => {
   const classes = useStyles();
   const [allTransactions, setAllTransactions] = useState([]);
-  const [application, setApplication] = useState();
+  // const [application, setApplication] = useState();
 
   const getTransactionData = () => {
     Service.client

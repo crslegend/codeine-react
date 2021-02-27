@@ -19,7 +19,7 @@ import {
 } from "@material-ui/core";
 
 import Service from "../../../AxiosService";
-import { Add, Clear, Delete, Edit, Help } from "@material-ui/icons";
+import { Add, Clear, Delete, Help } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   dialogButtons: {

@@ -15,15 +15,8 @@ const MCQ = ({
   index,
   setPageNum,
   resultObj,
-  setResultObj,
   quizLength,
   quizType,
-  materialId,
-  progressArr,
-  setProgressArr,
-  courseId,
-  progress,
-  setProgress,
 }) => {
   //const classes = styles();
   console.log(question);
@@ -129,7 +122,7 @@ const MCQ = ({
     ) {
       loadPrevAnswer(resultObj.quiz_answers[index].response);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(chosenOption);

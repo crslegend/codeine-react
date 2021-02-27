@@ -58,8 +58,9 @@ const loggedInNavbar = (onClickFn) => {
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
           onClick={onClickFn}
@@ -84,11 +85,12 @@ const navLogo = (
         width: 100,
       }}
     >
-      <img src={logo} width="120%" />
+      <img src={logo} width="120%" alt="codeine's logo" />
     </Link>
   </Fragment>
 );
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   memberNavbar,
   loggedInNavbar,
