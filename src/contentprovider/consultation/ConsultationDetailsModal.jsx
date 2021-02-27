@@ -14,6 +14,7 @@ import {
   Checkbox,
   FormHelperText,
   InputAdornment,
+  Link,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
@@ -271,6 +272,15 @@ const ConsultationDetailsModal = ({
       return;
     }
 
+    if (!/^https?:\/\/([\w\d-]+\.)+\w{2,}(\/.+)?$/.test(slot.meeting_link)) {
+      setSnackbar({
+        message: "Enter a valid URL for the meeting link",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError.err) {
       return;
     }
@@ -441,7 +451,7 @@ const ConsultationDetailsModal = ({
             )}
             <TextField
               required
-              margin="dense"
+              margin="normal"
               id="name"
               label="Title"
               value={slot.title}
@@ -451,13 +461,30 @@ const ConsultationDetailsModal = ({
             />
             <TextField
               required
-              margin="dense"
+              margin="normal"
               id="name"
               label="Conference link"
               value={slot.meeting_link}
               onChange={(e) => handleLinkChange(e.target.value)}
               type="url"
               fullWidth
+              InputProps={{
+                inputProps: { min: 1 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      as={Link}
+                      href={slot.meeting_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      size="small"
+                      color="primary"
+                    >
+                      Go To Meeting
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
             />
             <div
               style={{
@@ -466,7 +493,7 @@ const ConsultationDetailsModal = ({
               }}
             >
               <TextField
-                margin="dense"
+                margin="normal"
                 id="name"
                 label="Max no. of signups"
                 value={slot.max_members}
@@ -478,7 +505,7 @@ const ConsultationDetailsModal = ({
                 helperText="You can only increase the no. of signups"
               />
               <TextField
-                margin="dense"
+                margin="normal"
                 id="price_pax"
                 label="Price (per pax)"
                 value={slot.price_per_pax}
@@ -488,6 +515,7 @@ const ConsultationDetailsModal = ({
                   inputProps: { min: 0 },
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
                 }}
+                helperText="Changes here will only apply to new signups"
               />
             </div>
           </DialogContent>

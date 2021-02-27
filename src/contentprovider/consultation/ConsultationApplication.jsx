@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   Avatar,
+  Paper,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
@@ -128,18 +129,16 @@ const ConsultationApplication = () => {
   // console.log(applications);
 
   const rejectConsultation = (applicationId) => {
-    Service.client
-      .patch(`/consultations/application/${applicationId}/reject`)
-      .then((res) => {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Member is removed from consultation",
-          severity: "success",
-        });
-        getApplicationData();
-        window.location.reload();
+    Service.client.patch(`/consultations/application/${applicationId}/reject`).then((res) => {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Member is removed from consultation",
+        severity: "success",
       });
+      getApplicationData();
+      window.location.reload();
+    });
 
     // console.log("Application is deleted");
   };
@@ -166,11 +165,7 @@ const ConsultationApplication = () => {
       renderCell: (params) => {
         //console.log(params.row.meeting_link);
         return (
-          <a
-            href={params.row.meeting_link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={params.row.meeting_link} target="_blank" rel="noopener noreferrer">
             {params.row.meeting_link}
           </a>
         );
@@ -202,9 +197,7 @@ const ConsultationApplication = () => {
       headerName: "Status",
       renderCell: (params) => (
         <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>
-            {params.value}
-          </Typography>
+          <Typography style={{ color: formatStatus(params.value) }}>{params.value}</Typography>
         </strong>
       ),
       width: 130,
@@ -232,23 +225,14 @@ const ConsultationApplication = () => {
   const applicationsRows = applications;
 
   for (var h = 0; h < applications.length; h++) {
-    applicationsRows[h].start_time = formatDate(
-      applications[h].consultation_slot.start_time
-    );
-    applicationsRows[h].end_time = formatDate(
-      applications[h].consultation_slot.end_time
-    );
-    applicationsRows[h].meeting_link =
-      applications[h].consultation_slot.meeting_link;
+    applicationsRows[h].start_time = formatDate(applications[h].consultation_slot.start_time);
+    applicationsRows[h].end_time = formatDate(applications[h].consultation_slot.end_time);
+    applicationsRows[h].meeting_link = applications[h].consultation_slot.meeting_link;
     applicationsRows[h].title = applications[h].consultation_slot.title;
     applicationsRows[h].max_pax = applications[h].consultation_slot.max_members;
-    applicationsRows[h].number_of_signups =
-      applications[h].consultation_slot.number_of_signups; //update API
+    applicationsRows[h].number_of_signups = applications[h].consultation_slot.number_of_signups; //update API
 
-    applicationsRows[h].member_name =
-      applications[h].member.first_name +
-      " " +
-      applications[h].member.last_name;
+    applicationsRows[h].member_name = applications[h].member.first_name + " " + applications[h].member.last_name;
     if (applications[h].is_rejected === true) {
       applicationsRows[h].status = "Rejected";
     } else {
@@ -259,16 +243,10 @@ const ConsultationApplication = () => {
   return (
     <div style={{ minHeight: "70vh" }}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Typography
-        variant="h4"
-        style={{ marginBottom: "5px", color: "#437FC7" }}
-      >
+      <Typography variant="h4" style={{ marginBottom: "5px", color: "#437FC7" }}>
         Consultation Applications
       </Typography>
-      <Typography
-        variant="body1"
-        style={{ marginBottom: "30px", color: "#000000" }}
-      >
+      <Typography variant="body1" style={{ marginBottom: "30px", color: "#000000" }}>
         Click on the respective applications below to view application details.
       </Typography>
       <Grid item xs={12}>
@@ -285,7 +263,7 @@ const ConsultationApplication = () => {
           onCancelSearch={() => setSearchValue("")}
         />
       </Grid>
-      <div style={{ height: "650px", width: "100%" }}>
+      <Paper style={{ height: "650px", width: "100%" }}>
         <DataGrid
           rows={applicationsRows}
           columns={applicationsColumns.map((column) => ({
@@ -296,7 +274,7 @@ const ConsultationApplication = () => {
           disableSelectionOnClick
           onRowClick={(e) => handleClickOpenApplication(e)}
         />
-      </div>
+      </Paper>
       <Dialog
         open={openApplicationDialog}
         onClose={handleCloseApplication}
@@ -316,11 +294,7 @@ const ConsultationApplication = () => {
             Application Detail
           </Typography>
 
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={handleCloseApplication}
-          >
+          <IconButton aria-label="close" className={classes.closeButton} onClick={handleCloseApplication}>
             <Close />
           </IconButton>
         </DialogTitle>
@@ -328,21 +302,13 @@ const ConsultationApplication = () => {
           <Grid container>
             <Grid item xs={4}>
               {selectedApplication.member.profile_photo ? (
-                <Avatar
-                  src={selectedApplication.member.profile_photo}
-                  alt=""
-                  className={classes.avatar}
-                />
+                <Avatar src={selectedApplication.member.profile_photo} alt="" className={classes.avatar} />
               ) : (
                 <Avatar className={classes.avatar}>
-                  {selectedApplication &&
-                    selectedApplication.member.email.charAt(0)}
+                  {selectedApplication && selectedApplication.member.email.charAt(0)}
                 </Avatar>
               )}
-              <Typography
-                variant="h5"
-                style={{ textAlign: "center", marginRight: "60px" }}
-              >
+              <Typography variant="h5" style={{ textAlign: "center", marginRight: "60px" }}>
                 {selectedApplication.member_name}
                 <br />
                 {selectedApplication.member.email}
@@ -372,8 +338,7 @@ const ConsultationApplication = () => {
                 {selectedApplication.meeting_link}
                 <br />
                 {formatDate(selectedApplication.start_time)} <br />
-                {formatDate(selectedApplication.end_time)} <br />$
-                {selectedApplication.consultation_slot.price_per_pax}
+                {formatDate(selectedApplication.end_time)} <br />${selectedApplication.consultation_slot.price_per_pax}
                 <br />
                 {selectedApplication.max_pax}
                 <br />
@@ -385,10 +350,7 @@ const ConsultationApplication = () => {
           <br />
           <DialogActions>
             {selectedApplication.is_rejected === false ? (
-              <Button
-                className={classes.rejectButton}
-                onClick={(e) => setOpenRejectDialog(true)}
-              >
+              <Button className={classes.rejectButton} onClick={(e) => setOpenRejectDialog(true)}>
                 Reject
               </Button>
             ) : (
@@ -397,25 +359,15 @@ const ConsultationApplication = () => {
           </DialogActions>
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={openRejectDialog}
-        onClose={handleCloseReject}
-        maxWidth="xs"
-        fullWidth={true}
-      >
+      <Dialog open={openRejectDialog} onClose={handleCloseReject} maxWidth="xs" fullWidth={true}>
         <DialogTitle>
-          <Typography style={{ textAlign: "center", fontSize: "24px" }}>
-            Are you sure?
-          </Typography>
+          <Typography style={{ textAlign: "center", fontSize: "24px" }}>Are you sure?</Typography>
         </DialogTitle>
         <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
           Press confirm to proceed. Note that your action cannot be undone.
         </DialogContent>
         <DialogActions style={{ paddingBottom: "20px", marginRight: "5px" }}>
-          <Button
-            variant="outlined"
-            onClick={(e) => setOpenRejectDialog(false)}
-          >
+          <Button variant="outlined" onClick={(e) => setOpenRejectDialog(false)}>
             Cancel
           </Button>
           <Button
