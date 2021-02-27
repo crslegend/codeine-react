@@ -97,6 +97,7 @@ const MCQ = ({
                 .patch(`/courses/${courseId}/enrollments`, arr)
                 .then((res) => {
                   console.log(res);
+                  setProgress(res.data.progress);
                 })
                 .catch((err) => console.log(err));
             } else if (res.data.passed && quizType === "FINAL") {
