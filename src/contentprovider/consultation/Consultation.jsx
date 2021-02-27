@@ -163,6 +163,8 @@ const Consultation = () => {
           handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
           selectedConsultation={selectedConsultation}
           setSelectedConsultation={setSelectedConsultation}
+          setSnackbar={setSnackbar}
+          setSnackbarOpen={setSnackbarOpen}
         />
       )}
       <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleSnackbarClose}>
