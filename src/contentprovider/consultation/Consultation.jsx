@@ -8,7 +8,7 @@ import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
 import ConsultationApplication from "./ConsultationApplication";
 import Service from "../../AxiosService";
-import AppointmentDetailsModal from "./AppointmentDetailsModal";
+import ConsultationDetailsModal from "./ConsultationDetailsModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -159,7 +159,7 @@ const Consultation = () => {
       <Divider className={classes.divider} />
       <ConsultationApplication />
       {selectedConsultation && (
-        <AppointmentDetailsModal
+        <ConsultationDetailsModal
           handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
           selectedConsultation={selectedConsultation}
           setSelectedConsultation={setSelectedConsultation}

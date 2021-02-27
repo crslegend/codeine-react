@@ -8,8 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Snackbar,
-  Typography,
   Switch,
   FormControlLabel,
   FormGroup,
@@ -17,7 +15,6 @@ import {
   FormHelperText,
   InputAdornment,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
 import { formatISO, addMinutes } from "date-fns";
@@ -55,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     width: "60%",
   },
   secondaryDialogPaper: {
-    width: "60%",
+    width: "30%",
   },
   errorButton: {
     color: theme.palette.error.main,
@@ -67,7 +64,7 @@ const appendTimeToDate = (date, time) => {
   return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
 };
 
-const AppointmentDetailsModal = ({
+const ConsultationDetailsModal = ({
   handleGetAllConsultations,
   selectedConsultation,
   setSelectedConsultation,
@@ -85,6 +82,8 @@ const AppointmentDetailsModal = ({
     end_time: selectedConsultation.endDate,
   });
 
+  console.log(selectedConsultation);
+
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState({
     mon: false,
@@ -95,7 +94,10 @@ const AppointmentDetailsModal = ({
     sat: false,
     sun: false,
   });
-  const [timeError, setTimeError] = useState(false);
+  const [timeError, setTimeError] = useState({
+    err: false,
+    errorMessage: "",
+  });
 
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
@@ -135,6 +137,28 @@ const AppointmentDetailsModal = ({
   };
 
   const handleStartTimeChange = (e) => {
+    if (e.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (slot.end_time.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e >= slot.end_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
+    } else {
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
+    }
+
     setSlot({
       ...slot,
       start_time: e,
@@ -142,10 +166,26 @@ const AppointmentDetailsModal = ({
   };
 
   const handleEndTimeChange = (e) => {
-    if (e <= slot.start_time) {
-      setTimeError(true);
+    if (slot.start_time.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (e.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e <= slot.start_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
     } else {
-      setTimeError(false);
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
     }
     setSlot({
       ...slot,
@@ -185,7 +225,7 @@ const AppointmentDetailsModal = ({
     setSelectedConsultation();
   };
 
-  const handleSubmit = () => {
+  const validateInput = () => {
     if (slot.title === "" || slot.title === undefined) {
       setSnackbar({
         message: "Please enter a consultation title!",
@@ -211,73 +251,74 @@ const AppointmentDetailsModal = ({
       return;
     }
 
-    if (timeError) {
+    if (slot.max_members < 1) {
+      setSnackbar({
+        message: "You must accept at least 1 signup",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
       return;
     }
 
+    if (slot.max_members < selectedConsultation.max_members) {
+      setSnackbar({
+        message: "You can only increase the number of signups",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (timeError.err) {
+      return;
+    }
+
+    if (slot)
+      if (slot.price_per_pax > 0) {
+        Service.client
+          .get(`/auth/bank-details`)
+          .then((res) => {
+            setUpdateDialog(true);
+          })
+          .catch((err) => {
+            setBankDialog(true);
+          });
+      } else {
+        setUpdateDialog(true);
+      }
+  };
+
+  const handleSubmit = () => {
     const formattedSlot = {
       ...slot,
       start_time: appendTimeToDate(slot.date, slot.start_time),
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
 
-    setSelectedConsultation();
-    if (slot.price_per_pax > 0) {
-      Service.client
-        .get(`/auth/bank-details`)
-        .then((res) => {
-          Service.client
-            .put(`/consultations/${slot.id}`, formattedSlot)
-            .then((res) => {
-              setSnackbar({
-                message: "Consultation slot updated",
-                severity: "success",
-              });
-              setSnackbarOpen(true);
-
-              setSlot({
-                date: currentDate,
-                start_time: currentDate,
-                end_time: addMinutes(currentDate, 30),
-                meeting_link: "",
-                title: "",
-                max_members: 1,
-                price_per_pax: 0,
-              });
-              handleGetAllConsultations();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((err) => {
-          setBankDialog(true);
+    Service.client
+      .put(`/consultations/${slot.id}`, formattedSlot)
+      .then((res) => {
+        setSnackbar({
+          message: "Consultation slot updated",
+          severity: "success",
         });
-    } else {
-      Service.client
-        .put(`/consultations/${slot.id}`, formattedSlot)
-        .then((res) => {
-          setSnackbar({
-            message: "Consultation slot updated",
-            severity: "success",
-          });
-          setSnackbarOpen(true);
+        setSnackbarOpen(true);
 
-          setSlot({
-            date: currentDate,
-            start_time: currentDate,
-            end_time: addMinutes(currentDate, 30),
-            meeting_link: "",
-            title: "",
-            max_members: 1,
-            price_per_pax: 0,
-          });
-          handleGetAllConsultations();
-        })
-        .catch((error) => {
-          console.log(error);
+        setSlot({
+          date: currentDate,
+          start_time: currentDate,
+          end_time: addMinutes(currentDate, 30),
+          meeting_link: "",
+          title: "",
+          max_members: 1,
+          price_per_pax: 0,
         });
-    }
+        setSelectedConsultation();
+        handleGetAllConsultations();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // handles deletion of consultation slot
@@ -305,7 +346,7 @@ const AppointmentDetailsModal = ({
       >
         <DialogTitle id="form-dialog-title">Consultation Slot Details</DialogTitle>
         <DialogContent>
-          <DialogContentText>Edit here to update your consultation slot</DialogContentText>
+          <DialogContentText>Edit here to update your consultation slot.</DialogContentText>
           <div style={{ width: "100%" }}>
             <FormControlLabel
               style={{ margin: 0 }}
@@ -386,8 +427,8 @@ const AppointmentDetailsModal = ({
               className={classes.timeField}
             />
           </div>
-          {timeError ? (
-            <FormHelperText error>End time must be after start time</FormHelperText>
+          {timeError.err ? (
+            <FormHelperText error>{timeError.errorMessage}</FormHelperText>
           ) : (
             <FormHelperText>
               Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
@@ -401,6 +442,7 @@ const AppointmentDetailsModal = ({
             value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
+            style={{ marginTop: 16 }}
           />
           <TextField
             required
@@ -428,6 +470,7 @@ const AppointmentDetailsModal = ({
               InputProps={{
                 inputProps: { min: 1 },
               }}
+              helperText="You can only increase the no. of signups"
             />
             <TextField
               margin="dense"
@@ -443,7 +486,7 @@ const AppointmentDetailsModal = ({
             />
           </div>
         </DialogContent>
-        <DialogActions style={{ justifyContent: "space-between" }}>
+        <DialogActions style={{ justifyContent: "space-between", marginTop: 40 }}>
           <Button onClick={() => setCancelDialog(true)} className={classes.errorButton} variant="outlined">
             Cancel Consult
           </Button>
@@ -451,8 +494,8 @@ const AppointmentDetailsModal = ({
             <Button onClick={handleClose} color="primary" variant="outlined">
               Back
             </Button>
-            <Button onClick={() => setUpdateDialog(true)} color="primary" variant="contained">
-              Edit
+            <Button onClick={validateInput} color="primary" variant="contained">
+              Update
             </Button>
           </div>
         </DialogActions>
@@ -478,7 +521,7 @@ const AppointmentDetailsModal = ({
       <Dialog open={updateDialog} onClose={handleUpdateDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
         <DialogTitle>Confirm Update</DialogTitle>
         <DialogContent>
-          <b>Changes to prices will only apply to new applicants.</b>Your students will be notified of the updates.
+          <b>Price changes will only apply to new applicants.</b>Your students will be notified of the updates.
           <br />
           <br />
           Press "Proceed" to confirm.
@@ -515,4 +558,4 @@ const AppointmentDetailsModal = ({
   );
 };
 
-export default AppointmentDetailsModal;
+export default ConsultationDetailsModal;
