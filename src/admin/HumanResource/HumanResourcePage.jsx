@@ -767,6 +767,15 @@ const AdminHumanResourcePage = () => {
         >
           <DialogTitle id="form-dialog-title">
             Partner Detail
+            {selectedPartner.partner.organization ? (
+              <Typography style={{ color: "blue" }}>
+                Enterprise Account
+              </Typography>
+            ) : (
+              <Typography style={{ color: "blue" }}>
+                Personal Account
+              </Typography>
+            )}
             <IconButton
               aria-label="close"
               className={classes.closeButton}
@@ -831,15 +840,14 @@ const AdminHumanResourcePage = () => {
                   </Typography>
                 </Grid>
               </Grid>
-
-              <Grid container className={classes.border}>
-                <Grid item xs={12} style={{ marginBottom: "10px" }}>
-                  <Typography style={{ fontSize: "16spx" }}>
-                    <strong>Organisation Details</strong>
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  {selectedPartner.partner.organization && (
+              {selectedPartner.partner.organization && (
+                <Grid container className={classes.border}>
+                  <Grid item xs={12} style={{ marginBottom: "10px" }}>
+                    <Typography style={{ fontSize: "16spx" }}>
+                      <strong>Organisation Details</strong>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2}>
                     <Fragment>
                       {selectedPartner.partner.organization
                         .organization_photo ? (
@@ -859,29 +867,29 @@ const AdminHumanResourcePage = () => {
                         </Avatar>
                       )}
                     </Fragment>
-                  )}
+                  </Grid>
+                  <Grid item xs={10}>
+                    {selectedPartner.partner.organization && (
+                      <div>
+                        <Typography>
+                          <strong>{selectedPartner.partner.job_title}</strong>
+                          {"\u00A0"}@{" "}
+                          <strong>
+                            {
+                              selectedPartner.partner.organization
+                                .organization_name
+                            }
+                          </strong>
+                        </Typography>
+                        <Typography style={{ color: "#437FC7" }}>
+                          <strong>Bio</strong>
+                        </Typography>
+                        {selectedPartner.partner.bio}
+                      </div>
+                    )}
+                  </Grid>
                 </Grid>
-                <Grid item xs={10}>
-                  {selectedPartner.partner.organization && (
-                    <div>
-                      <Typography>
-                        <strong>{selectedPartner.partner.job_title}</strong>
-                        {"\u00A0"}@{" "}
-                        <strong>
-                          {
-                            selectedPartner.partner.organization
-                              .organization_name
-                          }
-                        </strong>
-                      </Typography>
-                      <Typography style={{ color: "#437FC7" }}>
-                        <strong>Bio</strong>
-                      </Typography>
-                      {selectedPartner.partner.bio}
-                    </div>
-                  )}
-                </Grid>
-              </Grid>
+              )}
             </div>
             <br />
           </DialogContent>
