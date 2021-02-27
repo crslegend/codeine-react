@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Divider } from "@material-ui/core";
+import { Typography, Divider, Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
 
 import Calendar from "./Calendar";
@@ -76,6 +77,11 @@ const Consultation = () => {
 
   const [selectedConsultation, setSelectedConsultation] = useState();
   console.log(selectedConsultation);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "success",
+  });
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const { consultations, loading } = state;
@@ -119,6 +125,13 @@ const Consultation = () => {
     }
   };
 
+  const handleSnackbarClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   return (
     <div className={classes.root}>
       <div
@@ -129,7 +142,11 @@ const Consultation = () => {
         }}
       >
         <Typography variant="h1">Upcoming schedule at a glance</Typography>
-        <AddConsultation handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)} />
+        <AddConsultation
+          handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+          setSnackbar={setSnackbar}
+          setSnackbarOpen={setSnackbarOpen}
+        />
       </div>
       <Calendar
         consultations={consultations}
@@ -148,6 +165,11 @@ const Consultation = () => {
           setSelectedConsultation={setSelectedConsultation}
         />
       )}
+      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} elevation={6} severity={snackbar.severity}>
+          <Typography variant="body1">{snackbar.message}</Typography>
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -64,7 +64,7 @@ const appendTimeToDate = (date, time) => {
   return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
 };
 
-const AddConsultation = ({ handleGetAllConsultations }) => {
+const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOpen }) => {
   const classes = useStyles();
 
   const currentDate = addDays(new Date(), 1);
@@ -96,10 +96,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
   };
 
-  const [titleAlertOpen, setTitleAlertOpen] = useState(false);
-  const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
-  const [dateAlertOpen, setDateAlertOpen] = useState(false);
-  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [bankDialog, setBankDialog] = useState(false);
 
   // react router dom history hooks
@@ -109,39 +105,11 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     setOpen(true);
   };
 
-  const handleLinkAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setMeetingLinkAlertOpen(false);
-  };
-
-  const handleDateAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setDateAlertOpen(false);
-  };
-
-  const handleTitleAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setTitleAlertOpen(false);
-  };
-
   const handleBankAlertClose = (e, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setBankDialog(false);
-  };
-
-  const handleSuccessAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccessAlertOpen(false);
   };
 
   const handleDateChange = (e) => {
@@ -205,11 +173,19 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
   const handleSubmit = () => {
     console.log(slot);
     if (slot.meeting_link === "" || slot.meeting_link === undefined) {
-      setMeetingLinkAlertOpen(true);
+      setSnackbar({
+        message: "Please enter a meeting link!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
       return;
     }
     if (slot.title === "" || slot.title === undefined) {
-      setTitleAlertOpen(true);
+      setSnackbar({
+        message: "Please enter a consultation title!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
       return;
     }
     if (timeError) {
@@ -226,7 +202,11 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       formattedSlot.start_time <= new Date(currentDate.toDateString()) ||
       formattedSlot.start_time >= formattedSlot.end_time
     ) {
-      setDateAlertOpen(true);
+      setSnackbar({
+        message: "Please enter a valid consultation date and time!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
       return;
     }
 
@@ -238,7 +218,12 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           Service.client
             .post("/consultations", formattedSlot)
             .then((res) => {
-              setSuccessAlertOpen(true);
+              setSnackbar({
+                message: "New consultation slot created",
+                severity: "success",
+              });
+              setSnackbarOpen(true);
+
               setSlot({
                 date: currentDate,
                 start_time: currentDate,
@@ -261,7 +246,11 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       Service.client
         .post("/consultations", formattedSlot)
         .then((res) => {
-          setSuccessAlertOpen(true);
+          setSnackbar({
+            message: "New consultation slot created",
+            severity: "success",
+          });
+          setSnackbarOpen(true);
           setSlot({
             date: currentDate,
             start_time: currentDate,
@@ -466,28 +455,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar open={successAlertOpen} autoHideDuration={4000} onClose={handleSuccessAlertClose}>
-        <Alert onClose={handleSuccessAlertClose} elevation={6} severity="success">
-          <Typography variant="body1">Consultation slot has been added</Typography>
-        </Alert>
-      </Snackbar>
-      <Snackbar open={titleAlertOpen} autoHideDuration={4000} onClose={handleTitleAlertClose}>
-        <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a consultation title!</Typography>
-        </Alert>
-      </Snackbar>
-
-      <Snackbar open={dateAlertOpen} autoHideDuration={4000} onClose={handleDateAlertClose}>
-        <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a valid consultation date and time!</Typography>
-        </Alert>
-      </Snackbar>
-      <Snackbar open={meetingLinkAlertOpen} autoHideDuration={4000} onClose={handleLinkAlertClose}>
-        <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a meeting link!</Typography>
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };
