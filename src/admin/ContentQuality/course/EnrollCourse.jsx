@@ -25,7 +25,7 @@ import LinkMui from "@material-ui/core/Link";
 import ReactPlayer from "react-player";
 
 import TakeQuiz from "./components/TakeQuiz";
-import Toast from "../../../components/Toast.js";
+// import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import CommentsSection from "./components/CommentsSection";
 // import calculate from "./components/CalculateDuration";

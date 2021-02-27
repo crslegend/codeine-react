@@ -80,6 +80,7 @@ const ConsultationApplication = () => {
 
   useEffect(() => {
     getApplicationData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setApplications]);
 
   const handleClickOpenApplication = (e) => {

@@ -20,10 +20,10 @@ import {
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import CloseIcon from "@material-ui/icons/Close";
-import MailOutlineIcon from "@material-ui/icons/MailOutline";
-import TodayIcon from "@material-ui/icons/Today";
+// import MailOutlineIcon from "@material-ui/icons/MailOutline";
+// import TodayIcon from "@material-ui/icons/Today";
 import Service from "../../AxiosService";
-import jwt_decode from "jwt-decode";
+// import jwt_decode from "jwt-decode";
 import PageTitle from "../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
@@ -96,6 +96,7 @@ const StudentPage = () => {
   useEffect(() => {
     getAllStudents();
     getAllCoursesByPartner();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Enrolled Course Student data

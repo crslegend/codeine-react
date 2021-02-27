@@ -96,10 +96,10 @@ const ContentProviderRegisterPage = () => {
     setCompany(e.target.value);
   };
 
-  const handlePageChange = (e) => {
-    e.preventDefault();
-    setPageNum(2);
-  };
+  // const handlePageChange = (e) => {
+  //   e.preventDefault();
+  //   setPageNum(2);
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
