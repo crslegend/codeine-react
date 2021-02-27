@@ -14,6 +14,8 @@ import Memeberlogo from "../assets/CodeineLogos/Member.svg";
 import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
+import axios from "axios";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
@@ -45,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     marginBottom: "20px",
     width: 200,
-    textTransform: "none",
   },
 }));
 
@@ -72,36 +73,48 @@ const NewPasswordPage = () => {
     autoHideDuration: 3000,
   });
 
-  useEffect(() => {
-    if (new URLSearchParams(location.search).get("token") !== null) {
-      const token = new URLSearchParams(location.search).get("token");
-      console.log("refresh toekn = " + token);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (new URLSearchParams(location.search).get("token") !== null) {
+
+  //     console.log("refresh toekn = " + token);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  const token = new URLSearchParams(location.search).get("token");
+  // console.log(token);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // call admin login ednpoint
-    Service.client
-      .get("/auth/refresh-token/", passwordDetails)
+    axios
+      .patch("http://localhost:8000/auth/reset-password", passwordDetails, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
+        console.log(res);
         setLoading(false);
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
           message:
-            "Please check your email for instructions to reset your password",
+            "Your password has been resetted. Redirecting you to login page...",
           severity: "success",
         });
-        //if member, go to member landing page
-        history.push("/");
-        //if partner, go to partner landing page
-        history.push("/partner");
-        //if admin, go to admin login page
-        history.push("/admin/login");
+
+        setTimeout(() => {
+          if (res.data.member) {
+            //if member, go to member landing page
+            history.push("/member/login");
+          } else if (res.data.partner) {
+            //if partner, go to partner landing page
+            history.push("/partner");
+          } else {
+            //if admin, go to admin login page
+            history.push("/admin/login");
+          }
+        }, 2000);
       })
       .catch((err) => {
         setLoading(false);

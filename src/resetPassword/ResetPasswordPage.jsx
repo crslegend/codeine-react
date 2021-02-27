@@ -14,6 +14,8 @@ import Memberlogo from "../assets/CodeineLogos/Member.svg";
 import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
+import axios from "axios";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
@@ -45,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     marginBottom: "20px",
     width: 280,
-    textTransform: "none",
   },
 }));
 
@@ -84,8 +85,10 @@ const ResetPasswordPage = (props) => {
     console.log(emailDetails);
 
     // call reset password endpoint
-    Service.client
-      .get("/auth/reset-password", emailDetails)
+    axios
+      .post("http://localhost:8000/auth/reset-password", emailDetails, {
+        timeout: 20000,
+      })
       .then((res) => {
         setLoading(false);
         setSbOpen(true);
@@ -170,7 +173,7 @@ const ResetPasswordPage = (props) => {
             {loading ? (
               <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
             ) : (
-              "Send a password reset link"
+              "Send Password Reset Link"
             )}
           </Button>
         </Paper>
