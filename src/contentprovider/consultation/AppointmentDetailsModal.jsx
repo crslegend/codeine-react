@@ -16,9 +16,6 @@ import {
   Checkbox,
   FormHelperText,
   InputAdornment,
-  Input,
-  FormControl,
-  InputLabel,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
@@ -67,7 +64,13 @@ const appendTimeToDate = (date, time) => {
   return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
 };
 
-const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultation, setSelectedConsultation }) => {
+const AppointmentDetailsModal = ({
+  handleGetAllConsultations,
+  selectedConsultation,
+  setSelectedConsultation,
+  setSnackbar,
+  setSnackbarOpen,
+}) => {
   const classes = useStyles();
 
   const currentDate = new Date();
@@ -94,11 +97,6 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
   };
-
-  const [titleAlertOpen, setTitleAlertOpen] = useState(false);
-  const [meetingLinkAlertOpen, setMeetingLinkAlertOpen] = useState(false);
-  const [dateAlertOpen, setDateAlertOpen] = useState(false);
-  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [bankDialog, setBankDialog] = useState(false);
   const [cancelDialog, setCancelDialog] = useState(false);
   const [updateDialog, setUpdateDialog] = useState(false);
@@ -119,39 +117,11 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
     setUpdateDialog(false);
   };
 
-  const handleLinkAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setMeetingLinkAlertOpen(false);
-  };
-
-  const handleDateAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setDateAlertOpen(false);
-  };
-
-  const handleTitleAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setTitleAlertOpen(false);
-  };
-
   const handleBankAlertClose = (e, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setBankDialog(false);
-  };
-
-  const handleSuccessAlertClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccessAlertOpen(false);
   };
 
   const handleDateChange = (e) => {
@@ -213,19 +183,31 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
   };
 
   const handleSubmit = () => {
-    console.log(slot);
-    if (slot.meeting_link === "" || slot.meeting_link === undefined) {
-      setMeetingLinkAlertOpen(true);
-      return;
-    }
-    if (slot.start_time <= currentDate || slot.start_time >= slot.end_time) {
-      setDateAlertOpen(true);
-      return;
-    }
     if (slot.title === "" || slot.title === undefined) {
-      setTitleAlertOpen(true);
+      setSnackbar({
+        message: "Please enter a consultation title!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
       return;
     }
+    if (slot.meeting_link === "" || slot.meeting_link === undefined) {
+      setSnackbar({
+        message: "Please enter a meeting link!",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+    if (slot.price_per_pax <= 0) {
+      setSnackbar({
+        message: "Price cannot be negative",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError) {
       return;
     }
@@ -244,7 +226,12 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
           Service.client
             .put(`/consultations/${slot.id}`, formattedSlot)
             .then((res) => {
-              setSuccessAlertOpen(true);
+              setSnackbar({
+                message: "Consultation slot updated",
+                severity: "success",
+              });
+              setSnackbarOpen(true);
+
               setSlot({
                 date: currentDate,
                 start_time: currentDate,
@@ -267,7 +254,12 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
       Service.client
         .put(`/consultations/${slot.id}`, formattedSlot)
         .then((res) => {
-          setSuccessAlertOpen(true);
+          setSnackbar({
+            message: "Consultation slot updated",
+            severity: "success",
+          });
+          setSnackbarOpen(true);
+
           setSlot({
             date: currentDate,
             start_time: currentDate,
@@ -434,20 +426,18 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
                 inputProps: { min: 1 },
               }}
             />
-            <FormControl className={classes.margin}>
-              <InputLabel htmlFor="price_pax">Price (per pax)</InputLabel>
-              <Input
-                margin="dense"
-                id="price_pax"
-                startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                value={slot.price_per_pax}
-                onChange={(e) => handlePriceChange(e.target.value)}
-                type="number"
-                InputProps={{
-                  inputProps: { min: 0 },
-                }}
-              />
-            </FormControl>
+            <TextField
+              margin="dense"
+              id="price_pax"
+              label="Price (per pax)"
+              value={slot.price_per_pax}
+              onChange={(e) => handlePriceChange(e.target.value)}
+              type="number"
+              InputProps={{
+                inputProps: { min: 0 },
+                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              }}
+            />
           </div>
         </DialogContent>
         <DialogActions style={{ justifyContent: "space-between" }}>
@@ -518,28 +508,6 @@ const AppointmentDetailsModal = ({ handleGetAllConsultations, selectedConsultati
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar open={successAlertOpen} autoHideDuration={4000} onClose={handleSuccessAlertClose}>
-        <Alert onClose={handleSuccessAlertClose} elevation={6} severity="success">
-          <Typography variant="body1">Consultation slot has been updated</Typography>
-        </Alert>
-      </Snackbar>
-      <Snackbar open={titleAlertOpen} autoHideDuration={4000} onClose={handleTitleAlertClose}>
-        <Alert onClose={handleTitleAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a consultation title!</Typography>
-        </Alert>
-      </Snackbar>
-
-      <Snackbar open={dateAlertOpen} autoHideDuration={4000} onClose={handleDateAlertClose}>
-        <Alert onClose={handleDateAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a valid consultation date and time!</Typography>
-        </Alert>
-      </Snackbar>
-      <Snackbar open={meetingLinkAlertOpen} autoHideDuration={4000} onClose={handleLinkAlertClose}>
-        <Alert onClose={handleLinkAlertClose} elevation={6} severity="error">
-          <Typography variant="body1">Please enter a meeting link!</Typography>
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };
