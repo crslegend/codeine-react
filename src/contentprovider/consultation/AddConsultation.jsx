@@ -24,7 +24,7 @@ import { Add } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
-import { formatISO, addMinutes } from "date-fns";
+import { formatISO, addMinutes, addDays } from "date-fns";
 
 import Service from "../../AxiosService";
 
@@ -55,6 +55,9 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(1),
   },
+  dialogPaper: {
+    width: "60%",
+  },
 }));
 
 const appendTimeToDate = (date, time) => {
@@ -64,7 +67,7 @@ const appendTimeToDate = (date, time) => {
 const AddConsultation = ({ handleGetAllConsultations }) => {
   const classes = useStyles();
 
-  const currentDate = new Date();
+  const currentDate = addDays(new Date(), 1);
 
   const [slot, setSlot] = useState({
     date: currentDate,
@@ -73,7 +76,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
     meeting_link: "",
     title: "",
     max_members: 1,
-    price_per_pax: 0,
+    price_per_pax: "0.00",
   });
   const [open, setOpen] = useState(false);
 
@@ -205,10 +208,6 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       setMeetingLinkAlertOpen(true);
       return;
     }
-    if (slot.start_time <= currentDate || slot.start_time >= slot.end_time) {
-      setDateAlertOpen(true);
-      return;
-    }
     if (slot.title === "" || slot.title === undefined) {
       setTitleAlertOpen(true);
       return;
@@ -222,6 +221,14 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       start_time: appendTimeToDate(slot.date, slot.start_time),
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
+
+    if (
+      formattedSlot.start_time <= new Date(currentDate.toDateString()) ||
+      formattedSlot.start_time >= formattedSlot.end_time
+    ) {
+      setDateAlertOpen(true);
+      return;
+    }
 
     setOpen(false);
     if (slot.price_per_pax > 0) {
@@ -283,7 +290,12 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
       >
         New Consultation Slot
       </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+        classes={{ paper: classes.dialogPaper }}
+      >
         <DialogTitle id="form-dialog-title">Create a new consultation slot</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -330,7 +342,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
                 />
               </FormGroup>
               <KeyboardDatePicker
-                disablePast
+                minDate={currentDate}
                 className={classes.dateTimeField}
                 variant="inline"
                 label="End Date"
@@ -342,7 +354,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           ) : (
             <KeyboardDatePicker
               className={classes.dateTimeField}
-              disablePast
+              minDate={currentDate}
               variant="inline"
               label="Date"
               value={slot.date}
@@ -429,10 +441,10 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} color="primary" variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleSubmit} color="primary" variant="contained">
             Create
           </Button>
         </DialogActions>
@@ -449,10 +461,7 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
           <Button onClick={handleBankAlertClose} color="primary">
             Cancel
           </Button>
-          <Button
-            onClick={(e) => history.push(`/partner/home/earnings`)}
-            color="primary"
-          >
+          <Button onClick={(e) => history.push(`/partner/home/earnings`)} color="primary">
             Proceed
           </Button>
         </DialogActions>
