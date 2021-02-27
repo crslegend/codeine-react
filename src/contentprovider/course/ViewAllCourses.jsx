@@ -433,47 +433,66 @@ const ViewAllCourses = () => {
                     disabled={course && course.is_deleted}
                     style={{
                       opacity: course && course.is_deleted && 0.5,
+                      height: "90%",
                     }}
                   >
-                    <CardMedia
-                      className={classes.media}
-                      image={course && course.thumbnail}
-                      title={course && course.title}
-                    />
-                    <CardContent>
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                    <div style={{ height: "30%" }}>
+                      <CardMedia
+                        className={classes.media}
+                        image={course && course.thumbnail}
+                        title={course && course.title}
+                      />
+                    </div>
+                    <div style={{ height: "5%" }} />
+                    <div style={{ height: "65%" }}>
+                      <CardContent
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          height: "100%",
+                          marginTop: "10px",
+                          paddingBottom: 0,
+                        }}
                       >
-                        {course && course.title}
-                      </Typography>
-                      {(() => {
-                        if (course.is_deleted) {
-                          return deletedChip;
-                        } else if (course.is_published) {
-                          return publishedChip;
-                        } else if (!course.is_published) {
-                          if (checkIfCourseIsReadyToPublish(course)) {
-                            return unPublishedChip;
-                          }
-                          return notReadyChip;
-                        }
-                      })()}
-                      {course.published_date && course.published_date && (
-                        <Typography
-                          variant="body2"
-                          style={{
-                            opacity: 0.7,
-                            paddingBottom: "10px",
-                            paddingTop: "10px",
-                          }}
-                        >
-                          Pusblished On:
-                          <br />
-                          {formatDate(course.published_date)}
-                        </Typography>
-                      )}
-                    </CardContent>
+                        <div>
+                          <Typography
+                            variant="body1"
+                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                          >
+                            {course && course.title}
+                          </Typography>
+                        </div>
+                        <div>
+                          {(() => {
+                            if (course.is_deleted) {
+                              return deletedChip;
+                            } else if (course.is_published) {
+                              return publishedChip;
+                            } else if (!course.is_published) {
+                              if (checkIfCourseIsReadyToPublish(course)) {
+                                return unPublishedChip;
+                              }
+                              return notReadyChip;
+                            }
+                          })()}
+                          {course.published_date && course.published_date && (
+                            <Typography
+                              variant="body2"
+                              style={{
+                                opacity: 0.7,
+                                paddingBottom: "10px",
+                                paddingTop: "10px",
+                              }}
+                            >
+                              Pusblished On:
+                              <br />
+                              {formatDate(course.published_date)}
+                            </Typography>
+                          )}
+                        </div>
+                      </CardContent>
+                    </div>
                   </CardActionArea>
                   <CardActions
                     style={{
