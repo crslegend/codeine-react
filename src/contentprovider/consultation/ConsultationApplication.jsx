@@ -12,12 +12,15 @@ import {
   DialogTitle,
   Avatar,
   Paper,
+  Link,
+  Chip,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import SearchBar from "material-ui-search-bar";
+// import jwt_decode from "jwt-decode";
+import { format } from "date-fns";
 
-import jwt_decode from "jwt-decode";
 import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
@@ -28,20 +31,38 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.grey[500],
   },
   avatar: {
-    fontSize: "95px",
-    width: theme.spacing(20),
-    height: theme.spacing(20),
-    marginBottom: "15px",
-    marginLeft: "45px",
+    fontSize: "30px",
+    width: "80px",
+    height: "80px",
+    margin: `${theme.spacing(1)}px auto`,
+    backgroundColor: theme.palette.primary.light,
   },
   rejectButton: {
-    fontSize: "18px",
-    color: "#437FC7",
-    padding: "10px 20px",
+    backgroundColor: theme.palette.error.main,
+    color: "#FFF",
+    "&:hover": {
+      backgroundColor: theme.palette.error.dark,
+    },
+  },
+  dialogContent: {
+    justifyContent: "center",
+  },
+  dialogPaper: {
+    width: "300px",
+  },
+  dialogTitle: {
+    padding: "16px 24px 8px",
+  },
+  header: {
+    color: theme.palette.grey[700],
+    margin: `${theme.spacing(2)}px 0`,
   },
 }));
 
-const ConsultationApplication = () => {
+const getDate = (date) => format(new Date(date), "dd/MM/yyyy");
+const getTime = (date) => format(new Date(date), "HH:mm");
+
+const ConsultationApplication = ({ handleGetAllConsultations }) => {
   const classes = styles();
 
   //Toast message
@@ -57,24 +78,7 @@ const ConsultationApplication = () => {
   });
 
   const [applications, setApplications] = useState([]);
-  const [selectedApplication, setSelectedApplication] = useState({
-    id: "",
-    title: "",
-    start_time: "",
-    end_time: "",
-    meeting_link: "",
-    price_per_pax: "",
-    max_members: "",
-    member_name: "",
-    consultation_slot: {
-      id: "",
-      number_of_signups: "",
-    },
-    member: {
-      email: "",
-      profile_photo: "",
-    },
-  });
+  const [selectedApplication, setSelectedApplication] = useState();
   const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -111,14 +115,21 @@ const ConsultationApplication = () => {
     };
 
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
+      // const userid = jwt_decode(Service.getJWT()).user_id;
       // console.log(userid);
       Service.client
         .get("/consultations/partner/applications", {
           params: { ...queryParams },
         })
         .then((res) => {
-          setApplications(res.data);
+          setApplications(
+            res.data.map((application) => ({
+              ...application.consultation_slot,
+              ...application.member,
+              ...application,
+              member_name: `${application.member.first_name} ${application.member.last_name}`,
+            }))
+          );
         })
         .catch((error) => {
           setApplications(null);
@@ -137,108 +148,55 @@ const ConsultationApplication = () => {
         severity: "success",
       });
       getApplicationData();
-      window.location.reload();
+      handleGetAllConsultations();
     });
 
     // console.log("Application is deleted");
   };
 
   const formatStatus = (status) => {
-    if (status !== "Rejected") {
-      return "green";
+    if (!status) {
+      return "Accepted";
     } else {
-      return "red";
+      return "Rejected";
     }
   };
 
   const applicationsColumns = [
-    { field: "title", headerName: "Title", width: 220 },
     {
-      field: "member_name",
-      headerName: "Submitted By",
-      width: 200,
-    },
-    {
-      field: "meeting_link",
-      headerName: "Meeting Link",
-      width: 220,
-      renderCell: (params) => {
-        //console.log(params.row.meeting_link);
-        return (
-          <a href={params.row.meeting_link} target="_blank" rel="noopener noreferrer">
-            {params.row.meeting_link}
-          </a>
-        );
-      },
+      field: "end_time",
+      headerName: "Date",
+      width: 150,
+      renderCell: (params) => <Typography variant="body2">{getDate(params.value)}</Typography>,
     },
     {
       field: "start_time",
       headerName: "Start Time",
-      width: 210,
-    },
-    {
-      field: "end_time",
-      headerName: "End Time",
-      type: "date",
-      width: 210,
-    },
-    {
-      field: "max_pax",
-      headerName: "No. of slots",
-      width: 130,
-    },
-    {
-      field: "number_of_signups",
-      headerName: "No. of signups",
       width: 150,
+      renderCell: (params) => <Typography variant="body2">{getTime(params.value)}</Typography>,
+    },
+    { field: "title", headerName: "Consultation", width: 200 },
+    {
+      field: "member_name",
+      headerName: "Applicant",
+      width: 200,
     },
     {
-      field: "status",
+      field: "is_rejected",
       headerName: "Status",
       renderCell: (params) => (
         <strong>
-          <Typography style={{ color: formatStatus(params.value) }}>{params.value}</Typography>
+          <Typography variant="body2" style={{ color: params.value ? "red" : "green" }}>
+            {formatStatus(params.value)}
+          </Typography>
         </strong>
       ),
       width: 130,
+      flex: 1,
     },
   ];
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    };
-
-    options.timeZone = "UTC";
-
-    if (date !== null || date !== "") {
-      const newDate = new Date(date).toLocaleDateString("en-US", options);
-      return newDate;
-    }
-    return "";
-  };
-
-  const applicationsRows = applications;
-
-  for (var h = 0; h < applications.length; h++) {
-    applicationsRows[h].start_time = formatDate(applications[h].consultation_slot.start_time);
-    applicationsRows[h].end_time = formatDate(applications[h].consultation_slot.end_time);
-    applicationsRows[h].meeting_link = applications[h].consultation_slot.meeting_link;
-    applicationsRows[h].title = applications[h].consultation_slot.title;
-    applicationsRows[h].max_pax = applications[h].consultation_slot.max_members;
-    applicationsRows[h].number_of_signups = applications[h].consultation_slot.number_of_signups; //update API
-
-    applicationsRows[h].member_name = applications[h].member.first_name + " " + applications[h].member.last_name;
-    if (applications[h].is_rejected === true) {
-      applicationsRows[h].status = "Rejected";
-    } else {
-      applicationsRows[h].status = "Accepted";
-    }
-  }
+  console.log(applications);
 
   return (
     <div style={{ minHeight: "70vh" }}>
@@ -265,115 +223,92 @@ const ConsultationApplication = () => {
       </Grid>
       <Paper style={{ height: "650px", width: "100%" }}>
         <DataGrid
-          rows={applicationsRows}
+          rows={applications}
           columns={applicationsColumns.map((column) => ({
             ...column,
           }))}
           pageSize={10}
-          checkboxSelection
           disableSelectionOnClick
           onRowClick={(e) => handleClickOpenApplication(e)}
         />
       </Paper>
-      <Dialog
-        open={openApplicationDialog}
-        onClose={handleCloseApplication}
-        aria-labelledby="form-dialog-title"
-        maxWidth="md"
-        fullWidth={true}
-      >
-        <DialogTitle id="form-dialog-title">
-          <Typography
-            variant="h4"
-            style={{
-              marginTop: "10px",
-              marginLeft: "20px",
-              marginBottom: "10px",
-            }}
-          >
-            Application Detail
-          </Typography>
 
+      <Dialog open={openApplicationDialog} onClose={handleCloseApplication} classes={{ paper: classes.dialogPaper }}>
+        <DialogTitle id="form-dialog-title" className={classes.dialogTitle}>
+          Details
           <IconButton aria-label="close" className={classes.closeButton} onClick={handleCloseApplication}>
             <Close />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <Grid container>
-            <Grid item xs={4}>
-              {selectedApplication.member.profile_photo ? (
-                <Avatar src={selectedApplication.member.profile_photo} alt="" className={classes.avatar} />
-              ) : (
-                <Avatar className={classes.avatar}>
-                  {selectedApplication && selectedApplication.member.email.charAt(0)}
-                </Avatar>
-              )}
-              <Typography variant="h5" style={{ textAlign: "center", marginRight: "60px" }}>
-                {selectedApplication.member_name}
-                <br />
-                {selectedApplication.member.email}
+        {selectedApplication && (
+          <DialogContent className={classes.dialogContent}>
+            <Typography className={classes.header} variant="body2">
+              Applicant:
+            </Typography>
+            <Avatar
+              className={classes.avatar}
+              src={
+                selectedApplication && selectedApplication.member.profile_photo
+                  ? selectedApplication.member.profile_photo
+                  : null
+              }
+            >
+              {selectedApplication && selectedApplication.member.first_name.charAt(0)}
+            </Avatar>
+            <Typography variant="h6" style={{ textAlign: "center", marginRight: "0 auto" }}>
+              {selectedApplication && selectedApplication.member_name}
+            </Typography>
+            <Link href={`mailto:${selectedApplication && selectedApplication.member.email}`}>
+              <Typography variant="body1" style={{ textAlign: "center", marginRight: "0 auto" }}>
+                {selectedApplication && selectedApplication.member.email}
               </Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h6">
-                Application ID <br />
-                Consultation ID <br />
-                Title <br />
-                Meeting Link <br />
-                Start Time <br />
-                End Time <br />
-                Price <br />
-                Maximum available slots <br />
-                Current slots taken <br />
-              </Typography>
+            </Link>
 
-              <br />
-            </Grid>
-            <Grid item xs={5}>
-              <Typography variant="h6">
-                {selectedApplication.id} <br />
-                {selectedApplication.consultation_slot.id} <br />
-                {selectedApplication.title}
-                <br />
-                {selectedApplication.meeting_link}
-                <br />
-                {formatDate(selectedApplication.start_time)} <br />
-                {formatDate(selectedApplication.end_time)} <br />${selectedApplication.consultation_slot.price_per_pax}
-                <br />
-                {selectedApplication.max_pax}
-                <br />
-                {selectedApplication.consultation_slot.number_of_signups}
-                <br />
-              </Typography>
-            </Grid>
-          </Grid>
-          <br />
-          <DialogActions>
-            {selectedApplication.is_rejected === false ? (
-              <Button className={classes.rejectButton} onClick={(e) => setOpenRejectDialog(true)}>
-                Reject
-              </Button>
-            ) : (
-              ""
-            )}
-          </DialogActions>
-        </DialogContent>
+            <Typography className={classes.header} variant="body2">
+              Application Details:
+            </Typography>
+            <Typography variant="body1">
+              <b>Date:</b> {getDate(selectedApplication.start_time)}
+            </Typography>
+            <Typography variant="body1">
+              <b>Time Slot:</b> {getTime(selectedApplication.start_time)} to {getTime(selectedApplication.end_time)}
+            </Typography>
+            <Typography variant="body1">
+              <b>Status:</b>
+              <Chip
+                style={{
+                  backgroundColor: selectedApplication.is_rejected ? "red" : "green",
+                  color: "#fff",
+                  margin: 8,
+                  padding: 8,
+                }}
+                label={formatStatus(selectedApplication.is_rejected)}
+              />
+            </Typography>
+          </DialogContent>
+        )}
+        <DialogActions style={{ margin: 8 }}>
+          <Button
+            disabled={selectedApplication && selectedApplication.is_rejected}
+            className={classes.rejectButton}
+            variant="contained"
+            fullWidth
+            onClick={() => setOpenRejectDialog(true)}
+          >
+            Reject Application
+          </Button>
+        </DialogActions>
       </Dialog>
       <Dialog open={openRejectDialog} onClose={handleCloseReject} maxWidth="xs" fullWidth={true}>
-        <DialogTitle>
-          <Typography style={{ textAlign: "center", fontSize: "24px" }}>Are you sure?</Typography>
-        </DialogTitle>
-        <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
-          Press confirm to proceed. Note that your action cannot be undone.
-        </DialogContent>
-        <DialogActions style={{ paddingBottom: "20px", marginRight: "5px" }}>
-          <Button variant="outlined" onClick={(e) => setOpenRejectDialog(false)}>
+        <DialogTitle>Confirm Rejection</DialogTitle>
+        <DialogContent>This action cannot be undone.</DialogContent>
+        <DialogActions style={{ margin: 8 }}>
+          <Button variant="outlined" onClick={() => setOpenRejectDialog(false)}>
             Cancel
           </Button>
           <Button
-            color="primary"
-            variant="outlined"
-            style={{ color: "#437FC7" }}
+            variant="contained"
+            className={classes.rejectButton}
             onClick={(e) => handleReject(selectedApplication.id)}
           >
             Confirm
