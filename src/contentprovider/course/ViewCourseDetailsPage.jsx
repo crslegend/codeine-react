@@ -497,6 +497,8 @@ const ViewCourseDetailsPage = () => {
                                 {material.title}
                               </div>
                             );
+                          } else {
+                            return null;
                           }
                         })}
                     </AccordionDetails>

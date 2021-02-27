@@ -144,6 +144,8 @@ const TakeQuiz = ({
                     setProgress={setProgress}
                   />
                 );
+              } else {
+                return null;
               }
             } else {
               return null;

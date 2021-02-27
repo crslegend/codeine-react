@@ -121,6 +121,7 @@ const AdminRoutesPage = () => {
 
   useEffect(() => {
     getOwnData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const memberNavbar = (

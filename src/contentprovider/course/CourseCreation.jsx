@@ -26,7 +26,7 @@ import validator from "validator";
 // import jwt_decode from "jwt-decode";
 // import Cookies from "js-cookie";
 // import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 // const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({

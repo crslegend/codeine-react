@@ -153,6 +153,7 @@ const AdminHumanResourcePage = () => {
     getMemberData();
     getPartnerData();
     getAdminData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Member data

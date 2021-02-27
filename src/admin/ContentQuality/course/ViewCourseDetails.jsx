@@ -100,7 +100,7 @@ const ViewCourseDetails = () => {
     autoHideDuration: 3000,
   });
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
   const [courseReviews, setCourseReviews] = useState([]);
 
@@ -114,7 +114,7 @@ const ViewCourseDetails = () => {
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
-      setLoggedIn(true);
+      // setLoggedIn(true);
     }
   };
 
@@ -455,6 +455,8 @@ const ViewCourseDetails = () => {
                                   {material.title}
                                 </div>
                               );
+                            } else {
+                              return null;
                             }
                           })}
                       </AccordionDetails>

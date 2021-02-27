@@ -87,7 +87,7 @@ const CommentsSection = ({ materialId, user }) => {
 
   useEffect(() => {
     getCourseMaterialComments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialId, pageNum]);
 
   const calculateDateInterval = (timestamp) => {
