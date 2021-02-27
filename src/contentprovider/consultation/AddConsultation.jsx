@@ -24,7 +24,7 @@ import { Add } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
-import { subHours, formatISO, addMinutes } from "date-fns";
+import { formatISO, addMinutes } from "date-fns";
 
 import Service from "../../AxiosService";
 

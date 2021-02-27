@@ -2,7 +2,6 @@ import React, { useCallback, useState, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Divider } from "@material-ui/core";
 import jwt_decode from "jwt-decode";
-import { addHours } from "date-fns";
 
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
