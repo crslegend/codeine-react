@@ -8,20 +8,19 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Snackbar,
+  Typography,
   Switch,
   FormControlLabel,
   FormGroup,
   Checkbox,
   FormHelperText,
   InputAdornment,
-  Input,
-  FormControl,
-  InputLabel,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import { KeyboardDatePicker, TimePicker } from "@material-ui/pickers";
-import { formatISO, addMinutes, addDays } from "date-fns";
+import { formatISO, addMinutes } from "date-fns";
 
 import Service from "../../AxiosService";
 
@@ -55,27 +54,36 @@ const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     width: "60%",
   },
+  secondaryDialogPaper: {
+    width: "60%",
+  },
+  errorButton: {
+    color: theme.palette.error.main,
+    border: `1px solid ${theme.palette.error.main}`,
+  },
 }));
 
 const appendTimeToDate = (date, time) => {
   return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
 };
 
-const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOpen }) => {
+const AppointmentDetailsModal = ({
+  handleGetAllConsultations,
+  selectedConsultation,
+  setSelectedConsultation,
+  setSnackbar,
+  setSnackbarOpen,
+}) => {
   const classes = useStyles();
 
-  const currentDate = addDays(new Date(), 1);
+  const currentDate = new Date();
 
   const [slot, setSlot] = useState({
-    date: currentDate,
-    start_time: currentDate,
-    end_time: addMinutes(currentDate, 30),
-    meeting_link: "",
-    title: "",
-    max_members: 1,
-    price_per_pax: "0.00",
+    ...selectedConsultation,
+    date: selectedConsultation.startDate,
+    start_time: selectedConsultation.startDate,
+    end_time: selectedConsultation.endDate,
   });
-  const [open, setOpen] = useState(false);
 
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState({
@@ -92,14 +100,24 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
   };
-
   const [bankDialog, setBankDialog] = useState(false);
+  const [cancelDialog, setCancelDialog] = useState(false);
+  const [updateDialog, setUpdateDialog] = useState(false);
 
   // react router dom history hooks
   const history = useHistory();
 
-  const handleDialogOpen = () => {
-    setOpen(true);
+  const handleCancelDialogClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setCancelDialog(false);
+  };
+  const handleUpdateDialogClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setUpdateDialog(false);
   };
 
   const handleBankAlertClose = (e, reason) => {
@@ -164,7 +182,7 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setSelectedConsultation();
   };
 
   const handleSubmit = () => {
@@ -203,28 +221,16 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
       end_time: appendTimeToDate(slot.date, slot.end_time),
     };
 
-    if (
-      formattedSlot.start_time <= new Date(currentDate.toDateString()) ||
-      formattedSlot.start_time >= formattedSlot.end_time
-    ) {
-      setSnackbar({
-        message: "Please enter a valid consultation date and time!",
-        severity: "error",
-      });
-      setSnackbarOpen(true);
-      return;
-    }
-
-    setOpen(false);
+    setSelectedConsultation();
     if (slot.price_per_pax > 0) {
       Service.client
         .get(`/auth/bank-details`)
         .then((res) => {
           Service.client
-            .post("/consultations", formattedSlot)
+            .put(`/consultations/${slot.id}`, formattedSlot)
             .then((res) => {
               setSnackbar({
-                message: "New consultation slot created",
+                message: "Consultation slot updated",
                 severity: "success",
               });
               setSnackbarOpen(true);
@@ -249,13 +255,14 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
         });
     } else {
       Service.client
-        .post("/consultations", formattedSlot)
+        .put(`/consultations/${slot.id}`, formattedSlot)
         .then((res) => {
           setSnackbar({
-            message: "New consultation slot created",
+            message: "Consultation slot updated",
             severity: "success",
           });
           setSnackbarOpen(true);
+
           setSlot({
             date: currentDate,
             start_time: currentDate,
@@ -273,28 +280,32 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
     }
   };
 
+  // handles deletion of consultation slot
+  const handleDeleteConsultation = () => {
+    console.log();
+    Service.client
+      .patch(`/consultations/${slot.id}/cancel`)
+      .then((res) => {
+        console.log(res);
+        handleGetAllConsultations();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .then(() => handleClose());
+  };
+
   return (
     <Fragment>
-      <Button
-        className={classes.opendialog}
-        variant="contained"
-        color="primary"
-        startIcon={<Add />}
-        onClick={handleDialogOpen}
-      >
-        New Consultation Slot
-      </Button>
       <Dialog
-        open={open}
+        open={true}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         classes={{ paper: classes.dialogPaper }}
       >
-        <DialogTitle id="form-dialog-title">Create a new consultation slot</DialogTitle>
+        <DialogTitle id="form-dialog-title">Consultation Slot Details</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Enter the start and end time of your preference, with a conference link attached.
-          </DialogContentText>
+          <DialogContentText>Edit here to update your consultation slot</DialogContentText>
           <div style={{ width: "100%" }}>
             <FormControlLabel
               style={{ margin: 0 }}
@@ -336,7 +347,7 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
                 />
               </FormGroup>
               <KeyboardDatePicker
-                minDate={currentDate}
+                disablePast
                 className={classes.dateTimeField}
                 variant="inline"
                 label="End Date"
@@ -348,7 +359,7 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
           ) : (
             <KeyboardDatePicker
               className={classes.dateTimeField}
-              minDate={currentDate}
+              disablePast
               variant="inline"
               label="Date"
               value={slot.date}
@@ -432,13 +443,18 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
             />
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary" variant="outlined">
-            Cancel
+        <DialogActions style={{ justifyContent: "space-between" }}>
+          <Button onClick={() => setCancelDialog(true)} className={classes.errorButton} variant="outlined">
+            Cancel Consult
           </Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained">
-            Create
-          </Button>
+          <div style={{ width: "30%", display: "flex", justifyContent: "space-evenly" }}>
+            <Button onClick={handleClose} color="primary" variant="outlined">
+              Back
+            </Button>
+            <Button onClick={() => setUpdateDialog(true)} color="primary" variant="contained">
+              Edit
+            </Button>
+          </div>
         </DialogActions>
       </Dialog>
 
@@ -458,8 +474,45 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={updateDialog} onClose={handleUpdateDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
+        <DialogTitle>Confirm Update</DialogTitle>
+        <DialogContent>
+          <b>Changes to prices will only apply to new applicants.</b>Your students will be notified of the updates.
+          <br />
+          <br />
+          Press "Proceed" to confirm.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleUpdateDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Proceed
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={cancelDialog} onClose={handleCancelDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
+        <DialogTitle>Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          This action is <b>non reversible</b>. Your students will be notified of the cancellation and will be refunded
+          (if applicable).
+          <br />
+          <br />
+          Press "Proceed" to confirm.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConsultation} color="primary">
+            Proceed
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
 
-export default AddConsultation;
+export default AppointmentDetailsModal;

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useCallback, useState, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Divider } from "@material-ui/core";
+import { Typography, Divider, Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
 
 import Calendar from "./Calendar";
 import AddConsultation from "./AddConsultation";
 import ConsultationApplication from "./ConsultationApplication";
 import Service from "../../AxiosService";
+import AppointmentDetailsModal from "./AppointmentDetailsModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const usaTime = (date) => new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const toLocalTime = (date) => new Date(date);
 
 const handleMemberList = (list) => {
   const newList = [];
@@ -37,15 +39,14 @@ const handleMemberList = (list) => {
     }
     i++;
   });
-  console.log(newList);
   return newList;
 };
 
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
-  startDate: usaTime(item.start_time),
-  endDate: usaTime(item.end_time),
+  startDate: toLocalTime(item.start_time),
+  endDate: toLocalTime(item.end_time),
   meeting_link: item.meeting_link,
   member: handleMemberList(item.confirmed_applications),
   max_members: item.max_members,
@@ -74,10 +75,18 @@ const reducer = (state, action) => {
 const Consultation = () => {
   const classes = useStyles();
 
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [selectedConsultation, setSelectedConsultation] = useState();
+  console.log(selectedConsultation);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "success",
+  });
+
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { consultations, loading } = state;
 
-  const setConsultations = React.useCallback(
+  const setConsultations = useCallback(
     (nextConsultations) =>
       dispatch({
         type: "setConsultations",
@@ -86,7 +95,7 @@ const Consultation = () => {
     [dispatch]
   );
 
-  const setLoading = React.useCallback(
+  const setLoading = useCallback(
     (nextLoading) =>
       dispatch({
         type: "setLoading",
@@ -116,6 +125,13 @@ const Consultation = () => {
     }
   };
 
+  const handleSnackbarClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   return (
     <div className={classes.root}>
       <div
@@ -126,7 +142,11 @@ const Consultation = () => {
         }}
       >
         <Typography variant="h1">Upcoming schedule at a glance</Typography>
-        <AddConsultation handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)} />
+        <AddConsultation
+          handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+          setSnackbar={setSnackbar}
+          setSnackbarOpen={setSnackbarOpen}
+        />
       </div>
       <Calendar
         consultations={consultations}
@@ -134,9 +154,24 @@ const Consultation = () => {
         setConsultations={setConsultations}
         setLoading={setLoading}
         handleGetAllConsultations={handleGetAllConsultations}
+        setSelectedConsultation={setSelectedConsultation}
       />
       <Divider className={classes.divider} />
       <ConsultationApplication />
+      {selectedConsultation && (
+        <AppointmentDetailsModal
+          handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+          selectedConsultation={selectedConsultation}
+          setSelectedConsultation={setSelectedConsultation}
+          setSnackbar={setSnackbar}
+          setSnackbarOpen={setSnackbarOpen}
+        />
+      )}
+      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} elevation={6} severity={snackbar.severity}>
+          <Typography variant="body1">{snackbar.message}</Typography>
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
