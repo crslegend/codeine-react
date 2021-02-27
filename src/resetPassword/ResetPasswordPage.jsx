@@ -7,8 +7,8 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
-import Service from "../AxiosService";
+import { Link, useParams } from "react-router-dom";
+// import Service from "../AxiosService";
 import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
 import Memberlogo from "../assets/CodeineLogos/Member.svg";
 import Adminlogo from "../assets/CodeineLogos/Admin.svg";
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ResetPasswordPage = (props) => {
   const classes = useStyles();
-  const history = useHistory();
+  // const history = useHistory();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);

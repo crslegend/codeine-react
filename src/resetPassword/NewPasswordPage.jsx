@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 // import Service from "../AxiosService";
 // import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
 import MemberLogo from "../assets/CodeineLogos/Member.svg";

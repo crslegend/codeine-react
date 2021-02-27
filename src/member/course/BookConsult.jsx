@@ -111,8 +111,9 @@ const BookConsult = () => {
     },
     autoHideDuration: 3000,
   });
-
+  // eslint-disable-next-line no-unused-vars
   const [loggedIn, setLoggedIn] = useState(true);
+
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
   const currentDate = new Date();
@@ -248,6 +249,7 @@ const BookConsult = () => {
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(id, setConsultations, setLoading);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, setConsultations, setLoading]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
