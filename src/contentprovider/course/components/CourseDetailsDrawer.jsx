@@ -60,6 +60,8 @@ const CourseDetailsDrawer = ({
   codeLanguage,
   setCodeLanguage,
   courseId,
+  setSbOpen,
+  setSnackbar,
 }) => {
   const classes = useStyles();
 
@@ -76,6 +78,43 @@ const CourseDetailsDrawer = ({
 
     setDrawerOpen(false);
     setDrawerPageNum(1);
+  };
+
+  const handleNextPage = () => {
+    if (!coursePicAvatar) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a picture for your course!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (
+      courseDetails.title === "" ||
+      courseDetails.description === "" ||
+      courseDetails.learning_objectives.length === 0 ||
+      courseDetails.requirements.length === 0
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter required fields!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    setDrawerPageNum(2);
   };
 
   const drawerPage1 = (
@@ -204,7 +243,7 @@ const CourseDetailsDrawer = ({
           variant="contained"
           color="primary"
           style={{ float: "right" }}
-          onClick={() => setDrawerPageNum(2)}
+          onClick={() => handleNextPage()}
         >
           Next
         </Button>

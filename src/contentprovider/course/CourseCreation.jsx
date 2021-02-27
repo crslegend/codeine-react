@@ -1079,6 +1079,8 @@ const CourseCreation = () => {
         codeLanguage={codeLanguage}
         setCodeLanguage={setCodeLanguage}
         courseId={courseId}
+        setSbOpen={setSbOpen}
+        setSnackbar={setSnackbar}
       />
       <Dialog
         open={chapterDialog}
