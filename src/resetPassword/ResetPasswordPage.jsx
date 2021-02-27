@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ResetPasswordPage = (props) => {
   const classes = useStyles();
-  // const history = useHistory();
+  //const history = useHistory();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
@@ -99,15 +99,15 @@ const ResetPasswordPage = (props) => {
           severity: "success",
         });
         //if member, go to member landing page
-        if (id === "member") {
-          setTimeout(() => history.push("/"), 2000);
-          //history.push("/");
-        } else if (id === "partner") {
-          setTimeout(() => history.push("/partner"), 2000);
-          history.push("/partner");
-        } else {
-          setTimeout(() => history.push("/admin/login"), 2000);
-        }
+        // if (id === "member") {
+        //   setTimeout(() => history.push("/"), 2000);
+        //   //history.push("/");
+        // } else if (id === "partner") {
+        //   setTimeout(() => history.push("/partner"), 2000);
+        //   history.push("/partner");
+        // } else {
+        //   setTimeout(() => history.push("/admin/login"), 2000);
+        // }
       })
       .catch((err) => {
         setLoading(false);

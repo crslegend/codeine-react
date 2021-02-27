@@ -734,9 +734,9 @@ const AdminHumanResourcePage = () => {
             />
           </Grid>
           <Grid item xs={3}>
-            <Button variant="contained" color="primary">
+            {/* <Button variant="contained" color="primary">
               Email Selected Partners
-            </Button>
+            </Button> */}
           </Grid>
 
           <Grid

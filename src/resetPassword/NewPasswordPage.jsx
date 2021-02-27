@@ -8,10 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router-dom";
-// import Service from "../AxiosService";
-// import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
 import MemberLogo from "../assets/CodeineLogos/Member.svg";
-// import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";
@@ -56,7 +53,6 @@ const NewPasswordPage = () => {
   const location = useLocation();
 
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState("");
 
   const [passwordDetails, setPasswordDetails] = useState({
     reset_password: "",
@@ -113,10 +109,6 @@ const NewPasswordPage = () => {
       return;
     }
 
-    let queryParams = {
-      token: token,
-    };
-
     axios
       .patch("http://localhost:8000/auth/reset-password", passwordDetails, {
         headers: { Authorization: `Bearer ${token}` },
@@ -152,7 +144,7 @@ const NewPasswordPage = () => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Please try again. Unknown error occured." + err.message,
+          message: "This email does not exist. Please try again.",
           severity: "error",
         });
       });
