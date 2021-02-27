@@ -123,8 +123,9 @@ const ContentProviderHome = () => {
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
           onClick={() => {
@@ -271,13 +272,13 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/partner/home/wallet"
+        to="/partner/home/earnings"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
         <PaymentIcon className={classes.listIcon} />
-        <Typography variant="body1">Wallet</Typography>
+        <Typography variant="body1">Earnings</Typography>
       </ListItem>
     </Fragment>
   );
@@ -416,7 +417,7 @@ const ContentProviderHome = () => {
             />
             <PrivateRoute
               exact
-              path="/partner/home/wallet"
+              path="/partner/home/earnings"
               render={() => <Wallet />}
               user="partner"
             />

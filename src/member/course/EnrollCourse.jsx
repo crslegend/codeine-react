@@ -63,7 +63,7 @@ const styles = makeStyles((theme) => ({
     // textTransform: "none",
     color: "#fff",
     "&:hover": {
-      color: "#000",
+      backgroundColor: "#8E0000",
     },
   },
   dialogButtons: {

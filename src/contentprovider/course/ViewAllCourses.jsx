@@ -41,9 +41,6 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     backgroundColor: theme.palette.primary.main,
     height: 35,
-    "&:hover": {
-      color: "#000",
-    },
   },
   courses: {
     display: "flex",
@@ -373,6 +370,7 @@ const ViewAllCourses = () => {
         <PageTitle title="My Courses" />
         <Button
           variant="contained"
+          color="primary"
           startIcon={<Add />}
           className={classes.addButton}
           component={Link}
