@@ -519,7 +519,9 @@ const ConsultationDetailsModal = ({
             </div>
           </DialogContent>
           <DialogContent style={{ paddingTop: 20, width: "30%" }}>
-            <DialogContentText>Applicants ({selectedConsultation.applications.length})</DialogContentText>
+            <DialogContentText>
+              Applicants ({selectedConsultation.applications.length}/{selectedConsultation.max_members})
+            </DialogContentText>
             <div style={{ overflow: "auto", maxHeight: "450px" }}>
               {selectedConsultation &&
                 selectedConsultation.applications.map((application) => (
