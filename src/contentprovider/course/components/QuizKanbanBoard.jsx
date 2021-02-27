@@ -1,16 +1,16 @@
 import React, { Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import Service from "../../../AxiosService";
 
 import QuizColumn from "./QuizColumn";
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    display: "flex",
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   container: {
+//     display: "flex",
+//   },
+// }));
 
 const QuizKanbanBoard = ({
   finalQuiz,
@@ -18,7 +18,7 @@ const QuizKanbanBoard = ({
   finalQuizQuestions,
   setFinalQuizQuestions,
 }) => {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;

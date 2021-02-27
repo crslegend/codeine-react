@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const Payment = () => {
   const classes = useStyles();
   const [allTransactions, setAllTransactions] = useState([]);
-  const [application, setApplication] = useState();
+  // const [application, setApplication] = useState();
 
   const getTransactionData = () => {
     Service.client

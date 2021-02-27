@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   Checkbox,
@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import Service from "../../../AxiosService";
 
-const styles = makeStyles((theme) => ({}));
+// const styles = makeStyles((theme) => ({}));
 
 const MRQ = ({
   question,
@@ -26,7 +26,7 @@ const MRQ = ({
   progress,
   setProgress,
 }) => {
-  const classes = styles();
+  // const classes = styles();
   console.log(question);
 
   const [chosenOption, setChosenOption] = useState([]);
@@ -144,6 +144,7 @@ const MRQ = ({
     ) {
       loadPrevAnswer(resultObj.quiz_answers[index].responses);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(chosenOption);

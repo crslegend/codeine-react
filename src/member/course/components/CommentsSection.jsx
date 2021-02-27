@@ -17,7 +17,6 @@ import {
   Chat,
   Delete,
   Edit,
-  FiberPin,
   SubdirectoryArrowRight,
   ThumbUp,
 } from "@material-ui/icons";
@@ -88,6 +87,7 @@ const CommentsSection = ({ materialId, user }) => {
 
   useEffect(() => {
     getCourseMaterialComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialId, pageNum]);
 
   const calculateDateInterval = (timestamp) => {

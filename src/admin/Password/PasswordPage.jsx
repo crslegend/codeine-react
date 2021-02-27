@@ -83,6 +83,7 @@ const AdminPasswordPage = () => {
 
   useEffect(() => {
     getProfileDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProfileDetails = () => {

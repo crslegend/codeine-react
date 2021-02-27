@@ -10,7 +10,7 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Avatar, ListItem, Typography, Divider } from "@material-ui/core";
+import { Avatar, ListItem, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/CodeineLogos/Admin.svg";

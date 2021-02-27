@@ -62,7 +62,7 @@ const SmallAvatar = withStyles((theme) => ({
 const Profile = (props) => {
   const classes = useStyles();
 
-  const { profile, setProfile } = props;
+  const { setProfile } = props;
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({

@@ -7,7 +7,6 @@ import {
   CardContent,
   CardMedia,
   FormControl,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -19,7 +18,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import { Pagination, Rating } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -92,7 +91,7 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
-  const history = useHistory();
+  // const history = useHistory();
 
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
@@ -176,12 +175,14 @@ const CoursesPage = () => {
 
   useEffect(() => {
     getAllCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (searchValue === "") {
       getAllCourses();
-    } // eslint-disable-next-line
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   return (

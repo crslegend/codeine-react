@@ -84,11 +84,12 @@ const navLogo = (
         width: 100,
       }}
     >
-      <img src={logo} width="120%" />
+      <img src={logo} width="120%" alt="codeine's logo" />
     </Link>
   </Fragment>
 );
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   memberNavbar,
   loggedInNavbar,

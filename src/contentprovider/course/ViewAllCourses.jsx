@@ -19,7 +19,6 @@ import {
   Popover,
   Select,
   Typography,
-  Grid,
 } from "@material-ui/core";
 import PageTitle from "../../components/PageTitle";
 import { Add, MoreVert, NoteAdd } from "@material-ui/icons";
@@ -233,6 +232,7 @@ const ViewAllCourses = () => {
 
   useEffect(() => {
     getAllCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

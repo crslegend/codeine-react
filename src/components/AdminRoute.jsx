@@ -28,6 +28,7 @@ const AdminRoute = ({ render, path, user, ...rest }) => {
 
   useEffect(() => {
     checkUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(auth);

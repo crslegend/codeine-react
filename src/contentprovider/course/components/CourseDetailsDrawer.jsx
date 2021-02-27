@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Folder, Help } from "@material-ui/icons";
+import { Help } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { ToggleButton } from "@material-ui/lab";
 

@@ -11,15 +11,8 @@ const ShortAnswer = ({
   index,
   setPageNum,
   resultObj,
-  setResultObj,
   quizLength,
   quizType,
-  materialId,
-  progressArr,
-  setProgressArr,
-  courseId,
-  progress,
-  setProgress,
 }) => {
   //const classes = styles();
   console.log(question);
@@ -120,6 +113,7 @@ const ShortAnswer = ({
     ) {
       loadPrevAnswer(resultObj.quiz_answers[index].response);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
