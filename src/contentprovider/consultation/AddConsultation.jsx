@@ -14,9 +14,6 @@ import {
   Checkbox,
   FormHelperText,
   InputAdornment,
-  Input,
-  FormControl,
-  InputLabel,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
@@ -87,7 +84,10 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
     sat: false,
     sun: false,
   });
-  const [timeError, setTimeError] = useState(false);
+  const [timeError, setTimeError] = useState({
+    err: false,
+    errorMessage: "",
+  });
 
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
@@ -117,6 +117,28 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
   };
 
   const handleStartTimeChange = (e) => {
+    if (e.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (slot.end_time.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e >= slot.end_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
+    } else {
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
+    }
+
     setSlot({
       ...slot,
       start_time: e,
@@ -124,10 +146,26 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
   };
 
   const handleEndTimeChange = (e) => {
-    if (e <= slot.start_time) {
-      setTimeError(true);
+    if (slot.start_time.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (e.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    } else if (e <= slot.start_time) {
+      setTimeError({
+        err: true,
+        errorMessage: "End time must be after start time",
+      });
     } else {
-      setTimeError(false);
+      setTimeError({
+        err: false,
+        errorMessage: "",
+      });
     }
     setSlot({
       ...slot,
@@ -193,7 +231,16 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
       return;
     }
 
-    if (timeError) {
+    if (slot.max_members < 1) {
+      setSnackbar({
+        message: "You must accept at least 1 signup",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (timeError.err) {
       return;
     }
 
@@ -375,8 +422,8 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
               className={classes.timeField}
             />
           </div>
-          {timeError ? (
-            <FormHelperText error>End time must be after start time</FormHelperText>
+          {timeError.err ? (
+            <FormHelperText error>{timeError.errorMessage}</FormHelperText>
           ) : (
             <FormHelperText>
               Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
@@ -390,6 +437,7 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
             value={slot.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             fullWidth
+            style={{ marginTop: 16 }}
           />
           <TextField
             required
@@ -432,11 +480,11 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
             />
           </div>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ marginTop: 40 }}>
           <Button onClick={handleClose} color="primary" variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained">
+          <Button disabled={timeError.err} onClick={handleSubmit} color="primary" variant="contained">
             Create
           </Button>
         </DialogActions>
