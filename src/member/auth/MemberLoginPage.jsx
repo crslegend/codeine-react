@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     padding: "10px",
     width: "25%",
+    minWidth: "120px",
   },
   paper: {
     display: "flex",
@@ -186,6 +187,13 @@ const MemberLoginPage = () => {
               </Link>
             </span>{" "}
             to register.
+          </Typography>
+          <Typography variant="body1">
+            <span>
+              <Link to="/resetPassword/member" style={{ color: "#437FC7" }}>
+                Forget Password?
+              </Link>
+            </span>
           </Typography>
         </Paper>
       </form>
