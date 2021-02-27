@@ -80,8 +80,18 @@ const App = () => {
         render={() => <MemberHome />}
         user="member"
       />
-      <Route exact path="/member/login" component={MemberLoginPage} />
-      <Route exact path="/member/register" component={MemberRegisterPage} />
+      <LandingPageRoute
+        exact
+        path="/member/login"
+        component={MemberLoginPage}
+        user="member"
+      />
+      <LandingPageRoute
+        exact
+        path="/member/register"
+        component={MemberRegisterPage}
+        user="member"
+      />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />
