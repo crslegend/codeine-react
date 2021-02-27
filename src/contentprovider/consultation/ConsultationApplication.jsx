@@ -265,7 +265,7 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
             </Link>
 
             <Typography className={classes.header} variant="body2">
-              Application Details:
+              Consultation Details:
             </Typography>
             <Typography variant="body1">
               <b>Date:</b> {getDate(selectedApplication.start_time)}
