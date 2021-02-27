@@ -27,7 +27,7 @@ const ContentProviderLanding = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Members
+            Learn On Codeine
           </Typography>
         </Link>
       </ListItem>

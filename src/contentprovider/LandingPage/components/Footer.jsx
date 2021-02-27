@@ -52,10 +52,10 @@ const Footer = () => {
       <div className={classes.container}>
         <div className={classes.leftCol}>
           <Link to="/" className={classes.footerLink}>
-            Members
+            Learn On Codeine
           </Link>
           <Link to="/partner" className={classes.footerLink}>
-            Partners
+            Teach On Codeine
           </Link>
           {/* <Link to="/industry" className={classes.footerLink}>
             Partners for Enterprise
