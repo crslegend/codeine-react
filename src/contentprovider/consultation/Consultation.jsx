@@ -139,6 +139,7 @@ const Consultation = () => {
           display: "flex",
           marginBottom: "30px",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Typography variant="h1">Upcoming schedule at a glance</Typography>

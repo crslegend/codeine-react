@@ -49,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   dialogPaper: {
-    width: "60%",
+    maxWidth: "800px",
+    width: "100%",
   },
   secondaryDialogPaper: {
     width: "30%",
@@ -345,153 +346,161 @@ const ConsultationDetailsModal = ({
         classes={{ paper: classes.dialogPaper }}
       >
         <DialogTitle id="form-dialog-title">Consultation Slot Details</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Edit here to update your consultation slot.</DialogContentText>
-          <div style={{ width: "100%" }}>
-            <FormControlLabel
-              style={{ margin: 0 }}
-              control={<Switch color="primary" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} />}
-              label="Recurring"
-              labelPlacement="start"
-            />
-          </div>
-          {recurring ? (
-            <Fragment>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.mon} onChange={handleRecurringDays} name="mon" />}
-                  label="Mon"
+        <div style={{ display: "flex" }}>
+          <DialogContent style={{ width: "70%" }}>
+            <DialogContentText>Edit here to update your consultation slot.</DialogContentText>
+            <div style={{ width: "100%" }}>
+              <FormControlLabel
+                style={{ margin: 0 }}
+                control={
+                  <Switch color="primary" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} />
+                }
+                label="Recurring"
+                labelPlacement="start"
+              />
+            </div>
+            {recurring ? (
+              <Fragment>
+                <FormGroup row>
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.mon} onChange={handleRecurringDays} name="mon" />}
+                    label="Mon"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.tue} onChange={handleRecurringDays} name="tue" />}
+                    label="Tue"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.wed} onChange={handleRecurringDays} name="wed" />}
+                    label="Wed"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.thu} onChange={handleRecurringDays} name="thu" />}
+                    label="Thu"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.fri} onChange={handleRecurringDays} name="fri" />}
+                    label="Fri"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.sat} onChange={handleRecurringDays} name="sat" />}
+                    label="Sat"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={recurringDays.sun} onChange={handleRecurringDays} name="sun" />}
+                    label="Sun"
+                  />
+                </FormGroup>
+                <KeyboardDatePicker
+                  disablePast
+                  className={classes.dateTimeField}
+                  variant="inline"
+                  label="End Date"
+                  value={slot.date}
+                  onChange={(date) => handleDateChange(date)}
+                  format="dd/MM/yyyy"
                 />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.tue} onChange={handleRecurringDays} name="tue" />}
-                  label="Tue"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.wed} onChange={handleRecurringDays} name="wed" />}
-                  label="Wed"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.thu} onChange={handleRecurringDays} name="thu" />}
-                  label="Thu"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.fri} onChange={handleRecurringDays} name="fri" />}
-                  label="Fri"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.sat} onChange={handleRecurringDays} name="sat" />}
-                  label="Sat"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={recurringDays.sun} onChange={handleRecurringDays} name="sun" />}
-                  label="Sun"
-                />
-              </FormGroup>
+              </Fragment>
+            ) : (
               <KeyboardDatePicker
-                disablePast
                 className={classes.dateTimeField}
+                disablePast
                 variant="inline"
-                label="End Date"
+                label="Date"
                 value={slot.date}
                 onChange={(date) => handleDateChange(date)}
                 format="dd/MM/yyyy"
               />
-            </Fragment>
-          ) : (
-            <KeyboardDatePicker
-              className={classes.dateTimeField}
-              disablePast
-              variant="inline"
-              label="Date"
-              value={slot.date}
-              onChange={(date) => handleDateChange(date)}
-              format="dd/MM/yyyy"
-            />
-          )}
-          <div className={classes.timeContainer}>
-            <TimePicker
-              variant="inline"
-              label="Start Time"
-              minutesStep={5}
-              value={slot.start_time}
-              onChange={handleStartTimeChange}
-              className={classes.timeField}
-            />
-            to
-            <TimePicker
-              variant="inline"
-              label="End Time"
-              minutesStep={5}
-              value={slot.end_time}
-              onChange={handleEndTimeChange}
-              className={classes.timeField}
-            />
-          </div>
-          {timeError.err ? (
-            <FormHelperText error>{timeError.errorMessage}</FormHelperText>
-          ) : (
-            <FormHelperText>
-              Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
-            </FormHelperText>
-          )}
-          <TextField
-            required
-            margin="dense"
-            id="name"
-            label="Title"
-            value={slot.title}
-            onChange={(e) => handleTitleChange(e.target.value)}
-            fullWidth
-            style={{ marginTop: 16 }}
-          />
-          <TextField
-            required
-            margin="dense"
-            id="name"
-            label="Conference link"
-            value={slot.meeting_link}
-            onChange={(e) => handleLinkChange(e.target.value)}
-            type="url"
-            fullWidth
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
+            )}
+            <div className={classes.timeContainer}>
+              <TimePicker
+                variant="inline"
+                label="Start Time"
+                minutesStep={5}
+                value={slot.start_time}
+                onChange={handleStartTimeChange}
+                className={classes.timeField}
+              />
+              to
+              <TimePicker
+                variant="inline"
+                label="End Time"
+                minutesStep={5}
+                value={slot.end_time}
+                onChange={handleEndTimeChange}
+                className={classes.timeField}
+              />
+            </div>
+            {timeError.err ? (
+              <FormHelperText error>{timeError.errorMessage}</FormHelperText>
+            ) : (
+              <FormHelperText>
+                Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
+              </FormHelperText>
+            )}
             <TextField
+              required
               margin="dense"
               id="name"
-              label="Max no. of signups"
-              value={slot.max_members}
-              onChange={(e) => handleMaxMemberChange(e.target.value)}
-              type="number"
-              InputProps={{
-                inputProps: { min: 1 },
-              }}
-              helperText="You can only increase the no. of signups"
+              label="Title"
+              value={slot.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              fullWidth
+              style={{ marginTop: 16 }}
             />
             <TextField
+              required
               margin="dense"
-              id="price_pax"
-              label="Price (per pax)"
-              value={slot.price_per_pax}
-              onChange={(e) => handlePriceChange(e.target.value)}
-              type="number"
-              InputProps={{
-                inputProps: { min: 0 },
-                startAdornment: <InputAdornment position="start">$</InputAdornment>,
-              }}
+              id="name"
+              label="Conference link"
+              value={slot.meeting_link}
+              onChange={(e) => handleLinkChange(e.target.value)}
+              type="url"
+              fullWidth
             />
-          </div>
-        </DialogContent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <TextField
+                margin="dense"
+                id="name"
+                label="Max no. of signups"
+                value={slot.max_members}
+                onChange={(e) => handleMaxMemberChange(e.target.value)}
+                type="number"
+                InputProps={{
+                  inputProps: { min: 1 },
+                }}
+                helperText="You can only increase the no. of signups"
+              />
+              <TextField
+                margin="dense"
+                id="price_pax"
+                label="Price (per pax)"
+                value={slot.price_per_pax}
+                onChange={(e) => handlePriceChange(e.target.value)}
+                type="number"
+                InputProps={{
+                  inputProps: { min: 0 },
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                }}
+              />
+            </div>
+          </DialogContent>
+          <DialogContent style={{ paddingTop: 20, width: "30%" }}>
+            <DialogContentText>Applicants</DialogContentText>
+            <div style={{ overflow: "auto", maxHeight: "450px" }}></div>
+          </DialogContent>
+        </div>
         <DialogActions style={{ justifyContent: "space-between", marginTop: 40 }}>
           <Button onClick={() => setCancelDialog(true)} className={classes.errorButton} variant="outlined">
             Cancel Consult
           </Button>
-          <div style={{ width: "30%", display: "flex", justifyContent: "space-evenly" }}>
-            <Button onClick={handleClose} color="primary" variant="outlined">
+          <div style={{ width: "30%", display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={handleClose} color="primary" variant="outlined" style={{ marginRight: 8 }}>
               Back
             </Button>
             <Button onClick={validateInput} color="primary" variant="contained">
