@@ -26,29 +26,13 @@ const useStyles = makeStyles((theme) => ({
 
 const toLocalTime = (date) => new Date(date);
 
-const handleMemberList = (list) => {
-  const newList = [];
-  let i = 1;
-  console.log(list);
-  list.forEach((listItem) => {
-    console.log(list.length);
-    if (list.length === i) {
-      newList.push(listItem.member.first_name + " " + listItem.member.last_name);
-    } else {
-      newList.push(listItem.member.first_name + " " + listItem.member.last_name + ", ");
-    }
-    i++;
-  });
-  return newList;
-};
-
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
   startDate: toLocalTime(item.start_time),
   endDate: toLocalTime(item.end_time),
   meeting_link: item.meeting_link,
-  member: handleMemberList(item.confirmed_applications),
+  applications: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
 });
@@ -76,7 +60,6 @@ const Consultation = () => {
   const classes = useStyles();
 
   const [selectedConsultation, setSelectedConsultation] = useState();
-  console.log(selectedConsultation);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -113,7 +96,7 @@ const Consultation = () => {
           params: { partner_id: userId, is_cancelled: "False" },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setTimeout(() => {
             setConsultations(res.data);
             setLoading(false);
@@ -139,6 +122,7 @@ const Consultation = () => {
           display: "flex",
           marginBottom: "30px",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Typography variant="h1">Upcoming schedule at a glance</Typography>
