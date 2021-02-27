@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     width: "60%",
   },
   secondaryDialogPaper: {
-    width: "60%",
+    width: "30%",
   },
   errorButton: {
     color: theme.palette.error.main,
