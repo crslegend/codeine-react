@@ -452,7 +452,7 @@ const ViewAllCourses = () => {
                           justifyContent: "space-between",
                           height: "100%",
                           marginTop: "10px",
-                          paddingBottom: 0,
+                          paddingBottom: "5px",
                         }}
                       >
                         <div>
