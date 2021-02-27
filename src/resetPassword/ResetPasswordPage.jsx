@@ -96,14 +96,15 @@ const ResetPasswordPage = (props) => {
           severity: "success",
         });
         //if member, go to member landing page
-        // if (id === "member") {
-        //   //setTimeout(() => history.push("/"), 2000);
-        //   history.push("/");
-        // } else if (id === "partner") {
-        //   history.push("/partner");
-        // } else {
-        //   history.push("/admin/login");
-        // }
+        if (id === "member") {
+          setTimeout(() => history.push("/"), 2000);
+          //history.push("/");
+        } else if (id === "partner") {
+          setTimeout(() => history.push("/partner"), 2000);
+          history.push("/partner");
+        } else {
+          setTimeout(() => history.push("/admin/login"), 2000);
+        }
       })
       .catch((err) => {
         setLoading(false);

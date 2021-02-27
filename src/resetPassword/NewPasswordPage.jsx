@@ -9,9 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Service from "../AxiosService";
-import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
 import Memeberlogo from "../assets/CodeineLogos/Member.svg";
-import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -115,7 +113,7 @@ const NewPasswordPage = () => {
 
     // call admin login ednpoint
     Service.client
-      .patch("/auth/reset-password/", passwordDetails, {
+      .patch("/auth/reset-password", passwordDetails, {
         params: { ...queryParams },
       })
       .then((res) => {
@@ -126,12 +124,7 @@ const NewPasswordPage = () => {
           message: "Password reset successfully! Please log in again",
           severity: "success",
         });
-        //if member, go to member landing page
-        history.push("/");
-        //if partner, go to partner landing page
-        history.push("/partner");
-        //if admin, go to admin login page
-        history.push("/admin/login");
+        setTimeout(() => history.push("/"), 2000);
       })
       .catch((err) => {
         setLoading(false);
@@ -140,7 +133,7 @@ const NewPasswordPage = () => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "PLease try again. Unknown error occured." + err.message,
+          message: "Please try again. Unknown error occured." + err.message,
           severity: "error",
         });
       });
@@ -152,7 +145,7 @@ const NewPasswordPage = () => {
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
           <Link to="/partner" className={classes.codeineLogo}>
-            <img src={Partnerlogo} alt="logo" width="110%" />
+            <img src={Memeberlogo} alt="logo" width="110%" />
           </Link>
           <Typography style={{ fontSize: "22px", fontWeight: "600" }}>
             Reset Password
