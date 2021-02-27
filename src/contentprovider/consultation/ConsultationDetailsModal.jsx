@@ -64,7 +64,7 @@ const appendTimeToDate = (date, time) => {
   return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
 };
 
-const AppointmentDetailsModal = ({
+const ConsultationDetailsModal = ({
   handleGetAllConsultations,
   selectedConsultation,
   setSelectedConsultation,
@@ -534,4 +534,4 @@ const AppointmentDetailsModal = ({
   );
 };
 
-export default AppointmentDetailsModal;
+export default ConsultationDetailsModal;
