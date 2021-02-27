@@ -90,6 +90,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
     autoHideDuration: 3000,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [editMode, setEditMode] = useState(false);
   const [courseMaterialDialog, setCourseMaterialDialog] = useState(false);
   const [materialType, setMaterialType] = useState();
@@ -159,7 +160,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       Service.client
         .put(`/materials/${courseMaterialId}/videos`, editVideo)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setEditVideo();
@@ -222,7 +223,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       Service.client
         .put(`/materials/${courseMaterialId}/files`, formData)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setCourseMaterialId();
@@ -254,7 +255,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       Service.client
         .put(`/materials/${courseMaterialId}/quizzes`, editQuiz)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setCourseMaterialId();
@@ -270,7 +271,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
     Service.client
       .delete(`/materials/${courseMaterialId}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setCourseMaterialDialog(false);
         setDeleteCourseMaterialDialog(false);
         setMaterialType();

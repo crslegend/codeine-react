@@ -98,7 +98,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
 
   const [chapterDetailsDialog, setChapterDetailsDialog] = useState(false);
 
+  // eslint-disable-next-line no-unused-vars
   const [editMode, setEditMode] = useState(false);
+
   const [editChapter, setEditChapter] = useState();
 
   const [deleteChapterDialog, setDeleteChapterDialog] = useState(false);
@@ -131,7 +133,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
     Service.client
       .put(`/courses/${courseId}/chapters/${column.id}`, editChapter)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setChapterDetailsDialog(false);
         setEditMode(false);
         setEditChapter();
@@ -145,7 +147,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
     Service.client
       .delete(`/courses/${courseId}/chapters/${deleteChapterId}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setDeleteChapterId();
         getCourse();
       })
@@ -197,7 +199,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       Service.client
         .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setChapterIdForCourseMaterial();
@@ -264,7 +266,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       Service.client
         .post(`/chapters/${chapterIdForCouseMaterial}/files`, formData)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setChapterIdForCourseMaterial();
@@ -301,7 +303,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       Service.client
         .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseMaterialDialog(false);
           setMaterialType();
           setChapterIdForCourseMaterial();

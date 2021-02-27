@@ -8,7 +8,7 @@ const memberNavbar = (
     <ListItem style={{ whiteSpace: "nowrap" }}>
       <Link to="/partner" style={{ textDecoration: "none" }}>
         <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-          Partners
+          Teach On Codeine
         </Typography>
       </Link>
     </ListItem>
@@ -58,8 +58,9 @@ const loggedInNavbar = (onClickFn) => {
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
           onClick={onClickFn}

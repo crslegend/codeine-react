@@ -70,7 +70,7 @@ const ViewAllQuizzes = () => {
     Service.client
       .get(`/quiz`, { params: { course_id: id } })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
 
         let arr = [];
         let obj;
@@ -84,7 +84,7 @@ const ViewAllQuizzes = () => {
             Service.client
               .get(`/materials/${res.data[i].course_material}`)
               .then((res) => {
-                console.log(res);
+                // console.log(res);
                 arrNames.push(res.data.title);
                 setMaterialQuizNames(arrNames);
               })

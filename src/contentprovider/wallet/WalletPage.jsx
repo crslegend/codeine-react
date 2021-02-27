@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
   Grid,
+  Paper,
   Card,
   CardHeader,
   CardContent,
@@ -24,8 +25,6 @@ import { Add } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import { DataGrid } from "@material-ui/data-grid";
 
-import jwt_decode from "jwt-decode";
-
 const useStyles = makeStyles((theme) => ({
   topSection: {
     display: "flex",
@@ -34,17 +33,22 @@ const useStyles = makeStyles((theme) => ({
   },
   addButton: {
     color: "#fff",
-    backgroundColor: theme.palette.primary.main,
     height: 35,
-    "&:hover": {
-      color: "#000",
-    },
   },
   paper: {
-    height: "calc(100vh - 115px)",
+    height: "40vh",
   },
   dataGrid: {
     backgroundColor: "#fff",
+  },
+  withdrawButton: {
+    backgroundColor: "#000000",
+    color: "#FFFFFF",
+    borderRadius: "40px",
+    margin: "36px 0px 50px",
+    "&:hover": {
+      backgroundColor: "#3D3D3D",
+    },
   },
 }));
 
@@ -62,6 +66,7 @@ const WalletPage = () => {
     autoHideDuration: 3000,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
 
   // Bank Details
@@ -74,20 +79,18 @@ const WalletPage = () => {
   });
   const [bankDetails, setBankDetails] = useState();
   const [bankDialog, setBankDialog] = useState(false);
+  const [latestEarnings, setLatestEarnings] = useState("0");
 
   // Transactions datagrid
   const [allTransactionList, setAllTransactionList] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState({
-    id: "",
-    date: "",
-    amount: "",
-  });
 
   const getTransactionData = () => {
     Service.client
       .get("/consultations/partner/payments")
       .then((res) => {
         setAllTransactionList(res.data);
+        console.log(res.data);
+        setEarnings(res.data);
       })
       .catch((error) => {
         setAllTransactionList(null);
@@ -97,7 +100,8 @@ const WalletPage = () => {
 
   useEffect(() => {
     getTransactionData();
-  }, [setAllTransactionList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const formatStatus = (status) => {
     if (status === "Earnings") {
@@ -113,7 +117,7 @@ const WalletPage = () => {
     {
       field: "title",
       headerName: "Consultation Title",
-      width: 250,
+      width: 220,
     },
     {
       field: "start_date",
@@ -123,7 +127,7 @@ const WalletPage = () => {
     {
       field: "member",
       headerName: "Booked By",
-      width: 200,
+      width: 180,
     },
     {
       field: "type",
@@ -138,7 +142,7 @@ const WalletPage = () => {
           </Typography>
         </strong>
       ),
-      width: 200,
+      width: 170,
     },
     {
       field: "debit",
@@ -149,7 +153,7 @@ const WalletPage = () => {
             ${params.value}
           </Typography>
         ),
-      width: 120,
+      width: 115,
     },
     {
       field: "credit",
@@ -160,7 +164,7 @@ const WalletPage = () => {
             ${params.value}
           </Typography>
         ),
-      width: 120,
+      width: 115,
     },
   ];
 
@@ -182,6 +186,7 @@ const WalletPage = () => {
   };
 
   const transactionRows = allTransactionList;
+  //let obj = {}
   for (var h = 0; h < allTransactionList.length; h++) {
     transactionRows[h].title = allTransactionList[h].consultation_slot.title;
     transactionRows[h].start_date = formatDate(
@@ -207,6 +212,18 @@ const WalletPage = () => {
         allTransactionList[h].payment_transaction.payment_amount;
     }
   }
+
+  const setEarnings = (data) => {
+    let amount = 0;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].debit !== undefined) {
+        amount += Number(data[i].amount);
+      } else {
+        amount -= Number(data[i].amount);
+      }
+    }
+    setLatestEarnings(amount);
+  };
 
   const getBankDetail = () => {
     Service.client
@@ -351,11 +368,12 @@ const WalletPage = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.topSection}>
-        <PageTitle title={`Wallet`} />
+        <PageTitle title={`See Earning Details`} />
         {!bankDetails && (
           <Button
             style={{ float: "right" }}
             variant="contained"
+            color="primary"
             startIcon={<Add />}
             className={classes.addButton}
             onClick={() => setBankDialog(true)}
@@ -366,7 +384,7 @@ const WalletPage = () => {
       </div>
       {bankDetails ? (
         <Grid container style={{ marginBottom: "50px" }}>
-          <Grid item xs>
+          <Grid item xs={7}>
             <form onSubmit={handleSubmit}>
               <Card className={classes.root}>
                 <CardHeader
@@ -377,9 +395,11 @@ const WalletPage = () => {
                   }
                 />
                 <CardContent style={{ paddingTop: "0px" }}>
-                  <div>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <FormControl
-                      style={{ width: "50%", paddingBottom: "10px" }}
+                      style={{ width: "45%", paddingBottom: "10px" }}
                     >
                       <InputLabel>Bank Name*</InputLabel>
                       <Select
@@ -404,13 +424,14 @@ const WalletPage = () => {
                         <MenuItem value="CIMB">CIMB</MenuItem>
                       </Select>
                     </FormControl>
-                  </div>
-                  <div>
                     <TextField
                       id="bank_account"
                       label="Bank Account*"
                       name="bank_account"
-                      style={{ width: "50%", paddingBottom: "10px" }}
+                      style={{
+                        width: "45%",
+                        paddingBottom: "10px",
+                      }}
                       value={bankDetails.bank_account || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -420,12 +441,14 @@ const WalletPage = () => {
                       }
                     />
                   </div>
-                  <div>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <TextField
                       id="swift_code"
                       label="Swift Code*"
                       name="swift_code"
-                      style={{ width: "50%", paddingBottom: "10px" }}
+                      style={{ width: "45%", paddingBottom: "10px" }}
                       value={bankDetails.swift_code || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -434,10 +457,8 @@ const WalletPage = () => {
                         })
                       }
                     />
-                  </div>
-                  <div>
                     <FormControl
-                      style={{ width: "50%", paddingBottom: "10px" }}
+                      style={{ width: "45%", paddingBottom: "10px" }}
                     >
                       <InputLabel>Bank Country*</InputLabel>
                       <Select
@@ -465,7 +486,7 @@ const WalletPage = () => {
                       id="bank_address"
                       label="Bank Address*"
                       name="bank_address"
-                      style={{ width: "50%", paddingBottom: "10px" }}
+                      style={{ width: "100%", paddingBottom: "10px" }}
                       value={bankDetails.bank_address || ""}
                       onChange={(e) =>
                         setBankDetails({
@@ -495,6 +516,51 @@ const WalletPage = () => {
               </Card>
             </form>
           </Grid>
+
+          <Grid item xs={1} />
+          <Grid
+            item
+            xs={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
+            <Paper>
+              <Typography
+                variant="h6"
+                style={{
+                  fontWeight: 600,
+                  paddingTop: "50px",
+                }}
+              >
+                Available to Withdraw
+              </Typography>
+              <Typography
+                variant="h1"
+                style={{
+                  color: "#437FC7",
+                  paddingTop: "15px",
+
+                  fontWeight: 600,
+                }}
+              >
+                ${latestEarnings}
+              </Typography>
+              <Typography
+                variant="h6"
+                style={{
+                  color: "#4B4B4B",
+                  fontWeight: 500,
+                  paddingTop: "15px",
+                }}
+              >
+                Accumulated Earnings: ${latestEarnings}
+              </Typography>
+              <Button variant="contained" className={classes.withdrawButton}>
+                Withdraw Earnings
+              </Button>
+            </Paper>
+          </Grid>
         </Grid>
       ) : null}
       <Typography
@@ -503,17 +569,19 @@ const WalletPage = () => {
       >
         My Earnings
       </Typography>
-      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
+      <div
+        style={{
+          height: "calc(100vh - 250px)",
+          width: "100%",
+        }}
+      >
         <DataGrid
           rows={transactionRows}
           columns={transactionColumns.map((column) => ({
             ...column,
-            //disableClickEventBubbling: true,
           }))}
           pageSize={10}
-          //checkboxSelection
           disableSelectionOnClick
-          //onRowClick={(e) => handleClickOpenAdmin(e)}
           className={classes.dataGrid}
         />
       </div>

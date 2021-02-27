@@ -8,6 +8,7 @@ import {
   CardMedia,
   FormControl,
   InputLabel,
+  LinearProgress,
   MenuItem,
   Select,
   Typography,
@@ -98,6 +99,8 @@ const CoursesPage = () => {
 
   const [allCourses, setAllCourses] = useState([]);
 
+  const [progressArr, setProgressArr] = useState([]);
+
   const itemsPerPage = 4;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
@@ -154,6 +157,17 @@ const CoursesPage = () => {
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
+
+    Service.client
+      .get(`enrollments`)
+      .then((res) => {
+        // console.log(res);
+        let arr = res.data;
+        arr = arr.filter((course) => course.course !== null);
+        // console.log(arr);
+        setProgressArr(arr);
+      })
+      .catch((err) => console.log(err));
   };
 
   const onSortChange = (e) => {
@@ -184,6 +198,15 @@ const CoursesPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
+
+  const getProgress = (course) => {
+    for (let i = 0; i < progressArr.length; i++) {
+      if (course.id === progressArr[i].course.id) {
+        // console.log(progressArr[i].progress);
+        return progressArr[i].progress;
+      }
+    }
+  };
 
   return (
     <Fragment>
@@ -240,45 +263,90 @@ const CoursesPage = () => {
               .map((course, index) => {
                 return (
                   <Card key={index} className={classes.card}>
-                    <a href={`/courses/${course.id}`} className={classes.link}>
+                    <a
+                      href={`/courses/${course.id}`}
+                      className={classes.link}
+                      style={{ height: "100%" }}
+                    >
                       <CardActionArea
                         // onClick={() => {
                         //   return <a href={`/courses/${course.id}`} />;
                         // }}
                         className={classes.cardActionArea}
+                        style={{ height: "100%" }}
                       >
-                        <CardMedia
-                          className={classes.media}
-                          image={course && course.thumbnail}
-                          title={course && course.title}
-                        />
-                        <CardContent>
-                          <Typography
-                            variant="body1"
-                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                        <div style={{ height: "30%" }}>
+                          <CardMedia
+                            className={classes.media}
+                            image={course && course.thumbnail}
+                            title={course && course.title}
+                          />
+                        </div>
+                        <div style={{ height: "5%" }} />
+                        <div style={{ height: "65%" }}>
+                          <CardContent
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              height: "100%",
+                            }}
                           >
-                            {course && course.title}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            style={{ opacity: 0.7, paddingBottom: "10px" }}
-                          >
-                            {course.partner && course.partner.first_name}{" "}
-                            {course.partner && course.partner.last_name}
-                          </Typography>
-                          {(() => {})()}
-                          <div>
-                            <Rating
-                              size="small"
-                              readOnly
-                              value={
-                                course && course.rating
-                                  ? parseFloat(course.rating)
-                                  : 0
-                              }
-                            />
-                          </div>
-                        </CardContent>
+                            <div
+                              style={{ width: "100%", marginBottom: "10px" }}
+                            >
+                              <Box display="flex" alignItems="center">
+                                <Box width="100%" mr={1}>
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={
+                                      progressArr &&
+                                      parseInt(getProgress(course))
+                                    }
+                                  />
+                                </Box>
+                                <Box minWidth={35}>
+                                  <Typography variant="body2">
+                                    {progressArr &&
+                                      parseInt(getProgress(course)).toFixed() +
+                                        "%"}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Typography
+                                variant="body1"
+                                style={{
+                                  fontWeight: 600,
+                                  paddingTop: "10px",
+                                  paddingBottom: "10px",
+                                }}
+                              >
+                                {course && course.title}
+                              </Typography>
+                            </div>
+                            <div>
+                              <Typography
+                                variant="body2"
+                                style={{ opacity: 0.7, paddingBottom: "10px" }}
+                              >
+                                {course.partner && course.partner.first_name}{" "}
+                                {course.partner && course.partner.last_name}
+                              </Typography>
+                              {(() => {})()}
+                              <div>
+                                <Rating
+                                  size="small"
+                                  readOnly
+                                  value={
+                                    course && course.rating
+                                      ? parseFloat(course.rating)
+                                      : 0
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </div>
                       </CardActionArea>
                     </a>
                   </Card>

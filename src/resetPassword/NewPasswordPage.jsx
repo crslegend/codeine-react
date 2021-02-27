@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -7,10 +7,14 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import Service from "../AxiosService";
-import Memeberlogo from "../assets/CodeineLogos/Member.svg";
+import { useHistory, useLocation } from "react-router-dom";
+// import Service from "../AxiosService";
+// import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
+import MemberLogo from "../assets/CodeineLogos/Member.svg";
+// import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
+
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     marginBottom: "20px",
     width: 200,
-    textTransform: "none",
   },
 }));
 
@@ -71,13 +74,16 @@ const NewPasswordPage = () => {
     autoHideDuration: 3000,
   });
 
-  useEffect(() => {
-    if (new URLSearchParams(location.search).get("token") !== null) {
-      setToken(new URLSearchParams(location.search).get("token"));
-      console.log("refresh toekn = " + token);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (new URLSearchParams(location.search).get("token") !== null) {
+
+  //     console.log("refresh toekn = " + token);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  const token = new URLSearchParams(location.search).get("token");
+  // console.log(token);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -111,20 +117,33 @@ const NewPasswordPage = () => {
       token: token,
     };
 
-    // call admin login ednpoint
-    Service.client
-      .patch("/auth/reset-password", passwordDetails, {
-        params: { ...queryParams },
+    axios
+      .patch("http://localhost:8000/auth/reset-password", passwordDetails, {
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
+        console.log(res);
         setLoading(false);
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Password reset successfully! Please log in again",
+          message:
+            "Your password has been resetted. Redirecting you to login page...",
           severity: "success",
         });
-        setTimeout(() => history.push("/"), 2000);
+
+        setTimeout(() => {
+          if (res.data.member) {
+            //if member, go to member landing page
+            history.push("/member/login");
+          } else if (res.data.partner) {
+            //if partner, go to partner landing page
+            history.push("/partner");
+          } else {
+            //if admin, go to admin login page
+            history.push("/admin/login");
+          }
+        }, 2000);
       })
       .catch((err) => {
         setLoading(false);
@@ -144,10 +163,11 @@ const NewPasswordPage = () => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/partner" className={classes.codeineLogo}>
-            <img src={Memeberlogo} alt="logo" width="110%" />
-          </Link>
-          <Typography style={{ fontSize: "22px", fontWeight: "600" }}>
+          <img src={MemberLogo} alt="logo" width="20%" />
+
+          <Typography
+            style={{ fontSize: "22px", fontWeight: "600", paddingTop: "20px" }}
+          >
             Reset Password
           </Typography>
           <Typography

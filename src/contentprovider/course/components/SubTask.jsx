@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SubTask = ({ task, subtask, getCourse, index }) => {
   const classes = useStyles();
-  console.log(index);
+  // console.log(index);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({

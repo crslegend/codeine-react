@@ -76,7 +76,7 @@ const MemberLandingPage = () => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/partner" style={{ textDecoration: "none" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners
+            Teach on Codeine
           </Typography>
         </Link>
       </ListItem>
@@ -99,10 +99,11 @@ const MemberLandingPage = () => {
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           component={Link}
           to="/member/register"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
         >
@@ -117,12 +118,10 @@ const MemberLandingPage = () => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          onClick={() => {
-            history.push("/member/home");
-          }}
+        <Link
+          to="/member/home"
           style={{
-            textTransform: "capitalize",
+            textDecoration: "none",
           }}
         >
           <Typography
@@ -131,12 +130,13 @@ const MemberLandingPage = () => {
           >
             Dashboard
           </Typography>
-        </Button>
+        </Link>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
+          variant="contained"
+          color="primary"
           style={{
-            backgroundColor: "#437FC7",
             textTransform: "capitalize",
           }}
           onClick={() => {

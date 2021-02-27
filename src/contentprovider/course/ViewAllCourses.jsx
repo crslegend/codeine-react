@@ -41,9 +41,6 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     backgroundColor: theme.palette.primary.main,
     height: 35,
-    "&:hover": {
-      color: "#000",
-    },
   },
   courses: {
     display: "flex",
@@ -145,7 +142,7 @@ const ViewAllCourses = () => {
       search: searchValue,
       partnerId: decoded.user_id,
     };
-    console.log(sort);
+    // console.log(sort);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -180,7 +177,7 @@ const ViewAllCourses = () => {
     Service.client
       .get(`/private-courses`, { params: { ...queryParams } })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setAllCourses(res.data.results);
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
@@ -205,7 +202,7 @@ const ViewAllCourses = () => {
     Service.client
       .delete(`/courses/${courseId}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setDeleteCourseDialog(false);
         setDeleteCourseId();
         getAllCourses();
@@ -241,7 +238,7 @@ const ViewAllCourses = () => {
     } // eslint-disable-next-line
   }, [searchValue]);
 
-  console.log(allCourses);
+  // console.log(allCourses);
 
   const handlePublishCourse = (courseId) => {
     let check = true;
@@ -373,6 +370,7 @@ const ViewAllCourses = () => {
         <PageTitle title="My Courses" />
         <Button
           variant="contained"
+          color="primary"
           startIcon={<Add />}
           className={classes.addButton}
           component={Link}
@@ -435,47 +433,66 @@ const ViewAllCourses = () => {
                     disabled={course && course.is_deleted}
                     style={{
                       opacity: course && course.is_deleted && 0.5,
+                      height: "90%",
                     }}
                   >
-                    <CardMedia
-                      className={classes.media}
-                      image={course && course.thumbnail}
-                      title={course && course.title}
-                    />
-                    <CardContent>
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                    <div style={{ height: "30%" }}>
+                      <CardMedia
+                        className={classes.media}
+                        image={course && course.thumbnail}
+                        title={course && course.title}
+                      />
+                    </div>
+                    <div style={{ height: "5%" }} />
+                    <div style={{ height: "65%" }}>
+                      <CardContent
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          height: "100%",
+                          marginTop: "10px",
+                          paddingBottom: "5px",
+                        }}
                       >
-                        {course && course.title}
-                      </Typography>
-                      {(() => {
-                        if (course.is_deleted) {
-                          return deletedChip;
-                        } else if (course.is_published) {
-                          return publishedChip;
-                        } else if (!course.is_published) {
-                          if (checkIfCourseIsReadyToPublish(course)) {
-                            return unPublishedChip;
-                          }
-                          return notReadyChip;
-                        }
-                      })()}
-                      {course.published_date && course.published_date && (
-                        <Typography
-                          variant="body2"
-                          style={{
-                            opacity: 0.7,
-                            paddingBottom: "10px",
-                            paddingTop: "10px",
-                          }}
-                        >
-                          Pusblished On:
-                          <br />
-                          {formatDate(course.published_date)}
-                        </Typography>
-                      )}
-                    </CardContent>
+                        <div>
+                          <Typography
+                            variant="body1"
+                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                          >
+                            {course && course.title}
+                          </Typography>
+                        </div>
+                        <div>
+                          {(() => {
+                            if (course.is_deleted) {
+                              return deletedChip;
+                            } else if (course.is_published) {
+                              return publishedChip;
+                            } else if (!course.is_published) {
+                              if (checkIfCourseIsReadyToPublish(course)) {
+                                return unPublishedChip;
+                              }
+                              return notReadyChip;
+                            }
+                          })()}
+                          {course.published_date && course.published_date && (
+                            <Typography
+                              variant="body2"
+                              style={{
+                                opacity: 0.7,
+                                paddingBottom: "10px",
+                                paddingTop: "10px",
+                              }}
+                            >
+                              Pusblished On:
+                              <br />
+                              {formatDate(course.published_date)}
+                            </Typography>
+                          )}
+                        </div>
+                      </CardContent>
+                    </div>
                   </CardActionArea>
                   <CardActions
                     style={{

@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
   const classes = useStyles();
-  console.log(state);
+  // console.log(state);
   // const [state, setState] = useState(data);
 
   const handleDragEnd = (result) => {
@@ -83,7 +83,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
     }
 
     if (type === "subtask") {
-      console.log(state);
+      // console.log(state);
 
       const affectedTask = state.tasks[source.droppableId];
       const newSubtaskIds = Array.from(affectedTask.subtaskIds);
@@ -161,7 +161,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
     Service.client
       .patch(`/courses/${courseId}/order-chapters`, newColumnOrder)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         getCourse();
       })
       .catch((err) => console.log(err));
@@ -174,7 +174,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
     Service.client
       .patch(`/chapters/${chapterId}/order-materials`, newTaskIds)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         getCourse();
       })
       .catch((err) => console.log(err));
@@ -186,7 +186,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
     Service.client
       .patch(`/quiz/${quizId}/order-questions`, newSubtaskIds)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         getCourse();
       })
       .catch((err) => console.log(err));

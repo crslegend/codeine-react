@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import { useParams, useHistory } from "react-router-dom";
 import components from "./components/NavbarComponents";
-import { Grid, Button, IconButton, Paper } from "@material-ui/core";
+import { Grid, Button, IconButton, Paper, Typography } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { ArrowBack } from "@material-ui/icons";
@@ -11,6 +11,8 @@ import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   WeekView,
+  MonthView,
+  ViewSwitcher,
   Appointments,
   Toolbar,
   TodayButton,
@@ -59,19 +61,26 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
   )
 );
 
-const usaTime = (date) =>
-  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const checkMemberAlreadyBooked = (applications) => {
+  const decoded = jwt_decode(Cookies.get("t1"));
+  for (let i = 0; i < applications.length; i++) {
+    if (decoded.user_id === applications[i].member.id) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
-  startDate: usaTime(item.start_time),
-  endDate: usaTime(item.end_time),
-  //meeting_link: item.meeting_link,
-  members: item.confirmed_applications,
+  startDate: item.start_time,
+  endDate: item.end_time,
+  applications: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
   curr_members: item.confirmed_applications.length,
+  in_consult: checkMemberAlreadyBooked(item.confirmed_applications),
 });
 
 const initialState = {
@@ -97,7 +106,8 @@ const BookConsult = () => {
   const classes = styles();
   const history = useHistory();
   const { id } = useParams();
-  console.log(id);
+
+  const [currentViewName, setCurrentViewName] = useState("week");
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -110,12 +120,9 @@ const BookConsult = () => {
     autoHideDuration: 3000,
   });
 
-  const [loggedIn, setLoggedIn] = useState(true);
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
   const currentDate = new Date();
-
-  console.log(consultations);
 
   const setConsultations = React.useCallback(
     (nextConsultations) =>
@@ -161,21 +168,18 @@ const BookConsult = () => {
   const handlePaymentDialog = (slot) => {
     const decoded = jwt_decode(Cookies.get("t1"));
 
-    for (let i = 0; i < slot.members.length; i++) {
-      console.log(slot.members[i].member);
-      if (decoded.user_id === slot.members[i].member.id) {
-        setSbOpen(true);
-        setSnackbar({
-          message: "You have already signed up for this consultation slot.",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-        return;
-      }
+    if (slot.in_consult === true) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "You have already signed up for this consultation slot.",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
     }
 
     // free consultation will not go through stripe
@@ -246,7 +250,8 @@ const BookConsult = () => {
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(id, setConsultations, setLoading);
-  }, [id, setConsultations, setLoading]);
+    // eslint-disable-next-line
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekview = React.useCallback(
@@ -255,6 +260,18 @@ const BookConsult = () => {
     )),
     []
   );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const monthview = React.useCallback(
+    React.memo(({ onDoubleClick, ...restProps }) => (
+      <MonthView.TimeTableCell {...restProps} onDoubleClick={undefined} />
+    )),
+    []
+  );
+
+  const handleCurrentViewChange = (newViewName) => {
+    setCurrentViewName(newViewName);
+  };
 
   const Content = withStyles({ name: "Content" })(
     ({ children, appointmentData, classes, ...restProps }) => (
@@ -265,7 +282,7 @@ const BookConsult = () => {
         <Grid
           container
           style={{
-            marginTop: "10px",
+            margin: "10px 0px",
             padding: "10px 0",
             backgroundColor: "#F4F4F4",
           }}
@@ -284,9 +301,19 @@ const BookConsult = () => {
             {appointmentData.max_members - appointmentData.curr_members} <br />
           </Grid>
         </Grid>
+        {appointmentData.in_consult ? (
+          <Typography
+            variant="body2"
+            style={{ color: "red", textAlign: "center" }}
+          >
+            You have signed up for this consultation.
+          </Typography>
+        ) : null}
         <Button
           /* eslint-disable-next-line no-alert */
-          //onClick={() => alert(JSON.stringify(appointmentData))}
+          disabled={
+            appointmentData.max_members - appointmentData.curr_members <= 0
+          }
           onClick={() => handlePaymentDialog(appointmentData)}
           style={{
             textTransform: "none",
@@ -310,7 +337,6 @@ const BookConsult = () => {
         bgColor="#fff"
         navbarItems={components.loggedInNavbar(() => {
           Service.removeCredentials();
-          setLoggedIn(false);
           history.push("/");
         })}
       />
@@ -329,9 +355,19 @@ const BookConsult = () => {
         </Grid>
         <Grid item xs={10}>
           <Paper>
-            <Scheduler data={consultations} height="750">
-              <ViewState defaultCurrentDate={currentDate} />
-              <WeekView name="week" timeTableCellComponent={weekview} />
+            <Scheduler data={consultations} height="auto">
+              <ViewState
+                defaultCurrentDate={currentDate}
+                currentViewName={currentViewName}
+                onCurrentViewNameChange={handleCurrentViewChange}
+              />
+              <WeekView
+                name="week"
+                timeTableCellComponent={weekview}
+                cellDuration={120}
+                startDayHour={6}
+              />
+              <MonthView name="month" timeTableCellComponent={monthview} />
               <Toolbar
                 {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
               />
@@ -339,6 +375,7 @@ const BookConsult = () => {
               <TodayButton />
               <Appointments />
               <AppointmentTooltip contentComponent={Content} />
+              <ViewSwitcher />
             </Scheduler>
           </Paper>
         </Grid>

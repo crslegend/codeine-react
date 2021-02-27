@@ -100,7 +100,7 @@ const MemberLoginPage = () => {
             // login to view course
             history.push(`/courses/${state.courseId}`);
           } else {
-            history.push("/");
+            history.push("/courses");
           }
         } else {
           setLoading(false);

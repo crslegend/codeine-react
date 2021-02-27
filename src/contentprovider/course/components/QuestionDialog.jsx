@@ -141,12 +141,12 @@ const QuestionDialog = ({
   const handleAddOption = () => {
     const values = [...options];
     values.push("");
-    console.log(values);
+    // console.log(values);
     setOptions(values);
   };
 
   const handleDeleteOption = (index) => {
-    console.log(index);
+    // console.log(index);
     if (questionType === "mrq") {
       const value = options[index];
       setCorrectAnswer(correctAnswer.filter((answer) => answer !== value));
@@ -163,7 +163,7 @@ const QuestionDialog = ({
     Service.client
       .delete(`/quiz/${quizId}/questions/${question.id}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setEditMode(false);
         setDeleteQuestionDialog(false);
         setEditQuestionDialog(false);
@@ -329,7 +329,7 @@ const QuestionDialog = ({
           params: { type: "mcq" },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
           setQuizId();
@@ -362,7 +362,7 @@ const QuestionDialog = ({
           params: { type: "mrq" },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
           setQuizId();
@@ -397,7 +397,7 @@ const QuestionDialog = ({
           params: { type: "shortanswer" },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
           setQuizId();
@@ -461,7 +461,7 @@ const QuestionDialog = ({
       Service.client
         .post(`/quiz/${quizId}/questions`, data, { params: { type: "mcq" } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setAddQuestionDialog(false);
           setQuizId();
           setQuestion();
@@ -489,7 +489,7 @@ const QuestionDialog = ({
       Service.client
         .post(`/quiz/${quizId}/questions`, data, { params: { type: "mrq" } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setAddQuestionDialog(false);
           setQuizId();
           setQuestion();
@@ -522,7 +522,7 @@ const QuestionDialog = ({
           params: { type: "shortanswer" },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setAddQuestionDialog(false);
           setQuizId();
           setQuestion();
