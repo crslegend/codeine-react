@@ -232,6 +232,15 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
             .post("/consultations", formattedSlot)
             .then((res) => {
               setSuccessAlertOpen(true);
+              setSlot({
+                date: currentDate,
+                start_time: currentDate,
+                end_time: addMinutes(currentDate, 30),
+                meeting_link: "",
+                title: "",
+                max_members: 1,
+                price_per_pax: 0,
+              });
               handleGetAllConsultations();
             })
             .catch((error) => {
@@ -246,6 +255,15 @@ const AddConsultation = ({ handleGetAllConsultations }) => {
         .post("/consultations", formattedSlot)
         .then((res) => {
           setSuccessAlertOpen(true);
+          setSlot({
+            date: currentDate,
+            start_time: currentDate,
+            end_time: addMinutes(currentDate, 30),
+            meeting_link: "",
+            title: "",
+            max_members: 1,
+            price_per_pax: 0,
+          });
           handleGetAllConsultations();
         })
         .catch((error) => {
