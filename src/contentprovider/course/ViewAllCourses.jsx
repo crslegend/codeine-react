@@ -142,7 +142,7 @@ const ViewAllCourses = () => {
       search: searchValue,
       partnerId: decoded.user_id,
     };
-    console.log(sort);
+    // console.log(sort);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -177,7 +177,7 @@ const ViewAllCourses = () => {
     Service.client
       .get(`/private-courses`, { params: { ...queryParams } })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setAllCourses(res.data.results);
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
@@ -202,7 +202,7 @@ const ViewAllCourses = () => {
     Service.client
       .delete(`/courses/${courseId}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setDeleteCourseDialog(false);
         setDeleteCourseId();
         getAllCourses();
@@ -238,7 +238,7 @@ const ViewAllCourses = () => {
     } // eslint-disable-next-line
   }, [searchValue]);
 
-  console.log(allCourses);
+  // console.log(allCourses);
 
   const handlePublishCourse = (courseId) => {
     let check = true;

@@ -118,12 +118,12 @@ const ViewCourseDetailsPage = () => {
     Service.client
       .get(`/courses/${id}/reviews`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setCourseReviews(res.data);
       })
       .catch((err) => console.log(err));
   };
-  console.log(course);
+  // console.log(course);
 
   useEffect(() => {
     getCourse();

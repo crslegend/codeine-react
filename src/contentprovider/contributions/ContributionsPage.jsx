@@ -72,7 +72,7 @@ const ContributionsPage = () => {
     Service.client
       .get(`/contributions`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
 
         let arr = [];
         for (let i = 0; i < res.data.length; i++) {
@@ -96,7 +96,7 @@ const ContributionsPage = () => {
         params: { latest: 1, payment_status: "COMPLETED" },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
 
         if (
           res.data.expiry_date &&
@@ -142,7 +142,7 @@ const ContributionsPage = () => {
     axios
       .post("/create-checkout-session", data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         stripe.redirectToCheckout({
           sessionId: res.data.id,
         });
@@ -185,7 +185,7 @@ const ContributionsPage = () => {
     Service.client
       .get(`/auth/partners/${decoded.user_id}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         const emailAdd = res.data.email;
 
         if (
@@ -214,7 +214,7 @@ const ContributionsPage = () => {
           payment_type: "Credit Card",
           month_duration: parseInt(month),
         };
-        console.log(data);
+        // console.log(data);
 
         Service.client
           .post(`contributions`, data)

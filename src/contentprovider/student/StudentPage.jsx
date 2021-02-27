@@ -222,12 +222,12 @@ const StudentPage = () => {
       };
     }
 
-    console.log("courseid: " + queryParams.courseId);
+    // console.log("courseid: " + queryParams.courseId);
 
     Service.client
       .get(`/enrolled-members`, { params: { ...queryParams } })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setAllStudentList(res.data);
         studentRows = removeDuplicateStudent(allStudentList);
       })
@@ -258,7 +258,7 @@ const StudentPage = () => {
   const onSortChange = (e) => {
     setSortMethod(e.target.value);
     getAllStudents(e.target.value);
-    console.log("onsortchange: " + e.target.value);
+    // console.log("onsortchange: " + e.target.value);
   };
 
   const [openDialog, setOpenDialog] = useState(false);

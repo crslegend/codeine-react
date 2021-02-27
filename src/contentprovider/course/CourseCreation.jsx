@@ -133,7 +133,7 @@ const CourseCreation = () => {
   // const [paymentAmount, setPaymentAmount] = useState();
 
   const handleSaveCourseDetails = () => {
-    console.log(coursePicAvatar);
+    // console.log(coursePicAvatar);
     if (!coursePicAvatar) {
       setSbOpen(true);
       setSnackbar({
@@ -312,7 +312,7 @@ const CourseCreation = () => {
       Service.client
         .put(`/courses/${courseId}`, formData)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setDrawerOpen(false);
           setDrawerPageNum(1);
           setCoursePicAvatar();
@@ -333,7 +333,7 @@ const CourseCreation = () => {
       Service.client
         .post(`/courses`, formData)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setDrawerOpen(false);
           setDrawerPageNum(1);
           localStorage.setItem("courseId", res.data.id);
@@ -369,7 +369,7 @@ const CourseCreation = () => {
       Service.client
         .get(`/private-courses/${chosenId}`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCourseDetails({
             title: res.data.title,
             description: res.data.description,
@@ -528,7 +528,7 @@ const CourseCreation = () => {
     Service.client
       .post(`/courses/${courseId}/chapters`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setChapterDialog(false);
         getCourse();
         setSbOpen(true);
@@ -733,7 +733,7 @@ const CourseCreation = () => {
       Service.client
         .get(`/contributions`, { params: { latest: 1 } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
 
           if (res.data.expiry_date) {
             const futureDate = new Date(res.data.expiry_date);
@@ -794,7 +794,7 @@ const CourseCreation = () => {
       Service.client
         .put(`/courses/${courseId}/assessments/${finalQuiz.id}`, data)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setFinalQuizDialog(false);
           setFinalQuiz({
             instructions: "",
@@ -808,7 +808,7 @@ const CourseCreation = () => {
       Service.client
         .post(`/courses/${courseId}/assessments`, finalQuiz)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setFinalQuizDialog(false);
           setFinalQuiz({
             instructions: "",

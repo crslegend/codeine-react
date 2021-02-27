@@ -48,7 +48,7 @@ const QuizKanbanBoard = ({
     Service.client
       .patch(`/quiz/${quizId}/order-questions`, newOrder)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         getCourse();
       })
       .catch((err) => console.log(err));
