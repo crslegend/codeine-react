@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import { useParams, useHistory } from "react-router-dom";
 import components from "./components/NavbarComponents";
-import { Grid, Button, IconButton, Paper } from "@material-ui/core";
+import { Grid, Button, IconButton, Paper, Typography } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { ArrowBack } from "@material-ui/icons";
@@ -61,18 +61,26 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
   )
 );
 
-const usaTime = (date) =>
-  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const checkMemberAlreadyBooked = (applications) => {
+  const decoded = jwt_decode(Cookies.get("t1"));
+  for (let i = 0; i < applications.length; i++) {
+    if (decoded.user_id === applications[i].member.id) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
-  startDate: usaTime(item.start_time),
-  endDate: usaTime(item.end_time),
-  members: item.confirmed_applications,
+  startDate: item.start_time,
+  endDate: item.end_time,
+  applications: item.confirmed_applications,
   max_members: item.max_members,
   price_per_pax: item.price_per_pax,
   curr_members: item.confirmed_applications.length,
+  in_consult: checkMemberAlreadyBooked(item.confirmed_applications),
 });
 
 const initialState = {
@@ -98,7 +106,7 @@ const BookConsult = () => {
   const classes = styles();
   const history = useHistory();
   const { id } = useParams();
-  console.log(id);
+
   const [currentViewName, setCurrentViewName] = useState("week");
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -111,14 +119,10 @@ const BookConsult = () => {
     },
     autoHideDuration: 3000,
   });
-  // eslint-disable-next-line no-unused-vars
-  const [loggedIn, setLoggedIn] = useState(true);
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
   const currentDate = new Date();
-
-  console.log(consultations);
 
   const setConsultations = React.useCallback(
     (nextConsultations) =>
@@ -163,22 +167,19 @@ const BookConsult = () => {
 
   const handlePaymentDialog = (slot) => {
     const decoded = jwt_decode(Cookies.get("t1"));
-    console.log(decoded);
-    for (let i = 0; i < slot.members.length; i++) {
-      console.log(decoded.user_id);
-      if (decoded.user_id === slot.members[i].member_base_user_id) {
-        setSbOpen(true);
-        setSnackbar({
-          message: "You have already signed up for this consultation slot.",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-        return;
-      }
+
+    if (slot.in_consult === true) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "You have already signed up for this consultation slot.",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
     }
 
     // free consultation will not go through stripe
@@ -249,8 +250,8 @@ const BookConsult = () => {
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(id, setConsultations, setLoading);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, setConsultations, setLoading]);
+    // eslint-disable-next-line
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekview = React.useCallback(
@@ -281,7 +282,7 @@ const BookConsult = () => {
         <Grid
           container
           style={{
-            marginTop: "10px",
+            margin: "10px 0px",
             padding: "10px 0",
             backgroundColor: "#F4F4F4",
           }}
@@ -300,6 +301,14 @@ const BookConsult = () => {
             {appointmentData.max_members - appointmentData.curr_members} <br />
           </Grid>
         </Grid>
+        {appointmentData.in_consult ? (
+          <Typography
+            variant="body2"
+            style={{ color: "red", textAlign: "center" }}
+          >
+            You have signed up for this consultation.
+          </Typography>
+        ) : null}
         <Button
           /* eslint-disable-next-line no-alert */
           disabled={
@@ -328,7 +337,6 @@ const BookConsult = () => {
         bgColor="#fff"
         navbarItems={components.loggedInNavbar(() => {
           Service.removeCredentials();
-          setLoggedIn(false);
           history.push("/");
         })}
       />
