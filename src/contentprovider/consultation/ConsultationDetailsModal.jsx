@@ -271,6 +271,15 @@ const ConsultationDetailsModal = ({
       return;
     }
 
+    if (!/^https?:\/\/([\w\d-]+\.)+\w{2,}(\/.+)?$/.test(slot.meeting_link)) {
+      setSnackbar({
+        message: "Enter a valid URL for the meeting link",
+        severity: "error",
+      });
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (timeError.err) {
       return;
     }
