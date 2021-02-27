@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -8,10 +8,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import Service from "../AxiosService";
-import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
-import Memeberlogo from "../assets/CodeineLogos/Member.svg";
-import Adminlogo from "../assets/CodeineLogos/Admin.svg";
+// import Service from "../AxiosService";
+// import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
+import MemberLogo from "../assets/CodeineLogos/Member.svg";
+// import Adminlogo from "../assets/CodeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";
@@ -134,10 +134,11 @@ const NewPasswordPage = () => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit}>
         <Paper elevation={3} className={classes.paper}>
-          <Link to="/partner" className={classes.codeineLogo}>
-            <img src={Partnerlogo} alt="logo" width="110%" />
-          </Link>
-          <Typography style={{ fontSize: "22px", fontWeight: "600" }}>
+          <img src={MemberLogo} alt="logo" width="20%" />
+
+          <Typography
+            style={{ fontSize: "22px", fontWeight: "600", paddingTop: "20px" }}
+          >
             Reset Password
           </Typography>
           <Typography
