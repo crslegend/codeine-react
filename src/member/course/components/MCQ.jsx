@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   FormControlLabel,
@@ -10,7 +10,7 @@ import {
 
 import Service from "../../../AxiosService";
 
-const styles = makeStyles((theme) => ({}));
+// const styles = makeStyles((theme) => ({}));
 
 const MCQ = ({
   question,
@@ -27,7 +27,7 @@ const MCQ = ({
   progress,
   setProgress,
 }) => {
-  const classes = styles();
+  // const classes = styles();
   console.log(question);
   // console.log(resultObj);
 
@@ -97,6 +97,7 @@ const MCQ = ({
                 .patch(`/courses/${courseId}/enrollments`, arr)
                 .then((res) => {
                   console.log(res);
+                  setProgress(res.data.progress);
                 })
                 .catch((err) => console.log(err));
             } else if (res.data.passed && quizType === "FINAL") {
@@ -131,6 +132,7 @@ const MCQ = ({
     ) {
       loadPrevAnswer(resultObj.quiz_answers[index].response);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(chosenOption);

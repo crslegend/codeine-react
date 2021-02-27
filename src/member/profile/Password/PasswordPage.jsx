@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 import {
   Button,
   CircularProgress,
@@ -7,7 +8,6 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
-import Toast from "../../../components/Toast.js";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Visibility from "@material-ui/icons/Visibility";
@@ -42,21 +42,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Password = () => {
+const Password = (props) => {
   const classes = useStyles();
+  const { snackbar, setSbOpen, setSnackbar } = props;
+  const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
 
   const handleClickShowOldPassword = () => {
     setPasswordDetails({
@@ -158,7 +149,11 @@ const Password = () => {
         passwordDetails.old_password = "";
         passwordDetails.new_password = "";
         passwordDetails.repeat_password = "";
+        passwordDetails.showOldPassword = false;
+        passwordDetails.showNewPassword = false;
+        passwordDetails.showRepeatPassword = false;
         setLoading(false);
+        history.push("/member/home/dashboard");
       })
       .catch((err) => {
         setSbOpen(true);
@@ -169,12 +164,6 @@ const Password = () => {
         });
         setLoading(false);
       });
-    passwordDetails.new_password = "";
-    passwordDetails.repeat_password = "";
-    passwordDetails.old_password = "";
-    passwordDetails.showOldPassword = false;
-    passwordDetails.showNewPassword = false;
-    passwordDetails.showRepeatPassword = false;
   };
 
   return (
@@ -185,7 +174,6 @@ const Password = () => {
         </Typography>
       </Box>
       <div className={classes.content}>
-        <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <form onSubmit={handleSubmit} noValidate>
           <Paper elevation={0} className={classes.paper} autoComplete="off">
             <Grid container>

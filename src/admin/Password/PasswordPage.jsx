@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 import { Button, CircularProgress, Paper, Grid } from "@material-ui/core";
-import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Visibility from "@material-ui/icons/Visibility";
@@ -25,21 +25,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminPasswordPage = () => {
+const AdminPasswordPage = (props) => {
+  const { snackbar, setSbOpen, setSnackbar } = props;
   const classes = useStyles();
+  const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
 
   const handleClickShowOldPassword = () => {
     setPasswordDetails({
@@ -83,6 +74,7 @@ const AdminPasswordPage = () => {
 
   useEffect(() => {
     getProfileDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProfileDetails = () => {
@@ -132,14 +124,15 @@ const AdminPasswordPage = () => {
     Service.client
       .patch(`/auth/admins/${adminId}`, passwordDetails)
       .then((res) => {
+        setLoading(false);
+        e.target.reset();
+        history.push("/admin/profile");
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
           message: "Password updated successfully!",
           severity: "success",
         });
-        setLoading(false);
-        e.target.reset();
       })
       .catch((err) => {
         setSbOpen(true);
@@ -160,7 +153,6 @@ const AdminPasswordPage = () => {
 
   return (
     <div>
-      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit} noValidate>
         <Paper elevation={0} className={classes.paper} autoComplete="off">
           <Grid container>

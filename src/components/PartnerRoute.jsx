@@ -21,7 +21,9 @@ const PartnerRoute = ({ render, path, user, ...rest }) => {
           }
         })
         .catch((err) => {
-          setAuth(false);
+          // token t1 and t2 expire
+          Service.removeCredentials();
+          setAuth(true);
           // return <Redirect to={`/404`} />;
         });
     } else {
@@ -32,6 +34,7 @@ const PartnerRoute = ({ render, path, user, ...rest }) => {
 
   useEffect(() => {
     checkUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(auth);

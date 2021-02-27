@@ -103,6 +103,7 @@ const ViewAllQuizzes = () => {
 
   useEffect(() => {
     getAllQuizzes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const MCQ = (question, index) => {

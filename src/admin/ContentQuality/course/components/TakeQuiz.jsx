@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
 import MCQ from "./MCQ";
 import MRQ from "./MRQ";
@@ -144,6 +144,8 @@ const TakeQuiz = ({
                     setProgress={setProgress}
                   />
                 );
+              } else {
+                return null;
               }
             } else {
               return null;

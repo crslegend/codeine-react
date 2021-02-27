@@ -8,20 +8,14 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import {
-  Avatar,
-  Button,
-  ListItem,
-  Typography,
-  Divider,
-} from "@material-ui/core";
+import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import PrivateRoute from "../../components/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
+import Toast from "../../components/Toast.js";
 import {
   Dashboard,
   Timeline,
   PublicOutlined,
-  Class,
   HelpOutline,
   LockOutlined,
   PersonOutlineOutlined,
@@ -100,6 +94,17 @@ const useStyles = makeStyles((theme) => ({
 const MemberLanding = () => {
   const classes = useStyles();
   const history = useHistory();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [user, setUser] = useState({
     first_name: "Member",
@@ -290,11 +295,13 @@ const MemberLanding = () => {
 
   useEffect(() => {
     getUserDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <BrowserRouter>
       <div className={classes.root}>
+        <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
         <Sidebar head={sidebarHead} list={sidebarList} />
         <main className={classes.content}>
@@ -333,7 +340,13 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/password"
-              render={() => <Password />}
+              render={() => (
+                <Password
+                  snackbar={snackbar}
+                  setSbOpen={setSbOpen}
+                  setSnackbar={setSnackbar}
+                />
+              )}
             />
             <PrivateRoute
               exact

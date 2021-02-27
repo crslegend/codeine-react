@@ -10,7 +10,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Grid,
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
@@ -176,6 +175,7 @@ const ViewAllCourses = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getAllCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

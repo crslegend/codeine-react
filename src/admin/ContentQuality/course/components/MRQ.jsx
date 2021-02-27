@@ -15,15 +15,8 @@ const MRQ = ({
   index,
   setPageNum,
   resultObj,
-  setResultObj,
   quizLength,
   quizType,
-  materialId,
-  progressArr,
-  setProgressArr,
-  courseId,
-  progress,
-  setProgress,
 }) => {
   //const classes = styles();
   console.log(question);
@@ -143,6 +136,7 @@ const MRQ = ({
     ) {
       loadPrevAnswer(resultObj.quiz_answers[index].responses);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(chosenOption);
