@@ -19,6 +19,8 @@ import ViewCourseDetails from "./member/course/ViewCourseDetails";
 import EnrollCourse from "./member/course/EnrollCourse";
 import BookConsult from "./member/course/BookConsult";
 import PaymentSuccess from "./components/PaymentSuccess";
+import ResetPassword from "./resetPassword/ResetPasswordPage";
+import NewPassword from "./resetPassword/NewPasswordPage";
 import AdminRoute from "./components/AdminRoute";
 import PartnerRoute from "./components/PartnerRoute";
 import MemberRoute from "./components/MemberRoute";
@@ -85,6 +87,14 @@ const App = () => {
       <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
       <Route path="/payment/success" component={PaymentSuccess} />
+      <Route
+        exact
+        path="/resetPassword/:id"
+        strict
+        sensitive
+        component={ResetPassword}
+      />
+      <Route path="/reset-password" component={NewPassword} />
       <Route component={NotFound} />
     </Switch>
   );

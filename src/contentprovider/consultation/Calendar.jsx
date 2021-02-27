@@ -27,14 +27,17 @@ const styles = {
   },
 };
 
-const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(({ children, classes, ...restProps }) => (
-  <div className={classes.toolbarRoot}>
-    <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-    <LinearProgress className={classes.progress} />
-  </div>
-));
+const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
+  ({ children, classes, ...restProps }) => (
+    <div className={classes.toolbarRoot}>
+      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+      <LinearProgress className={classes.progress} />
+    </div>
+  )
+);
 
-const usaTime = (date) => new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
+const usaTime = (date) =>
+  new Date(date).toLocaleString("en-US", { timeZone: "UTC" });
 
 const Calendar = ({
   consultations,
@@ -94,9 +97,16 @@ const Calendar = ({
           currentViewName={currentViewName}
           onCurrentViewNameChange={handleCurrentViewChange}
         />
-        <WeekView name="week" timeTableCellComponent={weekview} cellDuration={60} startDayHour={6} />
+        <WeekView
+          name="week"
+          timeTableCellComponent={weekview}
+          cellDuration={60}
+          startDayHour={6}
+        />
         <MonthView name="month" timeTableCellComponent={monthview} />
-        <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
+        <Toolbar
+          {...(loading ? { rootComponent: ToolbarWithLoading } : null)}
+        />
         <DateNavigator />
         <TodayButton />
         <Appointments appointmentComponent={AppointmentProps} />

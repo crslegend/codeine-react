@@ -98,7 +98,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
 
   const [chapterDetailsDialog, setChapterDetailsDialog] = useState(false);
 
+  // eslint-disable-next-line no-unused-vars
   const [editMode, setEditMode] = useState(false);
+
   const [editChapter, setEditChapter] = useState();
 
   const [deleteChapterDialog, setDeleteChapterDialog] = useState(false);
