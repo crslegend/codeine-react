@@ -55,6 +55,7 @@ const NewPasswordPage = () => {
   const location = useLocation();
 
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState("");
 
   const [passwordDetails, setPasswordDetails] = useState({
     reset_password: "",
@@ -74,26 +75,55 @@ const NewPasswordPage = () => {
 
   useEffect(() => {
     if (new URLSearchParams(location.search).get("token") !== null) {
-      const token = new URLSearchParams(location.search).get("token");
+      setToken(new URLSearchParams(location.search).get("token"));
       console.log("refresh toekn = " + token);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+    if (
+      passwordDetails.reset_password === "" ||
+      passwordDetails.repeat_password === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "All fields must be filled in.",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (passwordDetails.reset_password !== passwordDetails.repeat_password) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "New password must match Repeat password",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    let queryParams = {
+      token: token,
+    };
 
     // call admin login ednpoint
     Service.client
-      .get("/auth/refresh-token/", passwordDetails)
+      .patch("/auth/reset-password/", passwordDetails, {
+        params: { ...queryParams },
+      })
       .then((res) => {
         setLoading(false);
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message:
-            "Please check your email for instructions to reset your password",
+          message: "Password reset successfully! Please log in again",
           severity: "success",
         });
         //if member, go to member landing page
@@ -110,7 +140,7 @@ const NewPasswordPage = () => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "This email does not exist. Please try again." + err.message,
+          message: "PLease try again. Unknown error occured." + err.message,
           severity: "error",
         });
       });

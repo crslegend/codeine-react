@@ -92,6 +92,8 @@ const MemberLoginPage = () => {
       .then((res) => {
         console.log(res);
 
+        console.log("login = " + loginDetails);
+
         if (res.data.user.member) {
           Service.storeCredentials(res.data);
           if (state) {

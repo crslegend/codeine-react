@@ -81,7 +81,7 @@ const ResetPasswordPage = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(emailDetails);
+    console.log("reset = " + emailDetails);
 
     // call reset password endpoint
     Service.client
