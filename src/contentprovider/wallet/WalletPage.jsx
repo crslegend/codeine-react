@@ -596,7 +596,7 @@ const WalletPage = () => {
       >
         <DialogTitle>Add Bank Account</DialogTitle>
         <DialogContent>
-          <div>
+          <div style={{ marginBottom: "15px" }}>
             <FormControl fullWidth>
               <InputLabel>Bank Name*</InputLabel>
               <Select
@@ -621,7 +621,7 @@ const WalletPage = () => {
               </Select>
             </FormControl>
           </div>
-          <div>
+          <div style={{ marginBottom: "15px" }}>
             <TextField
               id="bank_account"
               label="Bank Account*"
@@ -635,7 +635,7 @@ const WalletPage = () => {
               }
             />
           </div>
-          <div>
+          <div style={{ marginBottom: "15px" }}>
             <TextField
               id="swift_code"
               label="Swift Code*"
@@ -649,7 +649,7 @@ const WalletPage = () => {
               }
             />
           </div>
-          <div>
+          <div style={{ marginBottom: "15px" }}>
             <FormControl fullWidth>
               <InputLabel>Bank Country*</InputLabel>
               <Select
@@ -671,7 +671,7 @@ const WalletPage = () => {
               </Select>
             </FormControl>
           </div>
-          <div>
+          <div style={{ marginBottom: "15px" }}>
             <TextField
               id="bank_address"
               label="Bank Address*"

@@ -563,25 +563,45 @@ const EnrollCourse = () => {
                                     >
                                       {material.title}
                                     </LinkMui>
-                                    <Button
-                                      variant="outlined"
-                                      style={{
-                                        marginLeft: "auto",
-                                        order: 2,
-                                        textTransform: "capitalize",
-                                        height: 25,
-                                      }}
-                                      href={
-                                        material.course_file.zip_file
-                                          ? material.course_file.zip_file
-                                          : material.course_file
-                                              .google_drive_url
-                                      }
-                                      target="_blank"
-                                      rel="noopener noreferrer"
+                                    <div
+                                      style={{ marginLeft: "auto", order: 2 }}
                                     >
-                                      Download File
-                                    </Button>
+                                      {material.course_file.zip_file &&
+                                        material.course_file.zip_file && (
+                                          <Button
+                                            variant="outlined"
+                                            style={{
+                                              textTransform: "capitalize",
+                                              height: 25,
+                                            }}
+                                            href={material.course_file.zip_file}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            Download File
+                                          </Button>
+                                        )}
+                                      {material.course_file.google_drive_url &&
+                                        material.course_file
+                                          .google_drive_url && (
+                                          <Button
+                                            variant="outlined"
+                                            style={{
+                                              textTransform: "capitalize",
+                                              height: 25,
+                                              marginLeft: "10px",
+                                            }}
+                                            href={
+                                              material.course_file
+                                                .google_drive_url
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            File URL
+                                          </Button>
+                                        )}
+                                    </div>
                                   </div>
                                   <Typography
                                     style={{

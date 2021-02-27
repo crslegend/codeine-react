@@ -154,7 +154,14 @@ const ShortAnswer = ({
           displayAnswer &&
           (correct ? (
             <Typography style={{ color: "green" }} variant="body2">
-              Correct answer. Well Done!
+              Correct answer. Well Done! The keyword(s) includes{" "}
+              {question.shortanswer.keywords.length > 0 &&
+                question.shortanswer.keywords.map((answer, index) => {
+                  if (index + 1 === question.shortanswer.keywords.length) {
+                    return `${answer}.`;
+                  }
+                  return `${answer}, `;
+                })}
             </Typography>
           ) : (
             <Typography style={{ color: "red" }} variant="body2">

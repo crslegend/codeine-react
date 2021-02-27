@@ -293,7 +293,11 @@ const CoursesPage = () => {
                             }}
                           >
                             <div
-                              style={{ width: "100%", marginBottom: "10px" }}
+                              style={{
+                                width: "100%",
+                                marginBottom: "10px",
+                                marginTop: "10px",
+                              }}
                             >
                               <Box display="flex" alignItems="center">
                                 <Box width="100%" mr={1}>
