@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Card, CardHeader, Avatar, Paper } from "@material-ui/core";
+import { CardHeader, Avatar, Paper } from "@material-ui/core";
 
-import profilePhoto from "../assets/placeholders/user-profile-placeholder.jpg";
+// import profilePhoto from "../assets/placeholders/user-profile-placeholder.jpg";
 
 const useStyles = makeStyles((theme) => ({
   cardRoot: {
@@ -29,8 +29,10 @@ const SmallMemberCard = ({ member }) => {
               aria-label={member.email}
               className={classes.avatar}
               size="small"
-              src={member.profile_photo ? member.profile_photo : profilePhoto}
-            />
+              src={member.profile_photo ? member.profile_photo : null}
+            >
+              {member.first_name.charAt(0)}
+            </Avatar>
           }
           title={`${member.first_name} ${member.last_name}`}
           subheader={member.email}
