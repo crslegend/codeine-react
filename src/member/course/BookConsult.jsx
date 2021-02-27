@@ -10,7 +10,6 @@ import {
   Paper,
   Typography,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
 } from "@material-ui/core";

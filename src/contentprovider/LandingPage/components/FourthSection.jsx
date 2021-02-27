@@ -39,7 +39,7 @@ const FourthSection = () => {
         className={classes.typography}
         style={{ fontWeight: 700 }}
       >
-        Become a content provider today!
+        Start teaching on Codeine today!
       </Typography>
       <Typography variant="h6" className={classes.typography}>
         Join our expanding online learning marketplace.
