@@ -48,7 +48,7 @@ const FourthSection = () => {
         className={classes.startButton}
         style={{ marginTop: "30px" }}
         component={Link}
-        to="/partner/login"
+        to="/partner/register"
       >
         Get Started
       </Button>
