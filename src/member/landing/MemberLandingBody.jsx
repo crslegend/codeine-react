@@ -17,8 +17,8 @@ const styles = makeStyles((theme) => ({
   },
   banner: {
     backgroundColor: "#437FC7",
-    height: "55vh",
-    paddingTop: "8vh",
+    height: "40vh",
+    paddingTop: "5vh",
     paddingLeft: "30px",
     [theme.breakpoints.down("sm")]: {
       paddingTop: "5vh",
@@ -67,19 +67,19 @@ const styles = makeStyles((theme) => ({
   },
   bannerphoto: {
     marginLeft: "45px",
-    height: "38vh",
+    height: "30vh",
     borderRadius: "50%",
     [theme.breakpoints.down("md")]: {
       marginLeft: "0.5vw",
       marginTop: "2vh",
-      height: "32vh",
+      height: "28vh",
     },
     [theme.breakpoints.down("sm")]: {
       marginLeft: "2vw",
-      height: "30vh",
+      height: "25vh",
     },
     [theme.breakpoints.down("xs")]: {
-      marginLeft: "35vw",
+      marginLeft: "30vw",
     },
   },
 }));
@@ -100,10 +100,10 @@ const MemberLandingBody = () => {
               Coding made addictive!
             </Typography>
             <Typography variant="h5" className={classes.bannersentence1}>
-              Kickstart your coding journey with Codeine. Join the
+              Kickstart your coding journey with Codeine.
             </Typography>
             <Typography variant="h5" className={classes.bannersentence2}>
-              millions who are learning to code!
+              Earn experience points to unlock new achievements!
             </Typography>
             <Button
               variant="contained"

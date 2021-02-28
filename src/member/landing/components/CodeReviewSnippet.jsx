@@ -4,14 +4,10 @@ import { Typography, Card, CardContent } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "80%",
     height: "20vh",
-    marginTop: "6vh",
+    marginTop: "3vh",
     borderRadius: 0,
     backgroundColor: "#000000",
-    [theme.breakpoints.down("sm")]: {
-      width: "90%",
-    },
   },
   snippets: {
     textAlign: "center",

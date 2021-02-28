@@ -14,10 +14,10 @@ import background from "../../assets/background.jpg";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "65px",
+    paddingTop: "60px",
     maxWidth: "100vw",
     paddingLeft: "30px",
-    paddingBottom: "30px",
+    paddingBottom: "10px",
     [theme.breakpoints.down("xs")]: {
       paddingTop: "160px",
       paddingLeft: "0px",
@@ -26,16 +26,10 @@ const styles = makeStyles((theme) => ({
   heading: {
     color: "#437FC7",
     lineHeight: "50px",
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "32px",
-    },
+    display: "inline-block",
   },
   cardroot: {
-    marginTop: "6vh",
-    width: "80%",
-    [theme.breakpoints.down("sm")]: {
-      width: "90%",
-    },
+    marginTop: "3vh",
   },
   cardmedia: {
     height: 0,
@@ -44,9 +38,12 @@ const styles = makeStyles((theme) => ({
   link: {
     textDecoration: "none",
     fontWeight: 600,
-    color: "#437FC7",
+    color: "#636363",
     align: "right",
-    fontSize: "24px",
+    fontSize: "20px",
+    "&:hover": {
+      color: "#164D8F",
+    },
   },
 }));
 
@@ -58,31 +55,28 @@ const FeaturedCourses = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography variant="h1" className={classes.heading}>
-            FEATURED
+          <Typography variant="h2" className={classes.heading}>
+            FEATURED COURSES
           </Typography>
-          <Typography
-            variant="h1"
-            style={{ display: "inline-block" }}
-            className={classes.heading}
-          >
-            COURSES
-          </Typography>
+
           <div
             style={{
-              display: "inline-block",
+              lineHeight: "45px",
               float: "right",
-              marginTop: "-25px",
             }}
           >
             <Link to="/courses" className={classes.link}>
-              VIEW ALL
-              <br />
-              COURSES
+              VIEW ALL COURSES
             </Link>
           </div>
-          <Grid container>
-            <Grid item xs={4}>
+          <Grid
+            container
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Grid item xs={3}>
               <Card className={classes.cardroot}>
                 <CardMedia
                   className={classes.cardmedia}
@@ -157,7 +151,7 @@ const FeaturedCourses = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <Card className={classes.cardroot}>
                 <CardMedia
                   className={classes.cardmedia}
@@ -232,7 +226,7 @@ const FeaturedCourses = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <Card className={classes.cardroot}>
                 <CardMedia
                   className={classes.cardmedia}

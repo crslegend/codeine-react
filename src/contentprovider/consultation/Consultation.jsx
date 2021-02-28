@@ -141,7 +141,9 @@ const Consultation = () => {
         setSelectedConsultation={setSelectedConsultation}
       />
       <Divider className={classes.divider} />
-      <ConsultationApplication />
+      <ConsultationApplication
+        handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+      />
       {selectedConsultation && (
         <ConsultationDetailsModal
           handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}

@@ -3,7 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import { useParams, useHistory } from "react-router-dom";
 import components from "./components/NavbarComponents";
-import { Grid, Button, IconButton, Paper, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Button,
+  IconButton,
+  Paper,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import { ArrowBack } from "@material-ui/icons";
@@ -108,6 +117,7 @@ const BookConsult = () => {
   const { id } = useParams();
 
   const [currentViewName, setCurrentViewName] = useState("week");
+  const [stripeDialog, setStripeDialog] = useState(false);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -166,8 +176,6 @@ const BookConsult = () => {
   };
 
   const handlePaymentDialog = (slot) => {
-    const decoded = jwt_decode(Cookies.get("t1"));
-
     if (slot.in_consult === true) {
       setSbOpen(true);
       setSnackbar({
@@ -184,6 +192,9 @@ const BookConsult = () => {
 
     // free consultation will not go through stripe
     if (slot.price_per_pax > 0) {
+      setStripeDialog(true);
+      const decoded = jwt_decode(Cookies.get("t1"));
+
       Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
         const emailAdd = res.data.email;
 
@@ -364,7 +375,7 @@ const BookConsult = () => {
               <WeekView
                 name="week"
                 timeTableCellComponent={weekview}
-                cellDuration={120}
+                cellDuration={60}
                 startDayHour={6}
               />
               <MonthView name="month" timeTableCellComponent={monthview} />
@@ -381,6 +392,10 @@ const BookConsult = () => {
         </Grid>
         <Grid item xs={1}></Grid>
       </Grid>
+      <Dialog style={{ textAlign: "center" }} open={stripeDialog}>
+        <DialogTitle>Please wait</DialogTitle>
+        <DialogContent>Redirecting to payment gateway...</DialogContent>
+      </Dialog>
     </div>
   );
 };

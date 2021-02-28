@@ -56,11 +56,11 @@ const ThirdSection = () => {
           className={classes.typography}
           style={{ paddingTop: "40px", fontWeight: 600 }}
         >
-          Earn money at home
+          Earn money from home
         </Typography>
         <Typography variant="h5" className={classes.typography}>
-          Earn money every time a student purchases your course.
-          <br /> Get paid monthly through your bank account!
+          Earn money every time a student books a consultation with you.
+          <br /> Get paid through your bank account!
         </Typography>
       </div>
       <div className={classes.rightCol}>

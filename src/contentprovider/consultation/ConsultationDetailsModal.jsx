@@ -85,7 +85,7 @@ const ConsultationDetailsModal = ({
     end_time: selectedConsultation.endDate,
   });
 
-  console.log(selectedConsultation);
+  // console.log(selectedConsultation);
 
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState({
@@ -335,11 +335,10 @@ const ConsultationDetailsModal = ({
 
   // handles deletion of consultation slot
   const handleDeleteConsultation = () => {
-    console.log();
     Service.client
       .patch(`/consultations/${slot.id}/cancel`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         handleGetAllConsultations();
       })
       .catch((error) => {
@@ -520,7 +519,9 @@ const ConsultationDetailsModal = ({
             </div>
           </DialogContent>
           <DialogContent style={{ paddingTop: 20, width: "30%" }}>
-            <DialogContentText>Applicants ({selectedConsultation.applications.length})</DialogContentText>
+            <DialogContentText>
+              Applicants ({selectedConsultation.applications.length}/{selectedConsultation.max_members})
+            </DialogContentText>
             <div style={{ overflow: "auto", maxHeight: "450px" }}>
               {selectedConsultation &&
                 selectedConsultation.applications.map((application) => (

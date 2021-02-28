@@ -16,10 +16,10 @@ import security from "../../assets/security.png";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "65px",
+    paddingTop: "50px",
     maxWidth: "100vw",
     paddingLeft: "30px",
-    paddingBottom: "30px",
+    paddingBottom: "20px",
     [theme.breakpoints.down("xs")]: {
       paddingLeft: "0px",
     },
@@ -32,7 +32,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   cardroot: {
-    marginTop: "6vh",
+    marginTop: "3vh",
   },
   cardmedia: {
     height: 0,
@@ -48,7 +48,7 @@ const Categories = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography variant="h1" className={classes.heading}>
+          <Typography variant="h2" className={classes.heading}>
             CATEGORIES
           </Typography>
           <Grid

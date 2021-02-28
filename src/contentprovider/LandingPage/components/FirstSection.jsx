@@ -68,9 +68,9 @@ const FirstSection = () => {
           className={classes.typography}
           style={{ paddingTop: "20px" }}
         >
-          Create an online video course and earn money
+          Create online coding course materials
           <br />
-          teaching people around the world.
+          that would benefit people around the world.
         </Typography>
         <Button
           className={classes.startButton}

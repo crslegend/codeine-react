@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "65px",
+    paddingTop: "50px",
     maxWidth: "100vw",
     paddingLeft: "30px",
-    paddingBottom: "30px",
+    paddingBottom: "20px",
     [theme.breakpoints.down("xs")]: {
       paddingLeft: "0px",
     },
@@ -16,30 +16,27 @@ const styles = makeStyles((theme) => ({
   heading: {
     color: "#437FC7",
     lineHeight: "50px",
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "32px",
-    },
+    display: "inline-block",
   },
   cardroot: {
     backgroundColor: "transparent",
-    marginTop: "6vh",
-    width: "80%",
-    [theme.breakpoints.down("sm")]: {
-      width: "90%",
-    },
+    marginTop: "3vh",
   },
   cardheading: {
     fontSize: "64px",
     color: "#CECECE",
-    marginLeft: "1vw",
+    marginLeft: "1px",
     lineHeight: "60px",
   },
   link: {
     textDecoration: "none",
     fontWeight: 600,
-    color: "#437FC7",
+    color: "#636363",
     align: "right",
-    fontSize: "24px",
+    fontSize: "20px",
+    "&:hover": {
+      color: "#164D8F",
+    },
   },
 }));
 
@@ -51,31 +48,24 @@ const FeaturedArticles = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography variant="h1" className={classes.heading}>
-            FEATURED
-          </Typography>
-          <Typography
-            variant="h1"
-            style={{ display: "inline-block" }}
-            className={classes.heading}
-          >
-            ARTICLES
+          <Typography variant="h2" className={classes.heading}>
+            FEATURED ARTICLES
           </Typography>
           <div
             style={{
-              display: "inline-block",
+              lineHeight: "48px",
               float: "right",
-              marginTop: "-25px",
             }}
           >
             <Link to="/" className={classes.link}>
-              VIEW ALL
-              <br />
-              ARTICLES
+              VIEW ALL ARTICLES
             </Link>
           </div>
-          <Grid container>
-            <Grid item xs={4}>
+          <Grid
+            container
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Grid item xs={3}>
               <Card elevation={0} className={classes.cardroot}>
                 <CardContent>
                   <Grid container>
@@ -107,7 +97,7 @@ const FeaturedArticles = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <Card elevation={0} className={classes.cardroot}>
                 <CardContent>
                   <Grid container>
@@ -139,7 +129,7 @@ const FeaturedArticles = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <Card elevation={0} className={classes.cardroot}>
                 <CardContent>
                   <Grid container>
