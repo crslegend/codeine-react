@@ -76,7 +76,7 @@ const FirstSection = () => {
           className={classes.startButton}
           style={{ marginTop: "40px", marginBottom: "40px" }}
           component={Link}
-          to="/partner/login"
+          to="/partner/register"
         >
           Start Now
         </Button>
