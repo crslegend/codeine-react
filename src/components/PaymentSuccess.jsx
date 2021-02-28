@@ -82,6 +82,7 @@ const PaymentSuccess = () => {
       const consultationId = new URLSearchParams(location.search).get(
         "consultation"
       );
+      console.log(consultationId);
 
       Service.client
         .post(`/consultations/${consultationId}/apply`)

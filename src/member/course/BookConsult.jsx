@@ -80,6 +80,16 @@ const checkMemberAlreadyBooked = (applications) => {
   return false;
 };
 
+const checkMemberAlreadyRejected = (applications) => {
+  const decoded = jwt_decode(Cookies.get("t1"));
+  for (let i = 0; i < applications.length; i++) {
+    if (decoded.user_id === applications[i].member.id) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
@@ -90,6 +100,7 @@ const mapAppointmentData = (item) => ({
   price_per_pax: item.price_per_pax,
   curr_members: item.confirmed_applications.length,
   in_consult: checkMemberAlreadyBooked(item.confirmed_applications),
+  is_rejected: checkMemberAlreadyRejected(item.rejected_applications),
 });
 
 const initialState = {
@@ -166,6 +177,7 @@ const BookConsult = () => {
       })
       .then((res) => {
         setTimeout(() => {
+          console.log(res.data);
           setConsultations(res.data);
           setLoading(false);
         }, 600);
@@ -180,6 +192,20 @@ const BookConsult = () => {
       setSbOpen(true);
       setSnackbar({
         message: "You have already signed up for this consultation slot.",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (slot.is_rejected === true) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "You are not permitted to sign up for this consultation slot.",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",

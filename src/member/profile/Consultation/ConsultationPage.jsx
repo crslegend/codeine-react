@@ -77,49 +77,63 @@ const Consultation = () => {
     setOpenCancelDialog(false);
   };
 
-  const handleCancel = (applicatio) => {
+  const handleCancel = (application) => {
     setOpenCancelDialog(false);
-    if (application.consultation_payments.length !== 0) {
-      cancelConsultation(application.id, application.consultation_payments);
-    } else {
-      cancelFreeConsultation(application.id);
-    }
+    cancelConsultation(application);
   };
 
-  const cancelFreeConsultation = (applicationId) => {
+  const cancelConsultation = (application) => {
     Service.client
-      .patch(`/consultations/application/${applicationId}/cancel`)
+      .patch(`/consultations/application/${application.id}/cancel`)
       .then((res) => {
-        setSbOpen(true);
+        if (application.consultation_payments.length > 0) {
+          Service.client
+            .post(
+              `/consultations/payment/${application.consultation_payments[0].id}/refund`
+            )
+            .then((res) => {
+              // console.log(res);
+              setSnackbar({
+                ...snackbar,
+                message: "You have been removed from consultation",
+                severity: "success",
+              });
+              setSbOpen(true);
+
+              getApplicationData();
+            })
+            .catch((err) => {
+              console.log(err);
+              setSnackbar({
+                ...snackbar,
+                message:
+                  "Something went wrong, contact Help Center for support",
+                severity: "error",
+              });
+              setSbOpen(true);
+            });
+        } else {
+          setSnackbar({
+            ...snackbar,
+            message: "You have been removed from consultation",
+            severity: "success",
+          });
+          setSbOpen(true);
+
+          getApplicationData();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
         setSnackbar({
           ...snackbar,
-          message: "You have been removed from this consultation",
-          severity: "success",
+          message: "Something went wrong, contact Help Center for support",
+          severity: "error",
         });
-        getApplicationData();
-      });
-  };
-
-  const cancelConsultation = (applicationId, transaction) => {
-    console.log(transaction[0].id);
-
-    Service.client
-      .post(`/consultations/payment/${transaction[0].id}/refund`)
-      .then((res) => {
-        console.log(res);
-      });
-
-    Service.client
-      .patch(`/consultations/application/${applicationId}/cancel`)
-      .then((res) => {
         setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "You have been removed from this consultation",
-          severity: "success",
-        });
-        getApplicationData();
       });
+
+    // console.log("Application is deleted");
   };
 
   const formatStatus = (status) => {
