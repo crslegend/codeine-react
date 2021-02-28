@@ -88,20 +88,9 @@ const FeaturedCourses = () => {
                     variant="h5"
                     style={{
                       fontWeight: "600",
-                      display: "inline-block",
                     }}
                   >
                     Title of course
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      fontWeight: "600",
-                      display: "inline-block",
-                      float: "right",
-                    }}
-                  >
-                    $55.00
                   </Typography>
                   <Typography variant="h6">Content Provider</Typography>
                   <Grid
@@ -163,20 +152,9 @@ const FeaturedCourses = () => {
                     variant="h5"
                     style={{
                       fontWeight: "600",
-                      display: "inline-block",
                     }}
                   >
                     Title of course
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      fontWeight: "600",
-                      display: "inline-block",
-                      float: "right",
-                    }}
-                  >
-                    $55.00
                   </Typography>
                   <Typography variant="h6">Content Provider</Typography>
                   <Grid
@@ -238,20 +216,9 @@ const FeaturedCourses = () => {
                     variant="h5"
                     style={{
                       fontWeight: "600",
-                      display: "inline-block",
                     }}
                   >
                     Title of course
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      fontWeight: "600",
-                      display: "inline-block",
-                      float: "right",
-                    }}
-                  >
-                    $55.00
                   </Typography>
                   <Typography variant="h6">Content Provider</Typography>
                   <Grid

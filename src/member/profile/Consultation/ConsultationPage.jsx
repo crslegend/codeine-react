@@ -9,6 +9,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
@@ -16,14 +20,28 @@ import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
-    height: "70px",
+    height: "80px",
     backgroundColor: "#437FC7",
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   cancelButton: {
     textTransform: "capitalize",
+  },
+  formControl: {
+    margin: "20px 0px",
+    marginRight: theme.spacing(9),
+    width: "250px",
+    maxHeight: 50,
+  },
+  inputLabel: {
+    top: "-5",
+    color: "#E3E3E3",
+    "&.Mui-focused": {
+      color: "#fff",
+    },
   },
 }));
 
@@ -42,16 +60,36 @@ const Consultation = () => {
     autoHideDuration: 3000,
   });
 
+  const [sortMethod, setSortMethod] = useState("");
+
   const [allConsultations, setAllConsultations] = useState([]);
   const [application, setApplication] = useState([]);
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
-  const getApplicationData = () => {
+  const getApplicationData = (sort) => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
       console.log(userid);
+
+      let queryParams = "";
+
+      if (sort !== undefined) {
+        if (sort === "upcoming") {
+          queryParams = {
+            is_upcoming: "True",
+          };
+        }
+        if (sort === "past") {
+          queryParams = {
+            is_past: "True",
+          };
+        }
+      }
+
       Service.client
-        .get("/consultations/member/applications")
+        .get("/consultations/member/applications", {
+          params: { ...queryParams },
+        })
         .then((res) => {
           setAllConsultations(res.data);
         })
@@ -64,6 +102,11 @@ const Consultation = () => {
   useEffect(() => {
     getApplicationData();
   }, [setAllConsultations]);
+
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    getApplicationData(e.target.value);
+  };
 
   console.log(allConsultations);
 
@@ -147,11 +190,11 @@ const Consultation = () => {
   };
 
   const consultationColumns = [
-    { field: "title", headerName: "Title", width: 280 },
+    { field: "title", headerName: "Title", width: 250 },
     {
       field: "meeting_link",
       headerName: "Meeting Link",
-      width: 380,
+      width: 350,
       renderCell: (params) => {
         //console.log(params.row.meeting_link);
         return (
@@ -174,7 +217,7 @@ const Consultation = () => {
     },
     {
       field: "partner",
-      headerName: "Created By",
+      headerName: "Instructor",
       width: 200,
     },
     {
@@ -198,10 +241,10 @@ const Consultation = () => {
           </Typography>
         </strong>
       ),
-      width: 140,
+      width: 120,
     },
     {
-      width: 180,
+      width: 160,
       field: "is_cancelled",
       headerName: "Cancel Booking",
       renderCell: (params) => (
@@ -269,9 +312,38 @@ const Consultation = () => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Box className={classes.heading}>
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          Upcoming Consultations
+          My Consultations
         </Typography>
+        <div>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel
+              style={{ top: -6, textUnderline: "none" }}
+              className={classes.inputLabel}
+            >
+              Filter by
+            </InputLabel>
+            <Select
+              label="Filter by"
+              value={sortMethod}
+              onChange={(event) => {
+                onSortChange(event);
+              }}
+              style={{
+                height: 47,
+                backgroundColor: "#fff",
+                color: "#000000",
+              }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
+              <MenuItem value="past">Past Consultations</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </Box>
+
       <div style={{ height: "700px", width: "100%" }}>
         <DataGrid
           rows={consultationRows}

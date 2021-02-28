@@ -48,7 +48,7 @@ const Payment = () => {
       field: "date",
       headerName: "Payment Date",
       type: "date",
-      width: 250,
+      width: 220,
     },
     {
       field: "title",
@@ -59,11 +59,11 @@ const Payment = () => {
       field: "consultation_date",
       headerName: "Consultation Date",
       type: "date",
-      width: 250,
+      width: 220,
     },
     {
       field: "partner",
-      headerName: "Consultation Held By",
+      headerName: "Instructor",
       width: 200,
     },
 
@@ -80,7 +80,7 @@ const Payment = () => {
           </Typography>
         </strong>
       ),
-      width: 200,
+      width: 170,
     },
     {
       field: "debit",

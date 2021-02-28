@@ -126,7 +126,7 @@ const WalletPage = () => {
     },
     {
       field: "member",
-      headerName: "Booked By",
+      headerName: "Applicant",
       width: 180,
     },
     {

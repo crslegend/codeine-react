@@ -14,6 +14,10 @@ import {
   Paper,
   Link,
   Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
@@ -63,6 +67,22 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.grey[700],
     margin: `${theme.spacing(2)}px 0`,
   },
+  searchSection: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    width: "100%",
+  },
+  formControl: {
+    marginLeft: theme.spacing(5),
+    width: "250px",
+    maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
+  },
 }));
 
 const getDate = (date) => format(new Date(date), "dd/MM/yyyy");
@@ -82,17 +102,22 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     },
     autoHideDuration: 3000,
   });
+  const currentDate = new Date().toISOString();
 
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState();
   const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
+
   const [searchValue, setSearchValue] = useState("");
+  const [sortMethod, setSortMethod] = useState("");
 
   useEffect(() => {
-    getApplicationData();
+    if (searchValue === "") {
+      getApplicationData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setApplications]);
+  }, [searchValue]);
 
   const handleClickOpenApplication = (e) => {
     setSelectedApplication(e.row);
@@ -113,13 +138,40 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     rejectConsultation(applicationId);
   };
 
-  const getApplicationData = () => {
+  const handleRequestSearch = () => {
+    getApplicationData();
+    setSortMethod("None");
+  };
+
+  const handleCancelSearch = () => {
+    setSearchValue("");
+    setSortMethod("None");
+  };
+
+  const getApplicationData = (sort) => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      // const userid = jwt_decode(Service.getJWT()).user_id;
-      // console.log(userid);
+      let queryParams = {
+        search: searchValue,
+      };
+
+      if (sort !== undefined) {
+        if (sort === "upcoming") {
+          queryParams = {
+            ...queryParams,
+            is_upcoming: "True",
+          };
+        }
+        if (sort === "past") {
+          queryParams = {
+            ...queryParams,
+            is_past: "True",
+          };
+        }
+      }
+
       Service.client
         .get("/consultations/partner/applications", {
-          params: { search: searchValue },
+          params: { ...queryParams },
         })
         .then((res) => {
           console.log(res.data);
@@ -138,7 +190,10 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     }
   };
 
-  // console.log(selectedApplication);
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    getApplicationData(e.target.value);
+  };
 
   const rejectConsultation = (applicationId) => {
     Service.client
@@ -146,7 +201,9 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
       .then((res) => {
         if (selectedApplication.consultation_payments.length > 0) {
           Service.client
-            .post(`/consultations/payment/${selectedApplication.consultation_payments[0].id}/refund`)
+            .post(
+              `/consultations/payment/${selectedApplication.consultation_payments[0].id}/refund`
+            )
             .then((res) => {
               // console.log(res);
               setSnackbar({
@@ -163,7 +220,8 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
               console.log(err);
               setSnackbar({
                 ...snackbar,
-                message: "Something went wrong, contact Help Center for support",
+                message:
+                  "Something went wrong, contact Help Center for support",
                 severity: "error",
               });
               setSbOpen(true);
@@ -206,13 +264,17 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
       field: "end_time",
       headerName: "Date",
       width: 150,
-      renderCell: (params) => <Typography variant="body2">{getDate(params.value)}</Typography>,
+      renderCell: (params) => (
+        <Typography variant="body2">{getDate(params.value)}</Typography>
+      ),
     },
     {
       field: "start_time",
       headerName: "Start Time",
       width: 150,
-      renderCell: (params) => <Typography variant="body2">{getTime(params.value)}</Typography>,
+      renderCell: (params) => (
+        <Typography variant="body2">{getTime(params.value)}</Typography>
+      ),
     },
     { field: "title", headerName: "Consultation", width: 200 },
     {
@@ -225,7 +287,10 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
       headerName: "Status",
       renderCell: (params) => (
         <strong>
-          <Typography variant="body2" style={{ color: params.value ? "red" : "green" }}>
+          <Typography
+            variant="body2"
+            style={{ color: params.value ? "red" : "green" }}
+          >
             {formatStatus(params.value)}
           </Typography>
         </strong>
@@ -240,27 +305,52 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
   return (
     <div style={{ minHeight: "70vh" }}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Typography variant="h4" style={{ marginBottom: "5px", color: "#437FC7" }}>
+      <Typography
+        variant="h4"
+        style={{ marginBottom: "5px", color: "#437FC7" }}
+      >
         Consultation Applications
       </Typography>
-      <Typography variant="body1" style={{ marginBottom: "30px", color: "#000000" }}>
+      <Typography
+        variant="body1"
+        style={{ marginBottom: "30px", color: "#000000" }}
+      >
         Click on the respective applications below to view application details.
       </Typography>
-      <Grid item xs={12}>
-        <SearchBar
-          style={{
-            width: "50%",
-            marginBottom: "30px",
-            elavation: "0px",
-          }}
-          placeholder="Search applications..."
-          value={searchValue}
-          onChange={(newValue) => setSearchValue(newValue)}
-          onRequestSearch={getApplicationData}
-          onCancelSearch={() => setSearchValue("")}
-        />
+      <Grid item xs={12} className={classes.searchSection}>
+        <div className={classes.searchBar}>
+          <SearchBar
+            placeholder="Search applications..."
+            value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
+            onRequestSearch={handleRequestSearch}
+            onCancelSearch={handleCancelSearch}
+            classes={{
+              input: classes.input,
+            }}
+          />
+        </div>
+        <div>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
+            <Select
+              label="Filter by"
+              value={sortMethod}
+              onChange={(event) => {
+                onSortChange(event);
+              }}
+              style={{ height: 47, backgroundColor: "#fff" }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
+              <MenuItem value="past">Past Applications</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </Grid>
-      <Paper style={{ height: "650px", width: "100%" }}>
+      <Paper style={{ height: "650px", width: "100%", marginTop: "20px" }}>
         <DataGrid
           rows={applications}
           columns={applicationsColumns.map((column) => ({
@@ -272,10 +362,18 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
         />
       </Paper>
 
-      <Dialog open={openApplicationDialog} onClose={handleCloseApplication} classes={{ paper: classes.dialogPaper }}>
+      <Dialog
+        open={openApplicationDialog}
+        onClose={handleCloseApplication}
+        classes={{ paper: classes.dialogPaper }}
+      >
         <DialogTitle id="form-dialog-title" className={classes.dialogTitle}>
           Details
-          <IconButton aria-label="close" className={classes.closeButton} onClick={handleCloseApplication}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={handleCloseApplication}
+          >
             <Close />
           </IconButton>
         </DialogTitle>
@@ -292,13 +390,24 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
                   : null
               }
             >
-              {selectedApplication && selectedApplication.member.first_name.charAt(0)}
+              {selectedApplication &&
+                selectedApplication.member.first_name.charAt(0)}
             </Avatar>
-            <Typography variant="h6" style={{ textAlign: "center", marginRight: "0 auto" }}>
+            <Typography
+              variant="h6"
+              style={{ textAlign: "center", marginRight: "0 auto" }}
+            >
               {selectedApplication && selectedApplication.member_name}
             </Typography>
-            <Link href={`mailto:${selectedApplication && selectedApplication.member.email}`}>
-              <Typography variant="body1" style={{ textAlign: "center", marginRight: "0 auto" }}>
+            <Link
+              href={`mailto:${
+                selectedApplication && selectedApplication.member.email
+              }`}
+            >
+              <Typography
+                variant="body1"
+                style={{ textAlign: "center", marginRight: "0 auto" }}
+              >
                 {selectedApplication && selectedApplication.member.email}
               </Typography>
             </Link>
@@ -310,13 +419,16 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
               <b>Date:</b> {getDate(selectedApplication.start_time)}
             </Typography>
             <Typography variant="body1">
-              <b>Time Slot:</b> {getTime(selectedApplication.start_time)} to {getTime(selectedApplication.end_time)}
+              <b>Time Slot:</b> {getTime(selectedApplication.start_time)} to{" "}
+              {getTime(selectedApplication.end_time)}
             </Typography>
             <Typography variant="body1">
               <b>Status:</b>
               <Chip
                 style={{
-                  backgroundColor: selectedApplication.is_rejected ? "red" : "green",
+                  backgroundColor: selectedApplication.is_rejected
+                    ? "red"
+                    : "green",
                   color: "#fff",
                   margin: 8,
                   padding: 8,
@@ -328,22 +440,38 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
         )}
         <DialogActions>
           <Button
-            disabled={selectedApplication && selectedApplication.is_rejected}
+            disabled={
+              (selectedApplication && selectedApplication.is_rejected) ||
+              (selectedApplication &&
+                selectedApplication.end_time < currentDate)
+            }
             className={classes.rejectButton}
             onClick={() => setOpenRejectDialog(true)}
           >
             Reject
           </Button>
-          <Button color="primary" href={selectedApplication && selectedApplication.meeting_link}>
+          <Button
+            color="primary"
+            href={selectedApplication && selectedApplication.meeting_link}
+          >
             Go To Meeting
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={openRejectDialog} onClose={handleCloseReject} maxWidth="xs" fullWidth={true}>
+      <Dialog
+        open={openRejectDialog}
+        onClose={handleCloseReject}
+        maxWidth="xs"
+        fullWidth={true}
+      >
         <DialogTitle>Confirm Rejection</DialogTitle>
         <DialogContent>This action cannot be undone.</DialogContent>
         <DialogActions style={{ margin: 8 }}>
-          <Button variant="outlined" color="primary" onClick={() => setOpenRejectDialog(false)}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setOpenRejectDialog(false)}
+          >
             Cancel
           </Button>
           <Button
