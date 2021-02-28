@@ -82,7 +82,7 @@ const ActivationPage = () => {
           variant="body1"
           style={{ paddingTop: "10px", textAlign: "center" }}
         >
-          Please log in to Codeine.
+          Please wait while we re-direct you to login.
         </Typography>
       </Paper>
     </div>
