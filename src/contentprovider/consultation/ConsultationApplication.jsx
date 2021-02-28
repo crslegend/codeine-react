@@ -402,12 +402,12 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
               <b>Status:</b>
               <Chip
                 style={{
-                  backgroundColor: selectedApplication.is_rejected ? "red" : "green",
+                  backgroundColor: formatColor(selectedApplication),
                   color: "#fff",
                   margin: 8,
                   padding: 8,
                 }}
-                label={formatStatus(selectedApplication.is_rejected)}
+                label={formatStatus(selectedApplication)}
               />
             </Typography>
           </DialogContent>
