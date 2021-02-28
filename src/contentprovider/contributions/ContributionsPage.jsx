@@ -68,6 +68,11 @@ const ContributionsPage = () => {
 
   const [latestContribution, setLatestContribution] = useState();
 
+  const [selectedTransaction, setSelectedTransaction] = useState();
+  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(
+    false
+  );
+
   const getAllContributions = async () => {
     Service.client
       .get(`/contributions`)
@@ -83,6 +88,7 @@ const ContributionsPage = () => {
             payment_status: res.data[i].payment_transaction.payment_status,
             timestamp: res.data[i].payment_transaction.timestamp,
             expiry_date: res.data[i].expiry_date,
+            month_duration: res.data[i].month_duration,
           };
           arr.push(obj);
         }
@@ -93,7 +99,7 @@ const ContributionsPage = () => {
 
     Service.client
       .get(`/contributions`, {
-        params: { latest: 1, payment_status: "COMPLETED" },
+        params: { latest: 1 },
       })
       .then((res) => {
         // console.log(res);
@@ -309,7 +315,57 @@ const ContributionsPage = () => {
       valueFormatter: (params) => formatDateToReturnWithoutTime(params.value),
       width: 150,
     },
+    {
+      field: "month_duration",
+      headerName: "No. of Months",
+      width: 150,
+      hide: true,
+    },
   ];
+
+  const handleClickOpen = (e) => {
+    console.log(e.row);
+    setSelectedTransaction(e.row);
+    setSelectedTransactionDialog(true);
+  };
+
+  const handleContinueTransaction = () => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    const month_duration = selectedTransaction.month_duration;
+    const amountToPay =
+      parseFloat(selectedTransaction.payment_amount) /
+      selectedTransaction.month_duration;
+
+    const cId = selectedTransaction.id;
+
+    // console.log(decoded);
+    Service.client
+      .get(`/auth/partners/${decoded.user_id}`)
+      .then((res) => {
+        const emailAdd = res.data.email;
+
+        handleStripePaymentGateway(
+          amountToPay,
+          emailAdd,
+          decoded.user_id,
+          month_duration,
+          cId
+        );
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteTransaction = () => {
+    Service.client
+      .delete(`contributions/${selectedTransaction.id}`)
+      .then((res) => {
+        // console.log(res);
+        setSelectedTransaction();
+        setSelectedTransactionDialog(false);
+        getAllContributions();
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Fragment>
@@ -365,7 +421,7 @@ const ContributionsPage = () => {
               {latestContribution.payment_transaction.payment_type}
             </Typography>
             <Typography variant="body1" style={{ paddingBottom: "5px" }}>
-              <span style={{ fontWeight: 600 }}>Payment Amount: </span>$
+              <span style={{ fontWeight: 600 }}>Contribution Amount: </span>$
               {latestContribution.payment_transaction.payment_amount}
             </Typography>
             <Typography variant="body1" style={{ paddingBottom: "5px" }}>
@@ -413,12 +469,19 @@ const ContributionsPage = () => {
         Contribution History
       </Typography>
 
-      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
+      <div
+        style={{
+          height: "calc(100vh - 250px)",
+          width: "100%",
+          marginBottom: "30px",
+        }}
+      >
         <DataGrid
           rows={contributions}
           columns={columns}
           pageSize={10}
           className={classes.dataGrid}
+          onRowClick={(e) => handleClickOpen(e)}
         />
       </div>
 
@@ -484,6 +547,92 @@ const ContributionsPage = () => {
             Proceed To Pay
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={selectedTransactionDialog}
+        onClose={() => {
+          setSelectedTransaction();
+          setSelectedTransactionDialog(false);
+        }}
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        {selectedTransaction &&
+        selectedTransaction &&
+        selectedTransaction.payment_status !== "COMPLETED" ? (
+          <Fragment>
+            <DialogTitle>Transaction Pending Completion</DialogTitle>
+            <DialogContent>This transaction is incomplete.</DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.dialogButtons}
+                onClick={() => {
+                  handleContinueTransaction();
+                }}
+              >
+                Continue To Payment
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => handleDeleteTransaction()}
+              >
+                Delete Transaction
+              </Button>
+            </DialogActions>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <DialogTitle>Transaction Complete</DialogTitle>
+            <DialogContent>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  style={{ marginRight: "10px", fontWeight: 600 }}
+                >
+                  Transaction Status:{" "}
+                </Typography>
+                <Chip
+                  label="Completed"
+                  style={{ backgroundColor: "green", color: "#fff" }}
+                  size="small"
+                />
+              </div>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Transaction ID: </span>
+                {selectedTransaction && selectedTransaction.id}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid On: </span>
+                {formatDate(
+                  selectedTransaction && selectedTransaction.timestamp
+                )}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid By: </span>
+                {selectedTransaction && selectedTransaction.payment_type}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Contribution Amount: </span>$
+                {selectedTransaction && selectedTransaction.payment_amount}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Expires On: </span>
+                {formatDateToReturnWithoutTime(
+                  selectedTransaction && selectedTransaction.expiry_date
+                )}
+              </Typography>
+            </DialogContent>
+          </Fragment>
+        )}
       </Dialog>
     </Fragment>
   );

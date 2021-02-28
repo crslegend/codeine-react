@@ -52,6 +52,9 @@ const styles = makeStyles((theme) => ({
     width: "100px",
     height: "100px",
   },
+  orgavatar: {
+    objectFit: "contain",
+  },
   border: {
     border: "1px solid",
     borderRadius: "5px",
@@ -910,6 +913,9 @@ const AdminHumanResourcePage = () => {
                           }
                           alt=""
                           className={classes.avatar}
+                          classes={{
+                            img: classes.orgavatar,
+                          }}
                         />
                       ) : (
                         <Avatar className={classes.avatar}>

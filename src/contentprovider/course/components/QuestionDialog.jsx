@@ -567,10 +567,7 @@ const QuestionDialog = ({
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
               </IconButton> */}
-              <IconButton
-                size="small"
-                onClick={() => setDeleteQuestionDialog(true)}
-              >
+              <IconButton size="small" onClick={() => setDeleteQuestionDialog(true)}>
                 <Delete />
               </IconButton>
             </div>
@@ -635,9 +632,7 @@ const QuestionDialog = ({
                     } else if (question.mrq) {
                       return question.mrq.marks ? question.mrq.marks : "";
                     } else if (question.shortanswer) {
-                      return question.shortanswer.marks
-                        ? question.shortanswer.marks
-                        : "";
+                      return question.shortanswer.marks ? question.shortanswer.marks : "";
                     }
                   }
                 })()}
@@ -650,16 +645,11 @@ const QuestionDialog = ({
             </Fragment>
           )}
 
-          {questionType &&
-            questionType !== "shortanswer" &&
-            (editMode || addQuestionDialog) && (
-              <Typography
-                variant="body1"
-                style={{ paddingTop: "10px", paddingBottom: "5px" }}
-              >
-                Enter option(s) below in the field
-              </Typography>
-            )}
+          {questionType && questionType !== "shortanswer" && (editMode || addQuestionDialog) && (
+            <Typography variant="body1" style={{ paddingTop: "10px", paddingBottom: "5px" }}>
+              Enter option(s) below in the field
+            </Typography>
+          )}
 
           {options &&
             options.map((option, index) => {
@@ -711,11 +701,7 @@ const QuestionDialog = ({
             })}
 
           {options && correctAnswer && questionType === "mcq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 value={correctAnswer}
@@ -734,11 +720,7 @@ const QuestionDialog = ({
           )}
 
           {options && correctAnswer && questionType === "mrq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 multiple
@@ -753,9 +735,7 @@ const QuestionDialog = ({
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
-                    <Checkbox
-                      checked={correctAnswer.includes(option) && option !== ""}
-                    />
+                    <Checkbox checked={correctAnswer.includes(option) && option !== ""} />
                     <ListItemText primary={option} />
                   </MenuItem>
                 ))}
@@ -769,9 +749,13 @@ const QuestionDialog = ({
                 <label htmlFor="shortanswer">
                   <Typography variant="body1">Keywords as Answers</Typography>
                 </label>
-                <Tooltip title="Separate the keywords with commas (eg. keyword 1,keyword 2)">
+                <Tooltip
+                  title={
+                    <Typography variant="body2">Separate the keywords with commas (eg. keyword 1,keyword 2)</Typography>
+                  }
+                >
                   <IconButton disableRipple size="small">
-                    <Help fontSize="small" />
+                    <Help fontSize="small" color="primary" />
                   </IconButton>
                 </Tooltip>
               </div>

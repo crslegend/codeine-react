@@ -72,10 +72,7 @@ const CourseDetailsDrawer = ({
   const [coursePic, setCoursePic] = useState();
 
   const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
 
@@ -170,7 +167,7 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           multiline
-          rows={2}
+          rows={4}
           inputProps={{ className: classes.textarea }}
           value={courseDetails && courseDetails.description}
           onChange={(e) =>
@@ -189,9 +186,11 @@ const CourseDetailsDrawer = ({
               Course Requirements (Required)
             </Typography>
           </label>
-          <Tooltip title="Separate the requirements with commas (eg. NodeJS,HTML,CSS)">
+          <Tooltip
+            title={<Typography variant="body2">Separate the requirements with commas (eg. NodeJS,HTML,CSS)</Typography>}
+          >
             <IconButton disableRipple size="small">
-              <Help fontSize="small" />
+              <Help fontSize="small" color="primary" />
             </IconButton>
           </Tooltip>
         </div>
@@ -218,9 +217,15 @@ const CourseDetailsDrawer = ({
               Course Learning Objectives (Required)
             </Typography>
           </label>
-          <Tooltip title="Separate the objectives with commas (eg. to gain knowledge,to make use of)">
+          <Tooltip
+            title={
+              <Typography variant="body2">
+                Separate the objectives with commas (eg. to gain knowledge,to make use of)
+              </Typography>
+            }
+          >
             <IconButton disableRipple size="small">
-              <Help fontSize="small" />
+              <Help fontSize="small" color="primary" />
             </IconButton>
           </Tooltip>
         </div>
@@ -231,7 +236,7 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           multiline
-          rows={2}
+          rows={4}
           inputProps={{ className: classes.textarea }}
           value={courseDetails && courseDetails.learning_objectives}
           onChange={(e) =>
@@ -244,12 +249,7 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ float: "right" }}
-          onClick={() => handleNextPage()}
-        >
+        <Button variant="contained" color="primary" style={{ float: "right" }} onClick={() => handleNextPage()}>
           Next
         </Button>
       </div>
@@ -468,9 +468,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="preview">
-          <Typography variant="body2">
-            Introduction Preview Video URL
-          </Typography>
+          <Typography variant="body2">Introduction Preview Video URL</Typography>
         </label>
         <TextField
           id="preview"
@@ -519,11 +517,7 @@ const CourseDetailsDrawer = ({
         <Button variant="contained" onClick={() => setDrawerPageNum(1)}>
           Back
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleSaveCourseDetails()}
-        >
+        <Button variant="contained" color="primary" onClick={() => handleSaveCourseDetails()}>
           Save
         </Button>
       </div>
@@ -533,15 +527,8 @@ const CourseDetailsDrawer = ({
   return (
     <Fragment>
       <div>
-        <Drawer
-          anchor="right"
-          open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          classes={{ paper: classes.drawer }}
-        >
-          <div className={classes.insideDrawer}>
-            {drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}
-          </div>
+        <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)} classes={{ paper: classes.drawer }}>
+          <div className={classes.insideDrawer}>{drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}</div>
         </Drawer>
       </div>
 

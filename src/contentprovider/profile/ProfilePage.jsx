@@ -40,10 +40,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   orgavatar: {
-    fontSize: "80px",
-    width: "150px",
-    height: "150px",
-    objectFit: "scale-down !important",
+    objectFit: "contain",
   },
   button: {
     marginTop: "20px",
@@ -613,10 +610,10 @@ const PartnerProfilePage = (props) => {
                                 profileDetails.partner.organization
                                   .organization_photo
                               }
-                              className={classes.orgavatar}
-                              style={{
-                                objectFit: "contain !important",
+                              classes={{
+                                img: classes.orgavatar,
                               }}
+                              className={classes.avatar}
                             />
                           </Badge>
                         )}
