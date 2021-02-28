@@ -138,7 +138,7 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     }
   };
 
-  console.log(selectedApplication);
+  // console.log(selectedApplication);
 
   const rejectConsultation = (applicationId) => {
     Service.client
