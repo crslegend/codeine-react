@@ -243,7 +243,7 @@ const ViewCourseDetails = () => {
           </IconButton>
         </div>
         <div className={classes.courseSection}>
-          <div style={{ flexGrow: 3 }}>
+          <div style={{ width: "60%" }}>
             <Typography
               variant="h3"
               style={{ fontWeight: 600, paddingBottom: "10px" }}
@@ -259,7 +259,7 @@ const ViewCourseDetails = () => {
               value={course && course.rating ? parseFloat(course.rating) : 0}
             />
             <Typography variant="body1" style={{ paddingBottom: "10px" }}>
-              Published on: {formatDate(course && course.published_date)}
+              Published On: {formatDate(course && course.published_date)}
             </Typography>
             <div style={{ display: "flex" }}>
               <Language style={{ marginRight: "10px" }} />
@@ -300,13 +300,17 @@ const ViewCourseDetails = () => {
                       key={index}
                       style={{
                         display: "flex",
-                        alignItems: "center",
+
                         marginBottom: "10px",
                       }}
                     >
                       <FiberManualRecord
                         fontSize="small"
-                        style={{ marginRight: "10px", fontSize: "13px" }}
+                        style={{
+                          marginRight: "10px",
+                          fontSize: "13px",
+                          marginTop: "6px",
+                        }}
                       />
                       <Typography>{objective}</Typography>
                     </div>
@@ -460,12 +464,15 @@ const ViewCourseDetails = () => {
                       key={index}
                       style={{
                         display: "flex",
-                        alignItems: "center",
                         marginBottom: "10px",
                       }}
                     >
                       <FiberManualRecord
-                        style={{ marginRight: "10px", fontSize: "13px" }}
+                        style={{
+                          marginRight: "10px",
+                          fontSize: "13px",
+                          marginTop: "6px",
+                        }}
                       />
                       <Typography>{requirement}</Typography>
                     </div>
@@ -570,7 +577,8 @@ const ViewCourseDetails = () => {
               )}
             </div>
           </div>
-          <div style={{ flexGrow: 1 }}>
+          <div style={{ width: "5%" }} />
+          <div style={{ width: "35%" }}>
             <div
               style={{ maxWidth: 400, margin: "auto", marginBottom: "20px" }}
             >

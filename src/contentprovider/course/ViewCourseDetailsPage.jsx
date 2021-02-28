@@ -362,13 +362,16 @@ const ViewCourseDetailsPage = () => {
                     key={index}
                     style={{
                       display: "flex",
-                      alignItems: "center",
                       marginBottom: "10px",
                     }}
                   >
                     <FiberManualRecord
                       fontSize="small"
-                      style={{ marginRight: "10px", fontSize: "13px" }}
+                      style={{
+                        marginRight: "10px",
+                        fontSize: "13px",
+                        marginTop: "6px",
+                      }}
                     />
                     <Typography>{objective}</Typography>
                   </div>
@@ -545,12 +548,15 @@ const ViewCourseDetailsPage = () => {
                     key={index}
                     style={{
                       display: "flex",
-                      alignItems: "center",
                       marginBottom: "10px",
                     }}
                   >
                     <FiberManualRecord
-                      style={{ marginRight: "10px", fontSize: "13px" }}
+                      style={{
+                        marginRight: "10px",
+                        fontSize: "13px",
+                        marginTop: "6px",
+                      }}
                     />
                     <Typography>{requirement}</Typography>
                   </div>
