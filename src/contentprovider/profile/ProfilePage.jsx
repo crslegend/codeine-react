@@ -34,10 +34,23 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  paper: {
+    height: "calc(100vh - 185px)",
+    padding: theme.spacing(3),
+    width: "100%",
+  },
   avatar: {
     fontSize: "80px",
     width: "200px",
     height: "200px",
+  },
+  button: {
+    marginTop: "20px",
+  },
+  avatar: {
+    fontSize: "80px",
+    width: "150px",
+    height: "150px",
   },
 }));
 
@@ -340,20 +353,63 @@ const PartnerProfilePage = (props) => {
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
             <Card className={classes.root}>
               <CardContent>
-                {/* <div>
-                  <TextField
-                    margin="normal"
-                    id="id"
-                    label="Profile ID"
-                    name="id"
-                    autoComplete="id"
-                    fullWidth
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    value={profileDetails.id}
-                  />
-                </div> */}
+                <div
+                  style={{
+                    marginBottom: "10px",
+                    marginTop: "10px",
+                    textAlign: "center",
+                  }}
+                >
+                  <a
+                    href="#profile_photo"
+                    onClick={(e) => setUploadOpen(true)}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {!profileDetails.profile_photo ? (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        className={classes.avatar}
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar className={classes.avatar}>
+                          {profileDetails.first_name.charAt(0)}
+                        </Avatar>
+                      </Badge>
+                    ) : (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar
+                          alt="Pic"
+                          src={profileDetails.profile_photo}
+                          className={classes.avatar}
+                        />
+                      </Badge>
+                    )}
+                  </a>
+                </div>
+
                 <div>
                   <TextField
                     margin="normal"
@@ -493,62 +549,76 @@ const PartnerProfilePage = (props) => {
           </form>
         </Grid>
 
-        <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-          <a
-            href="#profile_photo"
-            onClick={(e) => setUploadOpen(true)}
-            style={{ textDecoration: "none" }}
-          >
-            {!profileDetails.profile_photo ? (
-              <Badge
-                overlap="circle"
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                className={classes.avatar}
-                badgeContent={
-                  <SmallAvatar
-                    alt=""
-                    src={EditIcon}
-                    style={{ backgroundColor: "#d1d1d1" }}
-                  />
-                }
-              >
-                <Avatar className={classes.avatar}>
-                  {profileDetails.first_name.charAt(0)}
-                </Avatar>
-              </Badge>
-            ) : (
-              <Badge
-                overlap="circle"
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                badgeContent={
-                  <SmallAvatar
-                    alt=""
-                    src={EditIcon}
-                    style={{ backgroundColor: "#d1d1d1" }}
-                  />
-                }
-              >
-                <Avatar
-                  alt="Pic"
-                  src={profileDetails.profile_photo}
-                  className={classes.avatar}
-                />
-              </Badge>
-            )}
-          </a>
-        </Grid>
         <Grid item xs={12} style={{ marginBottom: "20px" }}></Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} style={{ marginBottom: "20px" }}>
           {profileDetails.partner.organization && (
             <Card className={classes.root}>
               <CardContent>
                 <div>
+                  {profileDetails.partner.organization && (
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <a
+                        href="#organisation_photo"
+                        onClick={(e) => setUploadOrgOpen(true)}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {!profileDetails.partner.organization
+                          .organization_photo ? (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            className={classes.avatar}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar className={classes.avatar}>
+                              {profileDetails.partner.organization.organization_name.charAt(
+                                0
+                              )}
+                            </Avatar>
+                          </Badge>
+                        ) : (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar
+                              alt="Pic"
+                              src={
+                                profileDetails.partner.organization
+                                  .organization_photo
+                              }
+                              className={classes.avatar}
+                            />
+                          </Badge>
+                        )}
+                      </a>
+                    </div>
+                  )}
                   <form
                     onSubmit={handleOrganizationSubmit}
                     noValidate
@@ -616,64 +686,6 @@ const PartnerProfilePage = (props) => {
                 </div>
               </CardContent>
             </Card>
-          )}
-        </Grid>
-        <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-          {profileDetails.partner.organization && (
-            <div>
-              <a
-                href="#organisation_photo"
-                onClick={(e) => setUploadOrgOpen(true)}
-                style={{ textDecoration: "none" }}
-              >
-                {!profileDetails.partner.organization.organization_photo ? (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    className={classes.avatar}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar className={classes.avatar}>
-                      {profileDetails.partner.organization.organization_name.charAt(
-                        0
-                      )}
-                    </Avatar>
-                  </Badge>
-                ) : (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar
-                      alt="Pic"
-                      src={
-                        profileDetails.partner.organization.organization_photo
-                      }
-                      className={classes.avatar}
-                    />
-                  </Badge>
-                )}
-              </a>
-            </div>
           )}
         </Grid>
       </Grid>

@@ -122,7 +122,7 @@ const ViewAllCourses = () => {
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
@@ -467,7 +467,7 @@ const ViewAllCourses = () => {
                             {course && course.title}
                           </Typography>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: "10px" }}>
                           {(() => {
                             if (course.is_deleted) {
                               return deletedChip;

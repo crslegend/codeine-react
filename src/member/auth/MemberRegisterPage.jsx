@@ -91,7 +91,9 @@ const MemberRegisterPage = () => {
     setLoading(true);
 
     Service.client
-      .post("/auth/members", registerDetails)
+      .post("/auth/members", registerDetails, {
+        timeout: 20000,
+      })
       .then((res) => {
         // console.log(res);
         setLoading(false);

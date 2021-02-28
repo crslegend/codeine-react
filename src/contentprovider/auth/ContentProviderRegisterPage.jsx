@@ -110,7 +110,9 @@ const ContentProviderRegisterPage = () => {
     if (company) {
       const data = { ...registerDetails, organization_name: company };
       Service.client
-        .post("/auth/partners", data)
+        .post("/auth/partners", data, {
+          timeout: 20000,
+        })
         .then((res) => {
           // console.log(res);
           setLoading(false);
@@ -122,7 +124,9 @@ const ContentProviderRegisterPage = () => {
         });
     } else {
       Service.client
-        .post("/auth/partners", registerDetails)
+        .post("/auth/partners", registerDetails, {
+          timeout: 20000,
+        })
         .then((res) => {
           // console.log(res);
           setLoading(false);

@@ -204,7 +204,7 @@ const EnrollCourse = () => {
       })
       .catch((err) => console.log(err));
   };
-  console.log(course);
+  // console.log(course);
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -494,7 +494,10 @@ const EnrollCourse = () => {
             <div style={{ width: "100%", marginBottom: "20px" }}>
               <Box display="flex" alignItems="center">
                 <Box width="100%" mr={1}>
-                  <LinearProgress variant="determinate" value={progress} />
+                  <LinearProgress
+                    variant="determinate"
+                    value={parseInt(progress)}
+                  />
                 </Box>
                 <Box minWidth={35}>
                   <Typography variant="body2">
@@ -831,7 +834,10 @@ const EnrollCourse = () => {
                                       }}
                                     >
                                       {material.quiz &&
-                                        material.quiz.questions.length +
+                                      material.quiz.questions.length === 1
+                                        ? material.quiz.questions.length +
+                                          ` Question`
+                                        : material.quiz.questions.length +
                                           ` Questions`}
                                     </Typography>
                                   </div>
@@ -874,20 +880,39 @@ const EnrollCourse = () => {
                   padding: "20px",
                 }}
               >
-                <Assignment fontSize="small" style={{ marginRight: "5px" }} />
-                <LinkMui
-                  className={classes.linkMui}
-                  onClick={() => {
-                    handleChosenCourseMaterial({
-                      material_type: "FINAL",
-                      quiz: course.assessment,
-                      id: course.assessment.id,
-                    });
-                    handleCreateQuizResult(course.assessment.id);
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    minWidth: "100%",
                   }}
                 >
-                  Attempt Final Quiz
-                </LinkMui>
+                  <Assignment fontSize="small" style={{ marginRight: "5px" }} />
+                  <LinkMui
+                    className={classes.linkMui}
+                    onClick={() => {
+                      handleChosenCourseMaterial({
+                        material_type: "FINAL",
+                        quiz: course.assessment,
+                        id: course.assessment.id,
+                      });
+                      handleCreateQuizResult(course.assessment.id);
+                    }}
+                  >
+                    Attempt Final Quiz
+                  </LinkMui>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      marginLeft: "auto",
+                      order: 2,
+                    }}
+                  >
+                    {course && course && course.assessment
+                      ? course.assessment.questions.length + ` Question`
+                      : ` Questions`}
+                  </Typography>
+                </div>
               </AccordionDetails>
             </Accordion>
           </div>

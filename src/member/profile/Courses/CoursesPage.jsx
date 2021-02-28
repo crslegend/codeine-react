@@ -101,7 +101,7 @@ const CoursesPage = () => {
 
   const [progressArr, setProgressArr] = useState([]);
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
