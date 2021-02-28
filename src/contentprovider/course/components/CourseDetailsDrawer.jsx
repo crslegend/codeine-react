@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "10px",
     height: 30,
   },
+  textarea: {
+    resize: "both",
+  },
 }));
 
 const CourseDetailsDrawer = ({
@@ -168,6 +171,7 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={2}
+          inputProps={{ className: classes.textarea }}
           value={courseDetails && courseDetails.description}
           onChange={(e) =>
             setCourseDetails({
@@ -228,6 +232,7 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={2}
+          inputProps={{ className: classes.textarea }}
           value={courseDetails && courseDetails.learning_objectives}
           onChange={(e) =>
             setCourseDetails({
