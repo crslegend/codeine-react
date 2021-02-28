@@ -112,7 +112,7 @@ const ViewAllCourses = () => {
     let queryParams = {
       search: searchValue,
     };
-    console.log(sort);
+    //console.log(sort);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -153,7 +153,7 @@ const ViewAllCourses = () => {
       })
       .catch((err) => console.log(err));
   };
-  console.log(allCourses);
+  //console.log(allCourses);
 
   const onSortChange = (e) => {
     setSortMethod(e.target.value);
