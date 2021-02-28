@@ -469,7 +469,13 @@ const ContributionsPage = () => {
         Contribution History
       </Typography>
 
-      <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
+      <div
+        style={{
+          height: "calc(100vh - 250px)",
+          width: "100%",
+          marginBottom: "30px",
+        }}
+      >
         <DataGrid
           rows={contributions}
           columns={columns}
@@ -552,23 +558,81 @@ const ContributionsPage = () => {
         maxWidth="sm"
         fullWidth={true}
       >
-        <DialogTitle>Transaction Pending Completion</DialogTitle>
-        <DialogContent>This transaction is incomplete.</DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.dialogButtons}
-            onClick={() => {
-              handleContinueTransaction();
-            }}
-          >
-            Continue To Payment
-          </Button>
-          <Button variant="contained" onClick={() => handleDeleteTransaction()}>
-            Delete Transaction
-          </Button>
-        </DialogActions>
+        {selectedTransaction &&
+        selectedTransaction &&
+        selectedTransaction.payment_status !== "COMPLETED" ? (
+          <Fragment>
+            <DialogTitle>Transaction Pending Completion</DialogTitle>
+            <DialogContent>This transaction is incomplete.</DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.dialogButtons}
+                onClick={() => {
+                  handleContinueTransaction();
+                }}
+              >
+                Continue To Payment
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => handleDeleteTransaction()}
+              >
+                Delete Transaction
+              </Button>
+            </DialogActions>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <DialogTitle>Transaction Complete</DialogTitle>
+            <DialogContent>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  style={{ marginRight: "10px", fontWeight: 600 }}
+                >
+                  Transaction Status:{" "}
+                </Typography>
+                <Chip
+                  label="Completed"
+                  style={{ backgroundColor: "green", color: "#fff" }}
+                  size="small"
+                />
+              </div>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Transaction ID: </span>
+                {selectedTransaction && selectedTransaction.id}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid On: </span>
+                {formatDate(
+                  selectedTransaction && selectedTransaction.timestamp
+                )}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid By: </span>
+                {selectedTransaction && selectedTransaction.payment_type}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Contribution Amount: </span>$
+                {selectedTransaction && selectedTransaction.payment_amount}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Expires On: </span>
+                {formatDateToReturnWithoutTime(
+                  selectedTransaction && selectedTransaction.expiry_date
+                )}
+              </Typography>
+            </DialogContent>
+          </Fragment>
+        )}
       </Dialog>
     </Fragment>
   );
