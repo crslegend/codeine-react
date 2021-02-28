@@ -467,7 +467,7 @@ const ViewAllCourses = () => {
                             {course && course.title}
                           </Typography>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: "10px" }}>
                           {(() => {
                             if (course.is_deleted) {
                               return deletedChip;
