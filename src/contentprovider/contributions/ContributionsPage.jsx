@@ -73,6 +73,8 @@ const ContributionsPage = () => {
     false
   );
 
+  const [existPending, setExistPending] = useState(false);
+
   const getAllContributions = async () => {
     Service.client
       .get(`/contributions`)
@@ -80,7 +82,14 @@ const ContributionsPage = () => {
         // console.log(res);
 
         let arr = [];
+        let checkExist = false;
         for (let i = 0; i < res.data.length; i++) {
+          if (
+            res.data[i].payment_transaction.payment_status ===
+            "PENDING_COMPLETION"
+          ) {
+            checkExist = true;
+          }
           const obj = {
             id: res.data[i].id,
             payment_amount: res.data[i].payment_transaction.payment_amount,
@@ -92,7 +101,7 @@ const ContributionsPage = () => {
           };
           arr.push(obj);
         }
-
+        setExistPending(checkExist);
         setContributions(arr);
       })
       .catch((err) => console.log(err));
@@ -378,6 +387,7 @@ const ContributionsPage = () => {
           startIcon={<Add />}
           className={classes.addButton}
           onClick={() => setPaymentDialog(true)}
+          disabled={existPending}
         >
           Make A Contribution
         </Button>
@@ -566,20 +576,19 @@ const ContributionsPage = () => {
             <DialogContent>This transaction is incomplete.</DialogContent>
             <DialogActions>
               <Button
-                variant="contained"
-                color="primary"
+                onClick={() => handleDeleteTransaction()}
+                style={{ backgroundColor: "#C74343", color: "#fff" }}
+              >
+                Delete Transaction
+              </Button>
+              <Button
+                style={{ backgroundColor: "#437FC7", color: "#fff" }}
                 className={classes.dialogButtons}
                 onClick={() => {
                   handleContinueTransaction();
                 }}
               >
                 Continue To Payment
-              </Button>
-              <Button
-                variant="contained"
-                onClick={() => handleDeleteTransaction()}
-              >
-                Delete Transaction
               </Button>
             </DialogActions>
           </Fragment>
