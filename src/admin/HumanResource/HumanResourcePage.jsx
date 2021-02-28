@@ -212,7 +212,9 @@ const AdminHumanResourcePage = () => {
   const [searchValueMember, setSearchValueMember] = useState("");
 
   const getMemberData = () => {
-    let queryParams;
+    let queryParams = {
+      search: searchValueMember,
+    };
     let active = "active";
     let deactived = "deactivated";
     if (searchValueMember !== "") {
@@ -237,6 +239,7 @@ const AdminHumanResourcePage = () => {
         .then((res) => {
           setAllMemberList(res.data);
           memberRows = allMembersList;
+          console.log("called member: " + searchValueMember);
         })
         .catch((err) => {
           //setProfile(null);
@@ -384,7 +387,9 @@ const AdminHumanResourcePage = () => {
   let partnerRows = allPartnerList;
 
   const getPartnerData = () => {
-    let queryParams;
+    let queryParams = {
+      search: searchValuePartner,
+    };
     let active = "active";
     let deactived = "deactivated";
     if (searchValuePartner !== "") {
@@ -408,6 +413,7 @@ const AdminHumanResourcePage = () => {
         .get(`/auth/partners`, { params: { ...queryParams } })
         .then((res) => {
           setAllPartnerList(res.data);
+          console.log(res.data);
           partnerRows = allPartnerList;
         })
         .catch((err) => {
@@ -551,7 +557,9 @@ const AdminHumanResourcePage = () => {
   }
 
   const getAdminData = () => {
-    let queryParams;
+    let queryParams = {
+      search: searchValueAdmin,
+    };
     let active = "active";
     let deactived = "deactivated";
     if (searchValueAdmin !== "") {
@@ -594,6 +602,20 @@ const AdminHumanResourcePage = () => {
     setOpenAdminDialog(false);
   };
 
+  useEffect(() => {
+    if (searchValueAdmin === "") {
+      getAdminData();
+    }
+    if (searchValueMember === "") {
+      getMemberData();
+      console.log("empty search value: " + searchValueMember);
+    }
+    if (searchValuePartner === "") {
+      getPartnerData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValueMember, searchValueAdmin, searchValuePartner]);
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -632,8 +654,8 @@ const AdminHumanResourcePage = () => {
               placeholder="Search members"
               value={searchValueMember}
               onChange={(newValue) => setSearchValueMember(newValue)}
-              onRequestSearch={getMemberData}
               onCancelSearch={() => setSearchValueMember("")}
+              onRequestSearch={getMemberData}
             />
           </Grid>
 

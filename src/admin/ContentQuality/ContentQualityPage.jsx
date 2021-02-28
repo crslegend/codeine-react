@@ -127,10 +127,19 @@ const AdminContentQualityPage = () => {
     }
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     getCourseData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getCourseData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
 
   // Member data
   const [allCourseList, setAllCourseList] = useState([]);
@@ -216,39 +225,6 @@ const AdminContentQualityPage = () => {
         });
     }
   };
-
-  // const handleCourseStatus = (e, status, courseid) => {
-  //   e.preventDefault();
-  //   if (status) {
-  //     Service.client.patch(`/courses/${courseid}/deactivate`).then(() => {
-  //       Service.client.get(`/courses/${courseid}`).then((res1) => {
-  //         setSelectedCourse(res1.data);
-  //         getCourseData();
-  //       });
-  //     });
-  //     setSbOpen(true);
-  //     setSnackbar({
-  //       ...snackbar,
-  //       message: "Course is deactivated",
-  //       severity: "success",
-  //     });
-
-  //     console.log("course is deactivated");
-  //   } else {
-  //     Service.client.patch(`/course/${courseid}/activate`).then((res) => {
-  //       setSelectedCourse(res.data);
-  //       getCourseData();
-  //     });
-  //     setSbOpen(true);
-  //     setSnackbar({
-  //       ...snackbar,
-  //       message: "Course is activated",
-  //       severity: "success",
-  //     });
-  //   }
-  // };
-
-  const [searchValue, setSearchValue] = useState("");
 
   return (
     <div className={classes.root}>
