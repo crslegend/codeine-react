@@ -175,24 +175,6 @@ const ContentProviderRegisterPage = () => {
             <TextField
               variant="outlined"
               margin="dense"
-              placeholder="Email"
-              value={registerDetails && registerDetails.email}
-              onChange={handleEmailChange}
-              type="email"
-              required
-            />
-            <TextField
-              variant="outlined"
-              margin="dense"
-              placeholder="Password"
-              value={registerDetails && registerDetails.password}
-              onChange={handlePasswordChange}
-              type="password"
-              required
-            />
-            <TextField
-              variant="outlined"
-              margin="dense"
               placeholder="First Name"
               value={registerDetails && registerDetails.first_name}
               onChange={handleNameChange}
@@ -209,6 +191,24 @@ const ContentProviderRegisterPage = () => {
               type="text"
               required
               name="last"
+            />
+            <TextField
+              variant="outlined"
+              margin="dense"
+              placeholder="Email"
+              value={registerDetails && registerDetails.email}
+              onChange={handleEmailChange}
+              type="email"
+              required
+            />
+            <TextField
+              variant="outlined"
+              margin="dense"
+              placeholder="Password"
+              value={registerDetails && registerDetails.password}
+              onChange={handlePasswordChange}
+              type="password"
+              required
             />
             {enterprise && (
               <TextField
