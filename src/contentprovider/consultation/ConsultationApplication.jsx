@@ -102,6 +102,7 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     },
     autoHideDuration: 3000,
   });
+  const currentDate = new Date().toISOString();
 
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState();
@@ -137,17 +138,40 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     rejectConsultation(applicationId);
   };
 
+  const handleRequestSearch = () => {
+    getApplicationData();
+    setSortMethod("None");
+  };
+
   const handleCancelSearch = () => {
     setSearchValue("");
+    setSortMethod("None");
   };
 
   const getApplicationData = (sort) => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      // const userid = jwt_decode(Service.getJWT()).user_id;
-      // console.log(userid);
+      let queryParams = {
+        search: searchValue,
+      };
+
+      if (sort !== undefined) {
+        if (sort === "upcoming") {
+          queryParams = {
+            ...queryParams,
+            is_upcoming: "True",
+          };
+        }
+        if (sort === "past") {
+          queryParams = {
+            ...queryParams,
+            is_past: "True",
+          };
+        }
+      }
+
       Service.client
         .get("/consultations/partner/applications", {
-          params: { search: searchValue },
+          params: { ...queryParams },
         })
         .then((res) => {
           console.log(res.data);
@@ -299,7 +323,7 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
             placeholder="Search applications..."
             value={searchValue}
             onChange={(newValue) => setSearchValue(newValue)}
-            onRequestSearch={getApplicationData}
+            onRequestSearch={handleRequestSearch}
             onCancelSearch={handleCancelSearch}
             classes={{
               input: classes.input,
@@ -308,9 +332,9 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
         </div>
         <div>
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
+            <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
             <Select
-              label="Sort By"
+              label="Filter by"
               value={sortMethod}
               onChange={(event) => {
                 onSortChange(event);
@@ -416,7 +440,11 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
         )}
         <DialogActions>
           <Button
-            disabled={selectedApplication && selectedApplication.is_rejected}
+            disabled={
+              (selectedApplication && selectedApplication.is_rejected) ||
+              (selectedApplication &&
+                selectedApplication.end_time < currentDate)
+            }
             className={classes.rejectButton}
             onClick={() => setOpenRejectDialog(true)}
           >

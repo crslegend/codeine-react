@@ -20,20 +20,28 @@ import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
-    height: "70px",
+    height: "80px",
     backgroundColor: "#437FC7",
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   cancelButton: {
     textTransform: "capitalize",
   },
   formControl: {
-    margin: "20px 20px",
-    //marginLeft: theme.spacing(5),
+    margin: "20px 0px",
+    marginRight: theme.spacing(9),
     width: "250px",
     maxHeight: 50,
+  },
+  inputLabel: {
+    top: "-5",
+    color: "#E3E3E3",
+    "&.Mui-focused": {
+      color: "#fff",
+    },
   },
 }));
 
@@ -62,8 +70,26 @@ const Consultation = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
       console.log(userid);
+
+      let queryParams = "";
+
+      if (sort !== undefined) {
+        if (sort === "upcoming") {
+          queryParams = {
+            is_upcoming: "True",
+          };
+        }
+        if (sort === "past") {
+          queryParams = {
+            is_past: "True",
+          };
+        }
+      }
+
       Service.client
-        .get("/consultations/member/applications")
+        .get("/consultations/member/applications", {
+          params: { ...queryParams },
+        })
         .then((res) => {
           setAllConsultations(res.data);
         })
@@ -288,26 +314,36 @@ const Consultation = () => {
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
           My Consultations
         </Typography>
+        <div>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel
+              style={{ top: -6, textUnderline: "none" }}
+              className={classes.inputLabel}
+            >
+              Filter by
+            </InputLabel>
+            <Select
+              label="Filter by"
+              value={sortMethod}
+              onChange={(event) => {
+                onSortChange(event);
+              }}
+              style={{
+                height: 47,
+                backgroundColor: "#fff",
+                color: "#000000",
+              }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
+              <MenuItem value="past">Past Consultations</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </Box>
-      <div style={{ textAlign: "right" }}>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
-          <Select
-            label="Sort By"
-            value={sortMethod}
-            onChange={(event) => {
-              onSortChange(event);
-            }}
-            style={{ height: 47, backgroundColor: "#fff" }}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
-            <MenuItem value="past">Past Consultations</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
+
       <div style={{ height: "700px", width: "100%" }}>
         <DataGrid
           rows={consultationRows}
