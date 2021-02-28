@@ -64,7 +64,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const appendTimeToDate = (date, time) => {
-  return new Date(formatISO(date, { representation: "date" }) + "T" + formatISO(time, { representation: "time" }));
+  return new Date(
+    formatISO(date, { representation: "date" }) +
+      "T" +
+      formatISO(time, { representation: "time" })
+  );
 };
 
 const ConsultationDetailsModal = ({
@@ -103,7 +107,10 @@ const ConsultationDetailsModal = ({
   });
 
   const handleRecurringDays = (event) => {
-    setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
+    setRecurringDays({
+      ...recurringDays,
+      [event.target.name]: event.target.checked,
+    });
   };
   const [bankDialog, setBankDialog] = useState(false);
   const [cancelDialog, setCancelDialog] = useState(false);
@@ -355,15 +362,26 @@ const ConsultationDetailsModal = ({
         aria-labelledby="form-dialog-title"
         classes={{ paper: classes.dialogPaper }}
       >
-        <DialogTitle id="form-dialog-title">Consultation Slot Details</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          Consultation Slot Details
+        </DialogTitle>
         <div style={{ display: "flex" }}>
           <DialogContent style={{ width: "70%" }}>
-            <DialogContentText>Edit here to update your consultation slot.</DialogContentText>
+            <DialogContentText>
+              {" "}
+              {slot.end_time < currentDate
+                ? "Consulation has ended and cannot be edited or deleted."
+                : "Edit here to update your consultation slot."}
+            </DialogContentText>
             <div style={{ width: "100%" }}>
               <FormControlLabel
                 style={{ margin: 0 }}
                 control={
-                  <Switch color="primary" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} />
+                  <Switch
+                    color="primary"
+                    checked={recurring}
+                    onChange={(e) => setRecurring(e.target.checked)}
+                  />
                 }
                 label="Recurring"
                 labelPlacement="start"
@@ -373,31 +391,73 @@ const ConsultationDetailsModal = ({
               <Fragment>
                 <FormGroup row>
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.mon} onChange={handleRecurringDays} name="mon" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.mon}
+                        onChange={handleRecurringDays}
+                        name="mon"
+                      />
+                    }
                     label="Mon"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.tue} onChange={handleRecurringDays} name="tue" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.tue}
+                        onChange={handleRecurringDays}
+                        name="tue"
+                      />
+                    }
                     label="Tue"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.wed} onChange={handleRecurringDays} name="wed" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.wed}
+                        onChange={handleRecurringDays}
+                        name="wed"
+                      />
+                    }
                     label="Wed"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.thu} onChange={handleRecurringDays} name="thu" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.thu}
+                        onChange={handleRecurringDays}
+                        name="thu"
+                      />
+                    }
                     label="Thu"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.fri} onChange={handleRecurringDays} name="fri" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.fri}
+                        onChange={handleRecurringDays}
+                        name="fri"
+                      />
+                    }
                     label="Fri"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.sat} onChange={handleRecurringDays} name="sat" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.sat}
+                        onChange={handleRecurringDays}
+                        name="sat"
+                      />
+                    }
                     label="Sat"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={recurringDays.sun} onChange={handleRecurringDays} name="sun" />}
+                    control={
+                      <Checkbox
+                        checked={recurringDays.sun}
+                        onChange={handleRecurringDays}
+                        name="sun"
+                      />
+                    }
                     label="Sun"
                   />
                 </FormGroup>
@@ -445,7 +505,9 @@ const ConsultationDetailsModal = ({
               <FormHelperText error>{timeError.errorMessage}</FormHelperText>
             ) : (
               <FormHelperText>
-                Duration: {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}mins
+                Duration:{" "}
+                {(slot.end_time.getTime() - slot.start_time.getTime()) / 60000}
+                mins
               </FormHelperText>
             )}
             <TextField
@@ -512,7 +574,9 @@ const ConsultationDetailsModal = ({
                 type="number"
                 InputProps={{
                   inputProps: { min: 0 },
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
                 }}
                 helperText="Changes here will only apply to new signups"
               />
@@ -520,25 +584,52 @@ const ConsultationDetailsModal = ({
           </DialogContent>
           <DialogContent style={{ paddingTop: 20, width: "30%" }}>
             <DialogContentText>
-              Applicants ({selectedConsultation.applications.length}/{selectedConsultation.max_members})
+              Applicants ({selectedConsultation.applications.length}/
+              {selectedConsultation.max_members})
             </DialogContentText>
             <div style={{ overflow: "auto", maxHeight: "450px" }}>
               {selectedConsultation &&
                 selectedConsultation.applications.map((application) => (
-                  <SmallMemberCard key={application.member.email} member={application.member} />
+                  <SmallMemberCard
+                    key={application.member.email}
+                    member={application.member}
+                  />
                 ))}
             </div>
           </DialogContent>
         </div>
-        <DialogActions style={{ justifyContent: "space-between", marginTop: 40 }}>
-          <Button onClick={() => setCancelDialog(true)} className={classes.errorButton} variant="outlined">
+        <DialogActions
+          style={{ justifyContent: "space-between", marginTop: 40 }}
+        >
+          <Button
+            onClick={() => setCancelDialog(true)}
+            disabled={slot.end_time < currentDate}
+            className={classes.errorButton}
+            variant="outlined"
+          >
             Cancel Consult
           </Button>
-          <div style={{ width: "30%", display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={handleClose} color="primary" variant="outlined" style={{ marginRight: 8 }}>
+          <div
+            style={{
+              width: "30%",
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              onClick={handleClose}
+              color="primary"
+              variant="outlined"
+              style={{ marginRight: 8 }}
+            >
               Back
             </Button>
-            <Button onClick={validateInput} color="primary" variant="contained">
+            <Button
+              onClick={validateInput}
+              disabled={slot.end_time < currentDate}
+              color="primary"
+              variant="contained"
+            >
               Update
             </Button>
           </div>
@@ -556,16 +647,24 @@ const ConsultationDetailsModal = ({
           <Button onClick={handleBankAlertClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={(e) => history.push(`/partner/home/earnings`)} color="primary">
+          <Button
+            onClick={(e) => history.push(`/partner/home/earnings`)}
+            color="primary"
+          >
             Proceed
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={updateDialog} onClose={handleUpdateDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
+      <Dialog
+        open={updateDialog}
+        onClose={handleUpdateDialogClose}
+        classes={{ paper: classes.secondaryDialogPaper }}
+      >
         <DialogTitle>Confirm Update</DialogTitle>
         <DialogContent>
-          <b>Price changes will only apply to new applicants.</b>Your students will be notified of the updates.
+          <b>Price changes will only apply to new applicants.</b>Your students
+          will be notified of the updates.
           <br />
           <br />
           Press "Proceed" to confirm.
@@ -574,17 +673,25 @@ const ConsultationDetailsModal = ({
           <Button onClick={handleUpdateDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button
+            disabled={slot.end_time < currentDate}
+            onClick={handleSubmit}
+            color="primary"
+          >
             Proceed
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={cancelDialog} onClose={handleCancelDialogClose} classes={{ paper: classes.secondaryDialogPaper }}>
+      <Dialog
+        open={cancelDialog}
+        onClose={handleCancelDialogClose}
+        classes={{ paper: classes.secondaryDialogPaper }}
+      >
         <DialogTitle>Confirm Cancellation</DialogTitle>
         <DialogContent>
-          This action is <b>non reversible</b>. Your students will be notified of the cancellation and will be refunded
-          (if applicable).
+          This action is <b>non reversible</b>. Your students will be notified
+          of the cancellation and will be refunded (if applicable).
           <br />
           <br />
           Press "Proceed" to confirm.
@@ -593,7 +700,11 @@ const ConsultationDetailsModal = ({
           <Button onClick={handleCancelDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDeleteConsultation} color="primary">
+          <Button
+            onClick={handleDeleteConsultation}
+            disabled={slot.end_time < currentDate}
+            color="primary"
+          >
             Proceed
           </Button>
         </DialogActions>
