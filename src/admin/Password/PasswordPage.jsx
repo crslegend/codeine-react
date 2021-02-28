@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
   withoutLabel: {
     marginTop: theme.spacing(3),
   },
+  button: {
+    marginTop: "20px",
+  },
 }));
 
 const AdminPasswordPage = (props) => {

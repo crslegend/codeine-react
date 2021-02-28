@@ -34,11 +34,16 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     height: "calc(100vh - 115px)",
+    padding: theme.spacing(3),
+    width: "100%",
   },
   avatar: {
     fontSize: "80px",
-    width: "200px",
-    height: "200px",
+    width: "150px",
+    height: "150px",
+  },
+  button: {
+    marginTop: "20px",
   },
 }));
 
@@ -229,8 +234,59 @@ const AdminProfilePage = (props) => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
-          <Grid container>
-            <Grid item xs={6}>
+          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+            <div style={{ width: "20%", marginLeft: "30px" }}>
+              <br />
+              <a
+                href="#profile_photo"
+                onClick={(e) => setUploadOpen(true)}
+                style={{ textDecoration: "none" }}
+              >
+                {!profileDetails.profile_photo ? (
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    className={classes.avatar}
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar className={classes.avatar}>
+                      {profileDetails.email.charAt(0)}
+                    </Avatar>
+                  </Badge>
+                ) : (
+                  <Badge
+                    overlap="circle"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    badgeContent={
+                      <SmallAvatar
+                        alt=""
+                        src={EditIcon}
+                        style={{ backgroundColor: "#d1d1d1" }}
+                      />
+                    }
+                  >
+                    <Avatar
+                      alt="Pic"
+                      src={profileDetails.profile_photo}
+                      className={classes.avatar}
+                    />
+                  </Badge>
+                )}
+              </a>
+            </div>
+            <div style={{ width: "50%" }}>
               {/* <div>
                 <TextField
                   margin="normal"
@@ -332,59 +388,8 @@ const AdminProfilePage = (props) => {
                   "Save Changes"
                 )}
               </Button>
-            </Grid>
-            <Grid item xs={6} style={{ paddingLeft: "25px" }}>
-              <br />
-              <a
-                href="#profile_photo"
-                onClick={(e) => setUploadOpen(true)}
-                style={{ textDecoration: "none" }}
-              >
-                {!profileDetails.profile_photo ? (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    className={classes.avatar}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar className={classes.avatar}>
-                      {profileDetails.email.charAt(0)}
-                    </Avatar>
-                  </Badge>
-                ) : (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar
-                      alt="Pic"
-                      src={profileDetails.profile_photo}
-                      className={classes.avatar}
-                    />
-                  </Badge>
-                )}
-              </a>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
         </Paper>
       </form>
 
