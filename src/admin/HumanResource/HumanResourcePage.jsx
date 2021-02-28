@@ -749,8 +749,7 @@ const AdminHumanResourcePage = () => {
                 </Typography>
               </Grid>
             </Grid>
-            <br /> <br />
-            <Typography variant="h6">Achievements</Typography>
+            <br />
           </DialogContent>
           <DialogActions>
             <Button
