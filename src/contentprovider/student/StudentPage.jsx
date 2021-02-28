@@ -95,11 +95,22 @@ const StudentPage = () => {
     return "";
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     getAllStudents();
     getAllCoursesByPartner();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getAllStudents();
+      getAllCoursesByPartner();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
 
   // Enrolled Course Student data
   const [allStudentList, setAllStudentList] = useState([]);
@@ -209,7 +220,6 @@ const StudentPage = () => {
 
   let studentRows = removeDuplicateStudent(allStudentList);
 
-  const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("None");
 
   const getAllStudents = (filter) => {

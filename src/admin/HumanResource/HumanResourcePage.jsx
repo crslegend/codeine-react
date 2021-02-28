@@ -605,14 +605,16 @@ const AdminHumanResourcePage = () => {
   useEffect(() => {
     if (searchValueAdmin === "") {
       getAdminData();
-    } else if (searchValueMember === "") {
+    }
+    if (searchValueMember === "") {
       getMemberData();
-    } else if (searchValuePartner === "") {
+      console.log("empty search value: " + searchValueMember);
+    }
+    if (searchValuePartner === "") {
       getPartnerData();
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValueAdmin, searchValueMember, searchValuePartner]);
+  }, [searchValueMember, searchValueAdmin, searchValuePartner]);
 
   return (
     <Fragment>
