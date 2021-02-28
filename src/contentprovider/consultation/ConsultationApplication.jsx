@@ -114,20 +114,15 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
   };
 
   const getApplicationData = () => {
-    let queryParams;
-
-    queryParams = {
-      search: searchValue,
-    };
-
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       // const userid = jwt_decode(Service.getJWT()).user_id;
       // console.log(userid);
       Service.client
         .get("/consultations/partner/applications", {
-          params: { ...queryParams },
+          params: { search: searchValue },
         })
         .then((res) => {
+          console.log(res.data);
           setApplications(
             res.data.map((application) => ({
               ...application.consultation_slot,
@@ -143,19 +138,57 @@ const ConsultationApplication = ({ handleGetAllConsultations }) => {
     }
   };
 
-  // console.log(applications);
+  // console.log(selectedApplication);
 
   const rejectConsultation = (applicationId) => {
-    Service.client.patch(`/consultations/application/${applicationId}/reject`).then((res) => {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Member is removed from consultation",
-        severity: "success",
+    Service.client
+      .patch(`/consultations/application/${applicationId}/reject`)
+      .then((res) => {
+        if (selectedApplication.consultation_payments.length > 0) {
+          Service.client
+            .post(`/consultations/payment/${selectedApplication.consultation_payments[0].id}/refund`)
+            .then((res) => {
+              // console.log(res);
+              setSnackbar({
+                ...snackbar,
+                message: "Member has been removed from consultation",
+                severity: "success",
+              });
+              setSbOpen(true);
+
+              getApplicationData();
+              handleGetAllConsultations();
+            })
+            .catch((err) => {
+              console.log(err);
+              setSnackbar({
+                ...snackbar,
+                message: "Something went wrong, contact Help Center for support",
+                severity: "error",
+              });
+              setSbOpen(true);
+            });
+        } else {
+          setSnackbar({
+            ...snackbar,
+            message: "Member has been removed from consultation",
+            severity: "success",
+          });
+          setSbOpen(true);
+
+          getApplicationData();
+          handleGetAllConsultations();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setSnackbar({
+          ...snackbar,
+          message: "Something went wrong, contact Help Center for support",
+          severity: "error",
+        });
+        setSbOpen(true);
       });
-      getApplicationData();
-      handleGetAllConsultations();
-    });
 
     // console.log("Application is deleted");
   };
