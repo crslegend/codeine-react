@@ -120,13 +120,21 @@ const MemberLoginPage = () => {
         setSbOpen(true);
 
         if (err.response.status === 403) {
-          setSbOpen(true);
-          setSnackbar({
-            ...snackbar,
-            message:
-              "Your account is still unactivated, please check your email to activate your account.",
-            severity: "error",
-          });
+          if (err.response.data.is_suspended) {
+            setSnackbar({
+              ...snackbar,
+              message:
+                "Your account has been deactivated, please contact Codeine for help to activate your account.",
+              severity: "error",
+            });
+          } else {
+            setSnackbar({
+              ...snackbar,
+              message:
+                "Your account is still being reviewed by us, please try again later.",
+              severity: "error",
+            });
+          }
         } else {
           setSbOpen(true);
           setSnackbar({

@@ -108,16 +108,25 @@ const ContentProviderLoginPage = () => {
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        console.log(err.response);
 
         if (err.response.status === 403) {
           setSbOpen(true);
-          setSnackbar({
-            ...snackbar,
-            message:
-              "Your account is still being reviewed by our admin, please try again later.",
-            severity: "error",
-          });
+          if (err.response.data.is_suspended) {
+            setSnackbar({
+              ...snackbar,
+              message:
+                "Your account has been deactivated, please contact Codeine for help to activate your account.",
+              severity: "error",
+            });
+          } else {
+            setSnackbar({
+              ...snackbar,
+              message:
+                "Your account is still being reviewed by us, please try again later.",
+              severity: "error",
+            });
+          }
         } else {
           setSbOpen(true);
           setSnackbar({
