@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ResetPasswordPage = (props) => {
   const classes = useStyles();
-  // const history = useHistory();
+  //const history = useHistory();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
@@ -82,7 +82,7 @@ const ResetPasswordPage = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(emailDetails);
+    console.log("reset = " + emailDetails);
 
     // call reset password endpoint
     axios
@@ -100,12 +100,13 @@ const ResetPasswordPage = (props) => {
         });
         //if member, go to member landing page
         // if (id === "member") {
-        //   //setTimeout(() => history.push("/"), 2000);
-        //   history.push("/");
+        //   setTimeout(() => history.push("/"), 2000);
+        //   //history.push("/");
         // } else if (id === "partner") {
+        //   setTimeout(() => history.push("/partner"), 2000);
         //   history.push("/partner");
         // } else {
-        //   history.push("/admin/login");
+        //   setTimeout(() => history.push("/admin/login"), 2000);
         // }
       })
       .catch((err) => {
