@@ -247,31 +247,50 @@ const AdminHumanResourcePage = () => {
   const handleMemberStatus = (e, status, memberid) => {
     e.preventDefault();
     if (status) {
-      Service.client.delete(`/auth/members/${memberid}`).then(() => {
-        Service.client.get(`auth/members/${memberid}`).then((res1) => {
-          setSelectedMember(res1.data);
-          getMemberData();
-        });
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Member is deactivated",
-        severity: "success",
-      });
-
-      console.log("member is deactivated");
+      Service.client
+        .patch(`/auth/members/${memberid}/suspend`, { is_suspended: true })
+        .then(() => {
+          Service.client
+            .delete(`auth/members/${memberid}`)
+            .then(() => {
+              Service.client
+                .get(`auth/members/${memberid}`)
+                .then((res1) => {
+                  setSbOpen(true);
+                  setSnackbar({
+                    ...snackbar,
+                    message: "Member is deactivated",
+                    severity: "success",
+                  });
+                  setSelectedMember(res1.data);
+                  getMemberData();
+                })
+                .catch();
+            })
+            .catch();
+        })
+        .catch();
     } else {
-      Service.client.post(`/auth/members/${memberid}/activate`).then((res) => {
-        setSelectedMember(res.data);
-        getMemberData();
-      });
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Member is activated",
-        severity: "success",
-      });
+      Service.client
+        .post(`/auth/members/${memberid}/activate`)
+        .then((res) => {
+          Service.client
+            .patch(`/auth/members/${memberid}/suspend`, {
+              is_suspended: false,
+            })
+            .then(() => {
+              setSbOpen(true);
+              setSnackbar({
+                ...snackbar,
+                message: "Member is activated",
+                severity: "success",
+              });
+              setSelectedMember(res.data);
+              getMemberData();
+            })
+            .catch();
+        })
+        .catch();
     }
   };
 
@@ -400,37 +419,48 @@ const AdminHumanResourcePage = () => {
   const handlePartnerStatus = (e, status, partnerid) => {
     if (status) {
       Service.client.delete(`/auth/partners/${partnerid}`).then((res) => {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Partner is deactivated",
-          severity: "success",
-        });
         Service.client
-          .get(`/auth/partners/${partnerid}`)
-          .then((res) => {
-            setSelectedPartner(res.data);
+          .patch(`/auth/partners/${partnerid}/suspend`, {
+            is_suspended: true,
           })
-          .catch((err) => {});
+          .then(() => {
+            Service.client
+              .get(`/auth/partners/${partnerid}`)
+              .then((res) => {
+                setSelectedPartner(res.data);
+                setSbOpen(true);
+                setSnackbar({
+                  ...snackbar,
+                  message: "Partner is deactivated",
+                  severity: "success",
+                });
+              })
+              .catch();
+          })
+          .catch();
         getPartnerData();
       });
-
-      console.log("Partner is deactivated");
     } else {
       Service.client
         .post(`/auth/partners/${partnerid}/activate`)
         .then((res) => {
-          setSbOpen(true);
-          setSnackbar({
-            ...snackbar,
-            message: "Partner is activated",
-            severity: "success",
-          });
-          setSelectedPartner(res.data);
-          getPartnerData();
-        });
-
-      console.log("Partner is activated");
+          Service.client
+            .patch(`/auth/partners/${partnerid}/suspend`, {
+              is_suspended: false,
+            })
+            .then(() => {
+              setSbOpen(true);
+              setSnackbar({
+                ...snackbar,
+                message: "Partner is activated",
+                severity: "success",
+              });
+              setSelectedPartner(res.data);
+              getPartnerData();
+            })
+            .catch();
+        })
+        .catch();
     }
   };
 
