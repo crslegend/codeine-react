@@ -65,6 +65,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
     borderColor: "#437FC7",
     marginTop: "15px",
+    overflow: "auto",
+    height: "230px",
   },
 }));
 
@@ -407,7 +409,7 @@ const StudentPage = () => {
                     color: "#437FC7",
                   }}
                 >
-                  <strong>Enrolled Course</strong>
+                  <strong>Enrolled Course(s)</strong>
                 </Typography>
 
                 <List>
