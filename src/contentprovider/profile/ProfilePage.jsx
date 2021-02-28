@@ -489,7 +489,6 @@ const PartnerProfilePage = (props) => {
                     label="Job Title"
                     name="job_title"
                     autoComplete="job_title"
-                    required
                     fullWidth
                     value={profileDetails.partner.job_title}
                     onChange={(event) =>
@@ -511,7 +510,6 @@ const PartnerProfilePage = (props) => {
                     label="Bio"
                     name="bio"
                     autoComplete="bio"
-                    required
                     fullWidth
                     multiline
                     rows={3}
