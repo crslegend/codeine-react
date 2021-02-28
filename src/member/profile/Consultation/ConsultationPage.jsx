@@ -269,7 +269,7 @@ const Consultation = () => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Box className={classes.heading}>
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Consultations
+          Upcoming Consultations
         </Typography>
       </Box>
       <div style={{ height: "700px", width: "100%" }}>
