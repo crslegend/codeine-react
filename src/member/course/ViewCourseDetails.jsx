@@ -625,7 +625,7 @@ const ViewCourseDetails = () => {
                       <Box width="100%" mr={1}>
                         <LinearProgress
                           variant="determinate"
-                          value={progress}
+                          value={parseInt(progress)}
                         />
                       </Box>
                       <Box minWidth={35}>
