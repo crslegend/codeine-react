@@ -127,6 +127,14 @@ const AdminContentQualityPage = () => {
     }
   };
 
+  const formatActDel = (status) => {
+    if (status) {
+      return "Deleted";
+    } else {
+      return "-";
+    }
+  };
+
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
@@ -163,12 +171,12 @@ const AdminContentQualityPage = () => {
       headerName: "Published Status",
       renderCell: (params) => (
         <strong>
-          {params.value ? (
-            <Typography style={{ color: "green" }}>
+          {!params.value ? (
+            <Typography style={{ color: "red" }}>
               {formatPubStatus(params.value)}
             </Typography>
           ) : (
-            <Typography style={{ color: "red" }}>
+            <Typography style={{ color: "green" }}>
               {formatPubStatus(params.value)}
             </Typography>
           )}
@@ -197,7 +205,19 @@ const AdminContentQualityPage = () => {
     {
       field: "is_deleted",
       headerName: "Deleted Status",
-      valueFormatter: (params) => formatStatus(params.value),
+      renderCell: (params) => (
+        <strong>
+          {params.value ? (
+            <Typography style={{ color: "red" }}>
+              {formatActDel(params.value)}
+            </Typography>
+          ) : (
+            <Typography style={{ color: "green" }}>
+              {formatActDel(params.value)}
+            </Typography>
+          )}
+        </strong>
+      ),
       width: 170,
     },
   ];

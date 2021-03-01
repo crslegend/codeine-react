@@ -124,9 +124,7 @@ const ViewAllCourses = () => {
 
   const itemsPerPage = 5;
   const [page, setPage] = useState(1);
-  const [noOfPages, setNumPages] = useState(
-    Math.ceil(allCourses.length / itemsPerPage)
-  );
+  const [noOfPages, setNumPages] = useState(Math.ceil(allCourses.length / itemsPerPage));
 
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [unpublishDialog, setUnpublishDialog] = useState(false);
@@ -300,10 +298,7 @@ const ViewAllCourses = () => {
       } else {
         // check course materials in each chapter
         for (let i = 0; i < chapters.length; i++) {
-          if (
-            !chapters[i].course_materials ||
-            chapters[i].course_materials.length === 0
-          ) {
+          if (!chapters[i].course_materials || chapters[i].course_materials.length === 0) {
             return false;
           } else {
             for (let j = 0; j < chapters[i].course_materials.length; j++) {
@@ -340,28 +335,12 @@ const ViewAllCourses = () => {
     return "";
   };
 
-  const publishedChip = (
-    <Chip
-      label="Published"
-      size="small"
-      style={{ color: "#fff", backgroundColor: "green" }}
-    />
-  );
+  const publishedChip = <Chip label="Published" size="small" style={{ color: "#fff", backgroundColor: "green" }} />;
   const unPublishedChip = <Chip label="Not Published" size="small" />;
-  const deletedChip = (
-    <Chip
-      label="Deleted"
-      size="small"
-      style={{ color: "#fff", backgroundColor: "#C74343" }}
-    />
-  );
+  const deletedChip = <Chip label="Deleted" size="small" style={{ color: "#fff", backgroundColor: "#C74343" }} />;
 
   const notReadyChip = (
-    <Chip
-      label="Incomplete Course"
-      size="small"
-      style={{ color: "#000", backgroundColor: "#fcdb03" }}
-    />
+    <Chip label="Incomplete Course" size="small" style={{ color: "#000", backgroundColor: "#fcdb03" }} />
   );
 
   return (
@@ -406,12 +385,8 @@ const ViewAllCourses = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="-published_date">
-                Published Date (Most Recent)
-              </MenuItem>
-              <MenuItem value="published_date">
-                Published Date (Least Recent)
-              </MenuItem>
+              <MenuItem value="-published_date">Published Date (Most Recent)</MenuItem>
+              <MenuItem value="published_date">Published Date (Least Recent)</MenuItem>
               <MenuItem value="rating">Rating (Ascending)</MenuItem>
               <MenuItem value="-rating">Rating (Descending)</MenuItem>
             </Select>
@@ -420,170 +395,158 @@ const ViewAllCourses = () => {
       </div>
       <div className={classes.courses}>
         {allCourses && allCourses.length > 0 ? (
-          allCourses
-            .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-            .map((course, index) => {
-              return (
-                <Card key={index} className={classes.card}>
-                  <CardActionArea
-                    onClick={() =>
-                      history.push(`/partner/home/content/view/${course.id}`)
-                    }
-                    className={classes.cardActionArea}
-                    disabled={course && course.is_deleted}
-                    style={{
-                      opacity: course && course.is_deleted && 0.5,
-                      height: "90%",
-                    }}
-                  >
-                    <div style={{ height: "30%" }}>
-                      <CardMedia
-                        className={classes.media}
-                        image={course && course.thumbnail}
-                        title={course && course.title}
-                      />
-                    </div>
-                    <div style={{ height: "5%" }} />
-                    <div style={{ height: "65%" }}>
-                      <CardContent
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          height: "100%",
-                          marginTop: "10px",
-                          paddingBottom: "5px",
-                        }}
-                      >
-                        <div>
+          allCourses.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((course, index) => {
+            return (
+              <Card key={index} className={classes.card}>
+                <CardActionArea
+                  onClick={() => history.push(`/partner/home/content/view/${course.id}`)}
+                  className={classes.cardActionArea}
+                  disabled={course && course.is_deleted}
+                  style={{
+                    opacity: course && course.is_deleted && 0.5,
+                    height: "90%",
+                  }}
+                >
+                  <div style={{ height: "30%" }}>
+                    <CardMedia
+                      className={classes.media}
+                      image={course && course.thumbnail}
+                      title={course && course.title}
+                    />
+                  </div>
+                  <div style={{ height: "5%" }} />
+                  <div style={{ height: "65%" }}>
+                    <CardContent
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        marginTop: "10px",
+                        paddingBottom: "5px",
+                      }}
+                    >
+                      <div>
+                        <Typography
+                          variant="body1"
+                          style={{
+                            fontWeight: 600,
+                            paddingBottom: "10px",
+                            paddingTop: "10px",
+                          }}
+                        >
+                          {course && course.title}
+                        </Typography>
+                      </div>
+                      <div style={{ marginBottom: "10px" }}>
+                        {(() => {
+                          if (course.is_deleted) {
+                            return deletedChip;
+                          } else if (course.is_published) {
+                            return publishedChip;
+                          } else if (!course.is_published) {
+                            if (checkIfCourseIsReadyToPublish(course)) {
+                              return unPublishedChip;
+                            }
+                            return notReadyChip;
+                          }
+                        })()}
+                        {course.published_date && course.published_date && (
                           <Typography
-                            variant="body1"
+                            variant="body2"
                             style={{
-                              fontWeight: 600,
+                              opacity: 0.7,
                               paddingBottom: "10px",
                               paddingTop: "10px",
                             }}
                           >
-                            {course && course.title}
+                            Pusblished On:
+                            <br />
+                            {formatDate(course.published_date)}
                           </Typography>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                          {(() => {
-                            if (course.is_deleted) {
-                              return deletedChip;
-                            } else if (course.is_published) {
-                              return publishedChip;
-                            } else if (!course.is_published) {
-                              if (checkIfCourseIsReadyToPublish(course)) {
-                                return unPublishedChip;
-                              }
-                              return notReadyChip;
-                            }
-                          })()}
-                          {course.published_date && course.published_date && (
-                            <Typography
-                              variant="body2"
-                              style={{
-                                opacity: 0.7,
-                                paddingBottom: "10px",
-                                paddingTop: "10px",
-                              }}
-                            >
-                              Pusblished On:
-                              <br />
-                              {formatDate(course.published_date)}
-                            </Typography>
-                          )}
-                        </div>
-                      </CardContent>
-                    </div>
-                  </CardActionArea>
-                  <CardActions
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      opacity: course && course.is_deleted && 0.5,
-                    }}
-                  >
-                    <div>
-                      <Rating
-                        size="small"
-                        readOnly
-                        value={
-                          course && course.rating
-                            ? parseFloat(course.rating)
-                            : 0
-                        }
-                      />
-                    </div>
-                    <div>
-                      <IconButton
-                        onClick={(e) => handleClick(e, course.id)}
-                        size="small"
-                        disabled={course && course.is_deleted}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                      <Popover
-                        open={popover.popoverId === course.id}
-                        onClose={handleClose}
-                        anchorEl={popover.anchorEl}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                      >
-                        <div className={classes.popoverContents}>
-                          {course && course.is_published ? (
-                            <Button
-                              className={classes.popoverButtons}
-                              onClick={() => {
-                                handleClose();
-                                setUnpublishCourseId(course.id);
-                                setUnpublishDialog(true);
-                              }}
-                            >
-                              Unpublish
-                            </Button>
-                          ) : checkIfCourseIsReadyToPublish(course) ? (
-                            <Button
-                              className={classes.popoverButtons}
-                              onClick={() => {
-                                handleClose();
-                                handlePublishCourse(course.id);
-                              }}
-                            >
-                              Publish
-                            </Button>
-                          ) : null}
-                          <Button
-                            className={classes.popoverButtons}
-                            component={Link}
-                            to={course && `/partner/home/content/${course.id}`}
-                          >
-                            Edit Course
-                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </div>
+                </CardActionArea>
+                <CardActions
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    opacity: course && course.is_deleted && 0.5,
+                  }}
+                >
+                  <div>
+                    <Rating size="small" readOnly value={course && course.rating ? parseFloat(course.rating) : 0} />
+                  </div>
+                  <div>
+                    <IconButton
+                      onClick={(e) => handleClick(e, course.id)}
+                      size="small"
+                      disabled={course && course.is_deleted}
+                    >
+                      <MoreVert />
+                    </IconButton>
+                    <Popover
+                      open={popover.popoverId === course.id}
+                      onClose={handleClose}
+                      anchorEl={popover.anchorEl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                    >
+                      <div className={classes.popoverContents}>
+                        {course && course.is_published ? (
                           <Button
                             className={classes.popoverButtons}
                             onClick={() => {
-                              setDeleteCourseId(course.id);
-                              setDeleteCourseDialog(true);
                               handleClose();
+                              setUnpublishCourseId(course.id);
+                              setUnpublishDialog(true);
                             }}
                           >
-                            <span style={{ color: "red" }}>Delete Course</span>
+                            Unpublish
                           </Button>
-                        </div>
-                      </Popover>
-                    </div>
-                  </CardActions>
-                </Card>
-              );
-            })
+                        ) : checkIfCourseIsReadyToPublish(course) ? (
+                          <Button
+                            className={classes.popoverButtons}
+                            onClick={() => {
+                              handleClose();
+                              handlePublishCourse(course.id);
+                            }}
+                          >
+                            Publish
+                          </Button>
+                        ) : null}
+                        <Button
+                          className={classes.popoverButtons}
+                          component={Link}
+                          to={course && `/partner/home/content/${course.id}`}
+                        >
+                          Edit Course
+                        </Button>
+                        <Button
+                          className={classes.popoverButtons}
+                          onClick={() => {
+                            setDeleteCourseId(course.id);
+                            setDeleteCourseDialog(true);
+                            handleClose();
+                          }}
+                        >
+                          <span style={{ color: "red" }}>Delete Course</span>
+                        </Button>
+                      </div>
+                    </Popover>
+                  </div>
+                </CardActions>
+              </Card>
+            );
+          })
         ) : (
           <div
             style={{
@@ -662,10 +625,10 @@ const ViewAllCourses = () => {
           },
         }}
       >
-        <DialogTitle>You have yet to contribute for this month</DialogTitle>
+        <DialogTitle>Contribute to Codeine's Cause!</DialogTitle>
+        <DialogContent>Kindly make a contribution this month if you wish to publish new courses.</DialogContent>
         <DialogActions>
           <Button
-            variant="contained"
             className={classes.dialogButtons}
             onClick={() => {
               setPaymentDialog(false);
@@ -673,11 +636,7 @@ const ViewAllCourses = () => {
           >
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(`/partner/home/contributions`)}
-          >
+          <Button color="primary" onClick={() => history.push(`/partner/home/contributions`)}>
             Go To Contributions
           </Button>
         </DialogActions>
@@ -703,11 +662,7 @@ const ViewAllCourses = () => {
           >
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleUnpublishCourse()}
-          >
+          <Button variant="contained" color="primary" onClick={() => handleUnpublishCourse()}>
             Confirm
           </Button>
         </DialogActions>

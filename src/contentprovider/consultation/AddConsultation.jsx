@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -88,6 +88,21 @@ const AddConsultation = ({ handleGetAllConsultations, setSnackbar, setSnackbarOp
     err: false,
     errorMessage: "",
   });
+
+  useEffect(() => {
+    if (slot.start_time.getHours() <= 5) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should not start before 06:00 AM",
+      });
+    } else if (slot.end_time.getHours() === 0) {
+      setTimeError({
+        err: true,
+        errorMessage: "Consultations should end before midnight",
+      });
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const handleRecurringDays = (event) => {
     setRecurringDays({ ...recurringDays, [event.target.name]: event.target.checked });
