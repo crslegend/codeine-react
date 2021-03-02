@@ -110,7 +110,8 @@ const ViewAllQuizzes = () => {
     return (
       <Fragment>
         <Typography variant="h6">
-          {`Q${index + 1}. ${question.title}`}
+          {`Q${index + 1}. `}
+          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks for this question: {question.mcq.marks}
@@ -142,7 +143,8 @@ const ViewAllQuizzes = () => {
     return (
       <Fragment>
         <Typography variant="h6">
-          {`Q${index + 1}. ${question.title}`}
+          {`Q${index + 1}. `}
+          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks for this question: {question.mrq.marks}
@@ -174,7 +176,8 @@ const ViewAllQuizzes = () => {
     return (
       <Fragment>
         <Typography variant="h6">
-          {`Q${index + 1}. ${question.title}`}
+          {`Q${index + 1}. `}
+          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks for this question: {question.shortanswer.marks}
@@ -196,14 +199,14 @@ const ViewAllQuizzes = () => {
           <ArrowBack />
         </IconButton>
         <PageTitle title="View All Quizzes" />
-        <IconButton
+        {/* <IconButton
           style={{ order: 2, marginLeft: "auto", marginRight: "5vw" }}
           onClick={() => {
             history.push(`/partner/home/content/${id}`);
           }}
         >
           <Edit />
-        </IconButton>
+        </IconButton> */}
       </div>
       <div className={classes.materialSection}>
         <Typography
