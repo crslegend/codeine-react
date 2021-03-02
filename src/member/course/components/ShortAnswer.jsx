@@ -138,7 +138,9 @@ const ShortAnswer = ({
           >
             Q{`${index + 1}. `}
           </Typography>
-          <Typography variant="h6">{question.title}</Typography>
+          <Typography variant="h6">
+            <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
+          </Typography>
         </div>
         <TextField
           variant="outlined"

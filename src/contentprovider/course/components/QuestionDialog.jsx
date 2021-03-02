@@ -20,6 +20,8 @@ import {
 
 import Service from "../../../AxiosService";
 import { Add, Clear, Delete, Help } from "@material-ui/icons";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const useStyles = makeStyles((theme) => ({
   dialogButtons: {
@@ -68,12 +70,43 @@ const QuestionDialog = ({
   const classes = useStyles();
   // console.log(question);
 
+  const editor = {
+    toolbar: [
+      [{ font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const format = [
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
+
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
-  const handleQuestionInputChange = (e) => {
+  const handleQuestionInputChange = (value) => {
     setQuestion({
       ...question,
-      title: e.target.value,
+      title: value,
     });
   };
 
@@ -332,12 +365,14 @@ const QuestionDialog = ({
           // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
-          getCourse();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+            getCourse();
+          }, 500);
         })
         .catch((err) => {
           console.log(err);
@@ -365,12 +400,14 @@ const QuestionDialog = ({
           // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
-          getCourse();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+            getCourse();
+          }, 500);
         })
         .catch((err) => {
           console.log(err);
@@ -400,12 +437,14 @@ const QuestionDialog = ({
           // console.log(res);
           setEditMode(false);
           setEditQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
-          getCourse();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+            getCourse();
+          }, 500);
         })
         .catch((err) => {
           console.log(err);
@@ -463,11 +502,13 @@ const QuestionDialog = ({
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+          }, 500);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -491,11 +532,13 @@ const QuestionDialog = ({
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+          }, 500);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -524,11 +567,13 @@ const QuestionDialog = ({
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+          }, 500);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -541,39 +586,44 @@ const QuestionDialog = ({
         open={editQuestionDialog || addQuestionDialog}
         onClose={() => {
           if (editQuestionDialog) {
-            setEditMode(false);
             setEditQuestionDialog(false);
+            setEditMode(false);
           }
           if (addQuestionDialog) {
             setAddQuestionDialog(false);
           }
 
-          setQuizId();
-          setQuestion();
-          setQuestionType();
-          setOptions();
-          setCorrectAnswer();
+          setTimeout(() => {
+            setQuizId();
+            setQuestion();
+            setQuestionType();
+            setOptions();
+            setCorrectAnswer();
+          }, 500);
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            width: "600px",
           },
         }}
       >
-        {editQuestionDialog && (
+        {questionNum && (
           <DialogTitle>
             Question {questionNum && questionNum}
             <div style={{ float: "right" }}>
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
               </IconButton> */}
-              <IconButton size="small" onClick={() => setDeleteQuestionDialog(true)}>
+              <IconButton
+                size="small"
+                onClick={() => setDeleteQuestionDialog(true)}
+              >
                 <Delete />
               </IconButton>
             </div>
           </DialogTitle>
         )}
-        {addQuestionDialog && <DialogTitle>Add New Question</DialogTitle>}
+        {!questionNum && <DialogTitle>Add New Question</DialogTitle>}
 
         <DialogContent>
           <FormControl fullWidth margin="dense" className={classes.formControl}>
@@ -598,7 +648,15 @@ const QuestionDialog = ({
           <label htmlFor="question">
             <Typography variant="body1">Question</Typography>
           </label>
-          <TextField
+
+          <ReactQuill
+            value={question && question.title ? question.title : ""}
+            onChange={handleQuestionInputChange}
+            modules={editor}
+            format={format}
+          />
+
+          {/* <TextField
             id="question"
             placeholder="Enter Question"
             type="text"
@@ -610,7 +668,7 @@ const QuestionDialog = ({
             onChange={(e) => {
               handleQuestionInputChange(e);
             }}
-          />
+          /> */}
           {questionType && (
             <Fragment>
               <label htmlFor="marks">
@@ -632,7 +690,9 @@ const QuestionDialog = ({
                     } else if (question.mrq) {
                       return question.mrq.marks ? question.mrq.marks : "";
                     } else if (question.shortanswer) {
-                      return question.shortanswer.marks ? question.shortanswer.marks : "";
+                      return question.shortanswer.marks
+                        ? question.shortanswer.marks
+                        : "";
                     }
                   }
                 })()}
@@ -645,11 +705,16 @@ const QuestionDialog = ({
             </Fragment>
           )}
 
-          {questionType && questionType !== "shortanswer" && (editMode || addQuestionDialog) && (
-            <Typography variant="body1" style={{ paddingTop: "10px", paddingBottom: "5px" }}>
-              Enter option(s) below in the field
-            </Typography>
-          )}
+          {questionType &&
+            questionType !== "shortanswer" &&
+            (editMode || addQuestionDialog) && (
+              <Typography
+                variant="body1"
+                style={{ paddingTop: "10px", paddingBottom: "5px" }}
+              >
+                Enter option(s) below in the field
+              </Typography>
+            )}
 
           {options &&
             options.map((option, index) => {
@@ -701,7 +766,11 @@ const QuestionDialog = ({
             })}
 
           {options && correctAnswer && questionType === "mcq" && (
-            <FormControl fullWidth margin="dense" className={classes.formControl}>
+            <FormControl
+              fullWidth
+              margin="dense"
+              className={classes.formControl}
+            >
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 value={correctAnswer}
@@ -720,7 +789,11 @@ const QuestionDialog = ({
           )}
 
           {options && correctAnswer && questionType === "mrq" && (
-            <FormControl fullWidth margin="dense" className={classes.formControl}>
+            <FormControl
+              fullWidth
+              margin="dense"
+              className={classes.formControl}
+            >
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 multiple
@@ -735,7 +808,9 @@ const QuestionDialog = ({
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
-                    <Checkbox checked={correctAnswer.includes(option) && option !== ""} />
+                    <Checkbox
+                      checked={correctAnswer.includes(option) && option !== ""}
+                    />
                     <ListItemText primary={option} />
                   </MenuItem>
                 ))}
@@ -751,7 +826,10 @@ const QuestionDialog = ({
                 </label>
                 <Tooltip
                   title={
-                    <Typography variant="body2">Separate the keywords with commas (eg. keyword 1,keyword 2)</Typography>
+                    <Typography variant="body2">
+                      Separate the keywords with commas (eg. keyword 1,keyword
+                      2)
+                    </Typography>
                   }
                 >
                   <IconButton disableRipple size="small">
@@ -781,18 +859,19 @@ const QuestionDialog = ({
             className={classes.dialogButtons}
             onClick={() => {
               if (editQuestionDialog) {
-                setEditMode(false);
                 setEditQuestionDialog(false);
+                setEditMode(false);
               }
               if (addQuestionDialog) {
                 setAddQuestionDialog(false);
               }
-
-              setQuizId();
-              setQuestion();
-              setQuestionType();
-              setOptions();
-              setCorrectAnswer();
+              setTimeout(() => {
+                setQuizId();
+                setQuestion();
+                setQuestionType();
+                setOptions();
+                setCorrectAnswer();
+              }, 500);
             }}
           >
             Cancel
