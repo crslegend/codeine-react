@@ -5,6 +5,7 @@ import LinkMui from "@material-ui/core/Link";
 import {
   Avatar,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -98,6 +99,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
 
   const [editFile, setEditFile] = useState();
   const [zipFile, setZipFile] = useState();
+
+  // const [uploadFileCheckbox, setUploadFileCheckbox] = useState(false);
+  // const [fileURLCheckbox, setFileURLCheckbox] = useState(false);
 
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
@@ -534,7 +538,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
 
                   <div>
                     <Typography variant="body2" style={{ marginTop: "10px" }}>
-                      Upload a Zip File (to replace the current file)
+                      Upload File (to replace the current file)
                     </Typography>
                     <DropzoneAreaBase
                       dropzoneText="Drag and drop a zip file or click&nbsp;here"
@@ -585,7 +589,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     OR
                   </Typography>
                   <label htmlFor="url">
-                    <Typography variant="body2">Google Drive URL</Typography>
+                    <Typography variant="body2">File URL</Typography>
                   </label>
                   <TextField
                     id="url"

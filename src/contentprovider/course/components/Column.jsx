@@ -642,7 +642,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         }}
                       />
                       <label htmlFor="url">
-                        <Typography variant="body2">Upload Zip File</Typography>
+                        <Typography variant="body2">Upload File</Typography>
                       </label>
                       <DropzoneAreaBase
                         dropzoneText="Drag and drop a zip file or click&nbsp;here"
@@ -670,9 +670,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         OR
                       </Typography>
                       <label htmlFor="url">
-                        <Typography variant="body2">
-                          Google Drive URL
-                        </Typography>
+                        <Typography variant="body2">Add Link</Typography>
                       </label>
                       <TextField
                         id="url"
