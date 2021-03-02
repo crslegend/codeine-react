@@ -131,7 +131,13 @@ const ShortAnswer = ({
           padding: "30px",
         }}
       >
-        <div style={{ display: "flex", marginBottom: "15px" }}>
+        <div
+          style={{
+            display: "flex",
+            marginBottom: "15px",
+            flexDirection: "column",
+          }}
+        >
           <Typography
             variant="h6"
             style={{ fontWeight: 600, paddingRight: "10px" }}
