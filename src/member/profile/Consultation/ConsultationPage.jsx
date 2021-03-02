@@ -66,6 +66,25 @@ const Consultation = () => {
   const [application, setApplication] = useState([]);
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
+  const currentDate = formatDate(new Date());
+
   const getApplicationData = (sort) => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
@@ -251,7 +270,10 @@ const Consultation = () => {
         <Button
           color="primary"
           className={classes.cancelButton}
-          disabled={params.row.status !== "Confirmed"}
+          disabled={
+            params.row.status !== "Confirmed" ||
+            params.row.end_time < currentDate
+          }
           onClick={() => {
             deleteConsultation(params.row);
           }}
@@ -261,23 +283,6 @@ const Consultation = () => {
       ),
     },
   ];
-
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    };
-
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
 
   const consultationRows = allConsultations;
 

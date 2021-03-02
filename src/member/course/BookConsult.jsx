@@ -25,9 +25,11 @@ import {
   Appointments,
   Toolbar,
   TodayButton,
+  Resources,
   DateNavigator,
   AppointmentTooltip,
 } from "@devexpress/dx-react-scheduler-material-ui";
+import { teal, grey, green } from "@material-ui/core/colors";
 import Toast from "../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -70,6 +72,18 @@ const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
   )
 );
 
+const resources = [
+  {
+    fieldName: "available",
+    title: "Availability",
+    instances: [
+      { id: 1, text: "Fully Booked", color: grey },
+      { id: 2, text: "One slot left", color: teal },
+      { id: 3, text: "Available", color: green },
+    ],
+  },
+];
+
 const checkMemberAlreadyBooked = (applications) => {
   const decoded = jwt_decode(Cookies.get("t1"));
   for (let i = 0; i < applications.length; i++) {
@@ -90,6 +104,16 @@ const checkMemberAlreadyRejected = (applications) => {
   return false;
 };
 
+const getAvailability = (max, curr) => {
+  if (max === curr) {
+    return 1;
+  } else if (max - 1 === curr) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
+
 const mapAppointmentData = (item) => ({
   id: item.id,
   title: item.title,
@@ -101,6 +125,10 @@ const mapAppointmentData = (item) => ({
   curr_members: item.confirmed_applications.length,
   in_consult: checkMemberAlreadyBooked(item.confirmed_applications),
   is_rejected: checkMemberAlreadyRejected(item.rejected_applications),
+  available: getAvailability(
+    item.max_members,
+    item.confirmed_applications.length
+  ),
 });
 
 const initialState = {
@@ -177,7 +205,7 @@ const BookConsult = () => {
       })
       .then((res) => {
         setTimeout(() => {
-          console.log(res.data);
+          //console.log(res.data);
           setConsultations(res.data);
           setLoading(false);
         }, 600);
@@ -311,7 +339,13 @@ const BookConsult = () => {
   };
 
   const Content = withStyles({ name: "Content" })(
-    ({ children, appointmentData, classes, ...restProps }) => (
+    ({
+      children,
+      appointmentData,
+      appointmentResources,
+      classes,
+      ...restProps
+    }) => (
       <AppointmentTooltip.Content
         {...restProps}
         appointmentData={appointmentData}
@@ -411,6 +445,7 @@ const BookConsult = () => {
               <DateNavigator />
               <TodayButton />
               <Appointments />
+              <Resources data={resources} />
               <AppointmentTooltip contentComponent={Content} />
               <ViewSwitcher />
             </Scheduler>
