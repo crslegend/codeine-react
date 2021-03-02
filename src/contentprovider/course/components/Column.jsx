@@ -577,7 +577,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         open={courseMaterialDialog}
         onClose={() => {
           setCourseMaterialDialog(false);
-          setMaterialType();
+          // setMaterialType();
           setChapterIdForCourseMaterial();
         }}
         PaperProps={{
@@ -590,261 +590,259 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
           <DialogTitle>Add Course Material</DialogTitle>
           <DialogContent>
             {(() => {
-              if (courseMaterialDialog) {
-                if (materialType === "file") {
-                  return (
-                    <Fragment>
-                      <label htmlFor="title">
-                        <Typography variant="body2">Title of File</Typography>
-                      </label>
-                      <TextField
-                        id="title"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={file && file.title}
-                        onChange={(e) => {
-                          setFile({
-                            ...file,
-                            title: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Title"
-                        style={{ marginBottom: "15px" }}
-                      />
-                      <label htmlFor="description">
-                        <Typography variant="body2">
-                          Description of File
-                        </Typography>
-                      </label>
-                      <TextField
-                        id="description"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={file && file.description}
-                        onChange={(e) => {
-                          setFile({
-                            ...file,
-                            description: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Description"
-                        style={{ marginBottom: "25px" }}
-                      />
-                      <div
-                        style={{
-                          display: "block",
-                          borderTop: "1px solid #000",
-                          marginBottom: "25px",
-                        }}
-                      />
-                      <label htmlFor="url">
-                        <Typography variant="body2">Upload File</Typography>
-                      </label>
-                      <DropzoneAreaBase
-                        dropzoneText="Drag and drop a zip file or click&nbsp;here"
-                        dropzoneClass={classes.dropzoneContainer}
-                        filesLimit={1}
-                        maxFileSize={5000000000}
-                        fileObjects={zipFile}
-                        useChipsForPreview={true}
-                        onAdd={(newFile) => {
-                          setZipFile(newFile);
-                        }}
-                        onDelete={(fileObj) => {
-                          setZipFile();
-                        }}
-                        previewGridProps={{
-                          item: {
-                            xs: "auto",
-                          },
-                        }}
-                      />
-                      <Typography
-                        variant="h6"
-                        style={{ textAlign: "center", marginTop: "10px" }}
-                      >
-                        OR
+              if (materialType === "file") {
+                return (
+                  <Fragment>
+                    <label htmlFor="title">
+                      <Typography variant="body2">Title of File</Typography>
+                    </label>
+                    <TextField
+                      id="title"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={file && file.title}
+                      onChange={(e) => {
+                        setFile({
+                          ...file,
+                          title: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Title"
+                      style={{ marginBottom: "15px" }}
+                    />
+                    <label htmlFor="description">
+                      <Typography variant="body2">
+                        Description of File
                       </Typography>
-                      <label htmlFor="url">
-                        <Typography variant="body2">Add Link</Typography>
-                      </label>
-                      <TextField
-                        id="url"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={file && file.google_drive_url}
-                        onChange={(e) => {
-                          setFile({
-                            ...file,
-                            google_drive_url: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="https://drive.google.com"
-                        style={{ marginBottom: "15px" }}
-                      />
-                    </Fragment>
-                  );
-                } else if (materialType === "video") {
-                  return (
-                    <Fragment>
-                      <label htmlFor="title">
-                        <Typography variant="body2">Title of Video</Typography>
-                      </label>
-                      <TextField
-                        id="title"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={video && video.title}
-                        onChange={(e) => {
-                          setVideo({
-                            ...video,
-                            title: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Title"
-                        style={{ marginBottom: "15px" }}
-                      />
-                      <label htmlFor="description">
-                        <Typography variant="body2">
-                          Description of Video
-                        </Typography>
-                      </label>
-                      <TextField
-                        id="description"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={video && video.description}
-                        onChange={(e) => {
-                          setVideo({
-                            ...video,
-                            description: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Description"
-                        style={{ marginBottom: "15px" }}
-                      />
-                      <label htmlFor="url">
-                        <Typography variant="body2">Video URL</Typography>
-                      </label>
-                      <TextField
-                        id="url"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={video && video.video_url}
-                        onChange={(e) => {
-                          setVideo({
-                            ...video,
-                            video_url: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="https://www.google.com"
-                        style={{ marginBottom: "15px" }}
-                      />
-                    </Fragment>
-                  );
-                } else if (materialType === "quiz") {
-                  return (
-                    <Fragment>
-                      <label htmlFor="title">
-                        <Typography variant="body2">
-                          Title of Quiz (Required)
-                        </Typography>
-                      </label>
-                      <TextField
-                        id="title"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={quiz && quiz.title}
-                        onChange={(e) => {
-                          setQuiz({
-                            ...quiz,
-                            title: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Title"
-                        style={{ marginBottom: "15px" }}
-                      />
-                      <label htmlFor="description">
-                        <Typography variant="body2">
-                          Description of Quiz (Required)
-                        </Typography>
-                      </label>
-                      <TextField
-                        id="description"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={quiz && quiz.description}
-                        onChange={(e) => {
-                          setQuiz({
-                            ...quiz,
-                            description: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="Enter Description"
-                        style={{ marginBottom: "15px" }}
-                      />
-                      <label htmlFor="marks">
-                        <Typography variant="body2">
-                          Passing Marks (Required)
-                        </Typography>
-                      </label>
-                      <TextField
-                        id="marks"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={quiz && quiz.passing_marks}
-                        onChange={(e) => {
-                          setQuiz({
-                            ...quiz,
-                            passing_marks: e.target.value,
-                          });
-                        }}
-                        InputProps={{
-                          inputProps: { min: 0 },
-                        }}
-                        required
-                        style={{ marginBottom: "15px" }}
-                        type="number"
-                      />
-                      <label htmlFor="marks">
-                        <Typography variant="body2">Instructions</Typography>
-                      </label>
-                      <TextField
-                        id="marks"
-                        variant="outlined"
-                        fullWidth
-                        margin="dense"
-                        value={quiz && quiz.instructions}
-                        onChange={(e) => {
-                          setQuiz({
-                            ...quiz,
-                            instructions: e.target.value,
-                          });
-                        }}
-                        required
-                        placeholder="eg. Read the questions carefully"
-                        style={{ marginBottom: "15px" }}
-                      />
-                    </Fragment>
-                  );
-                }
+                    </label>
+                    <TextField
+                      id="description"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={file && file.description}
+                      onChange={(e) => {
+                        setFile({
+                          ...file,
+                          description: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Description"
+                      style={{ marginBottom: "25px" }}
+                    />
+                    <div
+                      style={{
+                        display: "block",
+                        borderTop: "1px solid #000",
+                        marginBottom: "25px",
+                      }}
+                    />
+                    <label htmlFor="url">
+                      <Typography variant="body2">Upload File</Typography>
+                    </label>
+                    <DropzoneAreaBase
+                      dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                      dropzoneClass={classes.dropzoneContainer}
+                      filesLimit={1}
+                      maxFileSize={5000000000}
+                      fileObjects={zipFile}
+                      useChipsForPreview={true}
+                      onAdd={(newFile) => {
+                        setZipFile(newFile);
+                      }}
+                      onDelete={(fileObj) => {
+                        setZipFile();
+                      }}
+                      previewGridProps={{
+                        item: {
+                          xs: "auto",
+                        },
+                      }}
+                    />
+                    <Typography
+                      variant="h6"
+                      style={{ textAlign: "center", marginTop: "10px" }}
+                    >
+                      OR
+                    </Typography>
+                    <label htmlFor="url">
+                      <Typography variant="body2">Add Link</Typography>
+                    </label>
+                    <TextField
+                      id="url"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={file && file.google_drive_url}
+                      onChange={(e) => {
+                        setFile({
+                          ...file,
+                          google_drive_url: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="https://drive.google.com"
+                      style={{ marginBottom: "15px" }}
+                    />
+                  </Fragment>
+                );
+              } else if (materialType === "video") {
+                return (
+                  <Fragment>
+                    <label htmlFor="title">
+                      <Typography variant="body2">Title of Video</Typography>
+                    </label>
+                    <TextField
+                      id="title"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={video && video.title}
+                      onChange={(e) => {
+                        setVideo({
+                          ...video,
+                          title: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Title"
+                      style={{ marginBottom: "15px" }}
+                    />
+                    <label htmlFor="description">
+                      <Typography variant="body2">
+                        Description of Video
+                      </Typography>
+                    </label>
+                    <TextField
+                      id="description"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={video && video.description}
+                      onChange={(e) => {
+                        setVideo({
+                          ...video,
+                          description: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Description"
+                      style={{ marginBottom: "15px" }}
+                    />
+                    <label htmlFor="url">
+                      <Typography variant="body2">Video URL</Typography>
+                    </label>
+                    <TextField
+                      id="url"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={video && video.video_url}
+                      onChange={(e) => {
+                        setVideo({
+                          ...video,
+                          video_url: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="https://www.google.com"
+                      style={{ marginBottom: "15px" }}
+                    />
+                  </Fragment>
+                );
+              } else if (materialType === "quiz") {
+                return (
+                  <Fragment>
+                    <label htmlFor="title">
+                      <Typography variant="body2">
+                        Title of Quiz (Required)
+                      </Typography>
+                    </label>
+                    <TextField
+                      id="title"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={quiz && quiz.title}
+                      onChange={(e) => {
+                        setQuiz({
+                          ...quiz,
+                          title: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Title"
+                      style={{ marginBottom: "15px" }}
+                    />
+                    <label htmlFor="description">
+                      <Typography variant="body2">
+                        Description of Quiz (Required)
+                      </Typography>
+                    </label>
+                    <TextField
+                      id="description"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={quiz && quiz.description}
+                      onChange={(e) => {
+                        setQuiz({
+                          ...quiz,
+                          description: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="Enter Description"
+                      style={{ marginBottom: "15px" }}
+                    />
+                    <label htmlFor="marks">
+                      <Typography variant="body2">
+                        Passing Marks (Required)
+                      </Typography>
+                    </label>
+                    <TextField
+                      id="marks"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={quiz && quiz.passing_marks}
+                      onChange={(e) => {
+                        setQuiz({
+                          ...quiz,
+                          passing_marks: e.target.value,
+                        });
+                      }}
+                      InputProps={{
+                        inputProps: { min: 0 },
+                      }}
+                      required
+                      style={{ marginBottom: "15px" }}
+                      type="number"
+                    />
+                    <label htmlFor="marks">
+                      <Typography variant="body2">Instructions</Typography>
+                    </label>
+                    <TextField
+                      id="marks"
+                      variant="outlined"
+                      fullWidth
+                      margin="dense"
+                      value={quiz && quiz.instructions}
+                      onChange={(e) => {
+                        setQuiz({
+                          ...quiz,
+                          instructions: e.target.value,
+                        });
+                      }}
+                      required
+                      placeholder="eg. Read the questions carefully"
+                      style={{ marginBottom: "15px" }}
+                    />
+                  </Fragment>
+                );
               }
             })()}
           </DialogContent>
@@ -854,7 +852,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
               className={classes.dialogButtons}
               onClick={() => {
                 setCourseMaterialDialog(false);
-                setMaterialType();
+                // setMaterialType();
                 setChapterIdForCourseMaterial();
                 setVideo({
                   title: "",
