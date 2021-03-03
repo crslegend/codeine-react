@@ -43,6 +43,11 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
+  dataGrid: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
 }));
 
 const Consultation = () => {
@@ -242,23 +247,16 @@ const Consultation = () => {
     {
       field: "amount",
       headerName: "Amount",
-      renderCell: (params) => (
-        <Typography variant="body2">${params.value}</Typography>
-      ),
+      renderCell: (params) => <div variant="body2">${params.value}</div>,
       width: 150,
     },
     {
       field: "status",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
-          <Typography
-            variant="body2"
-            style={{ color: formatStatus(params.value) }}
-          >
-            {params.value}
-          </Typography>
-        </strong>
+        <div variant="body2" style={{ color: formatStatus(params.value) }}>
+          {params.value}
+        </div>
       ),
       width: 120,
     },
@@ -351,6 +349,7 @@ const Consultation = () => {
 
       <div style={{ height: "700px", width: "100%" }}>
         <DataGrid
+          className={classes.dataGrid}
           rows={consultationRows}
           columns={consultationColumns.map((column) => ({
             ...column,

@@ -62,6 +62,11 @@ const styles = makeStyles((theme) => ({
     marginTop: "15px",
     padding: "10px",
   },
+  dataGrid: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
 }));
 
 function TabPanel(props) {
@@ -195,17 +200,13 @@ const AdminHumanResourcePage = () => {
       field: "is_active",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "green" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
           ) : (
-            <Typography style={{ color: "red" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 160,
     },
@@ -365,17 +366,13 @@ const AdminHumanResourcePage = () => {
       field: "is_active",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "green" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
           ) : (
-            <Typography style={{ color: "red" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 160,
     },
@@ -531,17 +528,13 @@ const AdminHumanResourcePage = () => {
       field: "is_active",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "green" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
           ) : (
-            <Typography style={{ color: "red" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 160,
     },
@@ -668,6 +661,7 @@ const AdminHumanResourcePage = () => {
             style={{ height: "calc(100vh - 250px)", width: "100%" }}
           >
             <DataGrid
+              className={classes.dataGrid}
               rows={memberRows}
               columns={memberColumns.map((column) => ({
                 ...column,
@@ -721,32 +715,28 @@ const AdminHumanResourcePage = () => {
                     flexWrap: "wrap",
                   }}
                 >
-                  <Typography style={{ fontSize: "20px" }}>
+                  <div style={{ fontSize: "20px" }}>
                     <strong>
                       {selectedMember.first_name} {selectedMember.last_name}{" "}
                     </strong>
-                  </Typography>
+                  </div>
                   {selectedMember.is_active ? (
-                    <Typography style={{ color: "green" }}>
-                      {"\u00A0"}(Active){" "}
-                    </Typography>
+                    <div style={{ color: "green" }}>{"\u00A0"}(Active) </div>
                   ) : (
-                    <Typography style={{ color: "red" }}>
-                      {"\u00A0"}(Deactived)
-                    </Typography>
+                    <div style={{ color: "red" }}>{"\u00A0"}(Deactived)</div>
                   )}
                 </div>
-                <Typography style={{ color: "black" }}>
+                <div style={{ color: "black" }}>
                   {selectedMember.email} <br />
-                </Typography>
-                <Typography
+                </div>
+                <div
                   style={{ fontSize: "14px", marginTop: "0px", color: "black" }}
                 >
                   Joined on {formatDate(selectedMember.date_joined)}
-                </Typography>
-                <Typography style={{ fontSize: "12px", marginTop: "5px" }}>
+                </div>
+                <div style={{ fontSize: "12px", marginTop: "5px" }}>
                   ID: {selectedMember.id}
-                </Typography>
+                </div>
               </Grid>
             </Grid>
             <br />
@@ -799,6 +789,7 @@ const AdminHumanResourcePage = () => {
             style={{ height: "calc(100vh - 250px)", width: "100%" }}
           >
             <DataGrid
+              className={classes.dataGrid}
               rows={partnerRows}
               columns={partnerColumns.map((column) => ({
                 ...column,
@@ -993,6 +984,7 @@ const AdminHumanResourcePage = () => {
             style={{ height: "calc(100vh - 250px)", width: "100%" }}
           >
             <DataGrid
+              className={classes.dataGrid}
               rows={adminRows}
               columns={adminColumns.map((column) => ({
                 ...column,

@@ -39,6 +39,11 @@ const styles = makeStyles((theme) => ({
   tabPanel: {
     padding: "0px",
   },
+  dataGrid: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
 }));
 
 function TabPanel(props) {
@@ -103,14 +108,6 @@ const AdminContentQualityPage = () => {
     return "";
   };
 
-  const formatStatus = (status) => {
-    if (status) {
-      return "Yes";
-    } else {
-      return "No";
-    }
-  };
-
   const formatPubStatus = (status) => {
     if (status) {
       return "Published";
@@ -170,17 +167,15 @@ const AdminContentQualityPage = () => {
       field: "is_published",
       headerName: "Published Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {!params.value ? (
-            <Typography style={{ color: "red" }}>
-              {formatPubStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatPubStatus(params.value)}</div>
           ) : (
-            <Typography style={{ color: "green" }}>
+            <div style={{ color: "green" }}>
               {formatPubStatus(params.value)}
-            </Typography>
+            </div>
           )}
-        </strong>
+        </div>
       ),
       width: 170,
     },
@@ -188,17 +183,15 @@ const AdminContentQualityPage = () => {
       field: "is_available",
       headerName: "Activation Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "green" }}>
+            <div style={{ color: "green" }}>
               {formatActStatus(params.value)}
-            </Typography>
+            </div>
           ) : (
-            <Typography style={{ color: "red" }}>
-              {formatActStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatActStatus(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 160,
     },
@@ -206,17 +199,13 @@ const AdminContentQualityPage = () => {
       field: "is_deleted",
       headerName: "Deleted Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "red" }}>
-              {formatActDel(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatActDel(params.value)}</div>
           ) : (
-            <Typography style={{ color: "green" }}>
-              {formatActDel(params.value)}
-            </Typography>
+            <div style={{ color: "green" }}>{formatActDel(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 170,
     },
@@ -291,6 +280,7 @@ const AdminContentQualityPage = () => {
             style={{ height: "calc(100vh - 300px)", width: "100%" }}
           >
             <DataGrid
+              className={classes.dataGrid}
               rows={courseRows}
               columns={coruseColumns.map((column) => ({
                 ...column,

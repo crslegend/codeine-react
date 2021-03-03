@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
   withdrawButton: {
     backgroundColor: "#000000",
@@ -133,14 +136,11 @@ const WalletPage = () => {
       field: "type",
       headerName: "Transaction Type",
       renderCell: (params) => (
-        <strong>
-          <Typography
-            variant="body2"
-            style={{ color: formatStatus(params.value) }}
-          >
+        <div>
+          <div variant="body2" style={{ color: formatStatus(params.value) }}>
             {params.value}
-          </Typography>
-        </strong>
+          </div>
+        </div>
       ),
       width: 170,
     },
@@ -149,9 +149,9 @@ const WalletPage = () => {
       headerName: "Debit",
       renderCell: (params) =>
         params.value && (
-          <Typography style={{ color: "green" }} variant="body2">
+          <div style={{ color: "green" }} variant="body2">
             ${params.value}
-          </Typography>
+          </div>
         ),
       width: 115,
     },
@@ -160,9 +160,9 @@ const WalletPage = () => {
       headerName: "Credit",
       renderCell: (params) =>
         params.value && (
-          <Typography style={{ color: "red" }} variant="body2">
+          <div style={{ color: "red" }} variant="body2">
             ${params.value}
-          </Typography>
+          </div>
         ),
       width: 115,
     },
