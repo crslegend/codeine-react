@@ -156,8 +156,7 @@ const ContentProviderRegisterPage = () => {
             variant="body1"
             style={{ paddingTop: "10px", textAlign: "center" }}
           >
-            Our admins are currently reviewing your application. An email will
-            be sent to you once your application has been approved.
+            Please check your email to activate you account!
           </Typography>
         </Paper>
       </div>

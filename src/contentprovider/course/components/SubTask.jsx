@@ -125,7 +125,7 @@ const SubTask = ({ task, subtask, getCourse, index }) => {
                   setEditQuestionDialog(true);
                 }}
               >
-                {subtask.title}
+                {`Question ${index + 1}`}
               </LinkMui>
             </div>
           );

@@ -148,14 +148,22 @@ const MRQ = ({
           padding: "30px",
         }}
       >
-        <div style={{ display: "flex", marginBottom: "15px" }}>
+        <div
+          style={{
+            display: "flex",
+            marginBottom: "15px",
+            flexDirection: "column",
+          }}
+        >
           <Typography
             variant="h6"
             style={{ fontWeight: 600, paddingRight: "10px" }}
           >
             Q{`${index + 1}. `}
           </Typography>
-          <Typography variant="h6">{question.title}</Typography>
+          <Typography variant="h6">
+            <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
+          </Typography>
         </div>
         <div
           style={{

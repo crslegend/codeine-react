@@ -1102,10 +1102,10 @@ const CourseCreation = () => {
           },
         }}
       >
-        <DialogTitle>You have yet to contribute for this month</DialogTitle>
+        <DialogTitle>Contribute to Codeine's Cause!</DialogTitle>
+        <DialogContent>Kindly make a contribution this month if you wish to publish new courses.</DialogContent>
         <DialogActions>
           <Button
-            variant="contained"
             className={classes.dialogButtons}
             onClick={() => {
               setPaymentDialog(false);
@@ -1113,7 +1113,7 @@ const CourseCreation = () => {
           >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={() => history.push(`/partner/home/contributions`)}>
+          <Button color="primary" onClick={() => history.push(`/partner/home/contributions`)}>
             Go To Contributions
           </Button>
         </DialogActions>
