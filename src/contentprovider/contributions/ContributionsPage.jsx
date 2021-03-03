@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
 }));
 
@@ -298,17 +301,17 @@ const ContributionsPage = () => {
       field: "payment_status",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value && params.value === "COMPLETED" ? (
-            <Typography variant="body2" style={{ color: "green" }}>
+            <div variant="body2" style={{ color: "green" }}>
               {params.value}
-            </Typography>
+            </div>
           ) : (
-            <Typography variant="body2" style={{ color: "red" }}>
+            <div variant="body2" style={{ color: "red" }}>
               {`PENDING COMPLETION`}
-            </Typography>
+            </div>
           )}
-        </strong>
+        </div>
       ),
       width: 200,
     },
