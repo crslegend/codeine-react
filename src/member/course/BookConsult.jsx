@@ -453,7 +453,7 @@ const BookConsult = () => {
               }}
             >
               <FiberManualRecord
-                style={{ color: "#437FC7", paddingBottom: "4px" }}
+                style={{ color: "#03a9f4", paddingBottom: "4px" }}
               />
               <Typography variant="body2">Still available</Typography>
               <FiberManualRecord
