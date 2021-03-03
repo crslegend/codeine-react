@@ -13,6 +13,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     flexWrap: "wrap",
   },
+  dataGrid: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
 }));
 
 const Payment = () => {
@@ -71,14 +76,9 @@ const Payment = () => {
       field: "type",
       headerName: "Transaction Type",
       renderCell: (params) => (
-        <strong>
-          <Typography
-            variant="body2"
-            style={{ color: formatStatus(params.value) }}
-          >
-            {params.value}
-          </Typography>
-        </strong>
+        <div variant="body2" style={{ color: formatStatus(params.value) }}>
+          {params.value}
+        </div>
       ),
       width: 170,
     },
@@ -86,9 +86,7 @@ const Payment = () => {
       field: "debit",
       headerName: "Debit",
       renderCell: (params) =>
-        params.value && (
-          <Typography variant="body2">${params.value}</Typography>
-        ),
+        params.value && <div variant="body2">${params.value}</div>,
       width: 120,
     },
     {
@@ -96,9 +94,9 @@ const Payment = () => {
       headerName: "Credit",
       renderCell: (params) =>
         params.value && (
-          <Typography style={{ color: "green" }} variant="body2">
+          <div style={{ color: "green" }} variant="body2">
             ${params.value}
-          </Typography>
+          </div>
         ),
       width: 120,
     },
@@ -155,6 +153,7 @@ const Payment = () => {
       </Box>
       <div style={{ height: "700px", width: "100%" }}>
         <DataGrid
+          className={classes.dataGrid}
           rows={transactionRows}
           columns={transactionColumns.map((column) => ({
             ...column,

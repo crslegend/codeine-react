@@ -59,6 +59,9 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
   border: {
     border: "1px solid",
@@ -161,17 +164,13 @@ const StudentPage = () => {
       field: "is_active",
       headerName: "Status",
       renderCell: (params) => (
-        <strong>
+        <div>
           {params.value ? (
-            <Typography style={{ color: "green" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
           ) : (
-            <Typography style={{ color: "red" }}>
-              {formatStatus(params.value)}
-            </Typography>
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
           )}
-        </strong>
+        </div>
       ),
       width: 130,
     },
