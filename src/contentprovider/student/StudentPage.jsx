@@ -59,8 +59,10 @@ const useStyles = makeStyles((theme) => ({
   },
   dataGrid: {
     backgroundColor: "#fff",
-    "&:hover": {
-      cursor: "pointer",
+    "@global": {
+      ".MuiDataGrid-row": {
+        cursor: "pointer",
+      },
     },
   },
   border: {
