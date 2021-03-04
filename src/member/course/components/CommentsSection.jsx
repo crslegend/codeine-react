@@ -467,8 +467,9 @@ const CommentsSection = ({ materialId, user }) => {
             }}
             onClick={() => {
               setReferencedCommentId(id);
-              setPageNum(2);
+              getNestedComments(id);
             }}
+            disabled={checkIfCommentInNestedCommentsArr(id)}
           >
             <Typography variant="body2">View Replies</Typography>
           </Button>
@@ -999,7 +1000,34 @@ const CommentsSection = ({ materialId, user }) => {
                                 </Fragment>
                               );
                             } else {
-                              return deletedChildCommentWithButton(reply.id);
+                              return (
+                                <Fragment>
+                                  {deletedChildCommentWithButton(reply.id)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
+                                              }
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
+                              );
                             }
                           })}
                       </Fragment>
@@ -1012,9 +1040,63 @@ const CommentsSection = ({ materialId, user }) => {
                           comment.replies.length > 0 &&
                           comment.replies.map((reply, replyIndex) => {
                             if (reply.user) {
-                              return childComment(reply, replyIndex);
+                              return (
+                                <Fragment>
+                                  {childComment(reply, replyIndex)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
+                                              }
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
+                              );
                             } else {
-                              return deletedChildCommentWithButton(reply.id);
+                              return (
+                                <Fragment>
+                                  {deletedChildCommentWithButton(reply.id)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
+                                              }
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
+                              );
                             }
                           })}
                       </Fragment>
