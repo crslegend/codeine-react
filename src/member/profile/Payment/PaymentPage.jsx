@@ -14,8 +14,10 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   dataGrid: {
-    "&:hover": {
-      cursor: "pointer",
+    "@global": {
+      ".MuiDataGrid-row": {
+        cursor: "pointer",
+      },
     },
   },
 }));

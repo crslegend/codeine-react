@@ -44,8 +44,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   dataGrid: {
-    "&:hover": {
-      cursor: "pointer",
+    "@global": {
+      ".MuiDataGrid-row": {
+        cursor: "pointer",
+      },
     },
   },
 }));
