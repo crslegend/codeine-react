@@ -8,12 +8,12 @@ import ContentProviderLanding from "./contentprovider/LandingPage/ContentProvide
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
 import MemberHome from "./member/profile/MemberRoutesPage";
-import PrivateRoute from "./components/PrivateRoute.jsx";
+import PrivateRoute from "./components/Routes/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderRoutes";
 import ContentProviderLoginPage from "./contentprovider/auth/ContentProviderLoginPage";
 import ContentProviderRegisterPage from "./contentprovider/auth/ContentProviderRegisterPage";
-import LandingPageRoute from "./components/LandingPageRoute";
+import LandingPageRoute from "./components/Routes/LandingPageRoute";
 import ViewAllCourses from "./member/course/ViewAllCourses";
 import ViewCourseDetails from "./member/course/ViewCourseDetails";
 import EnrollCourse from "./member/course/EnrollCourse";
@@ -22,15 +22,16 @@ import PaymentSuccess from "./components/PaymentSuccess";
 import ResetPassword from "./resetPassword/ResetPasswordPage";
 import NewPassword from "./resetPassword/NewPasswordPage";
 import Activation from "./resetPassword/ActivationPage";
-import AdminRoute from "./components/AdminRoute";
-import PartnerRoute from "./components/PartnerRoute";
-import MemberRoute from "./components/MemberRoute";
-import MemberAndPublicRoute from "./components/MemberAndPublicRoute";
+import AdminRoute from "./components/Routes/AdminRoute";
+import PartnerRoute from "./components/Routes/PartnerRoute";
+import MemberRoute from "./components/Routes/MemberRoute";
+import MemberAndPublicRoute from "./components/Routes/MemberAndPublicRoute";
+import PartnerAndPublicRoute from "./components/Routes/PartnerAndPublicRoute";
 
 const App = () => {
   return (
     <Switch>
-      <LandingPageRoute
+      <PartnerAndPublicRoute
         exact
         path="/partner"
         render={() => <ContentProviderLanding />}

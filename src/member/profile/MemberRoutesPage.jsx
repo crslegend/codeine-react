@@ -9,7 +9,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
-import PrivateRoute from "../../components/PrivateRoute.jsx";
+import PrivateRoute from "../../components/Routes/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
 import Toast from "../../components/Toast.js";
 import {

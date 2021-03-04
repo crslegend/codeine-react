@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
-import Service from "../AxiosService";
+import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import { CircularProgress } from "@material-ui/core";
 
-const MemberRoute = ({ render, path, user, ...rest }) => {
+const PartnerRoute = ({ render, path, user, ...rest }) => {
   const [auth, setAuth] = useState();
   const checkUser = () => {
     // console.log("CHECKING");
     if (Cookies.get("t1")) {
       const decoded = jwt_decode(Cookies.get("t1"));
       Service.client
-        .get(`/auth/members/${decoded.user_id}`)
+        .get(`/auth/partners/${decoded.user_id}`)
         .then((res) => {
-          if (res.data.member) {
+          if (res.data.partner) {
             setAuth(true);
           } else {
             setAuth(false);
           }
         })
         .catch((err) => {
-          setAuth(false);
+          // token t1 and t2 expire
+          Service.removeCredentials();
+          setAuth(true);
           // return <Redirect to={`/404`} />;
         });
     } else {
@@ -63,4 +65,4 @@ const MemberRoute = ({ render, path, user, ...rest }) => {
   );
 };
 
-export default MemberRoute;
+export default PartnerRoute;

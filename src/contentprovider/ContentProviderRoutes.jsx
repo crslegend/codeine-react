@@ -9,7 +9,7 @@ import {
   Switch,
   useHistory,
 } from "react-router-dom";
-import PrivateRoute from "../components/PrivateRoute";
+import PrivateRoute from "../components/Routes/PrivateRoute";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";

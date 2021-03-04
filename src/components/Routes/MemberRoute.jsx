@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
-import Service from "../AxiosService";
+import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import { CircularProgress } from "@material-ui/core";
 
-const MemberAndPublicRoute = ({ render, path, ...rest }) => {
+const MemberRoute = ({ render, path, user, ...rest }) => {
   const [auth, setAuth] = useState();
-  const [user, setUser] = useState();
   const checkUser = () => {
     // console.log("CHECKING");
     if (Cookies.get("t1")) {
@@ -15,39 +14,30 @@ const MemberAndPublicRoute = ({ render, path, ...rest }) => {
       Service.client
         .get(`/auth/members/${decoded.user_id}`)
         .then((res) => {
-          console.log(res);
           if (res.data.member) {
             setAuth(true);
-            setUser("member");
           } else {
             setAuth(false);
-            if (res.data.partner) {
-              setUser("partner");
-            } else {
-              setUser("admin");
-            }
           }
         })
         .catch((err) => {
-          // token t1 and t2 expire
-          Service.removeCredentials();
-          setAuth(true);
-          setUser("non-logged");
+          setAuth(false);
           // return <Redirect to={`/404`} />;
         });
     } else {
       //   console.log("HELLO");
-      setAuth(true);
+      return <Redirect to={`/${user}/login`} />;
     }
   };
 
   useEffect(() => {
     checkUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(user);
+  console.log(auth);
 
-  if (Cookies.get("t1") && (auth === undefined || user === undefined)) {
+  if (Cookies.get("t1") && auth === undefined) {
     return (
       <div
         style={{
@@ -65,14 +55,12 @@ const MemberAndPublicRoute = ({ render, path, ...rest }) => {
   return Cookies.get("t1") ? (
     auth && auth ? (
       <Route path={path} render={render} {...rest} />
-    ) : user === "partner" ? (
-      <Redirect to={`/partner/home`} />
     ) : (
-      <Redirect to={`/admin`} />
+      <Redirect to={`/401`} />
     )
   ) : (
-    <Route path={path} render={render} {...rest} />
+    <Redirect to={`/${user}/login`} />
   );
 };
 
-export default MemberAndPublicRoute;
+export default MemberRoute;
