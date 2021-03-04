@@ -646,7 +646,7 @@ const EnrollCourse = () => {
                                   <div
                                     style={{
                                       display: "flex",
-                                      alignItems: "center",
+                                      // alignItems: "center",
                                       minWidth: "100%",
                                     }}
                                   >
