@@ -262,7 +262,7 @@ const ViewCourseDetails = () => {
           </IconButton>
         </div>
         <div className={classes.courseSection}>
-          <div style={{ flexGrow: 3 }}>
+          <div style={{ width: "60%" }}>
             <Typography
               variant="h3"
               style={{ fontWeight: 600, paddingBottom: "10px" }}
@@ -578,7 +578,8 @@ const ViewCourseDetails = () => {
               )}
             </div>
           </div>
-          <div style={{ flexGrow: 1 }}>
+          <div style={{ width: "5%" }} />
+          <div style={{ width: "35%" }}>
             <div
               style={{ maxWidth: 400, margin: "auto", marginBottom: "20px" }}
             >

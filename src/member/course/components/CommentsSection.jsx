@@ -45,6 +45,15 @@ const styles = makeStyles((theme) => ({
     width: "90%",
     marginLeft: "auto",
   },
+  nestedChildComment: {
+    display: "flex",
+    marginBottom: "20px",
+    border: "2px solid lightgrey",
+    borderRadius: "6px",
+    padding: "20px",
+    width: "80%",
+    marginLeft: "auto",
+  },
 }));
 
 const CommentsSection = ({ materialId, user }) => {
@@ -63,6 +72,7 @@ const CommentsSection = ({ materialId, user }) => {
 
   const [pageNum, setPageNum] = useState(1);
   const [comments, setComments] = useState([]);
+  const [nestedComments, setNestedComments] = useState([]);
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [replyCommentDialog, setReplyCommentDialog] = useState(false);
@@ -180,6 +190,7 @@ const CommentsSection = ({ materialId, user }) => {
         setReplyCommentDialog(false);
         setCommentDialogValue("");
         getCourseMaterialComments();
+        getNestedComments(cId);
       })
       .catch((err) => console.log(err));
   };
@@ -206,6 +217,10 @@ const CommentsSection = ({ materialId, user }) => {
         setEditCommentDialog(false);
         setCommentDialogValue("");
         setReferencedCommentId();
+        const { childCommentId, isNested } = checkIfCommentIsNested(id);
+        if (isNested) {
+          getNestedComments(childCommentId);
+        }
         getCourseMaterialComments();
       })
       .catch((err) => console.log(err));
@@ -218,6 +233,10 @@ const CommentsSection = ({ materialId, user }) => {
         console.log(res);
         setDeleteCommentDialog(false);
         setReferencedCommentId();
+        const { childCommentId, isNested } = checkIfCommentIsNested(id);
+        if (isNested) {
+          getNestedComments(childCommentId);
+        }
         getCourseMaterialComments();
       })
       .catch((err) => console.log(err));
@@ -229,6 +248,10 @@ const CommentsSection = ({ materialId, user }) => {
         .delete(`/course-comments/${id}/engagements`)
         .then((res) => {
           console.log(res);
+          const { childCommentId, isNested } = checkIfCommentIsNested(id);
+          if (isNested) {
+            getNestedComments(childCommentId);
+          }
           getCourseMaterialComments();
         })
         .catch((err) => console.log(err));
@@ -237,6 +260,10 @@ const CommentsSection = ({ materialId, user }) => {
         .post(`/course-comments/${id}/engagements`)
         .then((res) => {
           console.log(res);
+          const { childCommentId, isNested } = checkIfCommentIsNested(id);
+          if (isNested) {
+            getNestedComments(childCommentId);
+          }
           getCourseMaterialComments();
         })
         .catch((err) => console.log(err));
@@ -268,6 +295,61 @@ const CommentsSection = ({ materialId, user }) => {
       .then((res) => {
         console.log(res);
         getCourseMaterialComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const checkIfCommentInNestedCommentsArr = (id) => {
+    for (let i = 0; i < nestedComments.length; i++) {
+      if (nestedComments[i].id === id) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkIfCommentIsNested = (id) => {
+    for (let i = 0; i < nestedComments.length; i++) {
+      for (let j = 0; j < nestedComments[i].replies.length; j++) {
+        if (nestedComments[i].replies[j].id === id) {
+          return { childCommentId: nestedComments[i].id, isNested: true };
+        }
+      }
+    }
+    return { childCommentId: null, isNested: false };
+  };
+
+  const getNestedComments = (id) => {
+    Service.client
+      .get(`/course-comments/${id}`)
+      .then((res1) => {
+        console.log(res1);
+        let arr;
+        if (nestedComments.length > 0) {
+          arr = [...nestedComments];
+        } else {
+          arr = [];
+        }
+
+        if (checkIfCommentInNestedCommentsArr(id)) {
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i].id === id) {
+              arr[i] = {
+                id: id,
+                replies: res1.data.replies,
+              };
+            }
+          }
+        } else {
+          arr.push({
+            id: id,
+            replies: res1.data.replies,
+          });
+        }
+
+        console.log(arr);
+        setNestedComments(arr);
+        // setComment(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -319,6 +401,36 @@ const CommentsSection = ({ materialId, user }) => {
     </div>
   );
 
+  const deletedNestedComment = (
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          width: "20%",
+        }}
+      >
+        <SubdirectoryArrowRight fontSize="large" color="primary" />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          marginBottom: "20px",
+          justifyContent: "center",
+          alignItems: "center",
+          border: "2px solid lightgrey",
+          borderRadius: "6px",
+          padding: "10px",
+          width: "80%",
+          marginLeft: "auto",
+        }}
+      >
+        <Block style={{ marginRight: "10px" }} />
+        <Typography variant="body2">This comment has been deleted</Typography>
+      </div>
+    </div>
+  );
+
   const deletedChildCommentWithButton = (id) => {
     return (
       <div style={{ display: "flex" }}>
@@ -355,11 +467,317 @@ const CommentsSection = ({ materialId, user }) => {
             }}
             onClick={() => {
               setReferencedCommentId(id);
-              setPageNum(2);
+              getNestedComments(id);
             }}
+            disabled={checkIfCommentInNestedCommentsArr(id)}
           >
             <Typography variant="body2">View Replies</Typography>
           </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const childComment = (reply, replyIndex) => {
+    return (
+      <div key={`reply` + replyIndex} style={{ display: "flex" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "10%",
+          }}
+        >
+          <SubdirectoryArrowRight fontSize="large" color="primary" />
+        </div>
+        <div className={classes.childComment}>
+          {reply.user.profile_photo ? (
+            <Avatar
+              style={{ marginRight: "15px" }}
+              src={reply.user.profile_photo}
+            />
+          ) : (
+            <Avatar style={{ marginRight: "15px" }}>
+              {reply.user.first_name.charAt(0)}
+            </Avatar>
+          )}
+
+          <div
+            style={{
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h6" style={{ fontWeight: 600 }}>
+              {reply.user && reply.user.first_name}{" "}
+              {reply.user && reply.user.last_name}
+            </Typography>
+            <div style={{ display: "flex" }}>
+              <Typography variant="body2">
+                Reply to #{reply.reply_to.display_id}
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{
+                  paddingLeft: "10px",
+                  opacity: 0.7,
+                }}
+              >
+                {reply && calculateDateInterval(reply.timestamp)}
+              </Typography>
+              {reply && checkIfOwnerOfComment(reply.user.id) && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    order: 2,
+                    marginLeft: "auto",
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setReferencedCommentId(reply.id);
+                      setCommentDialogValue({
+                        comment: reply.comment,
+                      });
+                      setEditCommentDialog(true);
+                    }}
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setReferencedCommentId(reply.id);
+                      setDeleteCommentDialog(true);
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </div>
+              )}
+            </div>
+
+            <Typography
+              variant="body1"
+              style={{
+                paddingTop: "5px",
+                paddingBottom: "10px",
+              }}
+            >
+              {reply.comment}
+            </Typography>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="body2"
+                style={{
+                  opacity: 0.7,
+                  paddingRight: "20px",
+                }}
+              >
+                Likes: {reply.likes}
+              </Typography>
+              {user && user === "member" && (
+                <IconButton
+                  size="small"
+                  onClick={() =>
+                    handleLikeUnlikeComment(
+                      reply.id,
+                      reply.current_member_liked
+                    )
+                  }
+                >
+                  <ThumbUp
+                    color={reply.current_member_liked ? "primary" : "inherit"}
+                  />
+                </IconButton>
+              )}
+              <div
+                style={{
+                  order: 2,
+                  marginLeft: "auto",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setReferencedCommentId(reply.id);
+                    getNestedComments(reply.id);
+                    // setPageNum(2);
+                  }}
+                  disabled={checkIfCommentInNestedCommentsArr(reply.id)}
+                >
+                  <Typography variant="body2">View Replies</Typography>
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setReferencedCommentId(reply.id);
+                    setReplyCommentDialog(true);
+                  }}
+                >
+                  <Typography variant="body2">Reply</Typography>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const nestedChildComment = (nestedReply, nestedIndex) => {
+    return (
+      <div key={`nestedreply` + nestedIndex} style={{ display: "flex" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "20%",
+          }}
+        >
+          <SubdirectoryArrowRight fontSize="large" color="primary" />
+        </div>
+        <div className={classes.nestedChildComment}>
+          {nestedReply.user.profile_photo ? (
+            <Avatar
+              style={{
+                marginRight: "15px",
+              }}
+              src={nestedReply.user.profile_photo}
+            />
+          ) : (
+            <Avatar
+              style={{
+                marginRight: "15px",
+              }}
+            >
+              {nestedReply.user.first_name.charAt(0)}
+            </Avatar>
+          )}
+
+          <div
+            style={{
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="h6"
+              style={{
+                fontWeight: 600,
+              }}
+            >
+              {nestedReply.user && nestedReply.user.first_name}{" "}
+              {nestedReply.user && nestedReply.user.last_name}
+            </Typography>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              <Typography variant="body2">
+                Reply to #{nestedReply.reply_to.display_id}
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{
+                  paddingLeft: "10px",
+                  opacity: 0.7,
+                }}
+              >
+                {nestedReply && calculateDateInterval(nestedReply.timestamp)}
+              </Typography>
+              {nestedReply && checkIfOwnerOfComment(nestedReply.user.id) && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    order: 2,
+                    marginLeft: "auto",
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setReferencedCommentId(nestedReply.id);
+                      setCommentDialogValue({
+                        comment: nestedReply.comment,
+                      });
+                      setEditCommentDialog(true);
+                    }}
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setReferencedCommentId(nestedReply.id);
+                      setDeleteCommentDialog(true);
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </div>
+              )}
+            </div>
+
+            <Typography
+              variant="body1"
+              style={{
+                paddingTop: "5px",
+                paddingBottom: "10px",
+              }}
+            >
+              {nestedReply.comment}
+            </Typography>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="body2"
+                style={{
+                  opacity: 0.7,
+                  paddingRight: "20px",
+                }}
+              >
+                Likes: {nestedReply.likes}
+              </Typography>
+              {user && user === "member" && (
+                <IconButton
+                  size="small"
+                  onClick={() =>
+                    handleLikeUnlikeComment(
+                      nestedReply.id,
+                      nestedReply.current_member_liked
+                    )
+                  }
+                >
+                  <ThumbUp
+                    color={
+                      nestedReply.current_member_liked ? "primary" : "inherit"
+                    }
+                  />
+                </IconButton>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -554,171 +972,62 @@ const CommentsSection = ({ materialId, user }) => {
                           comment.replies.map((reply, replyIndex) => {
                             if (reply.user) {
                               return (
-                                <div style={{ display: "flex" }}>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      width: "10%",
-                                    }}
-                                  >
-                                    <SubdirectoryArrowRight
-                                      fontSize="large"
-                                      color="primary"
-                                    />
-                                  </div>
-                                  <div
-                                    key={`reply` + replyIndex}
-                                    className={classes.childComment}
-                                  >
-                                    {reply.user.profile_photo ? (
-                                      <Avatar
-                                        style={{ marginRight: "15px" }}
-                                        src={reply.user.profile_photo}
-                                      />
-                                    ) : (
-                                      <Avatar style={{ marginRight: "15px" }}>
-                                        {reply.user.first_name.charAt(0)}
-                                      </Avatar>
-                                    )}
-
-                                    <div
-                                      style={{
-                                        flexDirection: "column",
-                                        width: "100%",
-                                      }}
-                                    >
-                                      <Typography
-                                        variant="h6"
-                                        style={{ fontWeight: 600 }}
-                                      >
-                                        {reply.user && reply.user.first_name}{" "}
-                                        {reply.user && reply.user.last_name}
-                                      </Typography>
-                                      <div style={{ display: "flex" }}>
-                                        <Typography variant="body2">
-                                          Reply to #{reply.reply_to.display_id}
-                                        </Typography>
-                                        <Typography
-                                          variant="body2"
-                                          style={{
-                                            paddingLeft: "10px",
-                                            opacity: 0.7,
-                                          }}
-                                        >
-                                          {reply &&
-                                            calculateDateInterval(
-                                              reply.timestamp
-                                            )}
-                                        </Typography>
-                                        {reply &&
-                                          checkIfOwnerOfComment(
-                                            reply.user.id
-                                          ) && (
-                                            <div
-                                              style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                order: 2,
-                                                marginLeft: "auto",
-                                              }}
-                                            >
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  setReferencedCommentId(
-                                                    reply.id
-                                                  );
-                                                  setCommentDialogValue({
-                                                    comment: reply.comment,
-                                                  });
-                                                  setEditCommentDialog(true);
-                                                }}
-                                              >
-                                                <Edit />
-                                              </IconButton>
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  setReferencedCommentId(
-                                                    reply.id
-                                                  );
-                                                  setDeleteCommentDialog(true);
-                                                }}
-                                              >
-                                                <Delete />
-                                              </IconButton>
-                                            </div>
-                                          )}
-                                      </div>
-
-                                      <Typography
-                                        variant="body1"
-                                        style={{
-                                          paddingTop: "5px",
-                                          paddingBottom: "10px",
-                                        }}
-                                      >
-                                        {reply.comment}
-                                      </Typography>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                        }}
-                                      >
-                                        <Typography
-                                          variant="body2"
-                                          style={{
-                                            opacity: 0.7,
-                                            paddingRight: "20px",
-                                          }}
-                                        >
-                                          Likes: {reply.likes}
-                                        </Typography>
-                                        {user && user === "member" && (
-                                          <IconButton
-                                            size="small"
-                                            onClick={() =>
-                                              handleLikeUnlikeComment(
-                                                reply.id,
-                                                reply.current_member_liked
-                                              )
-                                            }
-                                          >
-                                            <ThumbUp
-                                              color={
-                                                reply.current_member_liked
-                                                  ? "primary"
-                                                  : "inherit"
+                                <Fragment>
+                                  {childComment(reply, replyIndex)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
                                               }
-                                            />
-                                          </IconButton>
-                                        )}
-                                        <Button
-                                          variant="contained"
-                                          color="primary"
-                                          style={{
-                                            order: 2,
-                                            marginLeft: "auto",
-                                          }}
-                                          onClick={() => {
-                                            setReferencedCommentId(reply.id);
-                                            setPageNum(2);
-                                          }}
-                                        >
-                                          <Typography variant="body2">
-                                            View Replies
-                                          </Typography>
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
                               );
                             } else {
-                              return deletedChildCommentWithButton(reply.id);
+                              return (
+                                <Fragment>
+                                  {deletedChildCommentWithButton(reply.id)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
+                                              }
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
+                              );
                             }
                           })}
                       </Fragment>
@@ -732,171 +1041,62 @@ const CommentsSection = ({ materialId, user }) => {
                           comment.replies.map((reply, replyIndex) => {
                             if (reply.user) {
                               return (
-                                <div style={{ display: "flex" }}>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      width: "10%",
-                                    }}
-                                  >
-                                    <SubdirectoryArrowRight
-                                      fontSize="large"
-                                      color="primary"
-                                    />
-                                  </div>
-                                  <div
-                                    key={`reply` + replyIndex}
-                                    className={classes.childComment}
-                                  >
-                                    {reply.user.profile_photo ? (
-                                      <Avatar
-                                        style={{ marginRight: "15px" }}
-                                        src={reply.user.profile_photo}
-                                      />
-                                    ) : (
-                                      <Avatar style={{ marginRight: "15px" }}>
-                                        {reply.user.first_name.charAt(0)}
-                                      </Avatar>
-                                    )}
-
-                                    <div
-                                      style={{
-                                        flexDirection: "column",
-                                        width: "100%",
-                                      }}
-                                    >
-                                      <Typography
-                                        variant="h6"
-                                        style={{ fontWeight: 600 }}
-                                      >
-                                        {reply.user && reply.user.first_name}{" "}
-                                        {reply.user && reply.user.last_name}
-                                      </Typography>
-                                      <div style={{ display: "flex" }}>
-                                        <Typography variant="body2">
-                                          Reply to #{reply.reply_to.display_id}
-                                        </Typography>
-                                        <Typography
-                                          variant="body2"
-                                          style={{
-                                            paddingLeft: "10px",
-                                            opacity: 0.7,
-                                          }}
-                                        >
-                                          {reply &&
-                                            calculateDateInterval(
-                                              reply.timestamp
-                                            )}
-                                        </Typography>
-                                        {reply &&
-                                          checkIfOwnerOfComment(
-                                            reply.user.id
-                                          ) && (
-                                            <div
-                                              style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                order: 2,
-                                                marginLeft: "auto",
-                                              }}
-                                            >
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  setReferencedCommentId(
-                                                    reply.id
-                                                  );
-                                                  setCommentDialogValue({
-                                                    comment: reply.comment,
-                                                  });
-                                                  setEditCommentDialog(true);
-                                                }}
-                                              >
-                                                <Edit />
-                                              </IconButton>
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  setReferencedCommentId(
-                                                    reply.id
-                                                  );
-                                                  setDeleteCommentDialog(true);
-                                                }}
-                                              >
-                                                <Delete />
-                                              </IconButton>
-                                            </div>
-                                          )}
-                                      </div>
-
-                                      <Typography
-                                        variant="body1"
-                                        style={{
-                                          paddingTop: "5px",
-                                          paddingBottom: "10px",
-                                        }}
-                                      >
-                                        {reply.comment}
-                                      </Typography>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                        }}
-                                      >
-                                        <Typography
-                                          variant="body2"
-                                          style={{
-                                            opacity: 0.7,
-                                            paddingRight: "20px",
-                                          }}
-                                        >
-                                          Likes: {reply.likes}
-                                        </Typography>
-                                        {user && user === "member" && (
-                                          <IconButton
-                                            size="small"
-                                            onClick={() =>
-                                              handleLikeUnlikeComment(
-                                                reply.id,
-                                                reply.current_member_liked
-                                              )
-                                            }
-                                          >
-                                            <ThumbUp
-                                              color={
-                                                reply.current_member_liked
-                                                  ? "primary"
-                                                  : "inherit"
+                                <Fragment>
+                                  {childComment(reply, replyIndex)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
                                               }
-                                            />
-                                          </IconButton>
-                                        )}
-                                        <Button
-                                          variant="contained"
-                                          color="primary"
-                                          style={{
-                                            order: 2,
-                                            marginLeft: "auto",
-                                          }}
-                                          onClick={() => {
-                                            setReferencedCommentId(reply.id);
-                                            setPageNum(2);
-                                          }}
-                                        >
-                                          <Typography variant="body2">
-                                            View Replies
-                                          </Typography>
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
                               );
                             } else {
-                              return deletedChildCommentWithButton(reply.id);
+                              return (
+                                <Fragment>
+                                  {deletedChildCommentWithButton(reply.id)}
+                                  {nestedComments &&
+                                    nestedComments.length > 0 &&
+                                    nestedComments.map((nestedComment) => {
+                                      if (nestedComment.id === reply.id) {
+                                        if (nestedComment.replies.length > 0) {
+                                          return nestedComment.replies.map(
+                                            (nestedReply, nestedIndex) => {
+                                              console.log(nestedReply);
+                                              if (nestedReply.user) {
+                                                return nestedChildComment(
+                                                  nestedReply,
+                                                  nestedIndex
+                                                );
+                                              }
+                                              return deletedNestedComment;
+                                            }
+                                          );
+                                        }
+                                        return null;
+                                      } else {
+                                        return null;
+                                      }
+                                    })}
+                                </Fragment>
+                              );
                             }
                           })}
                       </Fragment>

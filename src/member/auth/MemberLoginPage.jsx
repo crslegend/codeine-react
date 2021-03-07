@@ -102,16 +102,18 @@ const MemberLoginPage = () => {
           } else {
             history.push("/courses");
           }
-        } else {
-          setLoading(false);
-          setSbOpen(true);
-          setSnackbar({
-            ...snackbar,
-            message:
-              "The email address entered is not a registered member. Please register first!",
-            severity: "error",
-          });
-          return;
+        } else if (res.data.user.partner) {
+          Service.storeCredentials(res.data);
+          history.push("/partner/home/dashboard");
+          // setLoading(false);
+          // setSbOpen(true);
+          // setSnackbar({
+          //   ...snackbar,
+          //   message:
+          //     "The email address entered is not a registered member. Please register first!",
+          //   severity: "error",
+          // });
+          // return;
         }
       })
       .catch((err) => {

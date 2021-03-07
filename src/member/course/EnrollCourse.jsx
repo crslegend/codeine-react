@@ -602,17 +602,20 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
-                                  style={{ marginBottom: "20px" }}
-                                  checked={
-                                    progressArr &&
-                                    progressArr.length > 0 &&
-                                    progressArr.includes(material.id)
-                                  }
-                                  onChange={(e) =>
-                                    handleCheckMaterial(e, material.id)
-                                  }
-                                />
+                                <div>
+                                  <Checkbox
+                                    style={{ marginBottom: "20px" }}
+                                    checked={
+                                      progressArr &&
+                                      progressArr.length > 0 &&
+                                      progressArr.includes(material.id)
+                                    }
+                                    onChange={(e) =>
+                                      handleCheckMaterial(e, material.id)
+                                    }
+                                  />
+                                </div>
+
                                 <div
                                   style={{
                                     display: "flex",
@@ -708,17 +711,19 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
-                                  style={{ marginBottom: "20px" }}
-                                  checked={
-                                    progressArr &&
-                                    progressArr.length > 0 &&
-                                    progressArr.includes(material.id)
-                                  }
-                                  onChange={(e) =>
-                                    handleCheckMaterial(e, material.id)
-                                  }
-                                />
+                                <div>
+                                  <Checkbox
+                                    style={{ marginBottom: "20px" }}
+                                    checked={
+                                      progressArr &&
+                                      progressArr.length > 0 &&
+                                      progressArr.includes(material.id)
+                                    }
+                                    onChange={(e) =>
+                                      handleCheckMaterial(e, material.id)
+                                    }
+                                  />
+                                </div>
                                 <div
                                   style={{
                                     display: "flex",
@@ -730,7 +735,7 @@ const EnrollCourse = () => {
                                   <div
                                     style={{
                                       display: "flex",
-                                      alignItems: "center",
+                                      // alignItems: "center",
                                       minWidth: "100%",
                                     }}
                                   >
@@ -776,17 +781,20 @@ const EnrollCourse = () => {
                                   marginBottom: "20px",
                                 }}
                               >
-                                <Checkbox
-                                  style={{ marginBottom: "20px" }}
-                                  checked={
-                                    progressArr &&
-                                    progressArr.length > 0 &&
-                                    progressArr.includes(material.id)
-                                  }
-                                  onChange={(e) =>
-                                    handleCheckMaterial(e, material.id)
-                                  }
-                                />
+                                <div>
+                                  <Checkbox
+                                    style={{ marginBottom: "20px" }}
+                                    checked={
+                                      progressArr &&
+                                      progressArr.length > 0 &&
+                                      progressArr.includes(material.id)
+                                    }
+                                    onChange={(e) =>
+                                      handleCheckMaterial(e, material.id)
+                                    }
+                                  />
+                                </div>
+
                                 <div
                                   style={{
                                     display: "flex",
