@@ -19,7 +19,8 @@ import Cookies from "js-cookie";
 import "./sidenotes.css";
 import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 import TextSelector from "text-selection-react";
-// import store from "../redux/store";
+import store from "../redux/store";
+import { deselectSidenote } from "../redux/actions";
 const reactStringReplace = require("react-string-replace");
 
 const styles = makeStyles((theme) => ({
@@ -31,7 +32,6 @@ const styles = makeStyles((theme) => ({
   },
   content: {
     padding: theme.spacing(13),
-    // width: "100%",
   },
 }));
 
@@ -53,7 +53,7 @@ const ViewCodeReviewDetails = () => {
     }
   };
 
-  //   const deselect = () => store.dispatch(deselectSidenote(code && code.id));
+  const deselect = () => store.dispatch(deselectSidenote(code && code.id));
 
   const getCodeReview = () => {
     Service.client
@@ -258,7 +258,7 @@ const ViewCodeReviewDetails = () => {
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
-      <div className={classes.content}>
+      <div className={classes.content} onClick={deselect}>
         <article id={code && code.id}>
           <TextSelector
             events={[
