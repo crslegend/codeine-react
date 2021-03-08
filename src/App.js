@@ -27,10 +27,12 @@ import PartnerRoute from "./components/Routes/PartnerRoute";
 import MemberRoute from "./components/Routes/MemberRoute";
 import MemberAndPublicRoute from "./components/Routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/Routes/PartnerAndPublicRoute";
+import ViewCodeReviewDetails from "./codereview/ViewCodeReviewDetails";
 
 const App = () => {
   return (
     <Switch>
+      <Route exact path="/codereview" component={ViewCodeReviewDetails} />
       <PartnerAndPublicRoute
         exact
         path="/partner"
