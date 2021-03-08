@@ -243,10 +243,12 @@ const ViewCodeReviewDetails = () => {
         console.log(res);
         // setCodeComments(res.data);
         setAddCommentDialog(false);
-        setComment();
-        setSelectedValue();
-        getCodeReview();
-        getCodeReviewComments();
+        setTimeout(() => {
+          setComment();
+          setSelectedValue();
+          getCodeReview();
+          getCodeReviewComments();
+        }, 500);
       })
       .catch((err) => console.log(err));
   };
@@ -268,24 +270,12 @@ const ViewCodeReviewDetails = () => {
               },
             ]}
             color={"#F8E4B1"}
-            colorText={true}
+            colorText={false}
             unmark={false}
           />
           <div className="main-panel">
             <AnchorBase anchor={baseAnchor} style={{ width: "70%" }}>
-              <p>A sidenote and another red sidenote!</p>
-              <ul>
-                <li>
-                  Must be associated with a block (a small bit of content), that
-                  is versioned and must point to content inside of that block.
-                </li>
-              </ul>
-              <p>
-                The sidenotes location information is a stand alone package. For
-                example, the reducer should be based on the ID of the sidenote
-                that can get triggered (or not).
-              </p>
-              <p>{code && applyInlineAnchor(code.code)}</p>
+              {code && applyInlineAnchor(code.code)}
             </AnchorBase>
             <div className="sidenotes">
               {codeComments &&
@@ -308,9 +298,12 @@ const ViewCodeReviewDetails = () => {
         open={addCommentDialog}
         onClose={() => {
           setAddCommentDialog(false);
-          setComment();
-          setSelectedValue();
-          getCodeReview();
+
+          setTimeout(() => {
+            setComment();
+            setSelectedValue();
+            getCodeReview();
+          }, 500);
         }}
         PaperProps={{
           style: {
@@ -321,6 +314,9 @@ const ViewCodeReviewDetails = () => {
         <form onSubmit={handleAddComment}>
           <DialogTitle>Add Comment</DialogTitle>
           <DialogContent>
+            <span style={{ fontWeight: 600 }}>Text Selected:</span>
+            <br />
+            {selectedValue && selectedValue}
             <TextField
               variant="outlined"
               placeholder="Enter comment"
@@ -331,6 +327,7 @@ const ViewCodeReviewDetails = () => {
               fullWidth
               multiline
               rows={5}
+              style={{ marginTop: "25px" }}
             />
           </DialogContent>
           <DialogActions>
@@ -338,9 +335,11 @@ const ViewCodeReviewDetails = () => {
               variant="contained"
               onClick={() => {
                 setAddCommentDialog(false);
-                setComment();
-                setSelectedValue();
-                getCodeReview();
+                setTimeout(() => {
+                  setComment();
+                  setSelectedValue();
+                  getCodeReview();
+                }, 500);
               }}
               style={{ width: 100 }}
             >
