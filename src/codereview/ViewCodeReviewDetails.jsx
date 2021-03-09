@@ -24,7 +24,14 @@ import "./sidenotes.css";
 import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 import TextSelector from "text-selection-react";
 import store from "../redux/store";
-import { deselectSidenote, repositionSidenotes } from "../redux/actions";
+import {
+  deselectSidenote,
+  repositionSidenotes,
+  disconnectSidenote,
+  connectSidenote,
+  selectSidenote,
+  selectAnchor,
+} from "../redux/actions";
 import jwt_decode from "jwt-decode";
 const reactStringReplace = require("react-string-replace");
 
@@ -60,6 +67,10 @@ const ViewCodeReviewDetails = () => {
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
 
+  const [editMode, setEditMode] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState();
+  const [selectedComment, setSelectedComment] = useState();
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -68,6 +79,7 @@ const ViewCodeReviewDetails = () => {
 
   const deselect = () => store.dispatch(deselectSidenote(code && code.id));
   const reposition = () => store.dispatch(repositionSidenotes(code && code.id));
+  const select = (sId) => store.dispatch(selectAnchor(code && code.id, sId));
 
   const getCodeReview = () => {
     Service.client
@@ -317,7 +329,6 @@ const ViewCodeReviewDetails = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            marginBottom: "10px",
                           }}
                         >
                           {comment.user.profile_photo &&
@@ -358,7 +369,21 @@ const ViewCodeReviewDetails = () => {
                                 marginLeft: "auto",
                               }}
                             >
-                              <IconButton size="small">
+                              <IconButton
+                                size="small"
+                                onClick={() => {
+                                  setEditMode(true);
+                                  setSelectedCommentId(comment.id);
+                                  setSelectedComment(comment.comment);
+
+                                  setTimeout(() => {
+                                    select(comment.id);
+                                  }, 0.5);
+                                }}
+                                disabled={
+                                  editMode && selectedCommentId === comment.id
+                                }
+                              >
                                 <Edit fontSize="small" />
                               </IconButton>
 
@@ -372,9 +397,20 @@ const ViewCodeReviewDetails = () => {
                           )}
                         </div>
                         <div>
-                          <Typography style={{ fontSize: 12 }}>
-                            {comment.comment}
-                          </Typography>
+                          {editMode && selectedCommentId === comment.id ? (
+                            <TextField
+                              margin="dense"
+                              variant="outlined"
+                              value={selectedComment && selectedComment}
+                              onChange={(e) =>
+                                setSelectedComment(e.target.value)
+                              }
+                            />
+                          ) : (
+                            <Typography style={{ fontSize: 13 }}>
+                              {comment.comment}
+                            </Typography>
+                          )}
                         </div>
                       </div>
                     </Sidenote>
