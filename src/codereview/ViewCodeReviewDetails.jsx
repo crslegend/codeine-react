@@ -3,24 +3,29 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { Link, useHistory } from "react-router-dom";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   ListItem,
   TextField,
   Typography,
 } from "@material-ui/core";
+import { Delete, Edit } from "@material-ui/icons";
 import logo from "../assets/CodeineLogos/Member.svg";
 
+import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
 import "./sidenotes.css";
 import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 import TextSelector from "text-selection-react";
 import store from "../redux/store";
-import { deselectSidenote } from "../redux/actions";
+import { deselectSidenote, repositionSidenotes } from "../redux/actions";
+import jwt_decode from "jwt-decode";
 const reactStringReplace = require("react-string-replace");
 
 const styles = makeStyles((theme) => ({
@@ -33,6 +38,13 @@ const styles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(13),
   },
+  commentCard: {
+    width: 250,
+    minHeight: 100,
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+  },
 }));
 
 const ViewCodeReviewDetails = () => {
@@ -43,6 +55,7 @@ const ViewCodeReviewDetails = () => {
   const [selectedValue, setSelectedValue] = useState();
   const [code, setCode] = useState();
   const [codeComments, setCodeComments] = useState([]);
+  const [init, setInit] = useState(false);
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
@@ -54,6 +67,7 @@ const ViewCodeReviewDetails = () => {
   };
 
   const deselect = () => store.dispatch(deselectSidenote(code && code.id));
+  const reposition = () => store.dispatch(repositionSidenotes(code && code.id));
 
   const getCodeReview = () => {
     Service.client
@@ -71,6 +85,7 @@ const ViewCodeReviewDetails = () => {
       .then((res) => {
         console.log(res);
         setCodeComments(res.data);
+        reposition();
       })
       .catch((err) => console.log(err));
   };
@@ -180,41 +195,38 @@ const ViewCodeReviewDetails = () => {
     </Fragment>
   );
 
-  const docId = "article";
   const baseAnchor = "anchor";
-  const blue = "blue";
-  const red = "red";
-
-  const sampleStr =
-    "Must see all the sidenotes at once, so they should be in the margins!";
 
   const applyInlineAnchor = (str) => {
-    let formatted;
+    let formatted = str;
     // const arr = ["sidenotes", "once"];
 
     for (let i = 0; i < codeComments.length; i++) {
-      if (i === 0) {
-        formatted = reactStringReplace(
-          str,
-          codeComments[i].highlighted_code,
-          (match) => (
-            <InlineAnchor sidenote={codeComments[i].id}>{match}</InlineAnchor>
-          )
-        );
-      } else {
-        formatted = reactStringReplace(
-          formatted,
-          codeComments[i].highlighted_code,
-          (match) => (
-            <InlineAnchor sidenote={codeComments[i].id}>{match}</InlineAnchor>
-          )
-        );
-      }
+      formatted = reactStringReplace(
+        formatted,
+        codeComments[i].highlighted_code,
+        (match) => (
+          <InlineAnchor sidenote={codeComments[i].id}>{match}</InlineAnchor>
+        )
+      );
+    }
+
+    if (!init) {
+      setInit(true);
     }
     // console.log(formatted);
     return formatted;
   };
   //   console.log(selectedValue);
+
+  const checkIfOwnerOfComment = (userId) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+
+    if (decoded.user_id === userId) {
+      return true;
+    }
+    return false;
+  };
 
   const handleSelectText = (text) => {
     console.log(text);
@@ -253,6 +265,21 @@ const ViewCodeReviewDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleDeleteComment = (cId) => {
+    Service.client
+      .delete(
+        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${cId}`
+      )
+      .then((res) => {
+        console.log(res);
+        // setCodeComments(res.data);
+        reposition();
+        getCodeReview();
+        getCodeReviewComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -278,13 +305,77 @@ const ViewCodeReviewDetails = () => {
               {code && applyInlineAnchor(code.code)}
             </AnchorBase>
             <div className="sidenotes">
-              {codeComments &&
+              {init &&
+                codeComments &&
                 codeComments.length > 0 &&
-                codeComments.map((comment) => {
+                codeComments.map((comment, index) => {
+                  console.log(comment);
                   return (
                     <Sidenote sidenote={comment.id} base={baseAnchor}>
-                      <div style={{ width: 250, height: 100, padding: "20px" }}>
-                        {comment.comment}
+                      <div key={index} className={classes.commentCard}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          {comment.user.profile_photo &&
+                          comment.user.profile_photo ? (
+                            <Avatar
+                              style={{ marginRight: "15px" }}
+                              src={comment.user && comment.user.profile_photo}
+                            />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {comment.user &&
+                                comment.user.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                          <div style={{ flexDirection: "column" }}>
+                            <Typography
+                              variant="body2"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {comment.user && comment.user.first_name}{" "}
+                              {comment.user && comment.user.last_name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {comment &&
+                                calculateDateInterval(comment.timestamp)}
+                            </Typography>
+                          </div>
+                          {checkIfOwnerOfComment(
+                            comment.user && comment.user.id
+                          ) && (
+                            <div
+                              style={{
+                                flexDirection: "row",
+                                order: 2,
+                                marginLeft: "auto",
+                              }}
+                            >
+                              <IconButton size="small">
+                                <Edit fontSize="small" />
+                              </IconButton>
+
+                              <IconButton
+                                size="small"
+                                onClick={() => handleDeleteComment(comment.id)}
+                              >
+                                <Delete fontSize="small" />
+                              </IconButton>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <Typography style={{ fontSize: 12 }}>
+                            {comment.comment}
+                          </Typography>
+                        </div>
                       </div>
                     </Sidenote>
                   );
