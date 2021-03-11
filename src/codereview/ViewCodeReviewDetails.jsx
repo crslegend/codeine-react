@@ -473,9 +473,7 @@ const ViewCodeReviewDetails = () => {
       .post(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`, data)
       .then((res) => {
         console.log(res);
-        select(selectedCommentId);
-        setReplyParentComment();
-        setReplyParentId();
+        select(replyParentId);
         setReply();
         getCodeReview();
         getCodeReviewComments();
