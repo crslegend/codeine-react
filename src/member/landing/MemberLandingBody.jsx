@@ -81,13 +81,14 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const MemberLandingBody = (loggedIn) => {
+const MemberLandingBody = (props) => {
   const classes = styles();
+  const { loggedIn } = props;
 
   return (
     <Fragment>
       <Grid container className={classes.root}>
-        {loggedIn && loggedIn.loggedIn ? (
+        {loggedIn && loggedIn ? (
           <div>
             <RecentCourses />
             <FeaturedArticles />

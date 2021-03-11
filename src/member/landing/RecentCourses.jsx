@@ -20,7 +20,7 @@ const styles = makeStyles((theme) => ({
     lineHeight: "50px",
     fontWeight: 550,
     display: "inline-block",
-    fontFamily: "Roboto",
+    fontFamily: "Roboto Mono",
   },
 }));
 
@@ -33,8 +33,7 @@ const RecentCourses = () => {
       .get(`/enrollments`)
       .then((res) => {
         res.data = res.data.slice(0, 3);
-        console.log(res.data);
-        setCourses(res.data.results);
+        setCourses(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -59,7 +58,7 @@ const RecentCourses = () => {
             }}
           >
             {courses && courses.length > 0 ? (
-              courses.map((course) => <CourseCard course={course} />)
+              courses.map((course) => <CourseCard course={course.course} />)
             ) : (
               <div
                 style={{
@@ -71,7 +70,7 @@ const RecentCourses = () => {
                 <Typography
                   variant="h5"
                   style={{
-                    fontFamily: "Roboto",
+                    fontFamily: "Roboto Mono",
                     margin: "15px auto",
                     color: "#9B9B9B",
                   }}
