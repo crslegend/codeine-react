@@ -52,6 +52,10 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  input: {
+    height: 10,
+    fontSize: 13,
+  },
 }));
 
 const ViewCodeReviewDetails = () => {
@@ -78,8 +82,10 @@ const ViewCodeReviewDetails = () => {
   };
 
   const deselect = () => store.dispatch(deselectSidenote(code && code.id));
-  const reposition = () => store.dispatch(repositionSidenotes(code && code.id));
+  // const reposition = (docId) => store.dispatch(repositionSidenotes(docId));
   const select = (sId) => store.dispatch(selectAnchor(code && code.id, sId));
+  // const connectNote = (sId) =>
+  //   store.dispatch(connectSidenote(code && code.id, sId));
 
   const getCodeReview = () => {
     Service.client
@@ -96,8 +102,8 @@ const ViewCodeReviewDetails = () => {
       .get(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`)
       .then((res) => {
         console.log(res);
+        // setCodeComments([]);
         setCodeComments(res.data);
-        reposition();
       })
       .catch((err) => console.log(err));
   };
@@ -265,7 +271,6 @@ const ViewCodeReviewDetails = () => {
       .post(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`, data)
       .then((res) => {
         console.log(res);
-        // setCodeComments(res.data);
         setAddCommentDialog(false);
         setTimeout(() => {
           setComment();
@@ -283,9 +288,30 @@ const ViewCodeReviewDetails = () => {
         `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${cId}`
       )
       .then((res) => {
+        // console.log(res);
+        getCodeReview();
+        getCodeReviewComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUpdateComment = () => {
+    const data = {
+      highlighted_code: selectedComment.highlighted_code,
+      comment: selectedComment.comment,
+    };
+
+    Service.client
+      .put(
+        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${selectedCommentId}`,
+        data
+      )
+      .then((res) => {
         console.log(res);
-        // setCodeComments(res.data);
-        reposition();
+        setEditMode(false);
+        select(selectedCommentId);
+        setSelectedComment();
+        setSelectedCommentId();
         getCodeReview();
         getCodeReviewComments();
       })
@@ -321,7 +347,6 @@ const ViewCodeReviewDetails = () => {
                 codeComments &&
                 codeComments.length > 0 &&
                 codeComments.map((comment, index) => {
-                  console.log(comment);
                   return (
                     <Sidenote sidenote={comment.id} base={baseAnchor}>
                       <div key={index} className={classes.commentCard}>
@@ -374,11 +399,11 @@ const ViewCodeReviewDetails = () => {
                                 onClick={() => {
                                   setEditMode(true);
                                   setSelectedCommentId(comment.id);
-                                  setSelectedComment(comment.comment);
+                                  setSelectedComment(comment);
 
                                   setTimeout(() => {
                                     select(comment.id);
-                                  }, 0.5);
+                                  }, 0.1);
                                 }}
                                 disabled={
                                   editMode && selectedCommentId === comment.id
@@ -398,16 +423,56 @@ const ViewCodeReviewDetails = () => {
                         </div>
                         <div>
                           {editMode && selectedCommentId === comment.id ? (
-                            <TextField
-                              margin="dense"
-                              variant="outlined"
-                              value={selectedComment && selectedComment}
-                              onChange={(e) =>
-                                setSelectedComment(e.target.value)
-                              }
-                            />
+                            <Fragment>
+                              <TextField
+                                margin="dense"
+                                variant="outlined"
+                                value={
+                                  selectedComment && selectedComment.comment
+                                }
+                                onChange={(e) =>
+                                  setSelectedComment({
+                                    ...selectedComment,
+                                    comment: e.target.value,
+                                  })
+                                }
+                                InputProps={{
+                                  classes: { input: classes.input },
+                                }}
+                                fullWidth
+                              />
+                              <div style={{ marginTop: "10px" }}>
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  size="small"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() => handleUpdateComment()}
+                                  disabled={selectedComment.comment === ""}
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  onClick={() => {
+                                    setEditMode(false);
+                                    setSelectedComment();
+
+                                    setTimeout(() => {
+                                      select(selectedCommentId);
+                                      setSelectedCommentId();
+                                    }, 0.5);
+                                  }}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </Fragment>
                           ) : (
-                            <Typography style={{ fontSize: 13 }}>
+                            <Typography
+                              style={{ fontSize: 13, paddingTop: "10px" }}
+                            >
                               {comment.comment}
                             </Typography>
                           )}
