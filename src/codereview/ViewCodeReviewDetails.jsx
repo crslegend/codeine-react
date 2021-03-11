@@ -71,6 +71,8 @@ const ViewCodeReviewDetails = () => {
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
 
+  const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
+
   const [editMode, setEditMode] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState();
   const [selectedComment, setSelectedComment] = useState();
@@ -282,13 +284,15 @@ const ViewCodeReviewDetails = () => {
       .catch((err) => console.log(err));
   };
 
-  const handleDeleteComment = (cId) => {
+  const handleDeleteComment = () => {
     Service.client
       .delete(
-        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${cId}`
+        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${selectedCommentId}`
       )
       .then((res) => {
         // console.log(res);
+        setDeleteCommentDialog(false);
+        setSelectedCommentId();
         getCodeReview();
         getCodeReviewComments();
       })
@@ -414,7 +418,10 @@ const ViewCodeReviewDetails = () => {
 
                               <IconButton
                                 size="small"
-                                onClick={() => handleDeleteComment(comment.id)}
+                                onClick={() => {
+                                  setSelectedCommentId(comment.id);
+                                  setDeleteCommentDialog(true);
+                                }}
                               >
                                 <Delete fontSize="small" />
                               </IconButton>
@@ -547,6 +554,42 @@ const ViewCodeReviewDetails = () => {
             </Button>
           </DialogActions>
         </form>
+      </Dialog>
+
+      <Dialog
+        open={deleteCommentDialog}
+        onClose={() => {
+          setDeleteCommentDialog(false);
+          setSelectedCommentId();
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Comment Thread?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setDeleteCommentDialog(false);
+              setSelectedCommentId();
+            }}
+            style={{ width: 100 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ width: 100 }}
+            onClick={() => handleDeleteComment()}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );
