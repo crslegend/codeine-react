@@ -11,15 +11,10 @@ const styles = makeStyles((theme) => ({
     maxWidth: "100vw",
     paddingLeft: "30px",
     paddingBottom: "10px",
-    [theme.breakpoints.down("xs")]: {
-      paddingTop: "160px",
-      paddingLeft: "0px",
-    },
   },
   heading: {
     lineHeight: "50px",
     fontWeight: 550,
-    display: "inline-block",
     fontFamily: "Roboto Mono",
   },
 }));
@@ -32,7 +27,7 @@ const RecentCourses = () => {
     Service.client
       .get(`/enrollments`)
       .then((res) => {
-        res.data = res.data.slice(0, 3);
+        res.data = res.data.slice(0, 4);
         setCourses(res.data);
       })
       .catch((err) => console.log(err));
@@ -50,11 +45,10 @@ const RecentCourses = () => {
           <Typography variant="h2" className={classes.heading}>
             your recent courses
           </Typography>
-          <Grid
-            container
+          <div
             style={{
               display: "flex",
-              justifyContent: "flex-start",
+              justifyContent: "space-between",
             }}
           >
             {courses && courses.length > 0 ? (
@@ -93,7 +87,7 @@ const RecentCourses = () => {
                 </Button>
               </div>
             )}
-          </Grid>
+          </div>
         </Grid>
         <Grid item xs={1} />
       </Grid>

@@ -25,7 +25,7 @@ const Label = (props) => {
       return "#A0DD8B";
     } else if (label === "FE") {
       return "#DD8B8B";
-    } else if (label === "SE") {
+    } else if (label === "SEC") {
       return "#DDB28B";
     } else if (label === "UI") {
       return "#DDD58B";
