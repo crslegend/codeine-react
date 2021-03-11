@@ -1,14 +1,11 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button } from "@material-ui/core";
-import FeaturedCourses from "./FeaturedCourses";
+import { Grid } from "@material-ui/core";
+import RecentCourses from "./RecentCourses";
 import FeaturedArticles from "./FeaturedArticles";
 import CodeReview from "./CodeReview";
 import Categories from "./Categories";
 import RecentProjects from "./RecentProjects";
-
-import landingmodel from "../../assets/member-landing-model.jpg";
-import { Link } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -84,50 +81,24 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const MemberLandingBody = () => {
+const MemberLandingBody = (loggedIn) => {
   const classes = styles();
 
   return (
     <Fragment>
       <Grid container className={classes.root}>
-        <Grid container className={classes.banner}>
-          <Grid item xs={1} />
-          <Grid item xs={11} sm={5} md={6} lg={7}>
-            <Typography variant="h5" className={classes.bannerslogan1}>
-              HUSTLE ON
-            </Typography>
-            <Typography variant="h1" className={classes.bannerslogan2}>
-              Coding made addictive!
-            </Typography>
-            <Typography variant="h5" className={classes.bannersentence1}>
-              Kickstart your coding journey with Codeine.
-            </Typography>
-            <Typography variant="h5" className={classes.bannersentence2}>
-              Earn experience points to unlock new achievements!
-            </Typography>
-            <Button
-              variant="contained"
-              className={classes.bannerbutton}
-              component={Link}
-              to="/courses"
-            >
-              Our Courses
-            </Button>
-          </Grid>
-          <Grid item xs={3}>
-            <img
-              src={landingmodel}
-              className={classes.bannerphoto}
-              alt="Landing Page Model"
-            />
-          </Grid>
-          <Grid item xs={9} sm={3} md={2} lg={1} />
-        </Grid>
-        <FeaturedCourses />
-        <FeaturedArticles />
-        <CodeReview />
-        <Categories />
-        <RecentProjects />
+        {loggedIn && loggedIn.loggedIn ? (
+          <div>
+            <RecentCourses />
+            <FeaturedArticles />
+            <CodeReview />
+          </div>
+        ) : (
+          <div>
+            <Categories />
+            <RecentProjects />
+          </div>
+        )}
       </Grid>
     </Fragment>
   );

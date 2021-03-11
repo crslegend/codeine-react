@@ -100,7 +100,8 @@ const MemberLoginPage = () => {
             // login to view course
             history.push(`/courses/${state.courseId}`);
           } else {
-            history.push("/courses");
+            //history.push("/courses");
+            history.push("/");
           }
         } else if (res.data.user.partner) {
           Service.storeCredentials(res.data);

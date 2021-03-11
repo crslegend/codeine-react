@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     paddingTop: "50px",
     paddingBottom: "50px",
-
+    marginTop: "30px",
     paddingLeft: theme.spacing(15),
   },
   leftCol: {
