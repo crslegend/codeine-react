@@ -54,7 +54,7 @@ const RecentCourses = () => {
             container
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "flex-start",
             }}
           >
             {courses && courses.length > 0 ? (

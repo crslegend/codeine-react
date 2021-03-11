@@ -6,10 +6,14 @@ import {
   CardActionArea,
   CardContent,
 } from "@material-ui/core";
+import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
+    width: "280px",
+    padding: "0 10px",
     marginTop: "30px",
+    marginRight: "100px",
     border: "1px solid",
     borderRadius: 0,
   },
@@ -21,6 +25,7 @@ const styles = makeStyles((theme) => ({
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
+    marginTop: "10px",
   },
 }));
 
@@ -69,6 +74,10 @@ const CourseCard = (props) => {
           >
             exp points: {course && course.exp_points}p
           </Typography>
+          <div style={{ display: "flex", margin: "10px 0" }}>
+            {course &&
+              course.categories.map((category) => <Label label={category} />)}
+          </div>
         </CardContent>
       </CardActionArea>
     </Card>

@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Card, CardContent } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import CodeReviewLabel from "./components/CodeReviewLabel";
+import Label from "./components/Label";
 import CodeReviewSnippet from "./components/CodeReviewSnippet";
 
 const styles = makeStyles((theme) => ({
@@ -86,55 +86,16 @@ const CodeReview = () => {
                     }}
                   >
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#8B95DD" label="Bugs" />
+                      <Label color="#8B95DD" label="Bugs" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DDD58B" label="Design" />
+                      <Label color="#DDD58B" label="Design" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DD8B8B" label="Runtime" />
+                      <Label color="#DD8B8B" label="Runtime" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#A0DD8B" label="Syntax" />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={3}>
-              <CodeReviewSnippet
-                code="char[] helloArray = { 'h', 'e', 'l', 'l', 'o', '.' };
-              String helloString = new String(helloArray);
-              System.out.println(helloString);"
-              />
-              <Card className={classes.cardroot}>
-                <CardContent>
-                  <Typography
-                    variant="h4"
-                    style={{
-                      fontWeight: "600",
-                    }}
-                  >
-                    Title of code review
-                  </Typography>
-                  <Typography variant="h5">Author</Typography>
-                  <Grid
-                    container
-                    style={{
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#8B95DD" label="Bugs" />
-                    </Grid>
-                    <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DDD58B" label="Design" />
-                    </Grid>
-                    <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DD8B8B" label="Runtime" />
-                    </Grid>
-                    <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#A0DD8B" label="Syntax" />
+                      <Label color="#A0DD8B" label="Syntax" />
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -164,16 +125,55 @@ const CodeReview = () => {
                     }}
                   >
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#8B95DD" label="Bugs" />
+                      <Label label="Bugs" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DDD58B" label="Design" />
+                      <Label label="Design" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#DD8B8B" label="Runtime" />
+                      <Label label="Runtime" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <CodeReviewLabel color="#A0DD8B" label="Syntax" />
+                      <Label label="Syntax" />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={3}>
+              <CodeReviewSnippet
+                code="char[] helloArray = { 'h', 'e', 'l', 'l', 'o', '.' };
+              String helloString = new String(helloArray);
+              System.out.println(helloString);"
+              />
+              <Card className={classes.cardroot}>
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    style={{
+                      fontWeight: "600",
+                    }}
+                  >
+                    Title of code review
+                  </Typography>
+                  <Typography variant="h5">Author</Typography>
+                  <Grid
+                    container
+                    style={{
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Grid item md={6} lg={4}>
+                      <Label color="#8B95DD" label="Bugs" />
+                    </Grid>
+                    <Grid item md={6} lg={4}>
+                      <Label color="#DDD58B" label="Design" />
+                    </Grid>
+                    <Grid item md={6} lg={4}>
+                      <Label color="#DD8B8B" label="Runtime" />
+                    </Grid>
+                    <Grid item md={6} lg={4}>
+                      <Label color="#A0DD8B" label="Syntax" />
                     </Grid>
                   </Grid>
                 </CardContent>
