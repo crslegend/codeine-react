@@ -77,14 +77,24 @@ const ViewCodeReviewDetails = () => {
   const [selectedCommentId, setSelectedCommentId] = useState();
   const [selectedComment, setSelectedComment] = useState();
 
+  const [showReplyField, setShowReplyField] = useState(false);
+  const [reply, setReply] = useState();
+  const [replyToCommentArr, setReplyToCommentArr] = useState([]);
+
+  const [replyParentId, setReplyParentId] = useState();
+  const [replyParentComment, setReplyParentComment] = useState();
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
     }
   };
 
-  const deselect = () => store.dispatch(deselectSidenote(code && code.id));
-  // const reposition = (docId) => store.dispatch(repositionSidenotes(docId));
+  const deselect = () => {
+    setShowReplyField(false);
+    store.dispatch(deselectSidenote(code && code.id));
+  };
+  const reposition = (docId) => store.dispatch(repositionSidenotes(docId));
   const select = (sId) => store.dispatch(selectAnchor(code && code.id, sId));
   // const connectNote = (sId) =>
   //   store.dispatch(connectSidenote(code && code.id, sId));
@@ -105,7 +115,18 @@ const ViewCodeReviewDetails = () => {
       .then((res) => {
         console.log(res);
         // setCodeComments([]);
-        setCodeComments(res.data);
+        let parentCommentArr = [];
+        let replyCommentArr = [];
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].parent_comment) {
+            replyCommentArr.push(res.data[i]);
+          } else {
+            parentCommentArr.push(res.data[i]);
+          }
+        }
+        setCodeComments(parentCommentArr);
+        replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
+        setReplyToCommentArr(replyCommentArr);
       })
       .catch((err) => console.log(err));
   };
@@ -237,7 +258,126 @@ const ViewCodeReviewDetails = () => {
     // console.log(formatted);
     return formatted;
   };
-  //   console.log(selectedValue);
+
+  const singleComment = (comment) => {
+    return (
+      <Fragment>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          {comment.user.profile_photo && comment.user.profile_photo ? (
+            <Avatar
+              style={{ marginRight: "15px" }}
+              src={comment.user && comment.user.profile_photo}
+            />
+          ) : (
+            <Avatar style={{ marginRight: "15px" }}>
+              {comment.user && comment.user.first_name.charAt(0)}
+            </Avatar>
+          )}
+          <div style={{ flexDirection: "column" }}>
+            <Typography variant="body2" style={{ fontWeight: 600 }}>
+              {comment.user && comment.user.first_name}{" "}
+              {comment.user && comment.user.last_name}
+            </Typography>
+            <Typography variant="body2" style={{ opacity: 0.7 }}>
+              {comment && calculateDateInterval(comment.timestamp)}
+            </Typography>
+          </div>
+          {checkIfOwnerOfComment(comment.user && comment.user.id) && (
+            <div
+              style={{
+                flexDirection: "row",
+                order: 2,
+                marginLeft: "auto",
+              }}
+            >
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setEditMode(true);
+                  setSelectedCommentId(comment.id);
+                  setSelectedComment(comment);
+
+                  setTimeout(() => {
+                    select(comment.id);
+                  }, 0.1);
+                }}
+                disabled={editMode && selectedCommentId === comment.id}
+              >
+                <Edit fontSize="small" />
+              </IconButton>
+
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setSelectedCommentId(comment.id);
+                  setDeleteCommentDialog(true);
+                }}
+              >
+                <Delete fontSize="small" />
+              </IconButton>
+            </div>
+          )}
+        </div>
+        <div>
+          {editMode && selectedCommentId === comment.id ? (
+            <Fragment>
+              <TextField
+                margin="dense"
+                variant="outlined"
+                value={selectedComment && selectedComment.comment}
+                onChange={(e) =>
+                  setSelectedComment({
+                    ...selectedComment,
+                    comment: e.target.value,
+                  })
+                }
+                InputProps={{
+                  classes: { input: classes.input },
+                }}
+                fullWidth
+              />
+              <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  style={{ marginRight: "10px" }}
+                  onClick={() => handleUpdateComment()}
+                  disabled={selectedComment.comment === ""}
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    setEditMode(false);
+                    setSelectedComment();
+
+                    setTimeout(() => {
+                      select(selectedCommentId);
+                      setSelectedCommentId();
+                    }, 0.5);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Fragment>
+          ) : (
+            <Typography style={{ fontSize: 13, paddingTop: "10px" }}>
+              {comment.comment}
+            </Typography>
+          )}
+        </div>
+      </Fragment>
+    );
+  };
 
   const checkIfOwnerOfComment = (userId) => {
     const decoded = jwt_decode(Cookies.get("t1"));
@@ -322,6 +462,27 @@ const ViewCodeReviewDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleReplyToComment = () => {
+    const data = {
+      highlighted_code: replyParentComment.highlighted_code,
+      comment: reply,
+      parent_comment_id: replyParentId,
+    };
+
+    Service.client
+      .post(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`, data)
+      .then((res) => {
+        console.log(res);
+        select(selectedCommentId);
+        setReplyParentComment();
+        setReplyParentId();
+        setReply();
+        getCodeReview();
+        getCodeReviewComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -353,137 +514,88 @@ const ViewCodeReviewDetails = () => {
                 codeComments.map((comment, index) => {
                   return (
                     <Sidenote sidenote={comment.id} base={baseAnchor}>
-                      <div key={index} className={classes.commentCard}>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                          }}
-                        >
-                          {comment.user.profile_photo &&
-                          comment.user.profile_photo ? (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={comment.user && comment.user.profile_photo}
-                            />
-                          ) : (
-                            <Avatar style={{ marginRight: "15px" }}>
-                              {comment.user &&
-                                comment.user.first_name.charAt(0)}
-                            </Avatar>
-                          )}
-                          <div style={{ flexDirection: "column" }}>
-                            <Typography
-                              variant="body2"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {comment.user && comment.user.first_name}{" "}
-                              {comment.user && comment.user.last_name}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              style={{ opacity: 0.7 }}
-                            >
-                              {comment &&
-                                calculateDateInterval(comment.timestamp)}
-                            </Typography>
-                          </div>
-                          {checkIfOwnerOfComment(
-                            comment.user && comment.user.id
-                          ) && (
+                      <div
+                        key={index}
+                        className={classes.commentCard}
+                        onClick={() => {
+                          setShowReplyField(true);
+                          setReplyParentId(comment.id);
+                          setReplyParentComment(comment);
+                          setTimeout(() => {
+                            select(comment.id);
+                          }, 0.1);
+                        }}
+                      >
+                        {singleComment(comment)}
+                        {showReplyField && replyParentId === comment.id && (
+                          <Fragment>
                             <div
                               style={{
-                                flexDirection: "row",
-                                order: 2,
-                                marginLeft: "auto",
+                                borderTop: "1px solid #bbb",
+                                marginTop: "10px",
+                                marginBottom: "10px",
                               }}
-                            >
-                              <IconButton
+                            />
+                            {replyToCommentArr &&
+                              replyToCommentArr.length > 0 &&
+                              replyToCommentArr.map((reply) => {
+                                if (reply.parent_comment.id === comment.id) {
+                                  return (
+                                    <div
+                                      style={{
+                                        marginTop: "10px",
+                                        marginBottom: "10px",
+                                      }}
+                                    >
+                                      {singleComment(reply)}
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })}
+                            <TextField
+                              margin="dense"
+                              variant="outlined"
+                              value={reply && reply}
+                              onChange={(e) => setReply(e.target.value)}
+                              InputProps={{
+                                classes: { input: classes.input },
+                              }}
+                              fullWidth
+                              placeholder="Reply to Comment"
+                              onClick={() => {
+                                setReplyParentId(comment.id);
+                                setReplyParentComment(comment);
+                              }}
+                            />
+                            <div style={{ marginTop: "10px" }}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                style={{ marginRight: "10px" }}
+                                onClick={() => handleReplyToComment()}
+                                disabled={reply === "" || !reply}
+                              >
+                                Reply
+                              </Button>
+                              <Button
+                                variant="contained"
                                 size="small"
                                 onClick={() => {
-                                  setEditMode(true);
-                                  setSelectedCommentId(comment.id);
-                                  setSelectedComment(comment);
-
+                                  setShowReplyField(false);
                                   setTimeout(() => {
-                                    select(comment.id);
+                                    select(replyParentId);
+                                    setReplyParentId();
+                                    setReplyParentComment();
                                   }, 0.1);
                                 }}
-                                disabled={
-                                  editMode && selectedCommentId === comment.id
-                                }
                               >
-                                <Edit fontSize="small" />
-                              </IconButton>
-
-                              <IconButton
-                                size="small"
-                                onClick={() => {
-                                  setSelectedCommentId(comment.id);
-                                  setDeleteCommentDialog(true);
-                                }}
-                              >
-                                <Delete fontSize="small" />
-                              </IconButton>
+                                Cancel
+                              </Button>
                             </div>
-                          )}
-                        </div>
-                        <div>
-                          {editMode && selectedCommentId === comment.id ? (
-                            <Fragment>
-                              <TextField
-                                margin="dense"
-                                variant="outlined"
-                                value={
-                                  selectedComment && selectedComment.comment
-                                }
-                                onChange={(e) =>
-                                  setSelectedComment({
-                                    ...selectedComment,
-                                    comment: e.target.value,
-                                  })
-                                }
-                                InputProps={{
-                                  classes: { input: classes.input },
-                                }}
-                                fullWidth
-                              />
-                              <div style={{ marginTop: "10px" }}>
-                                <Button
-                                  variant="contained"
-                                  color="primary"
-                                  size="small"
-                                  style={{ marginRight: "10px" }}
-                                  onClick={() => handleUpdateComment()}
-                                  disabled={selectedComment.comment === ""}
-                                >
-                                  Save
-                                </Button>
-                                <Button
-                                  variant="contained"
-                                  size="small"
-                                  onClick={() => {
-                                    setEditMode(false);
-                                    setSelectedComment();
-
-                                    setTimeout(() => {
-                                      select(selectedCommentId);
-                                      setSelectedCommentId();
-                                    }, 0.5);
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            </Fragment>
-                          ) : (
-                            <Typography
-                              style={{ fontSize: 13, paddingTop: "10px" }}
-                            >
-                              {comment.comment}
-                            </Typography>
-                          )}
-                        </div>
+                          </Fragment>
+                        )}
                       </div>
                     </Sidenote>
                   );
