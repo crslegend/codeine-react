@@ -25,11 +25,11 @@ const MemberLandingBody = (props) => {
         {loggedIn && loggedIn ? (
           <div>
             <RecentCourses />
+            <Categories />
             <TopPicks />
           </div>
         ) : (
           <div>
-            <Categories />
             <FeaturedArticles />
             <CodeReview />
             <RecentProjects />
