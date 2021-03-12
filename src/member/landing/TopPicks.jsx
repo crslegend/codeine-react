@@ -1,19 +1,22 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { Typography, Grid, Tabs, Tab, Box, Divider } from "@material-ui/core";
+import CourseCard from "./components/CourseCard";
+import ArticleCard from "./components/ArticleCard";
+import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   root: {
     paddingTop: "60px",
     maxWidth: "100vw",
     paddingLeft: "30px",
-    paddingBottom: "10px",
+    paddingBottom: "40px",
   },
   heading: {
     lineHeight: "50px",
     paddingBottom: "10px",
-    fontWeight: 550,
+    fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
 }));
@@ -59,6 +62,25 @@ const TopPicks = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [courses, setCourses] = useState([]);
+
+  const getTopCourses = () => {
+    Service.client
+      .get(`/courses`, {
+        params: { sortRating: "-rating" },
+      })
+      .then((res) => {
+        res.data.results = res.data.results.slice(0, 4);
+        setCourses(res.data.results);
+        console.log(res.data.results);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getTopCourses();
+  }, []);
 
   return (
     <Fragment>
@@ -126,6 +148,49 @@ const TopPicks = () => {
               width: "100%",
             }}
           />
+          {/* Courses Tab */}
+          <TabPanel value={value} index={0}>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              {courses &&
+                courses.map((course) => <CourseCard course={course} />)}
+            </div>
+          </TabPanel>
+          {/* Code Reviews Tab */}
+          <TabPanel value={value} index={1}>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              {courses &&
+                courses.map((course) => <CourseCard course={course} />)}
+            </div>
+          </TabPanel>
+          {/* Articles Tab */}
+          <TabPanel value={value} index={2}>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              <ArticleCard />
+            </div>
+          </TabPanel>
+          {/* Projects Tab */}
+          <TabPanel value={value} index={3}>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              {courses &&
+                courses.map((course) => <CourseCard course={course} />)}
+            </div>
+          </TabPanel>
         </Grid>
         <Grid item xs={1} />
       </Grid>

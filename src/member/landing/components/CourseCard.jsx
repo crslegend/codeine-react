@@ -32,7 +32,6 @@ const styles = makeStyles((theme) => ({
 const CourseCard = (props) => {
   const classes = styles();
   const { course } = props;
-  console.log(course);
 
   return (
     <Card elevation={0} className={classes.root}>

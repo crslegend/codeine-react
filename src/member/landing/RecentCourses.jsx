@@ -14,7 +14,7 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     lineHeight: "50px",
-    fontWeight: 550,
+    fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
 }));
