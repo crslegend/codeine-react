@@ -41,7 +41,7 @@ const Categories = () => {
             image={courses}
             title="Courses"
           >
-            <Typography variant="h1" className={classes.cardcontent}>
+            <Typography variant="h2" className={classes.cardcontent}>
               courses
             </Typography>
             <Button
@@ -53,11 +53,11 @@ const Categories = () => {
                 textTransform: "none",
                 marginTop: "5%",
                 marginLeft: "5%",
-                padding: "10px 15px",
+                padding: "8px 10px",
               }}
             >
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{ color: "#fff", fontFamily: "Roboto Mono" }}
               >
                 view more
@@ -71,23 +71,23 @@ const Categories = () => {
             image={codeReviews}
             title="Code Reviews"
           >
-            <Typography variant="h1" className={classes.cardcontent}>
+            <Typography variant="h2" className={classes.cardcontent}>
               code reviews
             </Typography>
             <Button
               variant="outlined"
               component={Link}
-              to="/Courses"
+              //to="/"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
                 marginTop: "5%",
                 marginLeft: "5%",
-                padding: "10px 15px",
+                padding: "8px 10px",
               }}
             >
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{ color: "#fff", fontFamily: "Roboto Mono" }}
               >
                 view more
@@ -101,23 +101,23 @@ const Categories = () => {
             image={articles}
             title="Articles"
           >
-            <Typography variant="h1" className={classes.cardcontent}>
+            <Typography variant="h2" className={classes.cardcontent}>
               articles
             </Typography>
             <Button
               variant="outlined"
               component={Link}
-              to="/Courses"
+              //to="/"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
                 marginTop: "5%",
                 marginLeft: "5%",
-                padding: "10px 15px",
+                padding: "8px 10px",
               }}
             >
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{ color: "#fff", fontFamily: "Roboto Mono" }}
               >
                 view more
@@ -131,23 +131,23 @@ const Categories = () => {
             image={projects}
             title="Industry Projects"
           >
-            <Typography variant="h1" className={classes.cardcontent}>
+            <Typography variant="h2" className={classes.cardcontent}>
               industry projects
             </Typography>
             <Button
               variant="outlined"
               component={Link}
-              to="/Courses"
+              //to="/"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
                 marginTop: "5%",
                 marginLeft: "5%",
-                padding: "10px 15px",
+                padding: "8px 10px",
               }}
             >
               <Typography
-                variant="h3"
+                variant="h4"
                 style={{ color: "#fff", fontFamily: "Roboto Mono" }}
               >
                 view more

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Typography, Grid, Tabs, Tab, Box, Divider } from "@material-ui/core";
 import CourseCard from "./components/CourseCard";
 import ArticleCard from "./components/ArticleCard";
+import ProjectCard from "./components/ProjectCard";
 import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
@@ -15,7 +16,7 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     lineHeight: "50px",
-    paddingBottom: "10px",
+    paddingBottom: "30px",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
@@ -64,6 +65,7 @@ const TopPicks = () => {
   };
 
   const [courses, setCourses] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   const getTopCourses = () => {
     Service.client
@@ -73,13 +75,26 @@ const TopPicks = () => {
       .then((res) => {
         res.data.results = res.data.results.slice(0, 4);
         setCourses(res.data.results);
-        console.log(res.data.results);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getTopProjects = () => {
+    Service.client
+      .get(`/industry-projects`, {
+        params: { isAvailable: "true" },
+      })
+      .then((res) => {
+        res.data = res.data.slice(0, 3);
+        setProjects(res.data);
+        console.log(res.data);
       })
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     getTopCourses();
+    getTopProjects();
   }, []);
 
   return (
@@ -102,6 +117,7 @@ const TopPicks = () => {
           >
             <Tab
               style={{
+                fontSize: 20,
                 textTransform: "none",
                 fontWeight: 700,
                 color: "#000000",
@@ -112,6 +128,7 @@ const TopPicks = () => {
             />
             <Tab
               style={{
+                fontSize: 20,
                 textTransform: "none",
                 fontWeight: 700,
                 color: "#000000",
@@ -122,6 +139,7 @@ const TopPicks = () => {
             />
             <Tab
               style={{
+                fontSize: 20,
                 textTransform: "none",
                 fontWeight: 700,
                 color: "#000000",
@@ -132,6 +150,7 @@ const TopPicks = () => {
             />
             <Tab
               style={{
+                fontSize: 20,
                 textTransform: "none",
                 fontWeight: 700,
                 color: "#000000",
@@ -156,7 +175,9 @@ const TopPicks = () => {
               }}
             >
               {courses &&
-                courses.map((course) => <CourseCard course={course} />)}
+                courses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
             </div>
           </TabPanel>
           {/* Code Reviews Tab */}
@@ -167,7 +188,9 @@ const TopPicks = () => {
               }}
             >
               {courses &&
-                courses.map((course) => <CourseCard course={course} />)}
+                courses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
             </div>
           </TabPanel>
           {/* Articles Tab */}
@@ -187,8 +210,10 @@ const TopPicks = () => {
                 display: "flex",
               }}
             >
-              {courses &&
-                courses.map((course) => <CourseCard course={course} />)}
+              {projects &&
+                projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
             </div>
           </TabPanel>
         </Grid>

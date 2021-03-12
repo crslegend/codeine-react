@@ -52,7 +52,9 @@ const RecentCourses = () => {
             }}
           >
             {courses && courses.length > 0 ? (
-              courses.map((course) => <CourseCard course={course.course} />)
+              courses.map((course) => (
+                <CourseCard key={course.id} course={course.course} />
+              ))
             ) : (
               <div
                 style={{
