@@ -91,6 +91,11 @@ const ViewCodeReviewDetails = () => {
   };
 
   const deselect = () => {
+    setTimeout(() => {
+      select(replyParentId);
+      setReplyParentId();
+      setReplyParentComment();
+    }, 0.1);
     setShowReplyField(false);
     store.dispatch(deselectSidenote(code && code.id));
   };
@@ -114,7 +119,7 @@ const ViewCodeReviewDetails = () => {
       .get(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`)
       .then((res) => {
         console.log(res);
-        // setCodeComments([]);
+
         let parentCommentArr = [];
         let replyCommentArr = [];
         for (let i = 0; i < res.data.length; i++) {
@@ -124,6 +129,7 @@ const ViewCodeReviewDetails = () => {
             parentCommentArr.push(res.data[i]);
           }
         }
+        setCodeComments([]); // to reset the state of sidenotes
         setCodeComments(parentCommentArr);
         replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setReplyToCommentArr(replyCommentArr);
@@ -340,6 +346,7 @@ const ViewCodeReviewDetails = () => {
                   classes: { input: classes.input },
                 }}
                 fullWidth
+                autoFocus
               />
               <div style={{ marginTop: "10px", marginBottom: "10px" }}>
                 <Button
@@ -620,50 +627,50 @@ const ViewCodeReviewDetails = () => {
           },
         }}
       >
-        <form onSubmit={handleAddComment}>
-          <DialogTitle>Add Comment</DialogTitle>
-          <DialogContent>
-            <span style={{ fontWeight: 600 }}>Text Selected:</span>
-            <br />
-            {selectedValue && selectedValue}
-            <TextField
-              variant="outlined"
-              placeholder="Enter comment"
-              margin="dense"
-              value={comment && comment}
-              onChange={(e) => setComment(e.target.value)}
-              required
-              fullWidth
-              multiline
-              rows={5}
-              style={{ marginTop: "25px" }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setAddCommentDialog(false);
-                setTimeout(() => {
-                  setComment();
-                  setSelectedValue();
-                  getCodeReview();
-                }, 500);
-              }}
-              style={{ width: 100 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              style={{ width: 100 }}
-            >
-              Add
-            </Button>
-          </DialogActions>
-        </form>
+        <DialogTitle>Add Comment</DialogTitle>
+        <DialogContent>
+          <span style={{ fontWeight: 600 }}>Text Selected:</span>
+          <br />
+          {selectedValue && selectedValue}
+          <TextField
+            autoFocus
+            variant="outlined"
+            placeholder="Enter comment"
+            margin="dense"
+            value={comment && comment}
+            onChange={(e) => setComment(e.target.value)}
+            required
+            fullWidth
+            multiline
+            rows={5}
+            style={{ marginTop: "25px" }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setAddCommentDialog(false);
+              setTimeout(() => {
+                setComment();
+                setSelectedValue();
+                getCodeReview();
+              }, 500);
+            }}
+            style={{ width: 100 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ width: 100 }}
+            disabled={!comment || comment === ""}
+            onClick={() => handleAddComment()}
+          >
+            Add
+          </Button>
+        </DialogActions>
       </Dialog>
 
       <Dialog
