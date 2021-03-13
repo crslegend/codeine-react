@@ -4,6 +4,9 @@ import { Route, Switch } from "react-router-dom";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
+import ViewArticlePage from "./member/article/ArticleMain";
+import EditArticlePage from "./member/article/EditArticle";
+import MemberNewArticlePage from "./member/article/NewArticlePage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
@@ -92,6 +95,19 @@ const App = () => {
         exact
         path="/member/register"
         component={MemberRegisterPage}
+        user="member"
+      />
+      <Route
+        exact
+        path="/article/:id"
+        strict
+        sensitive
+        component={ViewArticlePage}
+      />
+      <PrivateRoute
+        exact
+        path="/newarticle"
+        component={MemberNewArticlePage}
         user="member"
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
