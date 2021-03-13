@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import {
   Avatar,
   Button,
@@ -33,6 +33,8 @@ import {
   selectAnchor,
 } from "../redux/actions";
 import jwt_decode from "jwt-decode";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 const reactStringReplace = require("react-string-replace");
 
 const styles = makeStyles((theme) => ({
@@ -61,6 +63,7 @@ const styles = makeStyles((theme) => ({
 const ViewCodeReviewDetails = () => {
   const classes = styles();
   const history = useHistory();
+  const { id } = useParams();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [selectedValue, setSelectedValue] = useState();
@@ -70,6 +73,7 @@ const ViewCodeReviewDetails = () => {
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
+  const [lineNum, setLineNum] = useState();
 
   const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
 
@@ -106,17 +110,19 @@ const ViewCodeReviewDetails = () => {
 
   const getCodeReview = () => {
     Service.client
-      .get(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa`)
+      .get(`/code-reviews/${id}`)
       .then((res) => {
         console.log(res);
         setCode(res.data);
+        let arr = res.data.code.split("\n");
+        console.log(arr);
       })
       .catch((err) => console.log(err));
   };
 
   const getCodeReviewComments = () => {
     Service.client
-      .get(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`)
+      .get(`/code-reviews/${id}/comments`)
       .then((res) => {
         console.log(res);
 
@@ -408,16 +414,14 @@ const ViewCodeReviewDetails = () => {
     // }, 3000);
   };
 
-  const handleAddComment = (e) => {
-    e.preventDefault();
-
+  const handleAddComment = () => {
     const data = {
       highlighted_code: selectedValue,
       comment: comment,
     };
 
     Service.client
-      .post(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`, data)
+      .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
         console.log(res);
         setAddCommentDialog(false);
@@ -433,9 +437,7 @@ const ViewCodeReviewDetails = () => {
 
   const handleDeleteComment = () => {
     Service.client
-      .delete(
-        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${selectedCommentId}`
-      )
+      .delete(`/code-reviews/${id}/comments/${selectedCommentId}`)
       .then((res) => {
         // console.log(res);
         setDeleteCommentDialog(false);
@@ -453,10 +455,7 @@ const ViewCodeReviewDetails = () => {
     };
 
     Service.client
-      .put(
-        `/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments/${selectedCommentId}`,
-        data
-      )
+      .put(`/code-reviews/${id}/comments/${selectedCommentId}`, data)
       .then((res) => {
         console.log(res);
         setEditMode(false);
@@ -477,7 +476,7 @@ const ViewCodeReviewDetails = () => {
     };
 
     Service.client
-      .post(`/code-reviews/1ce87555-d5fa-4391-b852-d607982040aa/comments`, data)
+      .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
         console.log(res);
         select(replyParentId);
@@ -487,6 +486,7 @@ const ViewCodeReviewDetails = () => {
       })
       .catch((err) => console.log(err));
   };
+  console.log(lineNum);
 
   return (
     <div className={classes.root}>
@@ -495,7 +495,7 @@ const ViewCodeReviewDetails = () => {
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
-      <div className={classes.content} onClick={deselect}>
+      <div className={classes.content}>
         <article id={code && code.id}>
           <TextSelector
             events={[
@@ -510,7 +510,24 @@ const ViewCodeReviewDetails = () => {
           />
           <div className="main-panel">
             <AnchorBase anchor={baseAnchor} style={{ width: "70%" }}>
-              {code && applyInlineAnchor(code.code)}
+              {/* {code && applyInlineAnchor(code.code)} */}
+
+              {code && (
+                <SyntaxHighlighter
+                  language="htmlbars"
+                  style={docco}
+                  showLineNumbers
+                  lineProps={(lineNumber) => ({
+                    onClick() {
+                      setLineNum(lineNumber);
+                    },
+                  })}
+                  wrapLines={true}
+                  startingLineNumber={1}
+                >
+                  {code && applyInlineAnchor(code.code)}
+                </SyntaxHighlighter>
+              )}
             </AnchorBase>
             <div className="sidenotes">
               {init &&
