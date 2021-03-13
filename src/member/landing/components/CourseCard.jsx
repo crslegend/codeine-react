@@ -32,14 +32,19 @@ const styles = makeStyles((theme) => ({
 const CourseCard = (props) => {
   const classes = styles();
   const { course } = props;
+  console.log(course.pro);
 
   return (
     <Card elevation={0} className={classes.root}>
       <CardActionArea>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.pro}>
-            PRO
-          </Typography>
+          {course && course.pro === true ? (
+            <Typography variant="subtitle1" className={classes.pro}>
+              PRO
+            </Typography>
+          ) : (
+            <div style={{ marginTop: "25px" }}></div>
+          )}
 
           <Typography
             style={{

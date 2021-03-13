@@ -77,7 +77,7 @@ const ArticleCard = (props) => {
                     fontFamily: "Roboto Mono",
                   }}
                 >
-                  last update: {article && formatDate(article.date_edited)}
+                  last updated: {article && formatDate(article.date_edited)}
                 </Typography>
               </div>
               <Typography
