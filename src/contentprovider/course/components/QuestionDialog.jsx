@@ -22,6 +22,8 @@ import Service from "../../../AxiosService";
 import { Add, Clear, Delete, Help } from "@material-ui/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { DropzoneAreaBase } from "material-ui-dropzone";
+import LinkMui from "@material-ui/core/Link";
 
 const useStyles = makeStyles((theme) => ({
   dialogButtons: {
@@ -39,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down("sm")]: {
       marginLeft: "0px",
+    },
+  },
+  dropzoneContainer: {
+    minHeight: "190px",
+    "@global": {
+      ".MuiDropzoneArea-root": {
+        minHeight: "190px",
+      },
     },
   },
 }));
@@ -74,14 +84,14 @@ const QuestionDialog = ({
     toolbar: [
       [{ font: [] }],
       [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      ["bold", "italic", "underline", "strike", "code-block"],
       [
         { list: "ordered" },
         { list: "bullet" },
         { indent: "-1" },
         { indent: "+1" },
       ],
-      ["link", "image"],
+      ["link"],
       ["clean"],
     ],
   };
@@ -93,15 +103,15 @@ const QuestionDialog = ({
     "italic",
     "underline",
     "strike",
-    "blockquote",
     "list",
     "bullet",
     "indent",
     "link",
-    "image",
   ];
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
+
+  const [questionImage, setQuestionImage] = useState();
 
   const handleQuestionInputChange = (value) => {
     setQuestion({
@@ -357,8 +367,17 @@ const QuestionDialog = ({
         correct_answer: correctAnswer,
       };
       //   console.log(data);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("correct_answer", data.correct_answer);
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
+
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
           params: { type: "mcq" },
         })
         .then((res) => {
@@ -366,6 +385,7 @@ const QuestionDialog = ({
           setEditMode(false);
           setEditQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -392,8 +412,17 @@ const QuestionDialog = ({
         correct_answer: correctAnswer,
       };
 
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("correct_answer", JSON.stringify(data.correct_answer));
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
+
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
           params: { type: "mrq" },
         })
         .then((res) => {
@@ -401,6 +430,7 @@ const QuestionDialog = ({
           setEditMode(false);
           setEditQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -429,8 +459,17 @@ const QuestionDialog = ({
         keywords: arr,
       };
 
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("correct_answer", JSON.stringify(data.keywords));
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
+
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, data, {
+        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
@@ -438,6 +477,7 @@ const QuestionDialog = ({
           setEditMode(false);
           setEditQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -496,13 +536,24 @@ const QuestionDialog = ({
         correct_answer: correctAnswer,
       };
       //   console.log(data);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("correct_answer", data.correct_answer);
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, data, { params: { type: "mcq" } })
+        .post(`/quiz/${quizId}/questions`, formData, {
+          params: { type: "mcq" },
+        })
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -526,13 +577,24 @@ const QuestionDialog = ({
         options: options,
         correct_answer: correctAnswer,
       };
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("correct_answer", JSON.stringify(data.correct_answer));
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, data, { params: { type: "mrq" } })
+        .post(`/quiz/${quizId}/questions`, formData, {
+          params: { type: "mrq" },
+        })
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -559,15 +621,24 @@ const QuestionDialog = ({
         keywords: arr,
       };
       //   console.log(data);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("marks", data.marks);
+      formData.append("options", JSON.stringify(data.options));
+      formData.append("keywords", JSON.stringify(data.keywords));
+      if (questionImage) {
+        formData.append("image", questionImage[0].file);
+      }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, data, {
+        .post(`/quiz/${quizId}/questions`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
           // console.log(res);
           setAddQuestionDialog(false);
           setTimeout(() => {
+            setQuestionImage();
             setQuizId();
             setQuestion();
             setQuestionType();
@@ -579,6 +650,7 @@ const QuestionDialog = ({
         .catch((err) => console.log(err));
     }
   };
+  // console.log(questionImage);
 
   return (
     <Fragment>
@@ -655,6 +727,49 @@ const QuestionDialog = ({
             modules={editor}
             format={format}
           />
+
+          <div>
+            <Typography variant="body1" style={{ marginTop: "10px" }}>
+              Upload Image (Optional)
+            </Typography>
+            <DropzoneAreaBase
+              dropzoneText="Drag and drop a image or click&nbsp;here"
+              dropzoneClass={classes.dropzoneContainer}
+              // dropzoneProps={{ disabled: true }}
+              filesLimit={1}
+              maxFileSize={5000000000}
+              fileObjects={questionImage}
+              useChipsForPreview={true}
+              onAdd={(newFile) => {
+                setQuestionImage(newFile);
+              }}
+              onDelete={(fileObj) => {
+                setQuestionImage();
+              }}
+              previewGridProps={{
+                item: {
+                  xs: "auto",
+                },
+              }}
+            />
+          </div>
+
+          {question && question.image && (
+            <div style={{ display: "flex", marginTop: "5px" }}>
+              <Typography
+                variant="body2"
+                style={{ marginTop: "5px", marginRight: "10px" }}
+              >
+                <LinkMui
+                  href={question.image ? question.image.replace("#", "") : "#"}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Question Image
+                </LinkMui>
+              </Typography>
+            </div>
+          )}
 
           {/* <TextField
             id="question"
