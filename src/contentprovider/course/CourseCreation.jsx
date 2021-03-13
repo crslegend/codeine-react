@@ -177,7 +177,28 @@ const CourseCreation = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Please enter a valid URL!",
+        message: "Please enter a valid URL for the introduction video!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    // check if github repo is a valid URL
+    if (
+      !validator.isURL(courseDetails.github_repo, {
+        protocols: ["http", "https"],
+        require_protocol: true,
+        allow_underscores: true,
+      })
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter a valid URL for the github repository!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -263,7 +284,6 @@ const CourseCreation = () => {
       coding_languages: [],
       languages: [],
       categories: [],
-      price: 20,
       thumbnail: coursePicAvatar[0].file,
       requirements: requirementsArr,
       learning_objectives: learnObjectivesArr,
@@ -307,6 +327,12 @@ const CourseCreation = () => {
     formData.append("categories", JSON.stringify(data.categories));
     formData.append("price", data.price);
     formData.append("exp_points", data.exp_points);
+    formData.append("pro", data.pro);
+    formData.append("duration", data.duration);
+
+    if (!data.github_repo || data.github_repo !== "") {
+      formData.append("github_repo", data.github_repo);
+    }
 
     if (courseId) {
       Service.client
@@ -377,6 +403,9 @@ const CourseCreation = () => {
             requirements: res.data.requirements.join(),
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
+            pro: res.data.pro,
+            github_repo: res.data.github_repo,
+            duration: res.data.duration,
           });
           const obj = {
             data: res.data.thumbnail,
@@ -730,34 +759,11 @@ const CourseCreation = () => {
 
   const handleLastPageSave = () => {
     if (isPublished === "true") {
-      let check = true;
       Service.client
-        .get(`/contributions`, { params: { latest: 1 } })
+        .patch(`/courses/${courseId}/publish`)
         .then((res) => {
-          // console.log(res);
-
-          if (res.data.expiry_date) {
-            const futureDate = new Date(res.data.expiry_date);
-            const currentDate = new Date();
-            const diffTime = futureDate - currentDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays > 29) {
-              check = false;
-            }
-          }
-
-          if (check) {
-            localStorage.removeItem("courseId");
-            setPaymentDialog(true);
-          } else {
-            Service.client
-              .patch(`/courses/${courseId}/publish`)
-              .then((res) => {
-                localStorage.removeItem("courseId");
-                history.push(`/partner/home/content`);
-              })
-              .catch((err) => console.log(err));
-          }
+          localStorage.removeItem("courseId");
+          history.push(`/partner/home/content`);
         })
         .catch((err) => console.log(err));
     } else {
