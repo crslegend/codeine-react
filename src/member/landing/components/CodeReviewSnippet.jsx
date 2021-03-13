@@ -7,11 +7,9 @@ const styles = makeStyles((theme) => ({
     height: "20vh",
     marginTop: "3vh",
     borderRadius: 0,
-    backgroundColor: "#000000",
   },
   snippets: {
     textAlign: "center",
-    color: "#FFFFFF",
     lineHeight: "50px",
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
@@ -30,6 +28,15 @@ const CodeReviewSnippet = (props) => {
         <Typography variant="h6" className={classes.snippets}>
           {code}
         </Typography>
+        <Typography
+          variant="h4"
+          style={{
+            fontWeight: "600",
+          }}
+        >
+          Title of code review
+        </Typography>
+        <Typography variant="h5">Author</Typography>
       </CardContent>
     </Card>
   );

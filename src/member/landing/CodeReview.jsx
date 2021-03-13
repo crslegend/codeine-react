@@ -86,16 +86,16 @@ const CodeReview = () => {
                     }}
                   >
                     <Grid item md={6} lg={4}>
-                      <Label color="#8B95DD" label="Bugs" />
+                      <Label label="Bugs" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <Label color="#DDD58B" label="Design" />
+                      <Label label="Design" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <Label color="#DD8B8B" label="Runtime" />
+                      <Label label="Runtime" />
                     </Grid>
                     <Grid item md={6} lg={4}>
-                      <Label color="#A0DD8B" label="Syntax" />
+                      <Label label="Syntax" />
                     </Grid>
                   </Grid>
                 </CardContent>

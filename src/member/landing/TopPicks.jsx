@@ -5,6 +5,7 @@ import { Typography, Grid, Tabs, Tab, Box, Divider } from "@material-ui/core";
 import CourseCard from "./components/CourseCard";
 import ArticleCard from "./components/ArticleCard";
 import ProjectCard from "./components/ProjectCard";
+import CodeReviewCard from "./components/CodeReviewCard";
 import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
@@ -66,6 +67,8 @@ const TopPicks = () => {
 
   const [courses, setCourses] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [codeReviews, setCodeReviews] = useState([]);
+  const [articles, setArticles] = useState([]);
 
   const getTopCourses = () => {
     Service.client
@@ -87,6 +90,26 @@ const TopPicks = () => {
       .then((res) => {
         res.data = res.data.slice(0, 3);
         setProjects(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getTopCodeReviews = () => {
+    Service.client
+      .get(`/code-reviews`)
+      .then((res) => {
+        res.data = res.data.slice(0, 3);
+        setCodeReviews(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getTopArticles = () => {
+    Service.client
+      .get(`/articles`)
+      .then((res) => {
+        res.data = res.data.slice(0, 3);
+        setArticles(res.data);
         console.log(res.data);
       })
       .catch((err) => console.log(err));
@@ -95,6 +118,8 @@ const TopPicks = () => {
   useEffect(() => {
     getTopCourses();
     getTopProjects();
+    getTopCodeReviews();
+    getTopArticles();
   }, []);
 
   return (
@@ -187,9 +212,9 @@ const TopPicks = () => {
                 display: "flex",
               }}
             >
-              {courses &&
-                courses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+              {codeReviews &&
+                codeReviews.map((codeReview) => (
+                  <CodeReviewCard key={codeReview.id} codeReview={codeReview} />
                 ))}
             </div>
           </TabPanel>
@@ -200,7 +225,14 @@ const TopPicks = () => {
                 display: "flex",
               }}
             >
-              <ArticleCard />
+              {articles &&
+                articles.map((article, index) => (
+                  <ArticleCard
+                    key={article.id}
+                    index={index}
+                    article={article}
+                  />
+                ))}
             </div>
           </TabPanel>
           {/* Projects Tab */}

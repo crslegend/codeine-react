@@ -16,9 +16,12 @@ const styles = makeStyles((theme) => ({
   },
   cardroot: {
     borderRadius: 0,
+    maxHeight: "300px",
+    display: "flex",
+    alignItems: "center",
   },
   cardmedia: {
-    height: "40vh",
+    height: "20vw",
     width: "25vw",
   },
   cardcontent: {
