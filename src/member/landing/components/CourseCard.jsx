@@ -6,6 +6,7 @@ import {
   CardActionArea,
   CardContent,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
@@ -36,7 +37,7 @@ const CourseCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea>
+      <Link to={`/courses/${course && course.id}`} component={CardActionArea}>
         <CardContent>
           {course && course.pro === true ? (
             <Typography variant="subtitle1" className={classes.pro}>
@@ -83,7 +84,7 @@ const CourseCard = (props) => {
               course.categories.map((category) => <Label label={category} />)}
           </div>
         </CardContent>
-      </CardActionArea>
+      </Link>
     </Card>
   );
 };
