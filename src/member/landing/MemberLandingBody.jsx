@@ -4,7 +4,6 @@ import { Grid } from "@material-ui/core";
 import RecentCourses from "./RecentCourses";
 import TopPicks from "./TopPicks";
 import FeaturedArticles from "./FeaturedArticles";
-import CodeReview from "./CodeReview";
 import Categories from "./Categories";
 import RecentProjects from "./RecentProjects";
 
@@ -31,7 +30,6 @@ const MemberLandingBody = (props) => {
         ) : (
           <div>
             <FeaturedArticles />
-            <CodeReview />
             <RecentProjects />
           </div>
         )}
