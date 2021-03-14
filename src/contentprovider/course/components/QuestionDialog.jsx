@@ -463,7 +463,7 @@ const QuestionDialog = ({
       formData.append("title", data.title);
       formData.append("marks", data.marks);
       formData.append("options", JSON.stringify(data.options));
-      formData.append("correct_answer", JSON.stringify(data.keywords));
+      formData.append("keywords", JSON.stringify(data.keywords));
       if (questionImage) {
         formData.append("image", questionImage[0].file);
       }
