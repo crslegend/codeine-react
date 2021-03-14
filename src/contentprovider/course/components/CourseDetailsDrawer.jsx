@@ -484,7 +484,7 @@ const CourseDetailsDrawer = ({
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="preview">
           <Typography variant="body2">
-            Introduction Preview Video URL
+            Introduction Preview Video URL (Required)
           </Typography>
         </label>
         <TextField

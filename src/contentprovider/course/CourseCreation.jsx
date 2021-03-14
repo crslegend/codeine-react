@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     padding: theme.spacing(3),
     marginBottom: "20px",
-    width: "80%",
+    width: "100%",
   },
   avatar: {
     width: theme.spacing(15),
@@ -143,6 +143,11 @@ const CourseCreation = () => {
   const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
+  const [courseDetailsCard, setCourseDetailsCard] = useState({
+    title: "",
+    description: "",
+  });
+
   const [paymentDialog, setPaymentDialog] = useState(false);
   // const [paymentAmount, setPaymentAmount] = useState();
 
@@ -203,24 +208,26 @@ const CourseCreation = () => {
     }
 
     // check if github repo is a valid URL
-    if (
-      !validator.isURL(courseDetails.github_repo, {
-        protocols: ["http", "https"],
-        require_protocol: true,
-        allow_underscores: true,
-      })
-    ) {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Please enter a valid URL for the github repository!",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
+    if (courseDetails.github_repo || courseDetails.github_repo !== "") {
+      if (
+        !validator.isURL(courseDetails.github_repo, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+          allow_underscores: true,
+        })
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please enter a valid URL for the github repository!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
     }
 
     let neverChooseOne = true;
@@ -420,6 +427,10 @@ const CourseCreation = () => {
             pro: res.data.pro,
             github_repo: res.data.github_repo,
             duration: res.data.duration,
+          });
+          setCourseDetailsCard({
+            title: res.data.title,
+            description: res.data.description,
           });
           const obj = {
             data: res.data.thumbnail,
@@ -855,7 +866,7 @@ const CourseCreation = () => {
             return (
               <Fragment>
                 <div className={classes.topSection}>
-                  <div style={{ width: "80%" }}>
+                  <div style={{ maxWidth: "100%" }}>
                     <Paper className={classes.paper}>
                       <div
                         style={{
@@ -887,13 +898,15 @@ const CourseCreation = () => {
                               paddingBottom: "5px",
                             }}
                           >
-                            {` ${courseDetails && courseDetails.title}`}
+                            {` ${courseDetailsCard && courseDetailsCard.title}`}
                           </Typography>
                           <Typography
                             variant="body2"
                             style={{ marginRight: "10px" }}
                           >
-                            {` ${courseDetails && courseDetails.description}`}
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
                           </Typography>
                         </div>
                         <div>
