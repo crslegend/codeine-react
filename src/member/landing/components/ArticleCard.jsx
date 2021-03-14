@@ -7,6 +7,7 @@ import {
   CardContent,
   Grid,
 } from "@material-ui/core";
+import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -27,6 +28,7 @@ const styles = makeStyles((theme) => ({
 const ArticleCard = (props) => {
   const classes = styles();
   const { article, index } = props;
+  console.log(article);
 
   let numbering = index + 1;
   if (numbering < 10) {
@@ -42,7 +44,6 @@ const ArticleCard = (props) => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -69,7 +70,8 @@ const ArticleCard = (props) => {
                     fontFamily: "Roboto Mono",
                   }}
                 >
-                  {article && article.member}
+                  {article &&
+                    article.member.first_name + " " + article.member.last_name}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -77,7 +79,7 @@ const ArticleCard = (props) => {
                     fontFamily: "Roboto Mono",
                   }}
                 >
-                  last updated: {article && formatDate(article.date_edited)}
+                  last updated on {article && formatDate(article.date_edited)}
                 </Typography>
               </div>
               <Typography
@@ -89,10 +91,12 @@ const ArticleCard = (props) => {
               >
                 {article && article.title}
               </Typography>
-              {/*article &&
+              <div style={{ display: "flex", margin: "10px 0" }}>
+                {article &&
                   article.categories.map((category) => (
                     <Label label={category} />
-                  ))*/}
+                  ))}
+              </div>
             </Grid>
           </Grid>
         </CardContent>

@@ -33,7 +33,6 @@ const styles = makeStyles((theme) => ({
 const CourseCard = (props) => {
   const classes = styles();
   const { course } = props;
-  console.log(course.pro);
 
   return (
     <Card elevation={0} className={classes.root}>
@@ -52,12 +51,12 @@ const CourseCard = (props) => {
               fontFamily: "Roboto Mono",
               fontWeight: 600,
             }}
-            variant="h6"
+            variant="h5"
           >
             {course && course.title}
           </Typography>
           <Typography
-            variant="body1"
+            variant="h6"
             style={{
               paddingBottom: "50px",
               fontFamily: "Roboto Mono",

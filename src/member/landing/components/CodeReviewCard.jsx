@@ -11,11 +11,13 @@ import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
-    height: "20vh",
+    height: "100%",
     width: "22vw",
-    marginTop: "3vh",
+    marginTop: "30px",
+    padding: "10px 10px",
     marginRight: "20px",
     borderRadius: 0,
+    border: "1px solid",
   },
   snippets: {
     fontFamily: "Roboto Mono",
@@ -31,10 +33,9 @@ const styles = makeStyles((theme) => ({
 const CodeReviewCard = (props) => {
   const classes = styles();
   const { codeReview } = props;
-  console.log(codeReview);
 
   return (
-    <Card className={classes.root}>
+    <Card elevation={0} className={classes.root}>
       <CardActionArea>
         <CardContent>
           <Typography variant="h6" className={classes.snippets}>
@@ -43,7 +44,7 @@ const CodeReviewCard = (props) => {
           <Divider
             style={{
               height: "1.5px",
-              margin: "10px 0",
+              margin: "20px 0",
             }}
           />
           <Typography
@@ -66,10 +67,10 @@ const CodeReviewCard = (props) => {
               codeReview.member.first_name + " " + codeReview.member.last_name}
           </Typography>
           <div style={{ display: "flex", margin: "10px 0" }}>
-            {/*codeReview &&
+            {codeReview &&
               codeReview.categories.map((category) => (
                 <Label label={category} />
-              ))*/}
+              ))}
           </div>
         </CardContent>
       </CardActionArea>
