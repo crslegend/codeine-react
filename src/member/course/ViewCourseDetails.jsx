@@ -10,6 +10,10 @@ import {
   Button,
   Card,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   LinearProgress,
   Typography,
@@ -19,6 +23,7 @@ import Footer from "../landing/Footer";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import {
   ArrowBack,
   Assignment,
@@ -102,6 +107,8 @@ const ViewCourseDetails = () => {
 
   const [expanded, setExpanded] = useState(false);
 
+  const [onlyForProDialog, setOnlyForProDialog] = useState(false);
+
   const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -175,13 +182,35 @@ const ViewCourseDetails = () => {
 
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
-      Service.client
-        .post(`/courses/${id}/enrollments`)
-        .then((res) => {
-          console.log(res);
-          history.push(`/courses/enroll/${id}`);
-        })
-        .catch((err) => console.log(err));
+      if (course.pro) {
+        const decoded = jwt_decode(Cookies.get("t1"));
+        Service.client
+          .get(`/auth/members/${decoded.user_id}`)
+          .then((res) => {
+            // console.log(res);
+            // to check whether member enrolling in course is pro-tier
+            if (res.data.member.membership_tier !== "FREE") {
+              Service.client
+                .post(`/courses/${id}/enrollments`)
+                .then((res) => {
+                  // console.log(res);
+                  history.push(`/courses/enroll/${id}`);
+                })
+                .catch((err) => console.log(err));
+            } else {
+              setOnlyForProDialog(true);
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        Service.client
+          .post(`/courses/${id}/enrollments`)
+          .then((res) => {
+            // console.log(res);
+            history.push(`/courses/enroll/${id}`);
+          })
+          .catch((err) => console.log(err));
+      }
     }
   };
 
@@ -800,6 +829,39 @@ const ViewCourseDetails = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={onlyForProDialog}
+        onClose={() => setOnlyForProDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>This course is only for pro-tier members</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOnlyForProDialog(false);
+            }}
+          >
+            Stay as Free-Tier
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              // direct user to pay for pro-tier membership
+              history.push(`/member/home/transaction`);
+            }}
+          >
+            Upgrade to Pro-Tier
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Footer />
     </div>
   );
