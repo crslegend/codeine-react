@@ -260,16 +260,18 @@ const ContentProviderHome = () => {
           </Typography>
         </label>
       </div>
-      <ListItem
-        component={NavLink}
-        to="/partner/home/contributions"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <AttachMoney className={classes.listIcon} />
-        <Typography variant="body1">Contributions</Typography>
-      </ListItem>
+      {user && user.partner && user.partner.organization && (
+        <ListItem
+          component={NavLink}
+          to="/partner/home/contributions"
+          activeClassName={classes.activeLink}
+          className={classes.listItem}
+          button
+        >
+          <AttachMoney className={classes.listIcon} />
+          <Typography variant="body1">Funding</Typography>
+        </ListItem>
+      )}
       <ListItem
         component={NavLink}
         to="/partner/home/earnings"

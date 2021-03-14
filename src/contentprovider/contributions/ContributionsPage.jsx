@@ -152,8 +152,8 @@ const ContributionsPage = () => {
       email: email,
       description:
         numOfMonths && numOfMonths === 1
-          ? `Monthly Contributions for 1 Month`
-          : `Monthly Contributions for ${numOfMonths} Months`,
+          ? `Funding for 1 Month`
+          : `Funding for ${numOfMonths} Months`,
       pId: userId,
       numOfMonths: numOfMonths,
       contribution: contributionId,
@@ -174,7 +174,7 @@ const ContributionsPage = () => {
     if (paymentAmount < 1) {
       setSbOpen(true);
       setSnackbar({
-        message: "Contribution amount has to be higher",
+        message: "Funding amount has to be at least a dollar",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -208,26 +208,26 @@ const ContributionsPage = () => {
         // console.log(res);
         const emailAdd = res.data.email;
 
-        if (
-          res.data.partner.organization &&
-          res.data.partner.organization.organization_name
-        ) {
-          // means enterprise partner
-          if (paymentAmount < 500) {
-            setSbOpen(true);
-            setSnackbar({
-              message:
-                "Contribution amount has to be greater than or equals to $500 for enterprise",
-              severity: "error",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-              autoHideDuration: 3000,
-            });
-            return;
-          }
-        }
+        // if (
+        //   res.data.partner.organization &&
+        //   res.data.partner.organization.organization_name
+        // ) {
+        //   // means enterprise partner
+        //   if (paymentAmount < 500) {
+        //     setSbOpen(true);
+        //     setSnackbar({
+        //       message:
+        //         "Contribution amount has to be greater than or equals to $500 for enterprise",
+        //       severity: "error",
+        //       anchorOrigin: {
+        //         vertical: "bottom",
+        //         horizontal: "center",
+        //       },
+        //       autoHideDuration: 3000,
+        //     });
+        //     return;
+        //   }
+        // }
 
         let data = {
           contribution: paymentAmount.toString(),
@@ -294,9 +294,9 @@ const ContributionsPage = () => {
     { field: "id", headerName: "ID", width: 250 },
     {
       field: "payment_amount",
-      headerName: "Contribution Amount",
+      headerName: "Funding Amount",
       valueFormatter: (params) => `$${params.value}`,
-      width: 150,
+      width: 170,
     },
     { field: "payment_type", headerName: "Paid By", width: 150 },
     {
@@ -315,13 +315,13 @@ const ContributionsPage = () => {
           )}
         </div>
       ),
-      width: 200,
+      width: 190,
     },
     {
       field: "timestamp",
       headerName: "Paid On",
       valueFormatter: (params) => formatDate(params.value),
-      width: 250,
+      width: 230,
     },
     {
       field: "expiry_date",
@@ -385,7 +385,7 @@ const ContributionsPage = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.topSection}>
-        <PageTitle title={`Contributions`} />
+        <PageTitle title={`Funding`} />
         <Button
           color="primary"
           variant="contained"
@@ -394,7 +394,7 @@ const ContributionsPage = () => {
           onClick={() => setPaymentDialog(true)}
           disabled={existPending}
         >
-          Make A Contribution
+          Make A Funding
         </Button>
       </div>
 
@@ -403,7 +403,7 @@ const ContributionsPage = () => {
           variant="h5"
           style={{ fontWeight: 600, paddingBottom: "20px" }}
         >
-          Current Active Contribution
+          Current Active Funding
         </Typography>
         {latestContribution && latestContribution ? (
           <Fragment>
@@ -466,9 +466,7 @@ const ContributionsPage = () => {
               />
             </div>
 
-            <Typography variant="body1">
-              You have yet to make contribution for this month.
-            </Typography>
+            <Typography variant="body1">No funding made yet.</Typography>
           </Fragment>
         )}
       </Paper>
@@ -481,7 +479,7 @@ const ContributionsPage = () => {
           paddingBottom: "10px",
         }}
       >
-        Contribution History
+        Funding History
       </Typography>
 
       <div
@@ -509,10 +507,10 @@ const ContributionsPage = () => {
           },
         }}
       >
-        <DialogTitle>Contribution</DialogTitle>
+        <DialogTitle>Funding</DialogTitle>
         <DialogContent>
           <label htmlFor="amount">
-            <Typography>Enter contribution amount below</Typography>
+            <Typography>Enter funding amount below</Typography>
           </label>
           <TextField
             id="amount"
@@ -527,7 +525,7 @@ const ContributionsPage = () => {
             style={{ marginBottom: "20px" }}
           />
           <label htmlFor="month">
-            <Typography>Enter number of contribution months</Typography>
+            <Typography>Enter number of months for funding</Typography>
           </label>
           <TextField
             id="month"
