@@ -32,14 +32,14 @@ const theme = createMuiTheme({
     h6: {
       fontSize: 18,
     },
-    subtitle1: {
-      fontSize: 18,
-    },
     body1: {
       fontSize: 16,
     },
     body2: {
       fontSize: 14,
+    },
+    subtitle1: {
+      fontSize: 12,
     },
   },
 });
