@@ -44,6 +44,8 @@ const MemberArticleIDE = (props) => {
     setOpenIDE,
     setSbOpen,
     setSnackbar,
+    articleEngagement,
+    setArticleEngagement,
   } = props;
 
   useEffect(() => {

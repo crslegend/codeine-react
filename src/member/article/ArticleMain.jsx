@@ -89,11 +89,13 @@ const ArticleMain = () => {
   };
 
   const [articleDetails, setArticleDetails] = useState({
+    id: "",
     title: "",
     content: "",
     category: [],
     coding_languages: [],
     languages: [],
+    engagements: [],
   });
 
   const editorBubble = {
@@ -300,7 +302,18 @@ const ArticleMain = () => {
         </div>
       )}
 
-      <CommentDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+      <CommentDrawer
+        openIDE={openIDE}
+        setOpenIDE={setOpenIDE}
+        openEditor={openEditor}
+        setOpenEditor={setOpenEditor}
+        articleDetails={articleDetails}
+        setArticleDetails={setArticleDetails}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        setSnackbar={setSnackbar}
+        setSbOpen={setSbOpen}
+      />
       <Footer />
     </div>
   );

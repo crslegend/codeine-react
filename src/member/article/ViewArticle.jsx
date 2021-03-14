@@ -16,6 +16,7 @@ import Service from "../../AxiosService";
 import Toast from "../../components/Toast.js";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
+import CommentIcon from "@material-ui/icons/Comment";
 import ReactQuill from "react-quill";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,15 +51,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "20px",
     width: 120,
   },
-  demo: {
-    [theme.breakpoints.up("md")]: {
-      width: 770,
-    },
-  },
 }));
 
 const ViewArticle = (props) => {
   const classes = useStyles();
+  const { id } = useParams();
 
   const {
     articleDetails,
@@ -73,76 +70,95 @@ const ViewArticle = (props) => {
     setSnackbar,
   } = props;
 
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
+  useEffect(() => {
+    getNumStatus();
+    getNumOfLikes();
+  }, []);
 
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
+  const [numOfLikes, setNumOfLikes] = useState(0);
+  const [articleLikedStatus, setArticleLikedStatus] = useState(false);
 
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `${seconds} seconds ago`;
+  const getNumOfLikes = () => {
+    let likes = 0;
+    Service.client
+      .get(`/articles/${id}/engagement`)
+      .then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+          likes = likes + res.data[i].like;
         }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
-
-  const formatDate = (date) => {
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
-
-  useEffect(() => {}, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (articleDetails.title === "" || articleDetails.content === "") {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Please enter required fields!",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
+        setNumOfLikes(likes);
+      })
+      .catch((err1) => {
+        console.log(err1);
       });
-      return;
-    }
+  };
+
+  const getNumStatus = () => {
+    let queryParams = {
+      is_user: true,
+    };
+    Service.client
+      .get(`/articles/${id}/engagement`, {
+        params: { ...queryParams },
+      })
+      .then((res) => {
+        if (res.data[0].like === 0) {
+          setArticleLikedStatus(false);
+        } else {
+          setArticleLikedStatus(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleLikeArticle = (e) => {
+    setArticleLikedStatus(!articleLikedStatus);
+    let queryParams = {
+      is_user: true,
+    };
+    Service.client
+      .get(`/articles/${articleDetails.id}/engagement`, {
+        params: { ...queryParams },
+      })
+      .then((res) => {
+        if (res.data.length === 0) {
+          Service.client
+            .post(`/articles/${articleDetails.id}`)
+            .then((res1) => {
+              getNumOfLikes();
+            })
+            .catch((err1) => {
+              console.log(err1);
+            });
+        } else {
+          if (res.data[0].like === 0) {
+            Service.client
+              .put(`/articles/${id}/engagement/${res.data[0].id}`, {
+                like: 1,
+              })
+              .then((res1) => {
+                getNumOfLikes();
+              })
+              .catch((err1) => {
+                console.log(err1);
+              });
+          } else {
+            Service.client
+              .put(`/articles/${id}/engagement/${res.data[0].id}`, {
+                like: 0,
+              })
+              .then((res1) => {
+                getNumOfLikes();
+              })
+              .catch((err1) => {
+                console.log(err1);
+              });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const [loading, setLoading] = useState(false);
@@ -152,23 +168,21 @@ const ViewArticle = (props) => {
       <Grid container justify="center">
         <Grid container alignItems="center" justify="center">
           <Grid md={3} item>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                textTransform: "capitalize",
-              }}
-              onClick={() => setDrawerOpen(true)}
-            >
-              Open Comments
-            </Button>
             <UseAnimations
               animation={heart}
-              size={56}
-              style={{ cursor: "pointer", padding: 100, color: "red" }}
-              onClick={() => console.log("like")}
+              size={30}
+              reverse={articleLikedStatus}
+              wrapperStyle={{
+                display: "inline-flex",
+              }}
+              onClick={(e) => handleLikeArticle(e)}
             />
-
+            <Typography style={{ display: "inline-flex" }}>
+              {numOfLikes}
+            </Typography>
+            <br />
+            <CommentIcon onClick={() => setDrawerOpen(true)} />
+            <Typography style={{ display: "inline-flex" }}>xx</Typography>
             <div style={{ display: "flex" }}>
               <Language style={{ marginRight: "10px" }} />
               {articleDetails &&
@@ -194,7 +208,6 @@ const ViewArticle = (props) => {
                   }
                 })}
             </div>
-
             <Typography
               variant="body1"
               style={{ fontWeight: 600, marginBottom: "10px" }}
@@ -255,7 +268,6 @@ const ViewArticle = (props) => {
                   );
                 }
               })}
-
             <Typography
               variant="body1"
               style={{

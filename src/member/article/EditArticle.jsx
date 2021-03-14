@@ -312,7 +312,7 @@ const EditArticle = (props) => {
         <Grid item xs={4}>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-              Course Language (Choost at least 1)
+              Course Language (Choose at least 1)
             </Typography>
             <div>
               <ToggleButton
@@ -352,7 +352,7 @@ const EditArticle = (props) => {
           </div>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-              Category (Choost at least 1)
+              Category (Choose at least 1)
             </Typography>
             <div>
               <ToggleButton
@@ -425,7 +425,7 @@ const EditArticle = (props) => {
           </div>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-              Coding Language/Framework (Choost at least 1)
+              Coding Language/Framework (Choose at least 1)
             </Typography>
             <div>
               <ToggleButton
