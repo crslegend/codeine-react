@@ -954,29 +954,73 @@ const CourseCreation = () => {
           } else if (pageNum === 2) {
             return (
               <Fragment>
-                <div className={classes.buttonSection}>
-                  <PageTitle title="Final Quiz" />
-                  <div>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => setDrawerOpen(true)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Course Details
-                    </Button>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => {
-                        setFinalQuizDialog(true);
-                        setEditMode(true);
-                      }}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Final Quiz Details
-                    </Button>
+                <div className={classes.topSection}>
+                  <div style={{ maxWidth: "100%" }}>
+                    <Paper className={classes.paper}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ marginRight: "25px" }}>
+                          {coursePicAvatar ? (
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
+                          ) : (
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
+                              No Course Logo Yet
+                            </Avatar>
+                          )}
+                        </div>
+                        <div style={{ flexDirection: "column" }}>
+                          <Typography
+                            variant="h5"
+                            style={{
+                              marginRight: "10px",
+                              fontWeight: 600,
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            {` ${courseDetailsCard && courseDetailsCard.title}`}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
+                          </Typography>
+                        </div>
+                        <div>
+                          <IconButton onClick={() => setDrawerOpen(true)}>
+                            <Edit />
+                          </IconButton>
+                        </div>
+                      </div>
+                    </Paper>
                   </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <PageTitle title="Final Quiz" />
+
+                  <Button
+                    variant="contained"
+                    startIcon={<Edit />}
+                    onClick={() => {
+                      setFinalQuizDialog(true);
+                      setEditMode(true);
+                    }}
+                    style={{ marginLeft: "30px", height: 30 }}
+                  >
+                    Edit Final Quiz Details
+                  </Button>
                 </div>
                 <QuizKanbanBoard
                   finalQuiz={finalQuiz}
