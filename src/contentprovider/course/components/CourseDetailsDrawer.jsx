@@ -618,7 +618,7 @@ const CourseDetailsDrawer = ({
       </div>
     </Fragment>
   );
-  console.log(courseDetails);
+  // console.log(courseDetails);
   return (
     <Fragment>
       <div>

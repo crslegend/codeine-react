@@ -1,12 +1,15 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  IconButton,
+  Paper,
   Radio,
   RadioGroup,
   TextField,
@@ -30,10 +33,10 @@ import validator from "validator";
 // const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
-  buttonSection: {
+  topSection: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    // justifyContent: "space-between",
+    // alignItems: "center",
   },
   dialogButtons: {
     width: 100,
@@ -42,6 +45,17 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     overflow: "auto",
     marginBottom: "20px",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3),
+    marginBottom: "20px",
+    width: "80%",
+  },
+  avatar: {
+    width: theme.spacing(15),
+    height: theme.spacing(15),
   },
 }));
 
@@ -840,25 +854,70 @@ const CourseCreation = () => {
           if (pageNum === 1) {
             return (
               <Fragment>
-                <div className={classes.buttonSection}>
-                  <PageTitle title="Course and Chapter" />
-                  <div>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => setDrawerOpen(true)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Course Details
-                    </Button>
-                    <Button
-                      variant="contained"
-                      startIcon={<Add />}
-                      onClick={() => setChapterDialog(true)}
-                    >
-                      Add New Chapter
-                    </Button>
+                <div className={classes.topSection}>
+                  <div style={{ width: "80%" }}>
+                    <Paper className={classes.paper}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ marginRight: "25px" }}>
+                          {coursePicAvatar ? (
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
+                          ) : (
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
+                              No Course Logo Yet
+                            </Avatar>
+                          )}
+                        </div>
+                        <div style={{ flexDirection: "column" }}>
+                          <Typography
+                            variant="h5"
+                            style={{
+                              marginRight: "10px",
+                              fontWeight: 600,
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            {` ${courseDetails && courseDetails.title}`}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${courseDetails && courseDetails.description}`}
+                          </Typography>
+                        </div>
+                        <div>
+                          <IconButton onClick={() => setDrawerOpen(true)}>
+                            <Edit />
+                          </IconButton>
+                        </div>
+                      </div>
+                    </Paper>
                   </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "50px" }}>
+                    <PageTitle title="Chapters" />
+                  </div>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => setChapterDialog(true)}
+                    style={{ height: 30 }}
+                  >
+                    Add New Chapter
+                  </Button>
                 </div>
                 <div className={classes.kanban}>
                   <CourseKanbanBoard

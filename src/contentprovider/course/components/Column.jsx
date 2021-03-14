@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 8,
     border: "1px solid lightgrey",
     borderRadius: 2,
-    width: 250,
+    width: 300,
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#fff",
@@ -350,54 +350,41 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 >
                   {column.title}
                 </LinkMui>
-                {/* <IconButton size="small">
-                  <Add />
-                </IconButton> */}
               </div>
 
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Button
-                  variant="contained"
-                  startIcon={<AttachFile />}
-                  className={classes.courseMaterialButton}
+                <IconButton
                   onClick={() => {
                     setMaterialType("file");
                     setCourseMaterialDialog(true);
                     setChapterIdForCourseMaterial(column.id);
                   }}
                 >
-                  Add File
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<Movie />}
-                  className={classes.courseMaterialButton}
+                  <AttachFile />
+                </IconButton>
+                <IconButton
                   onClick={() => {
                     setMaterialType("video");
                     setCourseMaterialDialog(true);
                     setChapterIdForCourseMaterial(column.id);
                   }}
                 >
-                  Add Video
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<Assignment />}
-                  className={classes.courseMaterialButton}
+                  <Movie />
+                </IconButton>
+                <IconButton
                   onClick={() => {
                     setMaterialType("quiz");
                     setCourseMaterialDialog(true);
                     setChapterIdForCourseMaterial(column.id);
                   }}
                 >
-                  Add Quiz
-                </Button>
+                  <Assignment />
+                </IconButton>
               </div>
 
               <Droppable droppableId={column.id} type="task">
