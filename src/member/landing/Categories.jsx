@@ -12,7 +12,6 @@ const styles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "row",
-    marginTop: "50px",
     maxWidth: "100",
   },
   cardroot: {

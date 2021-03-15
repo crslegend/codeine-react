@@ -3,9 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import RecentCourses from "./RecentCourses";
 import TopPicks from "./TopPicks";
-import FeaturedArticles from "./FeaturedArticles";
+import FeaturedCourses from "./FeaturedCourses";
 import Categories from "./Categories";
-import RecentProjects from "./RecentProjects";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -28,9 +27,9 @@ const MemberLandingBody = (props) => {
             <TopPicks />
           </div>
         ) : (
-          <div>
-            <FeaturedArticles />
-            <RecentProjects />
+          <div style={{ width: "100%" }}>
+            <Categories />
+            <FeaturedCourses />
           </div>
         )}
       </Grid>

@@ -11,6 +11,7 @@ const styles = makeStyles((theme) => ({
     maxWidth: "100vw",
     paddingLeft: "30px",
     paddingBottom: "10px",
+    marginBottom: "50px",
   },
   heading: {
     lineHeight: "50px",
