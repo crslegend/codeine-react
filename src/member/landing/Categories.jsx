@@ -55,7 +55,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                margin: "3% 0 5% 5%",
+                margin: "3% 0 10% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -84,7 +84,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                margin: "3% 0 5% 5%",
+                margin: "3% 0 10% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -113,7 +113,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                margin: "3% 0 5% 5%",
+                margin: "3% 0 10% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -142,7 +142,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                margin: "3% 0 5% 5%",
+                margin: "3% 0 10% 5%",
                 padding: "8px 10px",
               }}
             >

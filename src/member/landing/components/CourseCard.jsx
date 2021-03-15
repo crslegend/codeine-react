@@ -14,7 +14,7 @@ const styles = makeStyles((theme) => ({
     width: "350px",
     padding: "10px 10px",
     marginTop: "30px",
-    marginRight: "100px",
+    marginRight: "50px",
     border: "1px solid",
     borderRadius: 0,
   },

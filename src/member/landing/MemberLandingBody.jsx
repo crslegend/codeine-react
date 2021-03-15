@@ -4,6 +4,7 @@ import { Grid } from "@material-ui/core";
 import RecentCourses from "./RecentCourses";
 import TopPicks from "./TopPicks";
 import FeaturedCourses from "./FeaturedCourses";
+import IconPage from "./IconPage";
 import Categories from "./Categories";
 
 const styles = makeStyles((theme) => ({
@@ -28,6 +29,7 @@ const MemberLandingBody = (props) => {
           </div>
         ) : (
           <div style={{ width: "100%" }}>
+            <IconPage />
             <Categories />
             <FeaturedCourses />
           </div>
