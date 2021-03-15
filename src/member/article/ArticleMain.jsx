@@ -1,13 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  CircularProgress,
-  Paper,
-  TextField,
-  ListItem,
-  Typography,
-} from "@material-ui/core";
+import { Button, ListItem, Typography } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Service from "../../AxiosService";
 import logo from "../../assets/CodeineLogos/Member.svg";
@@ -19,9 +12,7 @@ import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
 import Cookies from "js-cookie";
 import Toast from "../../components/Toast.js";
-import Splitter, { SplitDirection } from "@devbookhq/splitter";
-import ReactQuill from "react-quill";
-import { CallReceived } from "@material-ui/icons";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,9 +73,22 @@ const ArticleMain = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const [user, setUser] = useState(null);
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+    }
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const memberid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get(`/auth/members/${memberid}`)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          setUser();
+        });
     }
   };
 
@@ -96,6 +100,7 @@ const ArticleMain = () => {
     coding_languages: [],
     languages: [],
     engagements: [],
+    top_level_comments: [],
   });
 
   const editorBubble = {
@@ -118,16 +123,6 @@ const ArticleMain = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
   const [openEditor, setOpenEditor] = useState(false);
-
-  const openingIDE = () => {
-    setOpenIDE(true);
-    setOpenEditor(false);
-  };
-
-  const openingEditor = () => {
-    setOpenIDE(false);
-    setOpenEditor(true);
-  };
 
   const memberNavbar = (
     <Fragment>
@@ -229,36 +224,22 @@ const ArticleMain = () => {
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
 
-      <div style={{ paddingTop: "65px" }}>
-        {!openIDE && !openEditor && (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
-            onClick={() => openingIDE()}
-          >
-            Open IDE
-          </Button>
-        )}
-
-        {!openEditor && (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
-            onClick={() => openingEditor()}
-          >
-            Edit Article
-          </Button>
-        )}
-      </div>
-
+      <CommentDrawer
+        user={user}
+        openIDE={openIDE}
+        setOpenIDE={setOpenIDE}
+        openEditor={openEditor}
+        setOpenEditor={setOpenEditor}
+        articleDetails={articleDetails}
+        setArticleDetails={setArticleDetails}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        setSnackbar={setSnackbar}
+        setSbOpen={setSbOpen}
+      />
       {openIDE ? (
         <ArticleIDE
+          user={user}
           openIDE={openIDE}
           setOpenIDE={setOpenIDE}
           openEditor={openEditor}
@@ -274,6 +255,7 @@ const ArticleMain = () => {
         <div>
           {openEditor ? (
             <EditArticle
+              user={user}
               openIDE={openIDE}
               setOpenIDE={setOpenIDE}
               openEditor={openEditor}
@@ -287,6 +269,7 @@ const ArticleMain = () => {
             />
           ) : (
             <ViewArticle
+              user={user}
               openIDE={openIDE}
               setOpenIDE={setOpenIDE}
               openEditor={openEditor}
@@ -301,19 +284,6 @@ const ArticleMain = () => {
           )}
         </div>
       )}
-
-      <CommentDrawer
-        openIDE={openIDE}
-        setOpenIDE={setOpenIDE}
-        openEditor={openEditor}
-        setOpenEditor={setOpenEditor}
-        articleDetails={articleDetails}
-        setArticleDetails={setArticleDetails}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        setSnackbar={setSnackbar}
-        setSbOpen={setSbOpen}
-      />
       <Footer />
     </div>
   );

@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
+    paddingTop: "65px",
   },
   tile: {
     height: "100%",

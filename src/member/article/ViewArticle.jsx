@@ -2,13 +2,11 @@ import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
-  CircularProgress,
-  Paper,
-  TextField,
-  ListItem,
-  Grid,
+  Popover,
+  Container,
   Chip,
   Typography,
+  Avatar,
 } from "@material-ui/core";
 import { Language } from "@material-ui/icons";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -17,7 +15,9 @@ import Toast from "../../components/Toast.js";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
+import Menu from "@material-ui/icons/MoreHoriz";
 import ReactQuill from "react-quill";
+import parse from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
+    paddingTop: "65px",
   },
   codeineLogo: {
     display: "flex",
@@ -35,21 +36,17 @@ const useStyles = makeStyles((theme) => ({
     width: "25%",
     minWidth: "120px",
   },
-  paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "40%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translateX(-50%) translateY(-50%)",
-    padding: "20px 30px",
-  },
   button: {
     marginTop: "20px",
     marginBottom: "20px",
     width: 120,
+  },
+  typography: {
+    padding: theme.spacing(2),
+    cursor: "pointer",
+    "&:hover": {
+      color: "#000000",
+    },
   },
 }));
 
@@ -69,6 +66,22 @@ const ViewArticle = (props) => {
     setSbOpen,
     setSnackbar,
   } = props;
+
+  const formatDate = (date) => {
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
 
   useEffect(() => {
     getNumStatus();
@@ -123,7 +136,9 @@ const ViewArticle = (props) => {
       .then((res) => {
         if (res.data.length === 0) {
           Service.client
-            .post(`/articles/${articleDetails.id}`)
+            .post(`/articles/${articleDetails.id}/engagement`, {
+              like: 1,
+            })
             .then((res1) => {
               getNumOfLikes();
             })
@@ -163,196 +178,289 @@ const ViewArticle = (props) => {
 
   const [loading, setLoading] = useState(false);
 
+  const openingIDE = () => {
+    setOpenIDE(true);
+    setOpenEditor(false);
+  };
+
+  const openingEditor = () => {
+    setOpenIDE(false);
+    setOpenEditor(true);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
+
   return (
     <div className={classes.root}>
-      <Grid container justify="center">
-        <Grid container alignItems="center" justify="center">
-          <Grid md={3} item>
-            <UseAnimations
-              animation={heart}
-              size={30}
-              reverse={articleLikedStatus}
-              wrapperStyle={{
-                display: "inline-flex",
-              }}
-              onClick={(e) => handleLikeArticle(e)}
-            />
-            <Typography style={{ display: "inline-flex" }}>
-              {numOfLikes}
-            </Typography>
-            <br />
-            <CommentIcon onClick={() => setDrawerOpen(true)} />
-            <Typography style={{ display: "inline-flex" }}>xx</Typography>
-            <div style={{ display: "flex" }}>
-              <Language style={{ marginRight: "10px" }} />
-              {articleDetails &&
-                articleDetails.languages &&
-                articleDetails.languages.length > 0 &&
-                articleDetails.languages.map((language, index) => {
-                  if (index + 1 !== articleDetails.languages.length) {
-                    if (language === "ENG") {
-                      return <Typography key={index}>English, </Typography>;
-                    } else if (language === "MAN") {
-                      return <Typography key={index}>中文, </Typography>;
-                    } else {
-                      return <Typography key={index}>Français, </Typography>;
-                    }
-                  } else {
-                    if (language === "ENG") {
-                      return <Typography key={index}>English</Typography>;
-                    } else if (language === "MAN") {
-                      return <Typography key={index}>中文</Typography>;
-                    } else {
-                      return <Typography key={index}>Français</Typography>;
-                    }
-                  }
-                })}
-            </div>
+      <Container maxWidth="md">
+        <div>
+          <Menu onClick={(e) => handleClick(e)} />
+          <Popover
+            id={popoverid}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
             <Typography
-              variant="body1"
-              style={{ fontWeight: 600, marginBottom: "10px" }}
+              variant="body2"
+              className={classes.typography}
+              onClick={() => openingEditor()}
             >
-              Categories this article falls under:
+              Edit article
             </Typography>
-            {articleDetails &&
-              articleDetails.categories &&
-              articleDetails.categories.length > 0 &&
-              articleDetails.categories.map((category, index) => {
-                if (category === "FE") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Frontend"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (category === "BE") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Backend"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (category === "UI") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="UI/UX"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (category === "DB") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Database Administration"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (category === "ML") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Machine Learning"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Security"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                }
-              })}
             <Typography
-              variant="body1"
+              variant="body2"
+              className={classes.typography}
+              onClick={() => {
+                // setDeleteCommentDialog(true);
+              }}
+            >
+              Delete
+            </Typography>
+          </Popover>
+          {!openIDE && !openEditor && (
+            <Button
+              variant="contained"
+              color="primary"
               style={{
-                fontWeight: 600,
-                marginBottom: "10px",
-                marginTop: "20px",
+                textTransform: "capitalize",
               }}
+              onClick={() => openingIDE()}
             >
-              Coding Languages/Frameworks:
-            </Typography>
-            {articleDetails &&
-              articleDetails.coding_languages &&
-              articleDetails.coding_languages.length > 0 &&
-              articleDetails.coding_languages.map((language, index) => {
-                if (language === "PY") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Python"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (language === "JAVA") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Java"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (language === "JS") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Javascript"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (language === "CPP") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="C++"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (language === "CS") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="C#"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
-                } else if (language === "RUBY") {
-                  return (
-                    <Chip
-                      key={index}
-                      label="Ruby"
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
+              Open IDE
+            </Button>
+          )}
+        </div>
+        <UseAnimations
+          animation={heart}
+          size={30}
+          reverse={articleLikedStatus}
+          wrapperStyle={{
+            display: "inline-flex",
+          }}
+          onClick={(e) => handleLikeArticle(e)}
+        />
+        <Typography style={{ display: "inline-flex" }}>{numOfLikes}</Typography>
+        <br />
+        <CommentIcon onClick={() => setDrawerOpen(true)} />
+        <Typography style={{ display: "inline-flex" }}>
+          {articleDetails.top_level_comments.length}
+        </Typography>
+        <div style={{ display: "flex" }}>
+          <Language style={{ marginRight: "10px" }} />
+          {articleDetails &&
+            articleDetails.languages &&
+            articleDetails.languages.length > 0 &&
+            articleDetails.languages.map((language, index) => {
+              if (index + 1 !== articleDetails.languages.length) {
+                if (language === "ENG") {
+                  return <Typography key={index}>English, </Typography>;
+                } else if (language === "MAN") {
+                  return <Typography key={index}>中文, </Typography>;
                 } else {
-                  return (
-                    <Chip
-                      key={index}
-                      label={language}
-                      style={{ marginRight: "10px", marginBottom: "10px" }}
-                    />
-                  );
+                  return <Typography key={index}>Français, </Typography>;
                 }
-              })}
-          </Grid>
-          <Grid md={6} item className={classes.demo}>
-            <Typography>{articleDetails.title}</Typography>
+              } else {
+                if (language === "ENG") {
+                  return <Typography key={index}>English</Typography>;
+                } else if (language === "MAN") {
+                  return <Typography key={index}>中文</Typography>;
+                } else {
+                  return <Typography key={index}>Français</Typography>;
+                }
+              }
+            })}
+        </div>
+        <Typography
+          variant="body1"
+          style={{ fontWeight: 600, marginBottom: "10px" }}
+        >
+          Categories this article falls under:
+        </Typography>
+        {articleDetails &&
+          articleDetails.categories &&
+          articleDetails.categories.length > 0 &&
+          articleDetails.categories.map((category, index) => {
+            if (category === "FE") {
+              return (
+                <Chip
+                  key={index}
+                  label="Frontend"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (category === "BE") {
+              return (
+                <Chip
+                  key={index}
+                  label="Backend"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (category === "UI") {
+              return (
+                <Chip
+                  key={index}
+                  label="UI/UX"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (category === "DB") {
+              return (
+                <Chip
+                  key={index}
+                  label="Database Administration"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (category === "ML") {
+              return (
+                <Chip
+                  key={index}
+                  label="Machine Learning"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else {
+              return (
+                <Chip
+                  key={index}
+                  label="Security"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            }
+          })}
+        <Typography
+          variant="body1"
+          style={{
+            fontWeight: 600,
+            marginBottom: "10px",
+            marginTop: "20px",
+          }}
+        >
+          Coding Languages/Frameworks:
+        </Typography>
+        {articleDetails &&
+          articleDetails.coding_languages &&
+          articleDetails.coding_languages.length > 0 &&
+          articleDetails.coding_languages.map((language, index) => {
+            if (language === "PY") {
+              return (
+                <Chip
+                  key={index}
+                  label="Python"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (language === "JAVA") {
+              return (
+                <Chip
+                  key={index}
+                  label="Java"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (language === "JS") {
+              return (
+                <Chip
+                  key={index}
+                  label="Javascript"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (language === "CPP") {
+              return (
+                <Chip
+                  key={index}
+                  label="C++"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (language === "CS") {
+              return (
+                <Chip
+                  key={index}
+                  label="C#"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else if (language === "RUBY") {
+              return (
+                <Chip
+                  key={index}
+                  label="Ruby"
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            } else {
+              return (
+                <Chip
+                  key={index}
+                  label={language}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                />
+              );
+            }
+          })}
+        <Typography
+          variant="h1"
+          style={{ fontWeight: "600", marginBottom: "10px" }}
+        >
+          {articleDetails.title}
+        </Typography>
+        {articleDetails.member && (
+          <div style={{ display: "flex", marginRight: "15px" }}>
+            <div style={{ display: "flex" }}>
+              <Avatar
+                src={articleDetails.member.profile_photo}
+                alt=""
+                style={{ marginRight: "15px" }}
+              ></Avatar>
+            </div>
+            <div style={{ flexDirection: "column" }}>
+              <Typography
+                style={{ display: "flex", fontWeight: "550" }}
+                variant="body2"
+              >
+                {articleDetails.member.first_name +
+                  " " +
+                  articleDetails.member.last_name}
+              </Typography>
+              <Typography variant="body2">
+                {formatDate(articleDetails.date_created)}
+              </Typography>
+            </div>
+          </div>
+        )}
 
-            <ReactQuill
-              theme={"bubble"}
-              value={articleDetails.content}
-              readOnly={openEditor}
-            />
-          </Grid>
-          <Grid md={3} item></Grid>
-        </Grid>
-      </Grid>
+        {parse(articleDetails.content)}
+
+        {/* <ReactQuill
+          value={articleDetails.content}
+          readOnly={openEditor}
+          theme={"bubble"}
+        /> */}
+      </Container>
     </div>
   );
 };
