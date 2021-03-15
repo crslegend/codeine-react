@@ -33,8 +33,8 @@ import {
   selectAnchor,
 } from "../redux/actions";
 import jwt_decode from "jwt-decode";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+// import SyntaxHighlighter from "react-syntax-highlighter";
+// import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 const reactStringReplace = require("react-string-replace");
 
 const styles = makeStyles((theme) => ({
@@ -73,7 +73,10 @@ const ViewCodeReviewDetails = () => {
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
-  const [lineNum, setLineNum] = useState();
+  const [indexes, setIndexes] = useState({
+    start: 0,
+    end: 0,
+  });
 
   const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
 
@@ -116,6 +119,7 @@ const ViewCodeReviewDetails = () => {
         setCode(res.data);
         let arr = res.data.code.split("\n");
         console.log(arr);
+        // console.log(arr[0].length);
       })
       .catch((err) => console.log(err));
   };
@@ -414,6 +418,35 @@ const ViewCodeReviewDetails = () => {
     // }, 3000);
   };
 
+  const getIndex = () => {
+    document.body.addEventListener(
+      "mouseup",
+      function () {
+        if (window.getSelection().toString().length > 0) {
+          if (typeof window.getSelection != "undefined") {
+            var sel = window.getSelection();
+            var range = sel.getRangeAt(0);
+
+            var startOffset = range.startOffset;
+            var endOffset = startOffset + range.toString().length;
+
+            // console.log("Selection starts at: " + startOffset);
+            // console.log("Selection ends at: " + endOffset);
+            if (startOffset === 0 && endOffset === 0) {
+              // do nothing
+            } else {
+              setIndexes({
+                start: startOffset,
+                end: endOffset,
+              });
+            }
+          }
+        }
+      },
+      false
+    );
+  };
+
   const handleAddComment = () => {
     const data = {
       highlighted_code: selectedValue,
@@ -486,7 +519,7 @@ const ViewCodeReviewDetails = () => {
       })
       .catch((err) => console.log(err));
   };
-  console.log(lineNum);
+  // console.log(lineNum);
 
   return (
     <div className={classes.root}>
@@ -495,24 +528,32 @@ const ViewCodeReviewDetails = () => {
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
-      <div className={classes.content}>
+      <div className={classes.content} onClick={deselect}>
         <article id={code && code.id}>
           <TextSelector
             events={[
               {
                 text: "Add a Comment",
-                handler: (html, text) => handleSelectText(text),
+                handler: (html, text) => {
+                  handleSelectText(text);
+                },
               },
             ]}
-            color={"#F8E4B1"}
             colorText={false}
             unmark={false}
           />
           <div className="main-panel">
-            <AnchorBase anchor={baseAnchor} style={{ width: "70%" }}>
-              {/* {code && applyInlineAnchor(code.code)} */}
-
-              {code && (
+            <AnchorBase anchor={baseAnchor} style={{ width: "100%" }}>
+              <div>HELLO</div>
+              <div
+                id="ip"
+                className="codeblock"
+                style={{ whiteSpace: "pre-line" }}
+                onClick={getIndex()}
+              >
+                {code && applyInlineAnchor(code.code)}
+              </div>
+              {/* {code && (
                 <SyntaxHighlighter
                   language="htmlbars"
                   style={docco}
@@ -527,7 +568,7 @@ const ViewCodeReviewDetails = () => {
                 >
                   {code && applyInlineAnchor(code.code)}
                 </SyntaxHighlighter>
-              )}
+              )} */}
             </AnchorBase>
             <div className="sidenotes">
               {init &&
@@ -649,6 +690,7 @@ const ViewCodeReviewDetails = () => {
           <span style={{ fontWeight: 600 }}>Text Selected:</span>
           <br />
           {selectedValue && selectedValue}
+          {indexes.start + ` ` + indexes.end}
           <TextField
             autoFocus
             variant="outlined"
