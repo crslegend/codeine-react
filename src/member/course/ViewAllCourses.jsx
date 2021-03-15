@@ -2,10 +2,6 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
   FormControl,
   InputLabel,
   MenuItem,
@@ -22,8 +18,8 @@ import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 
+import CourseCard from "../landing/components/CourseCard";
 import components from "./components/NavbarComponents";
-import { Rating } from "@material-ui/lab";
 import { NoteAdd } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
@@ -263,8 +259,12 @@ const ViewAllCourses = () => {
           {allCourses && allCourses.length > 0 ? (
             allCourses
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-              .map((course, index) => {
-                return (
+              .map((course, index) => (
+                <CourseCard key={course.id} course={course} />
+              ))
+          ) : (
+            /*{
+                  return (
                   <Card key={index} className={classes.cardRoot}>
                     <CardActionArea
                       onClick={() => {
@@ -325,9 +325,9 @@ const ViewAllCourses = () => {
                       </div>
                     </CardActionArea>
                   </Card>
-                );
-              })
-          ) : (
+                            );
+                
+                }*/
             <div
               style={{
                 display: "block",

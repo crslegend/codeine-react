@@ -3,14 +3,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import RecentCourses from "./RecentCourses";
 import TopPicks from "./TopPicks";
-import FeaturedArticles from "./FeaturedArticles";
+import FeaturedCourses from "./FeaturedCourses";
+import IconPage from "./IconPage";
 import Categories from "./Categories";
-import RecentProjects from "./RecentProjects";
 
 const styles = makeStyles((theme) => ({
   root: {
     paddingTop: "65px",
-    maxWidth: "100vw",
+    maxWidth: "100%",
   },
 }));
 
@@ -22,15 +22,16 @@ const MemberLandingBody = (props) => {
     <Fragment>
       <Grid container className={classes.root}>
         {loggedIn && loggedIn ? (
-          <div>
+          <div style={{ width: "100%" }}>
             <RecentCourses />
             <Categories />
             <TopPicks />
           </div>
         ) : (
-          <div>
-            <FeaturedArticles />
-            <RecentProjects />
+          <div style={{ width: "100%" }}>
+            <IconPage />
+            <Categories />
+            <FeaturedCourses />
           </div>
         )}
       </Grid>
