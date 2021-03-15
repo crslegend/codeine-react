@@ -12,23 +12,25 @@ const styles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: "50px",
+    marginTop: "50px",
+    maxWidth: "100",
   },
   cardroot: {
     borderRadius: 0,
-    maxHeight: "300px",
+    maxHeight: "330px",
     display: "flex",
     alignItems: "center",
+    width: "25%",
   },
   cardmedia: {
-    height: "20vw",
-    width: "25vw",
+    width: "100%",
+    height: "100%",
   },
   cardcontent: {
     color: "#FFFFFF",
     fontFamily: "Roboto Mono",
-    paddingTop: "35%",
-    paddingLeft: "5%",
+    marginTop: "35%",
+    marginLeft: "5%",
   },
 }));
 
@@ -54,8 +56,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                marginTop: "5%",
-                marginLeft: "5%",
+                margin: "3% 0 5% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -84,8 +85,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                marginTop: "5%",
-                marginLeft: "5%",
+                margin: "3% 0 5% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -114,8 +114,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                marginTop: "5%",
-                marginLeft: "5%",
+                margin: "3% 0 5% 5%",
                 padding: "8px 10px",
               }}
             >
@@ -144,8 +143,7 @@ const Categories = () => {
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
-                marginTop: "5%",
-                marginLeft: "5%",
+                margin: "3% 0 5% 5%",
                 padding: "8px 10px",
               }}
             >

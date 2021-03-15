@@ -10,7 +10,7 @@ import RecentProjects from "./RecentProjects";
 const styles = makeStyles((theme) => ({
   root: {
     paddingTop: "65px",
-    maxWidth: "100vw",
+    maxWidth: "100%",
   },
 }));
 
@@ -22,7 +22,7 @@ const MemberLandingBody = (props) => {
     <Fragment>
       <Grid container className={classes.root}>
         {loggedIn && loggedIn ? (
-          <div>
+          <div style={{ width: "100%" }}>
             <RecentCourses />
             <Categories />
             <TopPicks />
