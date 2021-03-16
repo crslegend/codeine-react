@@ -11,7 +11,7 @@ import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
-    minWidth: "350px",
+    width: "25vw",
     padding: "10px 10px",
     marginTop: "30px",
     marginRight: "50px",

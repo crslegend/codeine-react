@@ -76,7 +76,7 @@ const TopPicks = () => {
         params: { sortRating: "-rating" },
       })
       .then((res) => {
-        res.data.results = res.data.results.slice(0, 4);
+        res.data.results = res.data.results.slice(0, 3);
         setCourses(res.data.results);
       })
       .catch((err) => console.log(err));

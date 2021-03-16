@@ -1,13 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Grid,
-  Typography,
-  Button,
-  Card,
-  Box,
-  Tooltip,
-} from "@material-ui/core";
+import { Grid, Typography, Card, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 import py from "../../assets/icons/py_icon.png";
@@ -25,14 +18,15 @@ const styles = makeStyles((theme) => ({
     height: "100vh",
   },
   heading1: {
-    marginTop: "20vh",
+    marginTop: "13vh",
     color: "#D4D4D4",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
   heading2: {
-    marginTop: "15px",
+    marginTop: "3vh",
     marginBottom: "55px",
+    lineHeight: "40px",
     color: "#D4D4D4",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
@@ -63,12 +57,13 @@ const IconPage = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography variant="h1" className={classes.heading1}>
+          <Typography variant="h2" className={classes.heading1}>
             Not sure where to start?
           </Typography>
-          <Typography variant="h1" className={classes.heading2}>
-            Hover over these languages to find out <br />
-            their pros & cons!
+          <Typography variant="h4" className={classes.heading2}>
+            Check out their pros and cons to decide which
+            <br />
+            coding languages are for you!
           </Typography>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {/* PY icon */}
@@ -76,12 +71,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
-                    variant="body1"
+                    variant="h6"
                     style={{
-                      paddingTop: "10px",
+                      textAlign: "center",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      color: "#3675A9",
+                    }}
+                  >
+                    PYTHON COURSES
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
                     }}
                   >
                     Pros
@@ -101,7 +106,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "8px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -135,11 +140,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#F3BF04",
+                    }}
+                  >
+                    JAVASCRIPT COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -158,7 +174,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -191,11 +207,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#E57001",
+                    }}
+                  >
+                    JAVA COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -215,7 +242,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -250,11 +277,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#CC0000",
+                    }}
+                  >
+                    RUBY COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -273,7 +311,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -284,7 +322,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Poor Runtime Speed <br />- Lack of flexibility
+                    - Poor Runtime Speed <br />- Lack of Flexibility
                   </Typography>
                 </Card>
               }
@@ -306,11 +344,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#004482",
+                    }}
+                  >
+                    C++ COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -329,7 +378,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -362,11 +411,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#6A1577",
+                    }}
+                  >
+                    C# COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -386,7 +446,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -419,11 +479,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#E44D26",
+                    }}
+                  >
+                    HTML COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -434,7 +505,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Easy to learn and Understand <br /> - Great Browser
+                    - Easy to Learn and Understand <br /> - Great Browser
                     Support
                     <br />- SEO Friendly
                   </Typography>
@@ -443,7 +514,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -478,11 +549,22 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      color: "#264DE4",
+                    }}
+                  >
+                    CSS COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -501,7 +583,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -512,7 +594,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Cross-browser Issues <br />- Poor security
+                    - Cross-browser Issues <br />- Poor Security
                   </Typography>
                 </Card>
               }

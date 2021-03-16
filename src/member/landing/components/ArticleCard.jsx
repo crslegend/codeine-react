@@ -20,7 +20,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: "Roboto Mono",
     fontSize: "64px",
     color: "#CECECE",
-    marginLeft: "25px",
+    marginLeft: "1vw",
     lineHeight: "75px",
   },
 }));
