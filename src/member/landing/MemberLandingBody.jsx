@@ -35,6 +35,7 @@ const MemberLandingBody = (props) => {
             <Categories />
             <FeaturedCourses />
             <Ide />
+            <Pricing />
           </div>
         )}
       </Grid>

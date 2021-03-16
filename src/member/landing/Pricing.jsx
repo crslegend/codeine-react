@@ -1,19 +1,28 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, Button } from "@material-ui/core";
+
+import pricing from "../../assets/pricing_asset.png";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "60px",
+    paddingTop: "50px",
     maxWidth: "100vw",
     paddingLeft: "30px",
     paddingBottom: "10px",
     marginBottom: "50px",
   },
   heading: {
-    lineHeight: "50px",
+    marginTop: "20%",
+    marginBottom: "30px",
+    lineHeight: "40px",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
+  },
+  button: {
+    fontFamily: "Roboto Mono",
+    textTransform: "none",
+    fontWeight: 600,
   },
 }));
 
@@ -24,7 +33,23 @@ const Pricing = () => {
     <Fragment>
       <Grid container className={classes.root}>
         <Grid item xs={1} />
-        <Grid item xs={10}></Grid>
+        <Grid item xs={5}>
+          <img width="80%" alt="ide" src={pricing}></img>
+        </Grid>
+        <Grid item xs={5}>
+          <Typography variant="h3" className={classes.heading}>
+            Become our PRO member to
+            <br />
+            have access to ALL of
+            <br />
+            our features
+          </Typography>
+
+          <Button variant="outlined" color="primary" className={classes.button}>
+            subscribe now
+          </Button>
+        </Grid>
+
         <Grid item xs={1} />
       </Grid>
     </Fragment>
