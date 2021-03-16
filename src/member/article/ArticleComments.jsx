@@ -411,7 +411,11 @@ const ArticleComment = (props) => {
         if (commentid === commentList[i].id) {
           for (let j = 0; j < commentList[i].replies.length; j++) {
             if (commentList[i].replies[j].id === replyid) {
-              delete newArray[i].replies[j];
+              console.log("reply length: " + newArray[i].replies.length);
+              newArray[i].replies = newArray[i].replies.filter(
+                (item) => item !== newArray[i].replies[j]
+              );
+              console.log("reply length: " + newArray[i].replies.length);
               Service.client
                 .delete(`/articles/${id}/comments/${replyid}`)
                 .then(() => {})
@@ -419,7 +423,6 @@ const ArticleComment = (props) => {
               break;
             }
           }
-          
         }
       }
     }
@@ -1034,7 +1037,7 @@ const ArticleComment = (props) => {
                             </div>
                           )}
 
-                          {comment.viewReply && (
+                          {comment.viewReply && comment.replies.length !== 0 && (
                             <div
                               style={{
                                 display: "flex",
@@ -1139,7 +1142,8 @@ const ArticleComment = (props) => {
                             </Card>
                           )}
 
-                          {comment.viewReply &&
+                          {comment.replies.length !== 0 &&
+                            comment.viewReply &&
                             comment.replies &&
                             comment.replies.length > 0 &&
                             comment.replies.map((reply, replyIndex) => {
