@@ -23,6 +23,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: "Roboto Mono",
     textTransform: "none",
     fontWeight: 600,
+    fontSize: "18px",
   },
 }));
 

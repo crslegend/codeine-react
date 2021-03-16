@@ -27,6 +27,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: "Roboto Mono",
     textTransform: "none",
     color: "#FFFFFF",
+    fontSize: "18px",
     borderColor: "#FFFFFF",
   },
 }));
