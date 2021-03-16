@@ -98,8 +98,7 @@ const EditArticle = (props) => {
 
   const editor = {
     toolbar: [
-      [{ font: [] }],
-      [{ size: [] }],
+      [{ size: ["normal, large"] }],
       ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
       [
         { list: "ordered" },

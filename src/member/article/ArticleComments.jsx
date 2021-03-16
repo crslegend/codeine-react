@@ -18,6 +18,8 @@ import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/DeleteOutline";
 import Chat from "@material-ui/icons/ChatBubbleOutline";
 import Menu from "@material-ui/icons/MoreHoriz";
+import UseAnimations from "react-useanimations";
+import heart from "react-useanimations/lib/heart";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -47,7 +49,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     marginBottom: theme.spacing(1),
   },
+  childcommentheader: {
+    display: "flex",
+    maringTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
   parentcommentdivider: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  childcommentdivider: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
@@ -60,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "220px",
   },
   replyCommentCard: {
+    paddingTop: theme.spacing(2),
     paddingLeft: theme.spacing(2),
     borderLeft: "0.3em solid grey",
     marginBottom: theme.spacing(2),
@@ -170,10 +182,6 @@ const ArticleComment = (props) => {
     textfield: "",
   });
 
-  const [replyComment, setReplyComment] = useState({
-    comment: "",
-  });
-
   const [commentList, setCommentList] = useState([]);
 
   useEffect(() => {
@@ -182,15 +190,20 @@ const ArticleComment = (props) => {
 
   const addTextFieldStatus = (list) => {
     for (let i = 0; i < list.length; i++) {
-      list[i].textfield = false;
+      list[i].editfield = false;
       list[i].editValue = list[i].comment;
       list[i].replyfield = false;
-      list[i].editReplyValue = "";
+      list[i].replyValue = "";
+      list[i].viewReply = false;
+      for (let j = 0; j < list[i].replies.length; j++) {
+        list[i].replies[j].editfield = false;
+        list[i].replies[j].editValue = list[i].replies[j].comment;
+      }
     }
     return list;
   };
 
-  const handleEditTextField = (commentid, status) => {
+  const openEditTextField = (commentid, status) => {
     setPopover({
       popoverId: null,
       anchorEl: null,
@@ -198,7 +211,7 @@ const ArticleComment = (props) => {
     let newArray = [...commentList];
     for (let i = 0; i < commentList.length; i++) {
       if (commentList[i].id === commentid) {
-        newArray[i].textfield = status;
+        newArray[i].editfield = status;
         commentList[i].editValue = commentList[i].comment;
         break;
       }
@@ -206,45 +219,103 @@ const ArticleComment = (props) => {
     setCommentList(newArray);
   };
 
-  const handleReplyTextField = (commentid, status) => {
+  const openEditReplyTextField = (commentid, replyid, status) => {
+    setPopover({
+      popoverId: null,
+      anchorEl: null,
+    });
     let newArray = [...commentList];
     for (let i = 0; i < commentList.length; i++) {
       if (commentList[i].id === commentid) {
-        newArray[i].replyfield = status;
-        //commentList[i].replyValue = commentList[i].comment;
+        for (let j = 0; j < commentList[i].replies.length; j++) {
+          if (commentList[i].replies[j].id === replyid) {
+            commentList[i].replies[j].editfield = status;
+            break;
+          }
+        }
         break;
       }
     }
     setCommentList(newArray);
   };
 
-  let tempCommentId = -1;
+  const openReplyTextField = (commentid, status) => {
+    let newArray = [...commentList];
+    for (let i = 0; i < commentList.length; i++) {
+      if (commentList[i].id === commentid) {
+        newArray[i].replyfield = status;
+        if (!status) {
+          commentList[i].replyValue = "";
+        }
+        break;
+      }
+    }
+    setCommentList(newArray);
+  };
+
+  const openReply = (commentid, status) => {
+    let newArray = [...commentList];
+    for (let i = 0; i < commentList.length; i++) {
+      if (commentList[i].id === commentid) {
+        newArray[i].viewReply = status;
+        break;
+      }
+    }
+    setCommentList(newArray);
+  };
 
   const handleEditTextFieldValue = (commentid, value) => {
     // check if editing same field, then no need loop through array again
     let newArray;
     let i;
-    if (tempCommentId !== commentid) {
-      newArray = [...commentList];
-      tempCommentId = commentid;
-      for (i = 0; i < commentList.length; i++) {
-        if (commentList[i].id === commentid) {
-          newArray[i].editValue = value;
-          break;
-        }
+    newArray = [...commentList];
+    for (i = 0; i < commentList.length; i++) {
+      if (commentList[i].id === commentid) {
+        newArray[i].editValue = value;
+        break;
       }
-    } else {
-      newArray[i].comment = value;
+    }
+    setCommentList(newArray);
+  };
+
+  const handleReplyTextFieldValue = (commentid, value) => {
+    // check if editing same field, then no need loop through array again
+    let newArray;
+    let i;
+    newArray = [...commentList];
+    for (i = 0; i < commentList.length; i++) {
+      if (commentList[i].id === commentid) {
+        newArray[i].replyValue = value;
+        break;
+      }
+    }
+    setCommentList(newArray);
+  };
+
+  const handleEditReplyTextFieldValue = (commentid, replyid, value) => {
+    // check if editing same field, then no need loop through array again
+    let newArray;
+    let i;
+    newArray = [...commentList];
+    for (i = 0; i < commentList.length; i++) {
+      if (commentList[i].id === commentid) {
+        for (let j = 0; j < commentList[i].replies.length; j++) {
+          if (commentList[i].replies[j].id === replyid) {
+            newArray[i].replies[j].editValue = value;
+            break;
+          }
+        }
+        break;
+      }
     }
     setCommentList(newArray);
   };
 
   const handleUpdateComment = (commentid) => {
-    console.log("commentid = " + commentid);
     let tempcomment;
     for (let i = 0; i < commentList.length; i++) {
       if (commentid === commentList[i].id) {
-        commentList[i].textfield = false;
+        commentList[i].editfield = false;
         commentList[i].comment = commentList[i].editValue;
         tempcomment = commentList[i].editValue;
         break;
@@ -256,55 +327,114 @@ const ArticleComment = (props) => {
       })
       .then((res) => {
         console.log(res);
-        handleEditTextField(commentid, false);
-        // const { childCommentId, isNested } = checkIfCommentIsNested(id);
-        // if (isNested) {
-        //   getNestedComments(childCommentId);
-        // }
+        openEditTextField(commentid, false);
       })
       .catch((err) => console.log(err));
   };
 
-  //untested for now!!! till can reply first
-  const handleDeleteComment = (commentid) => {
+  const handleReplyComment = (commentid) => {
+    console.log("commentid = " + commentid);
+    let tempcomment;
+    let i;
+    for (i = 0; i < commentList.length; i++) {
+      if (commentid === commentList[i].id) {
+        tempcomment = commentList[i].replyValue;
+        break;
+      }
+    }
+    Service.client
+      .post(`/articles/${id}/comments`, {
+        comment: tempcomment,
+        reply_to: commentid,
+      })
+      .then((res) => {
+        let data = {
+          ...res.data,
+          editValue: res.data.comment,
+        };
+        commentList[i].replies.unshift(data);
+        openReplyTextField(commentid, false);
+        openReply(commentid, true);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUpdateReplyComment = (commentid, replyid) => {
+    let tempcomment;
+    for (let i = 0; i < commentList.length; i++) {
+      if (commentid === commentList[i].id) {
+        for (let j = 0; j < commentList[i].replies.length; j++) {
+          if (commentList[i].replies[j].id === replyid) {
+            commentList[i].replies[j].editfield = false;
+            commentList[i].replies[j].comment =
+              commentList[i].replies[j].editValue;
+            tempcomment = commentList[i].replies[j].editValue;
+            break;
+          }
+        }
+        break;
+      }
+    }
+    Service.client
+      .put(`/articles/${id}/comments/${replyid}`, {
+        comment: tempcomment,
+      })
+      .then((res) => {
+        console.log(res);
+        openEditTextField(commentid, false);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteComment = (commentid, replyid, type) => {
     setPopover({
       popoverId: null,
       anchorEl: null,
     });
+
     let newArray;
     newArray = [...commentList];
-    for (let i = 0; i < commentList.length; i++) {
-      if (commentid === commentList[i].id) {
-        delete newArray[i];
-        return;
+
+    if (type === "parent") {
+      for (let i = 0; i < commentList.length; i++) {
+        if (commentid === commentList[i].id) {
+          delete newArray[i];
+          Service.client
+            .delete(`/articles/${id}/comments/${commentid}`)
+            .then(() => {})
+            .catch((err) => console.log(err));
+          break;
+        }
+      }
+    } else {
+      for (let i = 0; i < commentList.length; i++) {
+        if (commentid === commentList[i].id) {
+          for (let j = 0; j < commentList[i].replies.length; j++) {
+            if (commentList[i].replies[j].id === replyid) {
+              delete newArray[i].replies[j];
+              Service.client
+                .delete(`/articles/${id}/comments/${replyid}`)
+                .then(() => {})
+                .catch((err) => console.log(err));
+              break;
+            }
+          }
+          
+        }
       }
     }
     setCommentList(newArray);
-
-    Service.client
-      .delete(`/articles/${id}/comments/${commentid}`)
-      .then((res) => {
-        console.log(res);
-
-        // const { childCommentId, isNested } = checkIfCommentIsNested(id);
-        // if (isNested) {
-        //   getNestedComments(childCommentId);
-        // }
-        // getArticleComments();
-      })
-      .catch((err) => console.log(err));
   };
 
   const getArticleComments = () => {
     Service.client
       .get(`/articles/${id}/comments`)
       .then((res) => {
-        console.log(res.data);
         let newCommentList = addTextFieldStatus(res.data);
         setCommentList(newCommentList);
         setArticleDetails({
           ...articleDetails,
-          top_level_comments: commentList,
+          top_level_comments: newCommentList,
         });
       })
       .catch((err) => console.log(err));
@@ -316,7 +446,7 @@ const ArticleComment = (props) => {
         comment: comment.comment,
       })
       .then((res) => {
-        console.log(res);
+        //console.log(res);
         setComment({
           comment: "",
         });
@@ -325,48 +455,16 @@ const ArticleComment = (props) => {
       .catch((err) => console.log(err));
   };
 
-  const handleEditReplyTextField = (replyid, status) => {
-    let newArray = [...commentList];
-    for (let i = 0; i < commentList.length; i++) {
-      if (commentList[i].id === replyid) {
-        newArray[i].replyfield = status;
-        commentList[i].replyValue = commentList[i].editReplyValue;
-      }
-    }
-    setCommentList(newArray);
-  };
-
-  const handleReplyComment = (mId, cId) => {
-    if (comment === "") {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Comment cannot be empty",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
-    }
-
-    const data = {
-      comment: comment,
-      reply_to: cId,
-    };
-
-    // Service.client
-    //   .post(`/articles/${mId}/course-comments`, data)
-    //   .then((res) => {
-    //     console.log(res);
-    //     setReplyCommentDialog(false);
-    //     setCommentDialogValue("");
-    //     getArticleComments();
-    //     getNestedComments(cId);
-    //   })
-    //   .catch((err) => console.log(err));
-  };
+  // const handleEditReplyTextField = (replyid, status) => {
+  //   let newArray = [...commentList];
+  //   for (let i = 0; i < commentList.length; i++) {
+  //     if (commentList[i].id === replyid) {
+  //       newArray[i].replyfield = status;
+  //       commentList[i].replyValue = commentList[i].editReplyValue;
+  //     }
+  //   }
+  //   setCommentList(newArray);
+  // };
 
   const checkIfOwnerOfComment = (userId) => {
     const decoded = jwt_decode(Cookies.get("t1"));
@@ -376,8 +474,262 @@ const ArticleComment = (props) => {
     return false;
   };
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  const handleLikeUnlikeParentComment = (commentid, status) => {
+    if (status) {
+      Service.client
+        .delete(`/articles/${id}/comments/${commentid}/engagements`)
+        .then((res) => {
+          let newArray = [...commentList];
+          for (let i = 0; i < commentList.length; i++) {
+            if (commentid === commentList[i].id) {
+              newArray[i].current_user_liked = false;
+              newArray[i].likes -= 1;
+              setCommentList(newArray);
+              break;
+            }
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/articles/${id}/comments/${commentid}/engagements`)
+        .then((res) => {
+          let newArray = [...commentList];
+          for (let i = 0; i < commentList.length; i++) {
+            if (commentid === commentList[i].id) {
+              newArray[i].current_user_liked = true;
+              newArray[i].likes += 1;
+              setCommentList(newArray);
+              break;
+            }
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const handleLikeUnlikeReplyComment = (commentid, replyid, status) => {
+    if (status) {
+      Service.client
+        .delete(`/articles/${id}/comments/${replyid}/engagements`)
+        .then((res) => {
+          let newArray = [...commentList];
+          for (let i = 0; i < commentList.length; i++) {
+            if (commentid === commentList[i].id) {
+              for (let j = 0; j < commentList[i].replies.length; j++) {
+                if (replyid === commentList[i].replies[j].id) {
+                  newArray[i].replies[j].current_user_liked = false;
+                  newArray[i].replies[j].likes -= 1;
+                  setCommentList(newArray);
+                  break;
+                }
+              }
+              break;
+            }
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/articles/${id}/comments/${replyid}/engagements`)
+        .then((res) => {
+          let newArray = [...commentList];
+          for (let i = 0; i < commentList.length; i++) {
+            if (commentid === commentList[i].id) {
+              for (let j = 0; j < commentList[i].replies.length; j++) {
+                if (replyid === commentList[i].replies[j].id) {
+                  newArray[i].replies[j].current_user_liked = true;
+                  newArray[i].replies[j].likes += 1;
+                  setCommentList(newArray);
+                  break;
+                }
+              }
+              break;
+            }
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const childComment = (commentid, reply, replyIndex) => {
+    return (
+      <div key={`reply` + replyIndex}>
+        <div className={classes.childcommentheader} style={{ display: "flex" }}>
+          {reply.user && reply.user.profile_photo && (
+            <Avatar
+              style={{ marginRight: "15px" }}
+              src={reply.user.profile_photo}
+              alt=""
+            />
+          )}
+          <div style={{ flexDirection: "column", width: "100%" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="body2">
+                {reply.user && reply.user.first_name}{" "}
+                {reply.user && reply.user.last_name}
+              </Typography>
+            </div>
+            <div style={{ display: "flex" }}>
+              <Typography variant="body2" style={{ opacity: 0.7 }}>
+                {reply && calculateDateInterval(reply.timestamp)}
+              </Typography>
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              order: 2,
+              marginLeft: "auto",
+            }}
+          >
+            {reply && reply.user && checkIfOwnerOfComment(reply.user.id) && (
+              <div>
+                <Menu onClick={(e) => handleClick(e, reply.id)} />
+                <Popover
+                  open={popover.popoverId === reply.id}
+                  onClose={handleClose}
+                  anchorEl={popover.anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={() => {
+                      openEditReplyTextField(commentid, reply.id, true);
+                    }}
+                  >
+                    Edit this reponse
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={() => {
+                      handleDeleteComment(commentid, reply.id, "reply");
+                    }}
+                  >
+                    Delete
+                  </Typography>
+                </Popover>
+              </div>
+            )}
+          </div>
+        </div>
+        {reply.editfield ? (
+          <div className={classes.editCommentCard}>
+            <Card>
+              <CardContent>
+                <TextField
+                  margin="normal"
+                  id="comment"
+                  name="comment"
+                  fullWidth
+                  value={reply.editValue}
+                  multiline
+                  rows={4}
+                  rowsMax={7}
+                  placeholder="What are your thoughts..."
+                  //error={firstNameError}
+                  onChange={(event) =>
+                    handleEditReplyTextFieldValue(
+                      commentid,
+                      reply.id,
+                      event.target.value
+                    )
+                  }
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "right",
+                    order: 2,
+                  }}
+                >
+                  <Button
+                    style={{
+                      order: 2,
+                      textTransform: "capitalize",
+                    }}
+                    onClick={() => {
+                      //setReferencedCommentId(comment.id);
+                      openEditReplyTextField(commentid, reply.id, false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={reply.comment === "" ? true : false}
+                    onClick={() =>
+                      handleUpdateReplyComment(commentid, reply.id)
+                    }
+                    style={{
+                      order: 2,
+                      marginLeft: "auto",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    Update
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <Typography
+            variant="body1"
+            style={{
+              paddingTop: "5px",
+              paddingBottom: "10px",
+            }}
+          >
+            {reply.comment}
+          </Typography>
+        )}
+        <div
+          style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+        >
+          <UseAnimations
+            animation={heart}
+            size={30}
+            reverse={reply.current_user_liked}
+            wrapperStyle={{
+              display: "inline-flex",
+            }}
+            onClick={() =>
+              handleLikeUnlikeReplyComment(
+                commentid,
+                reply.id,
+                reply.current_user_liked
+              )
+            }
+          />
+          <Typography
+            variant="body2"
+            style={{
+              marginRight: "5px",
+              cursor: "pointer",
+            }}
+          >
+            {reply.likes}
+          </Typography>
+        </div>
+
+        <div className={classes.childcommentdivider}>
+          <Divider />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <Drawer
@@ -464,191 +816,83 @@ const ArticleComment = (props) => {
           {commentList.length > 0 ? (
             <div style={{ marginTop: "30px" }}>
               {commentList.map((comment, index) => {
-                if (comment.user) {
-                  return (
-                    <Fragment>
-                      <div key={index} className={classes.parentcommentcard}>
-                        <div className={classes.parentcommentheader}>
-                          {comment.user.profile_photo && (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={comment.user.profile_photo}
-                              alt=""
-                            />
-                          )}
-                          <div
-                            style={{ flexDirection: "column", width: "100%" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="body2">
-                                {comment.user && comment.user.first_name}{" "}
-                                {comment.user && comment.user.last_name}
-                              </Typography>
-                              {comment &&
-                                checkIfOwnerOfComment(comment.user.id) && (
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      order: 2,
-                                      marginLeft: "auto",
+                return (
+                  <Fragment>
+                    <div key={comment.id} className={classes.parentcommentcard}>
+                      <div className={classes.parentcommentheader}>
+                        {comment.user.profile_photo && (
+                          <Avatar
+                            style={{ marginRight: "15px" }}
+                            src={comment.user.profile_photo}
+                            alt=""
+                          />
+                        )}
+                        <div style={{ flexDirection: "column", width: "100%" }}>
+                          <div style={{ display: "flex" }}>
+                            <Typography variant="body2">
+                              {comment.user && comment.user.first_name}{" "}
+                              {comment.user && comment.user.last_name}
+                            </Typography>
+                            {comment && checkIfOwnerOfComment(comment.user.id) && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  order: 2,
+                                  marginLeft: "auto",
+                                }}
+                              >
+                                <Menu
+                                  onClick={(e) => handleClick(e, comment.id)}
+                                />
+                                <Popover
+                                  open={popover.popoverId === comment.id}
+                                  onClose={handleClose}
+                                  anchorEl={popover.anchorEl}
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      openEditTextField(comment.id, true);
                                     }}
                                   >
-                                    <Menu
-                                      onClick={(e) =>
-                                        handleClick(e, comment.id)
-                                      }
-                                    />
-                                    <Popover
-                                      open={popover.popoverId === comment.id}
-                                      onClose={handleClose}
-                                      anchorEl={popover.anchorEl}
-                                      anchorOrigin={{
-                                        vertical: "bottom",
-                                        horizontal: "right",
-                                      }}
-                                      transformOrigin={{
-                                        vertical: "top",
-                                        horizontal: "right",
-                                      }}
-                                    >
-                                      <Typography
-                                        variant="body2"
-                                        className={classes.typography}
-                                        onClick={() => {
-                                          handleEditTextField(comment.id, true);
-                                        }}
-                                      >
-                                        Edit this reponse
-                                      </Typography>
-                                      <Typography
-                                        variant="body2"
-                                        className={classes.typography}
-                                        onClick={() => {
-                                          // setDeleteCommentDialog(true);
-                                        }}
-                                      >
-                                        Delete
-                                      </Typography>
-                                    </Popover>
-                                  </div>
-                                )}
-                            </div>
-                            <Typography
-                              variant="body2"
-                              style={{ opacity: 0.7 }}
-                            >
-                              {comment &&
-                                calculateDateInterval(comment.timestamp)}
-                            </Typography>
-                          </div>
-                        </div>
-                        <div>
-                          {comment.textfield ? (
-                            <div className={classes.editCommentCard}>
-                              <Card>
-                                <CardContent>
-                                  <TextField
-                                    margin="normal"
-                                    id="comment"
-                                    name="comment"
-                                    fullWidth
-                                    value={comment.editValue}
-                                    multiline
-                                    rows={4}
-                                    rowsMax={7}
-                                    placeholder="What are your thoughts..."
-                                    //error={firstNameError}
-                                    onChange={(event) =>
-                                      handleEditTextFieldValue(
+                                    Edit this reponse
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      handleDeleteComment(
                                         comment.id,
-                                        event.target.value
-                                      )
-                                    }
-                                  />
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "right",
-                                      order: 2,
+                                        -1,
+                                        "parent"
+                                      );
                                     }}
                                   >
-                                    <Button
-                                      style={{
-                                        order: 2,
-                                        textTransform: "capitalize",
-                                      }}
-                                      onClick={() => {
-                                        //setReferencedCommentId(comment.id);
-                                        handleEditTextField(comment.id, false);
-                                      }}
-                                    >
-                                      Cancel
-                                    </Button>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      disabled={
-                                        comment.comment === "" ? true : false
-                                      }
-                                      onClick={() =>
-                                        handleUpdateComment(comment.id)
-                                      }
-                                      style={{
-                                        order: 2,
-                                        marginLeft: "auto",
-                                        textTransform: "capitalize",
-                                      }}
-                                    >
-                                      Update
-                                    </Button>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </div>
-                          ) : (
-                            <Typography
-                              variant="body1"
-                              style={{
-                                paddingTop: "5px",
-                                paddingBottom: "10px",
-                              }}
-                            >
-                              {comment.comment}
-                            </Typography>
-                          )}
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Chat
-                              color={
-                                comment.current_member_liked
-                                  ? "primary"
-                                  : "inherit"
-                              }
-                            />
-                            <Typography variant="body2">xx reply</Typography>
-
-                            <Button
-                              style={{
-                                order: 2,
-                                marginLeft: "auto",
-                                textTransform: "capitalize",
-                              }}
-                              onClick={() => {
-                                //setReferencedCommentId(comment.id);
-                                handleReplyTextField(comment.id, true);
-                              }}
-                            >
-                              <Typography variant="body2">Reply</Typography>
-                            </Button>
+                                    Delete
+                                  </Typography>
+                                </Popover>
+                              </div>
+                            )}
                           </div>
+                          <Typography variant="body2" style={{ opacity: 0.7 }}>
+                            {comment &&
+                              calculateDateInterval(comment.timestamp)}
+                          </Typography>
                         </div>
-                        {comment.replyfield && (
-                          <div className={classes.replyCommentCard}>
+                      </div>
+                      <div>
+                        {comment.editfield ? (
+                          <div className={classes.editCommentCard}>
                             <Card>
                               <CardContent>
                                 <TextField
@@ -656,21 +900,17 @@ const ArticleComment = (props) => {
                                   id="comment"
                                   name="comment"
                                   fullWidth
-                                  value={replyComment.comment}
+                                  value={comment.editValue}
                                   multiline
                                   rows={4}
                                   rowsMax={7}
-                                  placeholder={
-                                    "Replying to " +
-                                    comment.user.first_name +
-                                    " " +
-                                    comment.user.last_name
-                                  }
+                                  placeholder="What are your thoughts..."
                                   //error={firstNameError}
                                   onChange={(event) =>
-                                    setReplyComment({
-                                      comment: event.target.value,
-                                    })
+                                    handleEditTextFieldValue(
+                                      comment.id,
+                                      event.target.value
+                                    )
                                   }
                                 />
                                 <div
@@ -686,7 +926,193 @@ const ArticleComment = (props) => {
                                       textTransform: "capitalize",
                                     }}
                                     onClick={() => {
-                                      handleReplyTextField(comment.id, false);
+                                      //setReferencedCommentId(comment.id);
+                                      openEditTextField(comment.id, false);
+                                    }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={
+                                      comment.comment === "" ? true : false
+                                    }
+                                    onClick={() =>
+                                      handleUpdateComment(comment.id)
+                                    }
+                                    style={{
+                                      order: 2,
+                                      marginLeft: "auto",
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    Update
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ) : (
+                          <Typography
+                            variant="body1"
+                            style={{
+                              paddingTop: "5px",
+                              paddingBottom: "10px",
+                            }}
+                          >
+                            {comment.comment}
+                          </Typography>
+                        )}
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <UseAnimations
+                            animation={heart}
+                            size={30}
+                            reverse={comment.current_user_liked}
+                            wrapperStyle={{
+                              display: "inline-flex",
+                            }}
+                            onClick={() =>
+                              handleLikeUnlikeParentComment(
+                                comment.id,
+                                comment.current_user_liked
+                              )
+                            }
+                          />
+                          <Typography
+                            variant="body2"
+                            style={{
+                              marginRight: "5px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {comment.likes}
+                          </Typography>
+                          {comment.replies.length >= 1 && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <Chat
+                                onClick={() => {
+                                  openReply(comment.id, true);
+                                }}
+                                style={{ marginRight: "3px" }}
+                              />
+                              {!comment.viewReply && (
+                                <div
+                                  onClick={() => {
+                                    openReply(comment.id, true);
+                                  }}
+                                >
+                                  {comment.replies.length === 1 ? (
+                                    <Typography
+                                      variant="body2"
+                                      style={{ cursor: "pointer" }}
+                                    >
+                                      {comment.replies.length} reply
+                                    </Typography>
+                                  ) : (
+                                    <Typography
+                                      variant="body2"
+                                      style={{ cursor: "pointer" }}
+                                    >
+                                      {comment.replies.length} replies
+                                    </Typography>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {comment.viewReply && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                openReply(comment.id, false);
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                style={{ cursor: "pointer" }}
+                              >
+                                Hide Replies
+                              </Typography>
+                            </div>
+                          )}
+
+                          <Typography
+                            style={{
+                              order: 2,
+                              marginLeft: "auto",
+                              cursor: "pointer",
+                            }}
+                            variant="body2"
+                            onClick={() => {
+                              //setReferencedCommentId(comment.id);
+                              openReplyTextField(comment.id, true);
+                            }}
+                          >
+                            Reply
+                          </Typography>
+                        </div>
+                      </div>
+
+                      {(comment.replyfield || comment.viewReply) && (
+                        <div className={classes.replyCommentCard}>
+                          {comment.replyfield && (
+                            <Card style={{ marginBottom: "20px" }}>
+                              <CardContent>
+                                <TextField
+                                  margin="normal"
+                                  id="comment"
+                                  name="comment"
+                                  fullWidth
+                                  value={comment.editReplyValue}
+                                  multiline
+                                  rows={4}
+                                  rowsMax={7}
+                                  placeholder={
+                                    "Replying to " +
+                                    comment.user.first_name +
+                                    " " +
+                                    comment.user.last_name
+                                  }
+                                  //error={firstNameError}
+                                  onChange={(event) =>
+                                    handleReplyTextFieldValue(
+                                      comment.id,
+                                      event.target.value
+                                    )
+                                  }
+                                />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "right",
+                                    order: 2,
+                                  }}
+                                >
+                                  <Button
+                                    style={{
+                                      order: 2,
+                                      textTransform: "capitalize",
+                                    }}
+                                    onClick={() => {
+                                      openReplyTextField(comment.id, false);
                                     }}
                                   >
                                     Cancel
@@ -700,10 +1126,10 @@ const ArticleComment = (props) => {
                                       textTransform: "capitalize",
                                     }}
                                     disabled={
-                                      replyComment.comment === "" ? true : false
+                                      comment.replyValue === "" ? true : false
                                     }
                                     onClick={() => {
-                                      //setOpenReplyTextField(false);
+                                      handleReplyComment(comment.id);
                                     }}
                                   >
                                     Respond
@@ -711,156 +1137,27 @@ const ArticleComment = (props) => {
                                 </div>
                               </CardContent>
                             </Card>
-                          </div>
-                        )}
-                        <div className={classes.parentcommentdivider}>
-                          <Divider variant="middle" />
-                        </div>
-                      </div>
+                          )}
 
-                      {/* {comment.replies &&
+                          {comment.viewReply &&
+                            comment.replies &&
                             comment.replies.length > 0 &&
                             comment.replies.map((reply, replyIndex) => {
-                              if (reply.user) {
-                                return (
-                                  <Fragment>
-                                    {childComment(reply, replyIndex)}
-                                    {nestedComments &&
-                                      nestedComments.length > 0 &&
-                                      nestedComments.map((nestedComment) => {
-                                        if (nestedComment.id === reply.id) {
-                                          if (
-                                            nestedComment.replies.length > 0
-                                          ) {
-                                            return nestedComment.replies.map(
-                                              (nestedReply, nestedIndex) => {
-                                                console.log(nestedReply);
-                                                if (nestedReply.user) {
-                                                  return nestedChildComment(
-                                                    nestedReply,
-                                                    nestedIndex
-                                                  );
-                                                }
-                                                return deletedNestedComment;
-                                              }
-                                            );
-                                          }
-                                          return null;
-                                        } else {
-                                          return null;
-                                        }
-                                      })}
-                                  </Fragment>
-                                );
-                              } else {
-                                return (
-                                  <Fragment>
-                                    {deletedChildCommentWithButton(reply.id)}
-                                    {nestedComments &&
-                                      nestedComments.length > 0 &&
-                                      nestedComments.map((nestedComment) => {
-                                        if (nestedComment.id === reply.id) {
-                                          if (
-                                            nestedComment.replies.length > 0
-                                          ) {
-                                            return nestedComment.replies.map(
-                                              (nestedReply, nestedIndex) => {
-                                                console.log(nestedReply);
-                                                if (nestedReply.user) {
-                                                  return nestedChildComment(
-                                                    nestedReply,
-                                                    nestedIndex
-                                                  );
-                                                }
-                                                return deletedNestedComment;
-                                              }
-                                            );
-                                          }
-                                          return null;
-                                        } else {
-                                          return null;
-                                        }
-                                      })}
-                                  </Fragment>
-                                );
-                              }
-                            })} */}
-                    </Fragment>
-                  );
-                } else {
-                  // return (
-                  //   <Fragment>
-                  //     {deletedParentComment}
-                  //     {comment.replies &&
-                  //       comment.replies.length > 0 &&
-                  //       comment.replies.map((reply, replyIndex) => {
-                  //         if (reply.user) {
-                  //           return (
-                  //             <Fragment>
-                  //               {childComment(reply, replyIndex)}
-                  //               {nestedComments &&
-                  //                 nestedComments.length > 0 &&
-                  //                 nestedComments.map((nestedComment) => {
-                  //                   if (nestedComment.id === reply.id) {
-                  //                     if (
-                  //                       nestedComment.replies.length > 0
-                  //                     ) {
-                  //                       return nestedComment.replies.map(
-                  //                         (nestedReply, nestedIndex) => {
-                  //                           console.log(nestedReply);
-                  //                           if (nestedReply.user) {
-                  //                             return nestedChildComment(
-                  //                               nestedReply,
-                  //                               nestedIndex
-                  //                             );
-                  //                           }
-                  //                           return deletedNestedComment;
-                  //                         }
-                  //                       );
-                  //                     }
-                  //                     return null;
-                  //                   } else {
-                  //                     return null;
-                  //                   }
-                  //                 })}
-                  //             </Fragment>
-                  //           );
-                  //         } else {
-                  //           return (
-                  //             <Fragment>
-                  //               {deletedChildCommentWithButton(reply.id)}
-                  //               {nestedComments &&
-                  //                 nestedComments.length > 0 &&
-                  //                 nestedComments.map((nestedComment) => {
-                  //                   if (nestedComment.id === reply.id) {
-                  //                     if (
-                  //                       nestedComment.replies.length > 0
-                  //                     ) {
-                  //                       return nestedComment.replies.map(
-                  //                         (nestedReply, nestedIndex) => {
-                  //                           console.log(nestedReply);
-                  //                           if (nestedReply.user) {
-                  //                             return nestedChildComment(
-                  //                               nestedReply,
-                  //                               nestedIndex
-                  //                             );
-                  //                           }
-                  //                           return deletedNestedComment;
-                  //                         }
-                  //                       );
-                  //                     }
-                  //                     return null;
-                  //                   } else {
-                  //                     return null;
-                  //                   }
-                  //                 })}
-                  //             </Fragment>
-                  //           );
-                  //         }
-                  //       })}
-                  //   </Fragment>
-                  // );
-                }
+                              return (
+                                <Fragment>
+                                  {childComment(comment.id, reply, replyIndex)}
+                                </Fragment>
+                              );
+                            })}
+                        </div>
+                      )}
+
+                      <div className={classes.parentcommentdivider}>
+                        <Divider variant="middle" />
+                      </div>
+                    </div>
+                  </Fragment>
+                );
               })}
             </div>
           ) : (

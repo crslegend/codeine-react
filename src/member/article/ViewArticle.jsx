@@ -17,7 +17,7 @@ import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import ReactQuill from "react-quill";
-import parse from "html-react-parser";
+import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -176,6 +176,15 @@ const ViewArticle = (props) => {
       });
   };
 
+  const options = {
+    replace: (domNode) => {
+      if (domNode.attribs && domNode.name === "img") {
+        const props = attributesToProps(domNode.attribs);
+        return <img style={{ width: "100%" }} alt="" {...props} />;
+      }
+    },
+  };
+
   const [loading, setLoading] = useState(false);
 
   const openingIDE = () => {
@@ -250,21 +259,22 @@ const ViewArticle = (props) => {
             </Button>
           )}
         </div>
-        <UseAnimations
-          animation={heart}
-          size={30}
-          reverse={articleLikedStatus}
-          wrapperStyle={{
-            display: "inline-flex",
-          }}
-          onClick={(e) => handleLikeArticle(e)}
-        />
-        <Typography style={{ display: "inline-flex" }}>{numOfLikes}</Typography>
-        <br />
-        <CommentIcon onClick={() => setDrawerOpen(true)} />
-        <Typography style={{ display: "inline-flex" }}>
-          {articleDetails.top_level_comments.length}
-        </Typography>
+        <div style={{ alignItems: "center", display: "flex" }}>
+          <UseAnimations
+            animation={heart}
+            size={30}
+            reverse={articleLikedStatus}
+            onClick={(e) => handleLikeArticle(e)}
+          />
+          <Typography>{numOfLikes}</Typography>
+        </div>
+        <div style={{ alignItems: "center", display: "flex" }}>
+          <CommentIcon onClick={() => setDrawerOpen(true)} />
+          <Typography style={{ display: "inline-flex" }}>
+            {articleDetails.top_level_comments.length}
+          </Typography>
+        </div>
+
         <div style={{ display: "flex" }}>
           <Language style={{ marginRight: "10px" }} />
           {articleDetails &&
@@ -452,9 +462,7 @@ const ViewArticle = (props) => {
             </div>
           </div>
         )}
-
-        {parse(articleDetails.content)}
-
+        {parse(articleDetails.content, options)}
         {/* <ReactQuill
           value={articleDetails.content}
           readOnly={openEditor}
