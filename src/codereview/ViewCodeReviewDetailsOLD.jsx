@@ -21,23 +21,21 @@ import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
 import "./sidenotes.css";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
-// import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
-// import TextSelector from "text-selection-react";
-// import store from "../redux/store";
-// import {
-//   deselectSidenote,
-//   repositionSidenotes,
-//   disconnectSidenote,
-//   connectSidenote,
-//   selectSidenote,
-//   selectAnchor,
-// } from "../redux/actions";
+import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
+import TextSelector from "text-selection-react";
+import store from "../redux/store";
+import {
+  deselectSidenote,
+  repositionSidenotes,
+  disconnectSidenote,
+  connectSidenote,
+  selectSidenote,
+  selectAnchor,
+} from "../redux/actions";
 import jwt_decode from "jwt-decode";
 // import SyntaxHighlighter from "react-syntax-highlighter";
 // import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
-// const reactStringReplace = require("react-string-replace");
+const reactStringReplace = require("react-string-replace");
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -48,9 +46,6 @@ const styles = makeStyles((theme) => ({
   },
   content: {
     padding: theme.spacing(13),
-    width: "80%",
-    marginLeft: "auto",
-    marginRight: "auto",
   },
   commentCard: {
     width: 250,
@@ -73,10 +68,16 @@ const ViewCodeReviewDetails = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [selectedValue, setSelectedValue] = useState();
   const [code, setCode] = useState();
+  const [codeLineByLine, setCodeLineByLine] = useState([]);
   const [codeComments, setCodeComments] = useState([]);
+  const [init, setInit] = useState(false);
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
+  const [indexes, setIndexes] = useState({
+    start: 0,
+    end: 0,
+  });
 
   const [deleteCommentDialog, setDeleteCommentDialog] = useState(false);
 
@@ -97,15 +98,29 @@ const ViewCodeReviewDetails = () => {
     }
   };
 
+  const deselect = () => {
+    setTimeout(() => {
+      select(replyParentId);
+      setReplyParentId();
+      setReplyParentComment();
+    }, 0.1);
+    setShowReplyField(false);
+    store.dispatch(deselectSidenote(code && code.id));
+  };
+  const reposition = (docId) => store.dispatch(repositionSidenotes(docId));
+  const select = (sId) => store.dispatch(selectAnchor(code && code.id, sId));
+  // const connectNote = (sId) =>
+  //   store.dispatch(connectSidenote(code && code.id, sId));
+
   const getCodeReview = () => {
     Service.client
       .get(`/code-reviews/${id}`)
       .then((res) => {
         console.log(res);
         setCode(res.data);
-        // let arr = res.data.code.split("\n");
-        // console.log(arr);
-        // setCodeLineByLine(arr);
+        let arr = res.data.code.split("\n");
+        console.log(arr);
+        setCodeLineByLine(arr);
         // console.log(arr[0].length);
       })
       .catch((err) => console.log(err));
@@ -239,6 +254,38 @@ const ViewCodeReviewDetails = () => {
     </Fragment>
   );
 
+  const baseAnchor = "anchor";
+
+  const applyInlineAnchor = (str) => {
+    let formatted = str;
+    // const arr = ["sidenotes", "once"];
+
+    for (let i = 0; i < codeComments.length; i++) {
+      formatted = reactStringReplace(
+        formatted,
+        codeComments[i].highlighted_code,
+        (match, index, offset) => {
+          // console.log(match);
+          // console.log(offset);
+
+          if (offset === codeComments[i].start_index) {
+            return (
+              <InlineAnchor sidenote={codeComments[i].id}>{match}</InlineAnchor>
+            );
+          } else {
+            return match;
+          }
+        }
+      );
+    }
+
+    if (!init) {
+      setInit(true);
+    }
+    // console.log(formatted);
+    return formatted;
+  };
+
   const singleComment = (comment) => {
     return (
       <Fragment>
@@ -281,6 +328,10 @@ const ViewCodeReviewDetails = () => {
                   setEditMode(true);
                   setSelectedCommentId(comment.id);
                   setSelectedComment(comment);
+
+                  setTimeout(() => {
+                    select(comment.id);
+                  }, 0.1);
                 }}
                 disabled={editMode && selectedCommentId === comment.id}
               >
@@ -335,7 +386,11 @@ const ViewCodeReviewDetails = () => {
                   onClick={() => {
                     setEditMode(false);
                     setSelectedComment();
-                    setSelectedCommentId();
+
+                    setTimeout(() => {
+                      select(selectedCommentId);
+                      setSelectedCommentId();
+                    }, 0.5);
                   }}
                 >
                   Cancel
@@ -361,10 +416,85 @@ const ViewCodeReviewDetails = () => {
     return false;
   };
 
+  const handleSelectText = (text) => {
+    console.log(text);
+    setSelectedValue(text);
+    setAddCommentDialog(true);
+    // setTimeout(() => {
+    //   if (window.getSelection) {
+    //     window.getSelection().removeAllRanges();
+    //   } else if (document.selection) {
+    //     document.selection.empty();
+    //   }
+    // }, 3000);
+  };
+
+  const getIndex = () => {
+    document.body.addEventListener(
+      "mouseup",
+      function () {
+        if (window.getSelection().toString().length > 0) {
+          if (typeof window.getSelection != "undefined") {
+            var sel = window.getSelection();
+            // console.log(sel);
+            var range = sel.getRangeAt(0);
+            // var parentNodeArr = sel.focusNode.parentNode.innerText.split("\n");
+            // console.log(parentNodeArr);
+            // var rangeIndex = 0;
+            // var parentIndex = 0;
+            // var max = sel.focusNode.parentNode.innerText.length - 1;
+            // var range = sel.toString();
+            // var rangeNodeArr = range.split("\n");
+            // var rangeLen = rangeNodeArr.length - 1;
+
+            // for (parentIndex = 0; parentIndex <= max; parentIndex++) {
+            //   if (parentNodeArr[parentIndex] === rangeNodeArr[rangeIndex]) {
+            //     if (rangeIndex === rangeLen) {
+            //       break;
+            //     }
+            //     rangeIndex++;
+            //   } else {
+            //     rangeIndex = 0;
+            //   }
+            // }
+            // var endOffset = parentIndex + 1;
+            // var startOffset = parentIndex - rangeIndex;
+            // console.log(startOffset);
+            // console.log(endOffset);
+
+            // console.log(range);
+            // var priorRange = range.cloneRange();
+
+            // priorRange.setEnd(range.startContainer, range.startOffset);
+            // var startOffset = priorRange.toString().length;
+            // var endOffset = startOffset + range.toString().length;
+
+            var startOffset = range.startOffset;
+            var endOffset = startOffset + range.toString().length;
+
+            // console.log("Selection starts at: " + startOffset);
+            // console.log("Selection ends at: " + endOffset);
+            if (startOffset === 0 && endOffset === 0) {
+              // do nothing
+            } else {
+              setIndexes({
+                start: startOffset,
+                end: endOffset,
+              });
+            }
+          }
+        }
+      },
+      false
+    );
+  };
+
   const handleAddComment = () => {
     const data = {
       highlighted_code: selectedValue,
       comment: comment,
+      start_index: indexes.start,
+      end_index: indexes.end,
     };
 
     Service.client
@@ -406,6 +536,7 @@ const ViewCodeReviewDetails = () => {
       .then((res) => {
         console.log(res);
         setEditMode(false);
+        select(selectedCommentId);
         setSelectedComment();
         setSelectedCommentId();
         getCodeReview();
@@ -425,6 +556,7 @@ const ViewCodeReviewDetails = () => {
       .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
         console.log(res);
+        select(replyParentId);
         setReply();
         getCodeReview();
         getCodeReviewComments();
@@ -440,23 +572,145 @@ const ViewCodeReviewDetails = () => {
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
-      <div className={classes.content}>
-        <Typography variant="h1" style={{ paddingBottom: "20px" }}>
-          {code && code.title}
-        </Typography>
-        <div style={{ marginBottom: "20px" }}>
-          <Typography variant="body1" style={{ opacity: 0.8 }}>
-            {`Asked ${code && calculateDateInterval(code.timestamp)}`}
-          </Typography>
-        </div>
-        <div className="codeblock">
-          <ReactQuill
-            value={code && code.code}
-            readOnly={true}
-            theme={"bubble"}
+      <div className={classes.content} onClick={deselect}>
+        <article id={code && code.id}>
+          <TextSelector
+            events={[
+              {
+                text: "Add a Comment",
+                handler: (html, text) => {
+                  handleSelectText(text);
+                },
+              },
+            ]}
+            colorText={false}
+            unmark={false}
           />
-        </div>
+          <div className="main-panel">
+            <AnchorBase anchor={baseAnchor} style={{ width: "100%" }}>
+              <div
+                id="ip"
+                className="codeblock"
+                style={{ whiteSpace: "pre-line" }}
+                onClick={getIndex()}
+              >
+                {code && applyInlineAnchor(code.code)}
+              </div>
+              {/* {code && (
+                <SyntaxHighlighter
+                  language="htmlbars"
+                  style={docco}
+                  showLineNumbers
+                  lineProps={(lineNumber) => ({
+                    onClick() {
+                      setLineNum(lineNumber);
+                    },
+                  })}
+                  wrapLines={true}
+                  startingLineNumber={1}
+                >
+                  {code && applyInlineAnchor(code.code)}
+                </SyntaxHighlighter>
+              )} */}
+            </AnchorBase>
+            <div className="sidenotes">
+              {init &&
+                codeComments &&
+                codeComments.length > 0 &&
+                codeComments.map((comment, index) => {
+                  return (
+                    <Sidenote sidenote={comment.id} base={baseAnchor}>
+                      <div
+                        key={index}
+                        className={classes.commentCard}
+                        onClick={() => {
+                          setShowReplyField(true);
+                          setReplyParentId(comment.id);
+                          setReplyParentComment(comment);
+                          setTimeout(() => {
+                            select(comment.id);
+                          }, 0.1);
+                        }}
+                      >
+                        {singleComment(comment)}
+                        {showReplyField && replyParentId === comment.id && (
+                          <Fragment>
+                            <div
+                              style={{
+                                borderTop: "1px solid #bbb",
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
+                            />
+                            {replyToCommentArr &&
+                              replyToCommentArr.length > 0 &&
+                              replyToCommentArr.map((reply) => {
+                                if (reply.parent_comment.id === comment.id) {
+                                  return (
+                                    <div
+                                      style={{
+                                        marginTop: "10px",
+                                        marginBottom: "10px",
+                                      }}
+                                    >
+                                      {singleComment(reply)}
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })}
+                            <TextField
+                              margin="dense"
+                              variant="outlined"
+                              value={reply && reply}
+                              onChange={(e) => setReply(e.target.value)}
+                              InputProps={{
+                                classes: { input: classes.input },
+                              }}
+                              fullWidth
+                              placeholder="Reply to Comment"
+                              onClick={() => {
+                                setReplyParentId(comment.id);
+                                setReplyParentComment(comment);
+                              }}
+                            />
+                            <div style={{ marginTop: "10px" }}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                style={{ marginRight: "10px" }}
+                                onClick={() => handleReplyToComment()}
+                                disabled={reply === "" || !reply}
+                              >
+                                Reply
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                onClick={() => {
+                                  setShowReplyField(false);
+                                  setTimeout(() => {
+                                    select(replyParentId);
+                                    setReplyParentId();
+                                    setReplyParentComment();
+                                  }, 0.1);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </Fragment>
+                        )}
+                      </div>
+                    </Sidenote>
+                  );
+                })}
+            </div>
+          </div>
+        </article>
       </div>
+
       <Dialog
         open={addCommentDialog}
         onClose={() => {
@@ -479,6 +733,7 @@ const ViewCodeReviewDetails = () => {
           <span style={{ fontWeight: 600 }}>Text Selected:</span>
           <br />
           {selectedValue && selectedValue}
+          {indexes.start + ` ` + indexes.end}
           <TextField
             autoFocus
             variant="outlined"

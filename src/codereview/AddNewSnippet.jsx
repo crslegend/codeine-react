@@ -31,7 +31,7 @@ const editor = {
       { indent: "-1" },
       { indent: "+1" },
     ],
-    ["link", "image"],
+    ["link"],
     ["clean"],
   ],
 };
@@ -48,7 +48,6 @@ const format = [
   "bullet",
   "indent",
   "link",
-  "image",
 ];
 
 const AddNewSnippet = () => {

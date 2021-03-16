@@ -28,13 +28,13 @@ import MemberRoute from "./components/Routes/MemberRoute";
 import MemberAndPublicRoute from "./components/Routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/Routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codereview/ViewCodeReviewDetails";
-import AddNewSnippet from "./codereview/AddNewSnippet";
+import ViewAllCodeReviews from "./codereview/ViewAllCodeReviews";
 
 const App = () => {
   return (
     <Switch>
+      <Route exact path="/codereview" component={ViewAllCodeReviews} />
       <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
-      <Route exact path="/addcodereview" component={AddNewSnippet} />
       <PartnerAndPublicRoute
         exact
         path="/partner"
