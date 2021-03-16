@@ -14,6 +14,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import LinkMui from "@material-ui/core/Link";
 import { Delete, Edit } from "@material-ui/icons";
 import logo from "../assets/CodeineLogos/Member.svg";
 
@@ -62,6 +63,13 @@ const styles = makeStyles((theme) => ({
   input: {
     height: 10,
     fontSize: 13,
+  },
+  linkMui: {
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "none",
+      color: "#065cc4",
+    },
   },
 }));
 
@@ -446,7 +454,12 @@ const ViewCodeReviewDetails = () => {
         </Typography>
         <div style={{ marginBottom: "20px" }}>
           <Typography variant="body1" style={{ opacity: 0.8 }}>
-            {`Asked ${code && calculateDateInterval(code.timestamp)}`}
+            <LinkMui className={classes.linkMui}>
+              {`${code && code.member.first_name} ${
+                code && code.member.last_name
+              }`}
+            </LinkMui>
+            {` asked ${code && calculateDateInterval(code.timestamp)}`}
           </Typography>
         </div>
         <div className="codeblock">
