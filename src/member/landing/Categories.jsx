@@ -1,42 +1,35 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Grid,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-} from "@material-ui/core";
+import { Typography, Card, CardMedia, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
-import backend from "../../assets/backend.png";
-import frontend from "../../assets/frontend.png";
-import uiux from "../../assets/uiux.png";
-import database from "../../assets/database.png";
-import security from "../../assets/security.png";
+import courses from "../../assets/courses_asset.png";
+import codeReviews from "../../assets/code_review_asset.png";
+import articles from "../../assets/articles_asset.png";
+import projects from "../../assets/industry_project_asset.png";
 
 const styles = makeStyles((theme) => ({
-  root: {
-    paddingTop: "50px",
-    maxWidth: "100vw",
-    paddingLeft: "30px",
-    paddingBottom: "20px",
-    [theme.breakpoints.down("xs")]: {
-      paddingLeft: "0px",
-    },
-  },
-  heading: {
-    color: "#437FC7",
-    lineHeight: "50px",
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "32px",
-    },
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    maxWidth: "100",
   },
   cardroot: {
-    marginTop: "3vh",
+    borderRadius: 0,
+    maxHeight: "330px",
+    display: "flex",
+    alignItems: "center",
+    width: "25%",
   },
   cardmedia: {
-    height: 0,
-    paddingTop: "56.25%",
+    width: "100%",
+    height: "100%",
+  },
+  cardcontent: {
+    color: "#FFFFFF",
+    fontFamily: "Roboto Mono",
+    marginTop: "35%",
+    marginLeft: "5%",
   },
 }));
 
@@ -45,117 +38,124 @@ const Categories = () => {
 
   return (
     <Fragment>
-      <Grid container className={classes.root}>
-        <Grid item xs={1} />
-        <Grid item xs={10}>
-          <Typography variant="h2" className={classes.heading}>
-            CATEGORIES
-          </Typography>
-          <Grid
-            container
-            style={{
-              justifyContent: "space-between",
-            }}
+      <div className={classes.container}>
+        <Card className={classes.cardroot}>
+          <CardMedia
+            className={classes.cardmedia}
+            image={courses}
+            title="Courses"
           >
-            <Grid item xs={5} lg={2}>
-              <Card className={classes.cardroot}>
-                <CardMedia
-                  className={classes.cardmedia}
-                  image={backend}
-                  title="Backend"
-                />
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      color: "#4B4B4B",
-                    }}
-                  >
-                    Backend
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={5} lg={2}>
-              <Card className={classes.cardroot}>
-                <CardMedia
-                  className={classes.cardmedia}
-                  image={frontend}
-                  title="frontend"
-                />
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      color: "#4B4B4B",
-                    }}
-                  >
-                    Frontend
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={5} lg={2}>
-              <Card className={classes.cardroot}>
-                <CardMedia
-                  className={classes.cardmedia}
-                  image={uiux}
-                  title="UI UX"
-                />
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      color: "#4B4B4B",
-                    }}
-                  >
-                    UI/UX
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={5} lg={2}>
-              <Card className={classes.cardroot}>
-                <CardMedia
-                  className={classes.cardmedia}
-                  image={database}
-                  title="database"
-                />
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      color: "#4B4B4B",
-                    }}
-                  >
-                    Database
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={5} lg={2}>
-              <Card className={classes.cardroot}>
-                <CardMedia
-                  className={classes.cardmedia}
-                  image={security}
-                  title="security"
-                />
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      color: "#4B4B4B",
-                    }}
-                  >
-                    Security
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={1} />
-      </Grid>
+            <Typography variant="h2" className={classes.cardcontent}>
+              courses
+            </Typography>
+            <Button
+              variant="outlined"
+              component={Link}
+              to="/courses"
+              style={{
+                borderColor: "#FFFFFF",
+                textTransform: "none",
+                margin: "3% 0 15% 5%",
+                padding: "8px 10px",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ color: "#fff", fontFamily: "Roboto Mono" }}
+              >
+                view more
+              </Typography>
+            </Button>
+          </CardMedia>
+        </Card>
+        <Card className={classes.cardroot}>
+          <CardMedia
+            className={classes.cardmedia}
+            image={codeReviews}
+            title="Code Reviews"
+          >
+            <Typography variant="h2" className={classes.cardcontent}>
+              code reviews
+            </Typography>
+            <Button
+              variant="outlined"
+              component={Link}
+              //to="/"
+              style={{
+                borderColor: "#fff",
+                textTransform: "none",
+                margin: "3% 0 15% 5%",
+                padding: "8px 10px",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ color: "#fff", fontFamily: "Roboto Mono" }}
+              >
+                view more
+              </Typography>
+            </Button>
+          </CardMedia>
+        </Card>
+        <Card className={classes.cardroot}>
+          <CardMedia
+            className={classes.cardmedia}
+            image={articles}
+            title="Articles"
+          >
+            <Typography variant="h2" className={classes.cardcontent}>
+              articles
+            </Typography>
+            <Button
+              variant="outlined"
+              component={Link}
+              //to="/"
+              style={{
+                borderColor: "#fff",
+                textTransform: "none",
+                margin: "3% 0 15% 5%",
+                padding: "8px 10px",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ color: "#fff", fontFamily: "Roboto Mono" }}
+              >
+                view more
+              </Typography>
+            </Button>
+          </CardMedia>
+        </Card>
+        <Card className={classes.cardroot}>
+          <CardMedia
+            className={classes.cardmedia}
+            image={projects}
+            title="Industry Projects"
+          >
+            <Typography variant="h2" className={classes.cardcontent}>
+              industry projects
+            </Typography>
+            <Button
+              variant="outlined"
+              component={Link}
+              //to="/"
+              style={{
+                borderColor: "#fff",
+                textTransform: "none",
+                margin: "3% 0 15% 5%",
+                padding: "8px 10px",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ color: "#fff", fontFamily: "Roboto Mono" }}
+              >
+                view more
+              </Typography>
+            </Button>
+          </CardMedia>
+        </Card>
+      </div>
     </Fragment>
   );
 };

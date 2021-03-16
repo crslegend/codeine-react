@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
-import { ArrowBack } from "@material-ui/icons";
+import { ArrowBack, FiberManualRecord } from "@material-ui/icons";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
@@ -29,7 +29,7 @@ import {
   DateNavigator,
   AppointmentTooltip,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { teal, grey, green } from "@material-ui/core/colors";
+import { teal, grey, blue } from "@material-ui/core/colors";
 import Toast from "../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -61,6 +61,12 @@ const styles = makeStyles((theme) => ({
     bottom: 0,
     left: 0,
   },
+  legend: {
+    fontWeight: 600,
+    marginBottom: "3px",
+    textAlign: "right",
+    marginRight: theme.spacing(36),
+  },
 }));
 
 const ToolbarWithLoading = withStyles(styles, { name: "Toolbar" })(
@@ -77,9 +83,9 @@ const resources = [
     fieldName: "available",
     title: "Availability",
     instances: [
-      { id: 1, text: "Fully Booked", color: grey },
+      { id: 1, text: "Fully Booked", color: grey[200] },
       { id: 2, text: "One slot left", color: teal },
-      { id: 3, text: "Available", color: green },
+      { id: 3, text: "Available", color: blue },
     ],
   },
 ];
@@ -425,6 +431,49 @@ const BookConsult = () => {
           </IconButton>
         </Grid>
         <Grid item xs={10}>
+          <Grid
+            container
+            elevation={0}
+            style={{
+              backgroundColor: "#FAFAFA",
+            }}
+          >
+            <Grid item xs={12}>
+              <Typography variant="body1" className={classes.legend}>
+                Legend
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              style={{
+                display: "flex",
+                paddingBottom: "15px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FiberManualRecord
+                style={{ color: "#03a9f4", paddingBottom: "4px" }}
+              />
+              <Typography variant="body2">Still available</Typography>
+              <FiberManualRecord
+                style={{
+                  color: "#26A69A",
+                  marginLeft: "15px",
+                  paddingBottom: "4px",
+                }}
+              />
+              <Typography variant="body2">One slot left</Typography>
+              <FiberManualRecord
+                style={{
+                  color: "#EEEEEE",
+                  marginLeft: "15px",
+                  paddingBottom: "4px",
+                }}
+              />
+              <Typography variant="body2">Fully booked</Typography>
+            </Grid>
+          </Grid>
           <Paper>
             <Scheduler data={consultations} height="auto">
               <ViewState

@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
+    //backgroundColor: "#EDEFEA",
   },
   listItem: {
     width: "100%",
@@ -80,13 +81,6 @@ const MemberLandingPage = () => {
           </Typography>
         </Link>
       </ListItem>
-      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/industry" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Enterprise
-          </Typography>
-        </Link>
-      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/member/login" style={{ textDecoration: "none" }}>
           <Typography
@@ -176,7 +170,7 @@ const MemberLandingPage = () => {
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
-      <MemberLandingBody />
+      <MemberLandingBody loggedIn={loggedIn} />
       <Footer />
     </div>
   );

@@ -238,7 +238,7 @@ const ViewCourseDetails = () => {
       />
       <div className={classes.mainSection}>
         <div style={{ marginTop: "20px" }}>
-          <IconButton onClick={() => history.push("/courses")}>
+          <IconButton onClick={() => history.goBack()}>
             <ArrowBack />
           </IconButton>
         </div>
