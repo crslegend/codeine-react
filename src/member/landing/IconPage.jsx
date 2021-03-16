@@ -284,7 +284,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Poor Runtime Speed <br />- Lack of flexibility
+                    - Poor Runtime Speed <br />- Lack of Flexibility
                   </Typography>
                 </Card>
               }
@@ -434,7 +434,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Easy to learn and Understand <br /> - Great Browser
+                    - Easy to Learn and Understand <br /> - Great Browser
                     Support
                     <br />- SEO Friendly
                   </Typography>
@@ -512,7 +512,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Cross-browser Issues <br />- Poor security
+                    - Cross-browser Issues <br />- Poor Security
                   </Typography>
                 </Card>
               }
