@@ -28,7 +28,7 @@ const RecentCourses = () => {
     Service.client
       .get(`/enrollments`)
       .then((res) => {
-        res.data = res.data.slice(0, 4);
+        res.data = res.data.slice(0, 3);
         setCourses(res.data);
       })
       .catch((err) => console.log(err));

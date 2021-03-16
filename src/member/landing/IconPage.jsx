@@ -18,15 +18,15 @@ const styles = makeStyles((theme) => ({
     height: "100vh",
   },
   heading1: {
-    marginTop: "20vh",
+    marginTop: "13vh",
     color: "#D4D4D4",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
   heading2: {
-    marginTop: "20px",
+    marginTop: "18px",
     marginBottom: "55px",
-    lineHeight: "47px",
+    lineHeight: "40px",
     color: "#D4D4D4",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
@@ -57,10 +57,10 @@ const IconPage = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <Typography variant="h1" className={classes.heading1}>
+          <Typography variant="h2" className={classes.heading1}>
             Not sure where to start?
           </Typography>
-          <Typography variant="h1" className={classes.heading2}>
+          <Typography variant="h4" className={classes.heading2}>
             Check out their pros and cons to decide which
             <br />
             coding languages are for you!
@@ -74,10 +74,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#3675A9",
                     }}
                   >
@@ -86,10 +84,9 @@ const IconPage = () => {
                   <Typography
                     variant="body1"
                     style={{
-                      paddingTop: "10px",
+                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                     }}
                   >
                     Pros
@@ -109,7 +106,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "8px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -146,10 +143,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#F3BF04",
                     }}
                   >
@@ -160,7 +155,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -179,7 +174,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -215,10 +210,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#E57001",
                     }}
                   >
@@ -229,7 +222,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -249,7 +242,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -287,10 +280,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#CC0000",
                     }}
                   >
@@ -301,7 +292,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -320,7 +311,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -356,10 +347,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#004482",
                     }}
                   >
@@ -370,7 +359,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -389,7 +378,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -425,10 +414,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#6A1577",
                     }}
                   >
@@ -439,7 +426,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -459,7 +446,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -495,10 +482,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#E44D26",
                     }}
                   >
@@ -509,7 +494,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -529,7 +514,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
@@ -567,10 +552,8 @@ const IconPage = () => {
                     variant="h6"
                     style={{
                       textAlign: "center",
-                      paddingTop: "5px",
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
                       color: "#264DE4",
                     }}
                   >
@@ -581,7 +564,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      marginBottom: "3px",
+                      marginBottom: "5px",
                     }}
                   >
                     Pros
@@ -600,7 +583,7 @@ const IconPage = () => {
                     style={{
                       fontWeight: 700,
                       fontFamily: "Roboto Mono",
-                      margin: "6px 0px 3px",
+                      margin: "5px 0px 3px",
                     }}
                   >
                     Cons
