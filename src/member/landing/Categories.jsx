@@ -51,9 +51,9 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              to="/Courses"
+              to="/courses"
               style={{
-                borderColor: "#fff",
+                borderColor: "#FFFFFF",
                 textTransform: "none",
                 margin: "3% 0 10% 5%",
                 padding: "8px 10px",

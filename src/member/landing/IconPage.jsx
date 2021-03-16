@@ -92,7 +92,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Simplified syntax
+                    - Readibe and Simplified Syntax
                     <br />
                     - Open Source <br />- Dynamically Typed
                   </Typography>
@@ -130,7 +130,6 @@ const IconPage = () => {
                 onMouseOut={() => setOpenPYDialog(false)}
               />
             </Tooltip>
-
             {/* JS icon */}
             <Tooltip
               title={
@@ -207,8 +206,9 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Client-side Script <br />
-                    - Easy to Learn and Understand <br />- Less Overhead
+                    - Object-oriented Programming <br />
+                    - Write Once Run Anywhere <br />- Efficient Memory
+                    Allocation
                   </Typography>
                   <Typography
                     variant="body1"
@@ -226,7 +226,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Compromises Security <br />- Single Inheritance
+                    - Poor Performance <br />- No Backup Facility
                   </Typography>
                 </Card>
               }
@@ -246,15 +246,291 @@ const IconPage = () => {
               />
             </Tooltip>
             {/* Ruby icon */}
-            <img width="8%" alt="ruby_icon" src={ruby} />
+            <Tooltip
+              title={
+                <Card className={classes.description}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Pros
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Open Source <br /> - Object-oriented Programming <br />-
+                    Built-in Security Mechanisms
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      margin: "6px 0px 3px",
+                    }}
+                  >
+                    Cons
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Poor Runtime Speed <br />- Lack of flexibility
+                  </Typography>
+                </Card>
+              }
+            >
+              <img
+                width="8%"
+                alt="ruby_icon"
+                src={ruby}
+                style={{
+                  transform: openRBDialog ? "scale(1.1, 1.1)" : "none",
+                  boxShadow: openRBDialog ? "-8px 8px 1px 1px #D4D4D4" : "none",
+                }}
+                onMouseOver={() => setOpenRBDialog(true)}
+                onMouseOut={() => setOpenRBDialog(false)}
+              />
+            </Tooltip>
             {/* c++ icon */}
-            <img width="8%" alt="c++_icon" src={cplus} />
+            <Tooltip
+              title={
+                <Card className={classes.description}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Pros
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Efficient Performance <br /> - Multi-paradigm Programming
+                    <br />- Portable Language
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      margin: "6px 0px 3px",
+                    }}
+                  >
+                    Cons
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - No Garbage Collection Support <br />- Poor Security
+                  </Typography>
+                </Card>
+              }
+            >
+              <img
+                width="8%"
+                alt="c++_icon"
+                src={cplus}
+                style={{
+                  transform: openCPDialog ? "scale(1.1, 1.1)" : "none",
+                  boxShadow: openCPDialog ? "-8px 8px 1px 1px #D4D4D4" : "none",
+                }}
+                onMouseOver={() => setOpenCPDialog(true)}
+                onMouseOut={() => setOpenCPDialog(false)}
+              />
+            </Tooltip>
             {/* c# icon */}
-            <img width="8%" alt="c#_icon" src={csharp} />
+            <Tooltip
+              title={
+                <Card className={classes.description}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Pros
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Automatic Garbage Collection <br /> - Object-oriented
+                    Programming
+                    <br />- Automated Memory Allocation
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      margin: "6px 0px 3px",
+                    }}
+                  >
+                    Cons
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Poor Flexbilty <br />- Difficult to Master
+                  </Typography>
+                </Card>
+              }
+            >
+              <img
+                width="8%"
+                alt="c#_icon"
+                src={csharp}
+                style={{
+                  transform: openCSDialog ? "scale(1.1, 1.1)" : "none",
+                  boxShadow: openCSDialog ? "-8px 8px 1px 1px #D4D4D4" : "none",
+                }}
+                onMouseOver={() => setOpenCSDialog(true)}
+                onMouseOut={() => setOpenCSDialog(false)}
+              />
+            </Tooltip>
             {/* html icon */}
-            <img width="8%" alt="html_icon" src={html} />
+            <Tooltip
+              title={
+                <Card className={classes.description}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Pros
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Easy to learn and Understand <br /> - Great Browser
+                    Support
+                    <br />- SEO Friendly
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      margin: "6px 0px 3px",
+                    }}
+                  >
+                    Cons
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Poor Security <br />- Cannot Create Dynamic Pages
+                  </Typography>
+                </Card>
+              }
+            >
+              <img
+                width="8%"
+                alt="html_icon"
+                src={html}
+                style={{
+                  transform: openHTMLDialog ? "scale(1.1, 1.1)" : "none",
+                  boxShadow: openHTMLDialog
+                    ? "-8px 8px 1px 1px #D4D4D4"
+                    : "none",
+                }}
+                onMouseOver={() => setOpenHTMLDialog(true)}
+                onMouseOut={() => setOpenHTMLDialog(false)}
+              />
+            </Tooltip>
             {/* css icon */}
-            <img width="8%" alt="css_icon" src={css} />
+            <Tooltip
+              title={
+                <Card className={classes.description}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Pros
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Enables Consistent Styling <br /> - Device Friendly
+                    <br />- SEO Friendly
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      margin: "6px 0px 3px",
+                    }}
+                  >
+                    Cons
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      fontFamily: "Roboto Mono",
+                    }}
+                  >
+                    - Cross-browser Issues <br />- Poor security
+                  </Typography>
+                </Card>
+              }
+            >
+              <img
+                width="8%"
+                alt="css_icon"
+                src={css}
+                style={{
+                  transform: openCSSDialog ? "scale(1.1, 1.1)" : "none",
+                  boxShadow: openCSSDialog
+                    ? "-8px 8px 1px 1px #D4D4D4"
+                    : "none",
+                }}
+                onMouseOver={() => setOpenCSSDialog(true)}
+                onMouseOut={() => setOpenCSSDialog(false)}
+              />
+            </Tooltip>
           </div>
         </Grid>
 
