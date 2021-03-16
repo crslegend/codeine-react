@@ -24,7 +24,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: "Roboto Mono",
   },
   heading2: {
-    marginTop: "18px",
+    marginTop: "3vh",
     marginBottom: "55px",
     lineHeight: "40px",
     color: "#D4D4D4",

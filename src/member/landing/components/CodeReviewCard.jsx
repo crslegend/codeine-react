@@ -12,7 +12,7 @@ import Label from "./Label";
 const styles = makeStyles((theme) => ({
   root: {
     height: "100%",
-    width: "22vw",
+    width: "25vw",
     marginTop: "30px",
     padding: "10px 10px",
     marginRight: "20px",

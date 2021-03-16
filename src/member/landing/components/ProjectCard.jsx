@@ -19,9 +19,8 @@ const styles = makeStyles((theme) => ({
     borderRadius: 0,
   },
   cardmedia: {
-    marginLeft: "15px",
     height: "100%",
-    width: "6vw",
+    width: "7vw",
   },
 }));
 
