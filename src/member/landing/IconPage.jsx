@@ -1,13 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Grid,
-  Typography,
-  Button,
-  Card,
-  Box,
-  Tooltip,
-} from "@material-ui/core";
+import { Grid, Typography, Card, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 import py from "../../assets/icons/py_icon.png";
@@ -67,14 +60,28 @@ const IconPage = () => {
             Not sure where to start?
           </Typography>
           <Typography variant="h1" className={classes.heading2}>
-            Hover over these languages to find out <br />
-            their pros & cons!
+            Check out the pros & cons to decide which
+            <br />
+            coding languages are for you!
           </Typography>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {/* PY icon */}
             <Tooltip
               title={
                 <Card className={classes.description}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#3675A9",
+                    }}
+                  >
+                    PYTHON COURSES
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{
@@ -135,6 +142,19 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#F3BF04",
+                    }}
+                  >
+                    JAVASCRIPT COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
@@ -190,6 +210,19 @@ const IconPage = () => {
             <Tooltip
               title={
                 <Card className={classes.description}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#E57001",
+                    }}
+                  >
+                    JAVA COURSES
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{
@@ -250,6 +283,19 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#CC0000",
+                    }}
+                  >
+                    RUBY COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
@@ -305,6 +351,19 @@ const IconPage = () => {
             <Tooltip
               title={
                 <Card className={classes.description}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#004482",
+                    }}
+                  >
+                    C++ COURSES
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{
@@ -362,6 +421,19 @@ const IconPage = () => {
               title={
                 <Card className={classes.description}>
                   <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#6A1577",
+                    }}
+                  >
+                    C# COURSES
+                  </Typography>
+                  <Typography
                     variant="body1"
                     style={{
                       fontWeight: 700,
@@ -418,6 +490,19 @@ const IconPage = () => {
             <Tooltip
               title={
                 <Card className={classes.description}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#E44D26",
+                    }}
+                  >
+                    HTML COURSES
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{
@@ -477,6 +562,19 @@ const IconPage = () => {
             <Tooltip
               title={
                 <Card className={classes.description}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "5px",
+                      fontWeight: 700,
+                      fontFamily: "Roboto Mono",
+                      marginBottom: "3px",
+                      color: "#264DE4",
+                    }}
+                  >
+                    CSS COURSES
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{
