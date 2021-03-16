@@ -24,8 +24,9 @@ const styles = makeStyles((theme) => ({
     fontFamily: "Roboto Mono",
   },
   heading2: {
-    marginTop: "15px",
+    marginTop: "20px",
     marginBottom: "55px",
+    lineHeight: "47px",
     color: "#D4D4D4",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
@@ -60,7 +61,7 @@ const IconPage = () => {
             Not sure where to start?
           </Typography>
           <Typography variant="h1" className={classes.heading2}>
-            Check out the pros & cons to decide which
+            Check out their pros and cons to decide which
             <br />
             coding languages are for you!
           </Typography>
