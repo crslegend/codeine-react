@@ -1,6 +1,11 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Card, CardActionArea, CardContent } from "@material-ui/core";
+import {
+  Typography,
+  Card,
+  CardActionArea,
+  CardContent,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Label from "./Label";
 
@@ -30,9 +35,18 @@ const CourseCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <Link style={{ height: "100%" }} to={`/courses/${course && course.id}`} component={CardActionArea}>
+      <Link
+        style={{ height: "100%" }}
+        to={`/courses/${course && course.id}`}
+        component={CardActionArea}
+      >
         <CardContent
-          style={{ height: "inherit", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+          style={{
+            height: "inherit",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
         >
           <div>
             {course && course.pro === true ? (
@@ -62,18 +76,26 @@ const CourseCard = (props) => {
                 fontWeight: 600,
               }}
             >
-              {course && course.partner.first_name + " " + course.partner.last_name}
+              {course &&
+                course.partner.first_name + " " + course.partner.last_name}
             </Typography>
           </div>
           <div>
-            <Typography variant="body1" style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}>
-              duration: 16h
+            <Typography
+              variant="body1"
+              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
+            >
+              duration: {course && course.duration}h
             </Typography>
-            <Typography variant="body1" style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}>
+            <Typography
+              variant="body1"
+              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
+            >
               exp points: {course && course.exp_points}p
             </Typography>
             <div style={{ display: "flex", margin: "10px 0" }}>
-              {course && course.categories.map((category) => <Label label={category} />)}
+              {course &&
+                course.categories.map((category) => <Label label={category} />)}
             </div>
           </div>
         </CardContent>
