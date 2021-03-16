@@ -6,6 +6,8 @@ import TopPicks from "./TopPicks";
 import FeaturedCourses from "./FeaturedCourses";
 import IconPage from "./IconPage";
 import Categories from "./Categories";
+import Ide from "./Ide";
+import Pricing from "./Pricing";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -32,6 +34,8 @@ const MemberLandingBody = (props) => {
             <IconPage />
             <Categories />
             <FeaturedCourses />
+            <Ide />
+            <Pricing />
           </div>
         )}
       </Grid>

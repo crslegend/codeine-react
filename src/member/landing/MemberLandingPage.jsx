@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
-    backgroundColor: "#EDEFEA",
+    //backgroundColor: "#EDEFEA",
   },
   listItem: {
     width: "100%",
