@@ -38,6 +38,9 @@ const editor = {
     ["link"],
     ["clean"],
   ],
+  clipboard: {
+    matchVisual: false,
+  },
 };
 
 const format = [
