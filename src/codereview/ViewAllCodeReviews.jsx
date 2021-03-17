@@ -244,7 +244,7 @@ const ViewAllCodeReviews = () => {
     Service.client
       .post(`/code-reviews`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         history.push(`/codereview/${res.data.id}`);
       })
       .catch((err) => console.log(err));
@@ -324,8 +324,6 @@ const ViewAllCodeReviews = () => {
                           return null;
                         }
                       })}
-                  </div>
-                  <div>
                     {code &&
                       code.coding_languages.length > 0 &&
                       code.coding_languages.map((language, index) => {

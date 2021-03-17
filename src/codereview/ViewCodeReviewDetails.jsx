@@ -19,6 +19,7 @@ import LinkMui from "@material-ui/core/Link";
 import { Add, ArrowBack, Delete, Edit } from "@material-ui/icons";
 import logo from "../assets/CodeineLogos/Member.svg";
 
+import AddSnippetDialog from "./components/AddSnippetDialog";
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
@@ -131,6 +132,29 @@ const ViewCodeReviewDetails = () => {
     UI: false,
     ML: false,
   });
+
+  const [newSnippet, setNewSnippet] = useState("");
+  const [newSnippetTitle, setNewSnippetTitle] = useState("");
+  const [newCodeLanguage, setNewCodeLanguage] = useState({
+    PY: false,
+    JAVA: false,
+    JS: false,
+    CPP: false,
+    CS: false,
+    HTML: false,
+    CSS: false,
+    RUBY: false,
+  });
+
+  const [newCategories, setNewCategories] = useState({
+    SEC: false,
+    DB: false,
+    FE: false,
+    BE: false,
+    UI: false,
+    ML: false,
+  });
+  const [addSnippetDialog, setAddSnippetDialog] = useState(false);
 
   const [deleteSnippetDialog, setDeleteSnippetDialog] = useState(false);
 
@@ -427,6 +451,110 @@ const ViewCodeReviewDetails = () => {
     );
   };
 
+  const handleAddNewSnippet = () => {
+    if (!newSnippetTitle || newSnippetTitle === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Title cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (!newSnippet || newSnippet === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Code snippet cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    let neverChooseOne = true;
+    for (const property in newCategories) {
+      if (newCategories[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 category",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in newCodeLanguage) {
+      if (newCodeLanguage[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 coding language/framework",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    let data = {
+      title: newSnippetTitle,
+      code: newSnippet,
+      coding_languages: [],
+      languages: ["ENG"],
+      categories: [],
+    };
+
+    for (const property in newCategories) {
+      if (newCategories[property]) {
+        data.categories.push(property);
+      }
+    }
+
+    for (const property in newCodeLanguage) {
+      if (newCodeLanguage[property]) {
+        data.coding_languages.push(property);
+      }
+    }
+
+    Service.client
+      .post(`/code-reviews`, data)
+      .then((res) => {
+        console.log(res);
+        setAddCommentDialog(false);
+        history.push(`/codereview/${res.data.id}`);
+        history.go();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleUpdateSnippet = () => {
     if (!snippetTitle || snippetTitle === "") {
       setSbOpen(true);
@@ -673,6 +801,7 @@ const ViewCodeReviewDetails = () => {
               color="primary"
               startIcon={<Add />}
               style={{ height: 30, alignItems: "center" }}
+              onClick={() => setAddSnippetDialog(true)}
             >
               Add Code Snippet
             </Button>
@@ -708,7 +837,7 @@ const ViewCodeReviewDetails = () => {
             {` asked ${code && calculateDateInterval(code.timestamp)}`}
           </Typography>
         </div>
-        <div style={{ marginBottom: "2px" }}>
+        <div style={{ marginBottom: "25px" }}>
           {code &&
             code.categories.length > 0 &&
             code.categories.map((category, index) => {
@@ -732,8 +861,6 @@ const ViewCodeReviewDetails = () => {
                 return null;
               }
             })}
-        </div>
-        <div style={{ marginBottom: "20px" }}>
           {code &&
             code.coding_languages.length > 0 &&
             code.coding_languages.map((language, index) => {
@@ -758,6 +885,7 @@ const ViewCodeReviewDetails = () => {
               }
             })}
         </div>
+
         <div className="codeblock">
           <ReactQuill
             value={code && code.code ? code.code : ""}
@@ -881,7 +1009,7 @@ const ViewCodeReviewDetails = () => {
       <Dialog
         open={deleteSnippetDialog}
         onClose={() => {
-          deleteSnippetDialog(false);
+          setDeleteSnippetDialog(false);
         }}
         PaperProps={{
           style: {
@@ -895,7 +1023,7 @@ const ViewCodeReviewDetails = () => {
           <Button
             variant="contained"
             onClick={() => {
-              setDeleteCommentDialog(false);
+              setDeleteSnippetDialog(false);
             }}
             style={{ width: 100 }}
           >
@@ -923,6 +1051,19 @@ const ViewCodeReviewDetails = () => {
         handleUpdateSnippet={handleUpdateSnippet}
         snippet={snippet}
         setSnippet={setSnippet}
+      />
+      <AddSnippetDialog
+        addSnippetDialog={addSnippetDialog}
+        setAddSnippetDialog={setAddSnippetDialog}
+        snippetTitle={newSnippetTitle}
+        setSnippetTitle={setNewSnippetTitle}
+        categories={newCategories}
+        setCategories={setNewCategories}
+        codeLanguage={newCodeLanguage}
+        setCodeLanguage={setNewCodeLanguage}
+        handleAddNewSnippet={handleAddNewSnippet}
+        snippet={newSnippet}
+        setSnippet={setNewSnippet}
       />
     </div>
   );
