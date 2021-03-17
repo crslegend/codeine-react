@@ -2,22 +2,15 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
-import logo from "../assets/CodeineLogos/Member.svg";
+// import logo from "../assets/CodeineLogos/Member.svg";
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
+// import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
-import PageTitle from "../components/PageTitle";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+// import PageTitle from "../components/PageTitle";
+import { Button, Chip, Paper, Typography } from "@material-ui/core";
+import LinkMui from "@material-ui/core/Link";
 import { Add } from "@material-ui/icons";
 // import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
@@ -42,10 +35,36 @@ const styles = makeStyles((theme) => ({
     paddingRight: theme.spacing(15),
   },
   title: {
-    paddingTop: theme.spacing(3),
+    paddingTop: theme.spacing(5),
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  heading: {
+    lineHeight: "50px",
+    fontWeight: 600,
+    fontFamily: "Roboto Mono",
+  },
+  codeReview: {
+    marginBottom: "10px",
+    padding: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
+  },
+  linkMui: {
+    fontSize: 28,
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "none",
+      color: "#065cc4",
+    },
+  },
+  linkMui1: {
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "none",
+      color: "#065cc4",
+    },
   },
 }));
 
@@ -89,16 +108,45 @@ const ViewAllCodeReviews = () => {
 
   const [addSnippetDialog, setAddSnippetDialog] = useState(false);
 
+  const [codeReviews, setCodeReviews] = useState();
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
     }
   };
 
+  const getAllCodeReview = () => {
+    Service.client
+      .get(`/code-reviews`)
+      .then((res) => {
+        console.log(res);
+        setCodeReviews(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
+    getAllCodeReview();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const resuableChip = (label, index, backgroundColor, fontColor) => {
+    return (
+      <Chip
+        key={index}
+        label={label}
+        style={{
+          marginRight: "10px",
+          marginBottom: "10px",
+          color: fontColor ? fontColor : "#000",
+          fontWeight: 600,
+          backgroundColor: backgroundColor,
+        }}
+      />
+    );
+  };
 
   const handleAddNewSnippet = () => {
     if (!snippetTitle || snippetTitle === "") {
@@ -220,15 +268,108 @@ const ViewAllCodeReviews = () => {
       />
       <div className={classes.content}>
         <div className={classes.title}>
-          <PageTitle title="Code Review" />
+          <Typography variant="h2" className={classes.heading}>
+            code review
+          </Typography>
           <Button
-            variant="contained"
+            variant="outlined"
+            color="primary"
             startIcon={<Add />}
             onClick={() => setAddSnippetDialog(true)}
             style={{ height: 30 }}
+            disabled={!loggedIn}
           >
             Add Code Snippet
           </Button>
+        </div>
+        <div style={{ marginTop: "40px" }}>
+          {codeReviews &&
+            codeReviews.length > 0 &&
+            codeReviews.map((code, index) => {
+              return (
+                <Paper key={index} className={classes.codeReview}>
+                  <div>
+                    <LinkMui
+                      className={classes.linkMui}
+                      onClick={() => history.push(`/codereview/${code.id}`)}
+                    >
+                      {code.title}
+                    </LinkMui>
+                  </div>
+                  <div style={{ marginTop: "20px" }}>
+                    {code &&
+                      code.categories.length > 0 &&
+                      code.categories.map((category, index) => {
+                        if (category === "FE") {
+                          return resuableChip("Frontend", index, "#DD8B8B");
+                        } else if (category === "BE") {
+                          return resuableChip("Backend", index, "#A0DD8B");
+                        } else if (category === "DB") {
+                          return resuableChip(
+                            "Database Administration",
+                            index,
+                            "#8B95DD"
+                          );
+                        } else if (category === "SEC") {
+                          return resuableChip("Security", index, "#DDB28B");
+                        } else if (category === "UI") {
+                          return resuableChip("UI/UX", index, "#DDD58B");
+                        } else if (category === "ML") {
+                          return resuableChip(
+                            "Machine Learning",
+                            index,
+                            "#8BD8DD"
+                          );
+                        } else {
+                          return null;
+                        }
+                      })}
+                  </div>
+                  <div>
+                    {code &&
+                      code.coding_languages.length > 0 &&
+                      code.coding_languages.map((language, index) => {
+                        if (language === "PY") {
+                          return resuableChip(
+                            "Python",
+                            index,
+                            "#3675A9",
+                            "#fff"
+                          );
+                        } else if (language === "JAVA") {
+                          return resuableChip("Java", index, "#E57001", "#fff");
+                        } else if (language === "JS") {
+                          return resuableChip("Javascript", index, "#F7DF1E");
+                        } else if (language === "RUBY") {
+                          return resuableChip("Ruby", index, "#CC0000");
+                        } else if (language === "CPP") {
+                          return resuableChip("C++", index, "#004482", "#fff");
+                        } else if (language === "CS") {
+                          return resuableChip("C#", index, "#6A1577", "#fff");
+                        } else if (language === "HTML") {
+                          return resuableChip("HTML", index, "#E44D26", "#fff");
+                        } else if (language === "CSS") {
+                          return resuableChip("CSS", index, "#264DE4", "#fff");
+                        } else {
+                          return null;
+                        }
+                      })}
+                  </div>
+                  <div style={{ marginLeft: "auto", marginTop: "10px" }}>
+                    <Typography variant="body1" style={{ opacity: 0.8 }}>
+                      <LinkMui className={classes.linkMui1}>
+                        {`${code && code.member.first_name} ${
+                          code && code.member.last_name
+                        }`}
+                      </LinkMui>
+                      {` asked ${
+                        code && calculateDateInterval(code.timestamp)
+                      }`}
+                    </Typography>
+                  </div>
+                </Paper>
+              );
+            })}
         </div>
       </div>
       <AddSnippetDialog
