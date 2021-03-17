@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Breadcrumbs,
   LinearProgress,
   Typography,
 } from "@material-ui/core";
@@ -25,7 +26,6 @@ import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import {
-  ArrowBack,
   Assignment,
   AttachFile,
   ExpandMore,
@@ -51,6 +51,14 @@ const styles = makeStyles((theme) => ({
     minHeight: "calc(100vh - 10px)",
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
   courseSection: {
     display: "flex",
@@ -229,12 +237,23 @@ const ViewCourseDetails = () => {
             : components.memberNavbar
         }
       />
+
       <div className={classes.mainSection}>
-        <div style={{ marginTop: "20px" }}>
-          <IconButton onClick={() => history.push("/courses")}>
-            <ArrowBack />
-          </IconButton>
-        </div>
+        <Breadcrumbs
+          style={{ margin: "20px 0px" }}
+          separator="›"
+          aria-label="breadcrumb"
+        >
+          <Link
+            className={classes.backLink}
+            onClick={() => history.push("/courses")}
+          >
+            <Typography style={{ marginRight: "8px" }} variant="body1">
+              All Courses
+            </Typography>
+          </Link>
+          <Typography variant="body1">Overview</Typography>
+        </Breadcrumbs>
         <div className={classes.courseSection}>
           <div style={{ width: "60%" }}>
             <Typography

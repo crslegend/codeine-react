@@ -12,7 +12,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
+  Breadcrumbs,
   LinearProgress,
   Paper,
   TextField,
@@ -25,7 +25,6 @@ import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 import {
   Announcement,
-  ArrowBack,
   Assignment,
   AttachFile,
   ExpandMore,
@@ -55,6 +54,14 @@ const styles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
     paddingBottom: theme.spacing(10),
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
   unenrollButton: {
     marginLeft: "25px",
@@ -356,9 +363,33 @@ const EnrollCourse = () => {
             justifyContent: "space-between",
           }}
         >
-          <IconButton onClick={() => history.push(`/courses/${id}`)}>
-            <ArrowBack />
-          </IconButton>
+          <Breadcrumbs
+            style={{ margin: "20px 0px" }}
+            separator="›"
+            aria-label="breadcrumb"
+          >
+            <Link
+              className={classes.backLink}
+              onClick={() => history.push("/courses")}
+            >
+              <Typography style={{ marginRight: "8px" }} variant="body1">
+                All Courses
+              </Typography>
+            </Link>
+            <Link
+              className={classes.backLink}
+              onClick={() => history.push(`/courses/${id}`)}
+            >
+              <Typography style={{ marginRight: "8px" }} variant="body1">
+                Overview
+              </Typography>
+            </Link>
+            <Typography variant="body1">
+              {course && course.title.length > 35
+                ? `${course && course.title.substr(0, 35)}...`
+                : course && course.title}
+            </Typography>
+          </Breadcrumbs>
           <div>
             <Button
               className={classes.consultationButton}
