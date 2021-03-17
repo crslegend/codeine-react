@@ -71,7 +71,7 @@ const CourseCard = (props) => {
             <Typography
               variant="h6"
               style={{
-                paddingBottom: "50px",
+                paddingBottom: "30px",
                 fontFamily: "Roboto Mono",
                 fontWeight: 600,
               }}

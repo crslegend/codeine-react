@@ -5,22 +5,23 @@ import ide from "../../assets/ide_asset.png";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "30px",
+    paddingTop: "40px",
     maxWidth: "100vw",
     paddingLeft: "30px",
-    paddingBottom: "30px",
+    paddingBottom: "40px",
     marginBottom: "50px",
     backgroundColor: theme.palette.primary.main,
     color: "#FFFFFF",
   },
   heading: {
     marginTop: "10%",
+    marginBottom: "30px",
     lineHeight: "50px",
     fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
   subheading: {
-    margin: "30px 0px",
+    marginBottom: "30px",
     fontFamily: "Roboto Mono",
   },
   button: {
@@ -40,16 +41,16 @@ const Ide = () => {
       <Grid container className={classes.root}>
         <Grid item xs={1} />
         <Grid item xs={5}>
-          <Typography variant="h2" className={classes.heading}>
-            INBUILT IDE
+          <Typography variant="h3" className={classes.heading}>
+            Learning made easy
           </Typography>
-          <Typography variant="h4" className={classes.subheading}>
-            want to access our <br />
-            step-by-step coding environment?
+
+          <Typography variant="h5" className={classes.subheading}>
+            Deploy your own integrated coding
+            <br />
+            environment (IDE) in the cloud <br />
+            and access it from anywhere
           </Typography>
-          <Button variant="outlined" className={classes.button}>
-            subscribe now
-          </Button>
         </Grid>
         <Grid item xs={5}>
           <img width="90%" alt="ide" src={ide}></img>

@@ -65,9 +65,7 @@ const styles = makeStyles((theme) => ({
   },
   unenrollButton: {
     marginLeft: "25px",
-    marginRight: "25px",
     backgroundColor: theme.palette.red.main,
-    // textTransform: "none",
     color: "#fff",
     "&:hover": {
       backgroundColor: "#8E0000",
@@ -78,7 +76,7 @@ const styles = makeStyles((theme) => ({
   },
   courseSection: {
     display: "flex",
-    marginTop: "15px",
+    marginTop: "30px",
   },
   content: {
     minHeight: 400,
@@ -364,7 +362,7 @@ const EnrollCourse = () => {
           }}
         >
           <Breadcrumbs
-            style={{ margin: "20px 0px" }}
+            style={{ margin: "10px 0px" }}
             separator="›"
             aria-label="breadcrumb"
           >
