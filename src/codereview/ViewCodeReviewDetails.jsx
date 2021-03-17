@@ -24,6 +24,7 @@ import Cookies from "js-cookie";
 import "./sidenotes.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import "react-quill/dist/quill.snow.css";
 // import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 // import TextSelector from "text-selection-react";
 // import store from "../redux/store";
@@ -36,9 +37,51 @@ import "react-quill/dist/quill.bubble.css";
 //   selectAnchor,
 // } from "../redux/actions";
 import jwt_decode from "jwt-decode";
+import hljs from "highlight.js";
+import "highlight.js/styles/darcula.css";
+import EditSnippetDialog from "./components/EditSnippetDialog";
+import Toast from "../components/Toast.js";
 // import SyntaxHighlighter from "react-syntax-highlighter";
 // import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 // const reactStringReplace = require("react-string-replace");
+hljs.configure({
+  languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
+});
+const editor = {
+  syntax: {
+    highlight: (text) => hljs.highlightAuto(text).value,
+  },
+};
+
+const editorSnow = {
+  toolbar: [
+    [{ font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link"],
+    ["clean"],
+  ],
+};
+
+const formatSnow = [
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+];
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -78,10 +121,44 @@ const ViewCodeReviewDetails = () => {
   const history = useHistory();
   const { id } = useParams();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [selectedValue, setSelectedValue] = useState();
   const [code, setCode] = useState();
   const [codeComments, setCodeComments] = useState([]);
+
+  const [editSnippetDialog, setEditSnippetDialog] = useState(false);
+  const [snippet, setSnippet] = useState("");
+  const [snippetTitle, setSnippetTitle] = useState("");
+  const [codeLanguage, setCodeLanguage] = useState({
+    PY: false,
+    JAVA: false,
+    JS: false,
+    CPP: false,
+    CS: false,
+    HTML: false,
+    CSS: false,
+    RUBY: false,
+  });
+
+  const [categories, setCategories] = useState({
+    SEC: false,
+    DB: false,
+    FE: false,
+    BE: false,
+    UI: false,
+    ML: false,
+  });
 
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
@@ -360,6 +437,110 @@ const ViewCodeReviewDetails = () => {
     );
   };
 
+  const handleUpdateSnippet = () => {
+    if (!snippetTitle || snippetTitle === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Title cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (!snippet || snippet === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Code snippet cannot be empty",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    let neverChooseOne = true;
+    for (const property in categories) {
+      if (categories[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 category",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in codeLanguage) {
+      if (codeLanguage[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 coding language/framework",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    let data = {
+      title: snippetTitle,
+      code: snippet,
+      coding_languages: [],
+      languages: ["ENG"],
+      categories: [],
+    };
+
+    for (const property in categories) {
+      if (categories[property]) {
+        data.categories.push(property);
+      }
+    }
+
+    for (const property in codeLanguage) {
+      if (codeLanguage[property]) {
+        data.coding_languages.push(property);
+      }
+    }
+
+    Service.client
+      .put(`/code-reviews/${id}`, data)
+      .then((res) => {
+        console.log(res);
+        setEditSnippetDialog(false);
+        getCodeReview();
+        getCodeReviewComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const checkIfOwnerOfComment = (userId) => {
     const decoded = jwt_decode(Cookies.get("t1"));
 
@@ -441,17 +622,61 @@ const ViewCodeReviewDetails = () => {
   };
   // console.log(lineNum);
 
+  const loadDataForEditSnippet = () => {
+    if (code) {
+      setSnippetTitle(code.title);
+      setSnippet(code.code);
+
+      let data = { ...codeLanguage };
+      for (let i = 0; i < code.coding_languages.length; i++) {
+        data = {
+          ...data,
+          [code.coding_languages[i]]: true,
+        };
+      }
+      setCodeLanguage(data);
+
+      data = { ...categories };
+      for (let i = 0; i < code.categories.length; i++) {
+        data = {
+          ...data,
+          [code.categories[i]]: true,
+        };
+      }
+      setCategories(data);
+      setEditSnippetDialog(true);
+    }
+  };
+
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Navbar
         logo={navLogo}
         bgColor="#fff"
         navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
       />
       <div className={classes.content}>
-        <Typography variant="h1" style={{ paddingBottom: "20px" }}>
-          {code && code.title}
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            marginBottom: "20px",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h1">{code && code.title}</Typography>
+          {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
+            <div style={{ marginLeft: "auto" }}>
+              <IconButton onClick={() => loadDataForEditSnippet()}>
+                <Edit />
+              </IconButton>
+              <IconButton>
+                <Delete />
+              </IconButton>
+            </div>
+          )}
+        </div>
+
         <div style={{ marginBottom: "20px" }}>
           <Typography variant="body1" style={{ opacity: 0.8 }}>
             <LinkMui className={classes.linkMui}>
@@ -464,9 +689,10 @@ const ViewCodeReviewDetails = () => {
         </div>
         <div className="codeblock">
           <ReactQuill
-            value={code && code.code}
+            value={code && code.code ? code.code : ""}
             readOnly={true}
             theme={"bubble"}
+            modules={editor}
           />
         </div>
       </div>
@@ -568,6 +794,19 @@ const ViewCodeReviewDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <EditSnippetDialog
+        editSnippetDialog={editSnippetDialog}
+        setEditSnippetDialog={setEditSnippetDialog}
+        snippetTitle={snippetTitle}
+        setSnippetTitle={setSnippetTitle}
+        categories={categories}
+        setCategories={setCategories}
+        codeLanguage={codeLanguage}
+        setCodeLanguage={setCodeLanguage}
+        handleUpdateSnippet={handleUpdateSnippet}
+        snippet={snippet}
+        setSnippet={setSnippet}
+      />
     </div>
   );
 };
