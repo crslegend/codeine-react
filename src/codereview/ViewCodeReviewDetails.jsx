@@ -160,6 +160,8 @@ const ViewCodeReviewDetails = () => {
     ML: false,
   });
 
+  const [deleteSnippetDialog, setDeleteSnippetDialog] = useState(false);
+
   const [addCommentDialog, setAddCommentDialog] = useState(false);
   const [comment, setComment] = useState();
 
@@ -533,10 +535,20 @@ const ViewCodeReviewDetails = () => {
     Service.client
       .put(`/code-reviews/${id}`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setEditSnippetDialog(false);
         getCodeReview();
         getCodeReviewComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteSnippet = () => {
+    Service.client
+      .delete(`/code-reviews/${id}`)
+      .then((res) => {
+        // console.log(res);
+        history.push(`/codereview`);
       })
       .catch((err) => console.log(err));
   };
@@ -670,7 +682,7 @@ const ViewCodeReviewDetails = () => {
               <IconButton onClick={() => loadDataForEditSnippet()}>
                 <Edit />
               </IconButton>
-              <IconButton>
+              <IconButton onClick={() => setDeleteSnippetDialog(true)}>
                 <Delete />
               </IconButton>
             </div>
@@ -758,7 +770,6 @@ const ViewCodeReviewDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Dialog
         open={deleteCommentDialog}
         onClose={() => {
@@ -789,6 +800,40 @@ const ViewCodeReviewDetails = () => {
             color="primary"
             style={{ width: 100 }}
             onClick={() => handleDeleteComment()}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteSnippetDialog}
+        onClose={() => {
+          deleteSnippetDialog(false);
+        }}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Delete Code Snippet?</DialogTitle>
+        <DialogContent>This action cannot be reverted.</DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setDeleteCommentDialog(false);
+            }}
+            style={{ width: 100 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ width: 100 }}
+            onClick={() => handleDeleteSnippet()}
           >
             Confirm
           </Button>
