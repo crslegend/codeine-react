@@ -310,7 +310,7 @@ const EditSnippetDialog = ({
           variant="contained"
           onClick={() => {
             setEditSnippetDialog(false);
-            setSnippet();
+            setSnippet("");
             setCodeLanguage({
               PY: false,
               JAVA: false,

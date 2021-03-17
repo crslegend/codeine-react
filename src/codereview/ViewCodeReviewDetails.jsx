@@ -5,6 +5,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import {
   Avatar,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -325,6 +326,22 @@ const ViewCodeReviewDetails = () => {
       </Link>
     </Fragment>
   );
+
+  const resuableChip = (label, index, backgroundColor, fontColor) => {
+    return (
+      <Chip
+        key={index}
+        label={label}
+        style={{
+          marginRight: "10px",
+          marginBottom: "10px",
+          color: fontColor ? fontColor : "#000",
+          fontWeight: 600,
+          backgroundColor: backgroundColor,
+        }}
+      />
+    );
+  };
 
   const singleComment = (comment) => {
     return (
@@ -698,6 +715,56 @@ const ViewCodeReviewDetails = () => {
             </LinkMui>
             {` asked ${code && calculateDateInterval(code.timestamp)}`}
           </Typography>
+        </div>
+        <div style={{ marginBottom: "2px" }}>
+          {code &&
+            code.categories.length > 0 &&
+            code.categories.map((category, index) => {
+              if (category === "FE") {
+                return resuableChip("Frontend", index, "#DD8B8B");
+              } else if (category === "BE") {
+                return resuableChip("Backend", index, "#A0DD8B");
+              } else if (category === "DB") {
+                return resuableChip(
+                  "Database Administration",
+                  index,
+                  "#8B95DD"
+                );
+              } else if (category === "SEC") {
+                return resuableChip("Security", index, "#DDB28B");
+              } else if (category === "UI") {
+                return resuableChip("UI/UX", index, "#DDD58B");
+              } else if (category === "ML") {
+                return resuableChip("Machine Learning", index, "#8BD8DD");
+              } else {
+                return null;
+              }
+            })}
+        </div>
+        <div style={{ marginBottom: "20px" }}>
+          {code &&
+            code.coding_languages.length > 0 &&
+            code.coding_languages.map((language, index) => {
+              if (language === "PY") {
+                return resuableChip("Python", index, "#3675A9", "#fff");
+              } else if (language === "JAVA") {
+                return resuableChip("Java", index, "#E57001", "#fff");
+              } else if (language === "JS") {
+                return resuableChip("Javascript", index, "#F7DF1E");
+              } else if (language === "RUBY") {
+                return resuableChip("Ruby", index, "#CC0000");
+              } else if (language === "CPP") {
+                return resuableChip("C++", index, "#004482", "#fff");
+              } else if (language === "CS") {
+                return resuableChip("C#", index, "#6A1577", "#fff");
+              } else if (language === "HTML") {
+                return resuableChip("HTML", index, "#E44D26", "#fff");
+              } else if (language === "CSS") {
+                return resuableChip("CSS", index, "#264DE4", "#fff");
+              } else {
+                return null;
+              }
+            })}
         </div>
         <div className="codeblock">
           <ReactQuill

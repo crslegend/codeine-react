@@ -43,13 +43,13 @@ article .anchor.selected {
 }
 
 .codeblock {
-  background: #f4f4f4;
+  background: #ffff;
   border: 1px solid #ddd;
-  border-left: 3px solid #f36d33;
+  border-left: 3px solid #437FC7;
   color: #666;
   page-break-inside: avoid;
   /* font-family: monospace; */
-  font-size: 15px;
+  /* font-size: 15px; */
   line-height: 1.6;
   margin-bottom: 1.6em;
   overflow: auto;
