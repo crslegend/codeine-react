@@ -11,8 +11,7 @@ import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
-    height: "100%",
-    width: "25vw",
+    width: "300px",
     marginTop: "30px",
     padding: "10px 10px",
     marginRight: "20px",
@@ -36,36 +35,48 @@ const CodeReviewCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea>
-        <CardContent>
-          <Typography variant="h6" className={classes.snippets}>
-            {codeReview && codeReview.code}
-          </Typography>
-          <Divider
-            style={{
-              height: "1.5px",
-              margin: "20px 0",
-            }}
-          />
-          <Typography
-            variant="h5"
-            style={{
-              fontFamily: "Roboto Mono",
-              fontWeight: "600",
-            }}
-          >
-            {codeReview && codeReview.title}
-          </Typography>
+      <CardActionArea style={{ height: "100%" }}>
+        <CardContent
+          style={{
+            height: "inherit",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <Typography variant="body1" className={classes.snippets}>
+              {codeReview && codeReview.code}
+            </Typography>
+            <Divider
+              style={{
+                height: "1.5px",
+                margin: "20px 0",
+              }}
+            />
 
-          <Typography
-            variant="h6"
-            style={{
-              fontFamily: "Roboto Mono",
-            }}
-          >
-            {codeReview &&
-              codeReview.member.first_name + " " + codeReview.member.last_name}
-          </Typography>
+            <Typography
+              variant="h5"
+              style={{
+                fontFamily: "Roboto Mono",
+                fontWeight: "600",
+              }}
+            >
+              {codeReview && codeReview.title}
+            </Typography>
+
+            <Typography
+              variant="h6"
+              style={{
+                fontFamily: "Roboto Mono",
+              }}
+            >
+              {codeReview &&
+                codeReview.member.first_name +
+                  " " +
+                  codeReview.member.last_name}
+            </Typography>
+          </div>
           <div style={{ display: "flex", margin: "10px 0" }}>
             {codeReview &&
               codeReview.categories.map((category) => (

@@ -11,7 +11,7 @@ import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "25vw",
+    width: "300px",
     padding: "10px 10px",
     marginTop: "30px",
     marginRight: "50px",
@@ -71,7 +71,7 @@ const CourseCard = (props) => {
             <Typography
               variant="h6"
               style={{
-                paddingBottom: "50px",
+                paddingBottom: "30px",
                 fontFamily: "Roboto Mono",
                 fontWeight: 600,
               }}

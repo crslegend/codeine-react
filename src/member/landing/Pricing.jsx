@@ -14,9 +14,13 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     marginTop: "20%",
-    marginBottom: "30px",
+    marginBottom: "20px",
     lineHeight: "40px",
     fontWeight: 600,
+    fontFamily: "Roboto Mono",
+  },
+  subheading: {
+    marginBottom: "30px",
     fontFamily: "Roboto Mono",
   },
   button: {
@@ -46,8 +50,13 @@ const Pricing = () => {
             our features
           </Typography>
 
+          <Typography variant="h6" className={classes.subheading}>
+            ** Register today to enjoy a free premium <br /> membership for 7
+            days
+          </Typography>
+
           <Button variant="outlined" color="primary" className={classes.button}>
-            subscribe now
+            Start Free Trial
           </Button>
         </Grid>
 
