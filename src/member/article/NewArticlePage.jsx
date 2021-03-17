@@ -18,6 +18,8 @@ import Footer from "./Footer";
 import Navbar from "../../components/Navbar";
 import Cookies from "js-cookie";
 import { ToggleButton } from "@material-ui/lab";
+import { useDebounce } from "use-debounce";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,17 +32,19 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "65px",
   },
   languageButtons: {
-    width: 80,
+    minWidth: 80,
     marginRight: "15px",
     height: 30,
   },
   categoryButtons: {
+    minWidth: 80,
+    marginRight: "15px",
     marginBottom: "10px",
     height: 30,
   },
 }));
 
-const MemberNewArticlePage = () => {
+function MemberNewArticlePage() {
   const classes = useStyles();
   const history = useHistory();
   const { state } = useLocation();
@@ -67,8 +71,25 @@ const MemberNewArticlePage = () => {
     }
   };
 
+  const [user, setUser] = useState();
+
+  const getUserDetails = () => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get(`/auth/members/${userid}`)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          setUser();
+        });
+    }
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
+    getUserDetails();
   }, []);
 
   const editor = {
@@ -112,6 +133,40 @@ const MemberNewArticlePage = () => {
     languages: [],
   });
 
+  const [saveState, setSaveState] = useState(true);
+
+  const [debouncedText] = useDebounce(articleDetails, 1500);
+
+  useEffect(() => {
+    if (debouncedText) {
+      setSaveState(true);
+      // Service.client
+      //   .put(`/articles/`, articleDetails)
+      //   .then((res) => {
+      //     setSaveState(true);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+    }
+  }, [debouncedText]);
+
+  const handleOnChangeTitle = (value) => {
+    setArticleDetails({
+      ...articleDetails,
+      title: value,
+    });
+    setSaveState(false);
+  };
+
+  const handleOnChangeContent = (value) => {
+    setArticleDetails({
+      ...articleDetails,
+      content: value,
+    });
+    setSaveState(false);
+  };
+
   const [languages, setLanguages] = useState({
     ENG: false,
     MAN: false,
@@ -138,11 +193,7 @@ const MemberNewArticlePage = () => {
     RUBY: false,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log("clicked submit");
-
+  const handlePublish = () => {
     if (articleDetails.title === "" || articleDetails.content === "") {
       setSbOpen(true);
       setSnackbar({
@@ -156,7 +207,6 @@ const MemberNewArticlePage = () => {
       });
       return;
     }
-
     let neverChooseOne = true;
     for (const property in languages) {
       if (languages[property]) {
@@ -224,6 +274,18 @@ const MemberNewArticlePage = () => {
       return;
     }
 
+    // To publish article
+    // Service.client
+    //   .put(`/articles/`, articleDetails)
+    //   .then((res) => {
+    //     setSaveState(true);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  };
+
+  const saveFields = (e) => {
     let data = {
       ...articleDetails,
       coding_languages: [],
@@ -249,62 +311,8 @@ const MemberNewArticlePage = () => {
       }
     }
 
-    Service.client
-      .post(`/articles`, data)
-      .then((res) => {
-        console.log("new article page = " + res.data);
-        setSbOpen(true);
-        setSnackbar({
-          message: "New article created!",
-          severity: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setArticleDetails(data);
   };
-
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Teach on Codeine
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/member/register"
-          style={{
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
 
   const loggedInNavbar = (
     <Fragment>
@@ -346,28 +354,41 @@ const MemberNewArticlePage = () => {
 
   const navLogo = (
     <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" alt="codeine logo" />
-      </Link>
+      {user && (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Link
+            to="/"
+            style={{
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              paddingLeft: "10px",
+              marginRight: "35px",
+              width: 100,
+            }}
+          >
+            <img src={logo} width="120%" alt="codeine logo" />
+          </Link>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#000000" }}
+          >
+            Draft in {user.first_name + " " + user.last_name}
+          </Typography>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#0000008a" }}
+          >
+            {saveState ? "-Saved" : "-Saving"}
+          </Typography>
+        </div>
+      )}
     </Fragment>
   );
 
   return (
     <div className={classes.createArticle}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={navLogo}
-        bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
-      />
+      <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
 
       <Grid container>
         <Grid item xs={8}>
@@ -376,16 +397,10 @@ const MemberNewArticlePage = () => {
             id="title"
             label="Title"
             name="title"
-            required
             fullWidth
             value={articleDetails.title}
             // error={firstNameError}
-            onChange={(event) =>
-              setArticleDetails({
-                ...articleDetails,
-                title: event.target.value,
-              })
-            }
+            onChange={(event) => handleOnChangeTitle(event.target.value)}
           />
           <ReactQuill
             theme="snow"
@@ -394,12 +409,7 @@ const MemberNewArticlePage = () => {
             format={format}
             id="content"
             name="content"
-            onChange={(event) =>
-              setArticleDetails({
-                ...articleDetails,
-                content: event,
-              })
-            }
+            onChange={(event) => handleOnChangeContent(event)}
             placeholder="Compose an epic..."
           />
 
@@ -407,7 +417,7 @@ const MemberNewArticlePage = () => {
             disabled={loading}
             variant="contained"
             color="primary"
-            onClick={(e) => handleSubmit(e)}
+            onClick={(e) => handlePublish(e)}
           >
             Submit
           </Button>
@@ -424,6 +434,8 @@ const MemberNewArticlePage = () => {
                 selected={languages && languages.ENG}
                 onChange={() => {
                   setLanguages({ ...languages, ENG: !languages.ENG });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -435,6 +447,8 @@ const MemberNewArticlePage = () => {
                 selected={languages && languages.MAN}
                 onChange={() => {
                   setLanguages({ ...languages, MAN: !languages.MAN });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -446,6 +460,8 @@ const MemberNewArticlePage = () => {
                 selected={languages && languages.FRE}
                 onChange={() => {
                   setLanguages({ ...languages, FRE: !languages.FRE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -464,6 +480,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.SEC}
                 onChange={() => {
                   setCategories({ ...categories, SEC: !categories.SEC });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -475,6 +493,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.DB}
                 onChange={() => {
                   setCategories({ ...categories, DB: !categories.DB });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -486,6 +506,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.FE}
                 onChange={() => {
                   setCategories({ ...categories, FE: !categories.FE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -497,6 +519,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.BE}
                 onChange={() => {
                   setCategories({ ...categories, BE: !categories.BE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -508,6 +532,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.UI}
                 onChange={() => {
                   setCategories({ ...categories, UI: !categories.UI });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -519,6 +545,8 @@ const MemberNewArticlePage = () => {
                 selected={categories && categories.ML}
                 onChange={() => {
                   setCategories({ ...categories, ML: !categories.ML });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -537,6 +565,8 @@ const MemberNewArticlePage = () => {
                 selected={codeLanguage && codeLanguage.PY}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, PY: !codeLanguage.PY });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -551,6 +581,8 @@ const MemberNewArticlePage = () => {
                     ...codeLanguage,
                     JAVA: !codeLanguage.JAVA,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -562,6 +594,8 @@ const MemberNewArticlePage = () => {
                 selected={codeLanguage && codeLanguage.JS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, JS: !codeLanguage.JS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -573,6 +607,8 @@ const MemberNewArticlePage = () => {
                 selected={codeLanguage && codeLanguage.CPP}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CPP: !codeLanguage.CPP });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -584,6 +620,8 @@ const MemberNewArticlePage = () => {
                 selected={codeLanguage && codeLanguage.CS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CS: !codeLanguage.CS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -598,6 +636,8 @@ const MemberNewArticlePage = () => {
                     ...codeLanguage,
                     HTML: !codeLanguage.HTML,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -609,6 +649,8 @@ const MemberNewArticlePage = () => {
                 selected={codeLanguage && codeLanguage.CSS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CSS: !codeLanguage.CSS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -623,6 +665,8 @@ const MemberNewArticlePage = () => {
                     ...codeLanguage,
                     RUBY: !codeLanguage.RUBY,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -636,6 +680,6 @@ const MemberNewArticlePage = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default MemberNewArticlePage;

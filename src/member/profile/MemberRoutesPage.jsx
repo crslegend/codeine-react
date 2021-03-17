@@ -26,6 +26,7 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import Consultation from "./Consultation/ConsultationPage";
+import Helpdesk from "./Helpdesk/HelpdeskPage";
 import Profile from "./Profile/ProfilePage";
 import Password from "./Password/PasswordPage";
 import Transaction from "./Payment/PaymentPage";
@@ -331,7 +332,7 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/helpdesk"
-              render={() => <div></div>}
+              render={() => <Helpdesk />}
             />
             <PrivateRoute
               exact
