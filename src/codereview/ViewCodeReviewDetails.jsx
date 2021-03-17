@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Delete, Edit } from "@material-ui/icons";
+import { Add, ArrowBack, Delete, Edit } from "@material-ui/icons";
 import logo from "../assets/CodeineLogos/Member.svg";
 
 import { calculateDateInterval } from "../utils.js";
@@ -42,6 +42,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
 import EditSnippetDialog from "./components/EditSnippetDialog";
 import Toast from "../components/Toast.js";
+import CommentSection from "./components/CommentSection";
 // import SyntaxHighlighter from "react-syntax-highlighter";
 // import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 // const reactStringReplace = require("react-string-replace");
@@ -53,36 +54,6 @@ const editor = {
     highlight: (text) => hljs.highlightAuto(text).value,
   },
 };
-
-const editorSnow = {
-  toolbar: [
-    [{ font: [] }],
-    [{ size: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    ["link"],
-    ["clean"],
-  ],
-};
-
-const formatSnow = [
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-];
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -581,7 +552,6 @@ const ViewCodeReviewDetails = () => {
 
   const handleAddComment = () => {
     const data = {
-      highlighted_code: selectedValue,
       comment: comment,
     };
 
@@ -589,13 +559,9 @@ const ViewCodeReviewDetails = () => {
       .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
         console.log(res);
-        setAddCommentDialog(false);
-        setTimeout(() => {
-          setComment();
-          setSelectedValue();
-          getCodeReview();
-          getCodeReviewComments();
-        }, 500);
+        setComment();
+        getCodeReview();
+        getCodeReviewComments();
       })
       .catch((err) => console.log(err));
   };
@@ -606,7 +572,6 @@ const ViewCodeReviewDetails = () => {
       .then((res) => {
         // console.log(res);
         setDeleteCommentDialog(false);
-        setSelectedCommentId();
         getCodeReview();
         getCodeReviewComments();
       })
@@ -615,7 +580,6 @@ const ViewCodeReviewDetails = () => {
 
   const handleUpdateComment = () => {
     const data = {
-      highlighted_code: selectedComment.highlighted_code,
       comment: selectedComment.comment,
     };
 
@@ -689,21 +653,49 @@ const ViewCodeReviewDetails = () => {
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             marginBottom: "20px",
-            alignItems: "center",
           }}
         >
-          <Typography variant="h1">{code && code.title}</Typography>
-          {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
-            <div style={{ marginLeft: "auto" }}>
-              <IconButton onClick={() => loadDataForEditSnippet()}>
-                <Edit />
-              </IconButton>
-              <IconButton onClick={() => setDeleteSnippetDialog(true)}>
-                <Delete />
-              </IconButton>
-            </div>
-          )}
+          <div
+            style={{
+              display: "flex",
+              marginBottom: "20px",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <IconButton onClick={() => history.push(`/codereview`)}>
+              <ArrowBack />
+            </IconButton>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<Add />}
+              style={{ height: 30, alignItems: "center" }}
+            >
+              Add Code Snippet
+            </Button>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              marginBottom: "20px",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h1">{code && code.title}</Typography>
+            {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
+              <div style={{ marginLeft: "auto" }}>
+                <IconButton onClick={() => loadDataForEditSnippet()}>
+                  <Edit />
+                </IconButton>
+                <IconButton onClick={() => setDeleteSnippetDialog(true)}>
+                  <Delete />
+                </IconButton>
+              </div>
+            )}
+          </div>
         </div>
 
         <div style={{ marginBottom: "20px" }}>
@@ -774,7 +766,20 @@ const ViewCodeReviewDetails = () => {
             modules={editor}
           />
         </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <CommentSection
+            codeComments={codeComments}
+            comment={comment}
+            setComment={setComment}
+            reply={reply}
+            setReply={setReply}
+            loggedIn={loggedIn}
+            handleAddComment={handleAddComment}
+          />
+        </div>
       </div>
+      <div style={{ width: "10%" }}></div>
+
       <Dialog
         open={addCommentDialog}
         onClose={() => {
