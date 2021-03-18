@@ -158,6 +158,24 @@ const ViewCourseDetails = () => {
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
+
+          if (!res.data.is_member_enrolled) {
+            // ANALYITCS: log course view by unenrolled members
+            Service.client
+              .post(
+                `/analytics`,
+                { payload: "course view" },
+                {
+                  params: {
+                    course_id: id,
+                  },
+                }
+              )
+              .then((res) => {
+                // console.log(res);
+              })
+              .catch((err) => console.log(err));
+          }
         })
         .catch((err) => console.log(err));
 
