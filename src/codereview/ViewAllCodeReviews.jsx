@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 // import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
 // import PageTitle from "../components/PageTitle";
-import { Button, Chip, Paper, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
 import { Add, People, Person } from "@material-ui/icons";
 // import { ToggleButton } from "@material-ui/lab";
@@ -382,17 +382,37 @@ const ViewAllCodeReviews = () => {
                         }
                       })}
                   </div>
-                  <div style={{ marginLeft: "auto", marginTop: "10px" }}>
-                    <Typography variant="body1" style={{ opacity: 0.8 }}>
+                  <div
+                    style={{
+                      marginLeft: "auto",
+                      display: "flex",
+                    }}
+                  >
+                    <div>
+                      {code.member.profile_photo &&
+                      code.member.profile_photo ? (
+                        <Avatar
+                          style={{ marginRight: "15px" }}
+                          src={code.member && code.member.profile_photo}
+                        />
+                      ) : (
+                        <Avatar style={{ marginRight: "15px" }}>
+                          {code.member && code.member.first_name.charAt(0)}
+                        </Avatar>
+                      )}
+                    </div>
+                    <div style={{ flexDirection: "column" }}>
                       <LinkMui className={classes.linkMui1}>
                         {`${code && code.member.first_name} ${
                           code && code.member.last_name
                         }`}
                       </LinkMui>
-                      {` asked ${
-                        code && calculateDateInterval(code.timestamp)
-                      }`}
-                    </Typography>
+                      <Typography variant="body2" style={{ opacity: 0.8 }}>
+                        {` asked ${
+                          code && calculateDateInterval(code.timestamp)
+                        }`}
+                      </Typography>
+                    </div>
                   </div>
                 </Paper>
               );
