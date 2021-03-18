@@ -119,7 +119,16 @@ const DashboardPage = () => {
   return (
     <div>
       <PageTitle title="Dashboard" />
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6" style={{ paddingRight: "15px" }}>
+          View By
+        </Typography>
         <FormControl margin="dense" className={classes.formControl}>
           <InputLabel>Date Range</InputLabel>
           <Select
