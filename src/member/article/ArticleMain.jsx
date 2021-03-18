@@ -7,7 +7,6 @@ import logo from "../../assets/CodeineLogos/Member.svg";
 import Navbar from "../../components/Navbar";
 import CommentDrawer from "./ArticleComments";
 import ViewArticle from "./ViewArticle";
-import EditArticle from "./EditArticle";
 import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
 import Cookies from "js-cookie";
@@ -71,20 +70,17 @@ const ArticleMain = () => {
     autoHideDuration: 3000,
   });
 
+  const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [user, setUser] = useState(null);
-
   const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const memberid = jwt_decode(Service.getJWT()).user_id;
       Service.client
         .get(`/auth/members/${memberid}`)
         .then((res) => {
           setUser(res.data);
+          setLoggedIn(true);
         })
         .catch((err) => {
           setUser();
@@ -112,6 +108,7 @@ const ArticleMain = () => {
     Service.client
       .get(`/articles/${id}`)
       .then((res) => {
+        console.log(res.data);
         setArticleDetails(res.data);
       })
       .catch((err) => {
@@ -122,7 +119,6 @@ const ArticleMain = () => {
   const [loading, setLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
-  const [openEditor, setOpenEditor] = useState(false);
 
   const memberNavbar = (
     <Fragment>
@@ -199,19 +195,40 @@ const ArticleMain = () => {
     </Fragment>
   );
 
+  const [saveState, setSaveState] = useState(true);
+
   const navLogo = (
     <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" alt="codeine logo" />
-      </Link>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Link
+          to="/"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            marginRight: "35px",
+            width: 100,
+          }}
+        >
+          <img src={logo} width="120%" alt="codeine logo" />
+        </Link>
+        {user && !articleDetails.is_published && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              variant="h6"
+              style={{ fontSize: "15px", color: "#000000" }}
+            >
+              Draft in {user.first_name + " " + user.last_name}
+            </Typography>
+            <Typography
+              variant="h6"
+              style={{ fontSize: "15px", color: "#0000008a" }}
+            >
+              {saveState ? "-Saved" : "-Saving"}
+            </Typography>
+          </div>
+        )}
+      </div>
     </Fragment>
   );
 
@@ -228,8 +245,6 @@ const ArticleMain = () => {
         user={user}
         openIDE={openIDE}
         setOpenIDE={setOpenIDE}
-        openEditor={openEditor}
-        setOpenEditor={setOpenEditor}
         articleDetails={articleDetails}
         setArticleDetails={setArticleDetails}
         drawerOpen={drawerOpen}
@@ -242,8 +257,6 @@ const ArticleMain = () => {
           user={user}
           openIDE={openIDE}
           setOpenIDE={setOpenIDE}
-          openEditor={openEditor}
-          setOpenEditor={setOpenEditor}
           articleDetails={articleDetails}
           setArticleDetails={setArticleDetails}
           drawerOpen={drawerOpen}
@@ -252,37 +265,17 @@ const ArticleMain = () => {
           setSbOpen={setSbOpen}
         />
       ) : (
-        <div>
-          {openEditor ? (
-            <EditArticle
-              user={user}
-              openIDE={openIDE}
-              setOpenIDE={setOpenIDE}
-              openEditor={openEditor}
-              setOpenEditor={setOpenEditor}
-              articleDetails={articleDetails}
-              setArticleDetails={setArticleDetails}
-              drawerOpen={drawerOpen}
-              setDrawerOpen={setDrawerOpen}
-              setSnackbar={setSnackbar}
-              setSbOpen={setSbOpen}
-            />
-          ) : (
-            <ViewArticle
-              user={user}
-              openIDE={openIDE}
-              setOpenIDE={setOpenIDE}
-              openEditor={openEditor}
-              setOpenEditor={setOpenEditor}
-              articleDetails={articleDetails}
-              setArticleDetails={setArticleDetails}
-              drawerOpen={drawerOpen}
-              setDrawerOpen={setDrawerOpen}
-              setSnackbar={setSnackbar}
-              setSbOpen={setSbOpen}
-            />
-          )}
-        </div>
+        <ViewArticle
+          user={user}
+          openIDE={openIDE}
+          setOpenIDE={setOpenIDE}
+          articleDetails={articleDetails}
+          setArticleDetails={setArticleDetails}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          setSnackbar={setSnackbar}
+          setSbOpen={setSbOpen}
+        />
       )}
       <Footer />
     </div>

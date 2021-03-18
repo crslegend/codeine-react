@@ -5,8 +5,8 @@ import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
 import ViewArticlePage from "./member/article/ArticleMain";
-import EditArticlePage from "./member/article/EditArticle";
-import MemberNewArticlePage from "./member/article/NewArticlePage";
+import MemberArticlePage from "./member/article/MemberArticleList";
+import MemberEditArticlePage from "./member/article/EditArticle";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
@@ -106,8 +106,14 @@ const App = () => {
       />
       <PrivateRoute
         exact
-        path="/newarticle"
-        component={MemberNewArticlePage}
+        path="/member/articles/"
+        component={MemberArticlePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/article/edit/:id"
+        component={MemberEditArticlePage}
         user="member"
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}

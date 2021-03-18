@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     fontDisplay: "swap",
     paddingTop: "65px",
+    backgroundColor: "#fff",
   },
   codeineLogo: {
     display: "flex",
@@ -53,14 +54,13 @@ const useStyles = makeStyles((theme) => ({
 const ViewArticle = (props) => {
   const classes = useStyles();
   const { id } = useParams();
+  const history = useHistory();
 
   const {
     articleDetails,
     setArticleDetails,
     drawerOpen,
     setDrawerOpen,
-    openEditor,
-    setOpenEditor,
     openIDE,
     setOpenIDE,
     setSbOpen,
@@ -189,12 +189,10 @@ const ViewArticle = (props) => {
 
   const openingIDE = () => {
     setOpenIDE(true);
-    setOpenEditor(false);
   };
 
   const openingEditor = () => {
     setOpenIDE(false);
-    setOpenEditor(true);
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -212,7 +210,7 @@ const ViewArticle = (props) => {
 
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      <Container maxWidth="sm">
         <div>
           <Menu onClick={(e) => handleClick(e)} />
           <Popover
@@ -232,7 +230,7 @@ const ViewArticle = (props) => {
             <Typography
               variant="body2"
               className={classes.typography}
-              onClick={() => openingEditor()}
+              onClick={() => history.push(`/article/edit/${id}`)}
             >
               Edit article
             </Typography>
@@ -246,7 +244,7 @@ const ViewArticle = (props) => {
               Delete
             </Typography>
           </Popover>
-          {!openIDE && !openEditor && (
+          {!openIDE && (
             <Button
               variant="contained"
               color="primary"
@@ -462,7 +460,10 @@ const ViewArticle = (props) => {
             </div>
           </div>
         )}
-        {parse(articleDetails.content, options)}
+        <div style={{ fontSize: "20px" }}>
+          {parse(articleDetails.content, options)}
+        </div>
+
         {/* <ReactQuill
           value={articleDetails.content}
           readOnly={openEditor}

@@ -1,45 +1,24 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
-import Service from "../../../AxiosService";
-import jwt_decode from "jwt-decode";
-import Toast from "../../../components/Toast.js";
+import {
+  Button,
+  CircularProgress,
+  Paper,
+  TextField,
+  ListItem,
+  Typography,
+} from "@material-ui/core";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import Service from "../../AxiosService";
+import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
-  dropzone: {
-    "@global": {
-      ".MuiDropzoneArea-text.MuiTypography-h5": {
-        textTransform: "none",
-        fontSize: "16px",
-      },
-    },
-  },
-  paper: {
-    height: "calc(100vh - 185px)",
-    padding: theme.spacing(3),
-    width: "100%",
-  },
-  avatar: {
-    fontSize: "80px",
-    width: "150px",
-    height: "150px",
-  },
-  heading: {
-    height: "70px",
-    backgroundColor: "#437FC7",
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  button: {
-    marginTop: "20px",
-  },
+  root: {},
 }));
 
-const Helpdesk = (props) => {
+const ViewAllArticles = () => {
   const classes = useStyles();
-
-  const { setProfile, history } = props;
+  const history = useHistory();
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -91,8 +70,7 @@ const Helpdesk = (props) => {
   };
 
   return (
-    <Fragment className={classes.paper}>
-      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+    <div className={classes.root}>
       <div style={{ display: "flex" }}>
         <Typography variant="h3" style={{ fontWeight: "600" }}>
           Your articles
@@ -100,7 +78,7 @@ const Helpdesk = (props) => {
         <Button
           variant="contained"
           color="primary"
-          onclick={createNewArticle()}
+          onclick={() => createNewArticle()}
         >
           New Article
         </Button>
@@ -113,7 +91,17 @@ const Helpdesk = (props) => {
       {articleList.map((article, index) => {
         return (
           <Fragment>
-            <div key={article.id}>{article.id + " - " + article.title}</div>
+            {!article.is_published && (
+              <div key={article.id}>
+                <Typography
+                  onClick={() => {
+                    //history.push(`/article/edit/${article.id}`);
+                  }}
+                >
+                  {article.id + " - " + article.title}
+                </Typography>
+              </div>
+            )}
           </Fragment>
         );
       })}
@@ -121,11 +109,25 @@ const Helpdesk = (props) => {
       <Typography variant="h5" style={{ fontWeight: "600" }}>
         Published
       </Typography>
-      <Typography variant="h5" style={{ fontWeight: "600" }}>
-        Your articles
-      </Typography>
-    </Fragment>
+      {articleList.map((article, index) => {
+        return (
+          <Fragment>
+            {article.is_published && (
+              <div key={article.id}>
+                <Typography
+                  onClick={() => {
+                    history.push(`/article/${article.id}`);
+                  }}
+                >
+                  {article.id + " - " + article.title}
+                </Typography>
+              </div>
+            )}
+          </Fragment>
+        );
+      })}
+    </div>
   );
 };
 
-export default Helpdesk;
+export default ViewAllArticles;

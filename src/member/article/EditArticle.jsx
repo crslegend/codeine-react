@@ -2,52 +2,30 @@ import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
-  CircularProgress,
-  Paper,
   TextField,
-  ListItem,
   Typography,
   Grid,
+  ListItem,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Member.svg";
 import Navbar from "../../components/Navbar";
-import CommentDrawer from "./ArticleComments";
-import Footer from "./Footer";
-import Cookies from "js-cookie";
-import Toast from "../../components/Toast.js";
-import Splitter, { SplitDirection } from "@devbookhq/splitter";
+import logo from "../../assets/CodeineLogos/Member.svg";
+import Service from "../../AxiosService";
+import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
 import { ToggleButton } from "@material-ui/lab";
+import Toast from "../../components/Toast.js";
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
     paddingTop: "65px",
-  },
-  codeineLogo: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: "10px",
-    width: "25%",
-    minWidth: "120px",
-  },
-  paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "40%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translateX(-50%) translateY(-50%)",
-    padding: "20px 30px",
+    backgroundColor: "#fff",
   },
   button: {
     marginTop: "20px",
@@ -57,48 +35,41 @@ const useStyles = makeStyles((theme) => ({
   tile: {
     height: "100%",
   },
-  split: {
-    height: "calc(100vh - 65px)",
-  },
   languageButtons: {
-    width: 80,
+    minWidth: 80,
     marginRight: "15px",
     height: 30,
   },
   categoryButtons: {
+    minWidth: 80,
+    marginRight: "15px",
     marginBottom: "10px",
     height: 30,
   },
+  gridlayout: {
+    padding: theme.spacing(3),
+  },
 }));
 
-const EditArticle = (props) => {
+const EditArticle = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { id } = useParams();
 
-  const {
-    articleDetails,
-    setArticleDetails,
-    drawerOpen,
-    setDrawerOpen,
-    openEditor,
-    setOpenEditor,
-    openIDE,
-    setOpenIDE,
-    setSbOpen,
-    setSnackbar,
-  } = props;
-
-  //   const [articleDetails, setArticleDetails] = useState({
-  //     title: "",
-  //     content: "",
-  //     category: [],
-  //     coding_languages: [],
-  //     languages: [],
-  //   });
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const editor = {
     toolbar: [
-      [{ size: ["normal, large"] }],
+      [{ size: ["normal", "large"] }],
       ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
       [
         { list: "ordered" },
@@ -114,8 +85,6 @@ const EditArticle = (props) => {
   };
 
   const format = [
-    "font",
-    "size",
     "bold",
     "italic",
     "underline",
@@ -127,6 +96,53 @@ const EditArticle = (props) => {
     "link",
     "image",
   ];
+
+  const [user, setUser] = useState(null);
+  const [articleDetails, setArticleDetails] = useState({
+    title: "",
+    content: "",
+  });
+
+  useEffect(() => {
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const memberid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get(`/auth/members/${memberid}`)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          setUser();
+        });
+      Service.client
+        .get(`/articles/${id}`)
+        .then((res1) => {
+          console.log(res1.data);
+          //setArticleDetails(res1.data);
+          getFields(res1.data);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const [debouncedText] = useDebounce(articleDetails, 1500);
+  const [saveState, setSaveState] = useState(true);
+
+  // useEffect(() => {
+  //   if (debouncedText) {
+  //     setSaveState(true);
+  //     if (!articleDetails.is_published) {
+  //       Service.client
+  //         .put(`/articles/${id}`, articleDetails)
+  //         .then((res) => {
+  //           setSaveState(true);
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         });
+  //     }
+  //   }
+  // }, [debouncedText]);
 
   const [languages, setLanguages] = useState({
     ENG: false,
@@ -154,56 +170,37 @@ const EditArticle = (props) => {
     RUBY: false,
   });
 
-  useEffect(() => {
+  const getFields = (currentarticle) => {
+    setArticleDetails(currentarticle);
     let newLanguages = { ...languages };
-    for (let i = 0; i < articleDetails.languages.length; i++) {
+    for (let i = 0; i < currentarticle.languages.length; i++) {
       newLanguages = {
         ...newLanguages,
-        [articleDetails.languages[i]]: true,
+        [currentarticle.languages[i]]: true,
       };
     }
     setLanguages(newLanguages);
 
     let newCategories = { ...categories };
-    for (let i = 0; i < articleDetails.categories.length; i++) {
+    for (let i = 0; i < currentarticle.categories.length; i++) {
       newCategories = {
         ...newCategories,
-        [articleDetails.categories[i]]: true,
+        [currentarticle.categories[i]]: true,
       };
     }
     setCategories(newCategories);
 
     let newCodeLanguages = { ...codeLanguage };
-    for (let i = 0; i < articleDetails.coding_languages.length; i++) {
+    for (let i = 0; i < currentarticle.coding_languages.length; i++) {
       newCodeLanguages = {
         ...newCodeLanguages,
-        [articleDetails.coding_languages[i]]: true,
+        [currentarticle.coding_languages[i]]: true,
       };
     }
     setCodeLanguage(newCodeLanguages);
-  }, []);
-
-  const closeEditor = () => {
-    setOpenEditor(false);
-    setOpenIDE(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (articleDetails.title === "" || articleDetails.content === "") {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Please enter required fields!",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
-    }
-
+  const saveFields = () => {
     let data = {
       ...articleDetails,
       coding_languages: [],
@@ -228,9 +225,94 @@ const EditArticle = (props) => {
         data.coding_languages.push(property);
       }
     }
+    setArticleDetails(data);
+  };
+
+  const handleSubmit = () => {
+    if (articleDetails.title === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "A title is required!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    let neverChooseOne = true;
+    for (const property in languages) {
+      if (languages[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 course language",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in categories) {
+      if (categories[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 category",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    neverChooseOne = true;
+    for (const property in codeLanguage) {
+      if (codeLanguage[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message:
+          "Please select at least 1 coding language/framework for your course",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    saveFields();
 
     Service.client
-      .put(`/articles/${articleDetails.id}`, data)
+      .put(`/articles/${id}`, articleDetails)
       .then((res) => {
         setArticleDetails(res.data);
         setSbOpen(true);
@@ -243,19 +325,91 @@ const EditArticle = (props) => {
           },
           autoHideDuration: 3000,
         });
-        closeEditor();
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const [loading, setLoading] = useState(false);
+  const navLogo = (
+    <Fragment>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Link
+          to="/"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            marginRight: "35px",
+            width: 100,
+          }}
+        >
+          <img src={logo} width="120%" alt="codeine logo" />
+        </Link>
+        {user && articleDetails && !articleDetails.is_published && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              variant="h6"
+              style={{ fontSize: "15px", color: "#000000" }}
+            >
+              Draft in {user.first_name + " " + user.last_name}
+            </Typography>
+            <Typography
+              variant="h6"
+              style={{ fontSize: "15px", color: "#0000008a" }}
+            >
+              {saveState ? "-Saved" : "-Saving"}
+            </Typography>
+          </div>
+        )}
+      </div>
+    </Fragment>
+  );
+
+  const loggedInNavbar = (
+    <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Link
+          to="/member/home"
+          style={{
+            textDecoration: "none",
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Dashboard
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{
+            textTransform: "capitalize",
+          }}
+          onClick={() => {
+            Service.removeCredentials();
+            //setLoggedIn(false);
+            history.push("/");
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Logout
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
 
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       <Grid container>
-        <Grid item xs={8}>
+        <Grid item xs={8} className={classes.gridlayout}>
           <TextField
             margin="normal"
             id="title"
@@ -263,54 +417,58 @@ const EditArticle = (props) => {
             name="title"
             required
             fullWidth
-            value={articleDetails.title}
+            value={articleDetails && articleDetails.title}
             // error={firstNameError}
-            onChange={(event) =>
+            onChange={(event) => {
               setArticleDetails({
                 ...articleDetails,
                 title: event.target.value,
-              })
-            }
+              });
+              setSaveState(false);
+            }}
           />
 
           <ReactQuill
             theme={"snow"}
-            value={articleDetails.content}
+            value={articleDetails && articleDetails.content}
             modules={editor}
             format={format}
             id="content"
             name="content"
-            onChange={(event) =>
+            style={{ height: "78vh", marginBottom: "50px" }}
+            onChange={(event) => {
               setArticleDetails({
                 ...articleDetails,
                 content: event,
-              })
-            }
+              });
+              setSaveState(false);
+            }}
             placeholder="Compose an epic..."
           />
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
-            onClick={(e) => handleSubmit(e)}
-          >
-            Save Changes
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
-            onClick={() => closeEditor()}
-          >
-            Cancel
-          </Button>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} className={classes.gridlayout}>
           <div style={{ marginBottom: "30px" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                textTransform: "capitalize",
+              }}
+              onClick={(e) => handleSubmit(e)}
+            >
+              {articleDetails && articleDetails.is_published
+                ? "Save and publish"
+                : "Publish"}
+            </Button>
+            <Button
+              variant="contained"
+              style={{
+                textTransform: "capitalize",
+              }}
+              onClick={() => history.push(`/article/${id}`)}
+            >
+              Back to article
+            </Button>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Course Language (Choose at least 1)
             </Typography>
@@ -321,6 +479,8 @@ const EditArticle = (props) => {
                 selected={languages && languages.ENG}
                 onChange={() => {
                   setLanguages({ ...languages, ENG: !languages.ENG });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -332,6 +492,8 @@ const EditArticle = (props) => {
                 selected={languages && languages.MAN}
                 onChange={() => {
                   setLanguages({ ...languages, MAN: !languages.MAN });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -343,6 +505,8 @@ const EditArticle = (props) => {
                 selected={languages && languages.FRE}
                 onChange={() => {
                   setLanguages({ ...languages, FRE: !languages.FRE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -361,6 +525,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.SEC}
                 onChange={() => {
                   setCategories({ ...categories, SEC: !categories.SEC });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -372,6 +538,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.DB}
                 onChange={() => {
                   setCategories({ ...categories, DB: !categories.DB });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -383,6 +551,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.FE}
                 onChange={() => {
                   setCategories({ ...categories, FE: !categories.FE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -394,6 +564,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.BE}
                 onChange={() => {
                   setCategories({ ...categories, BE: !categories.BE });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -405,6 +577,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.UI}
                 onChange={() => {
                   setCategories({ ...categories, UI: !categories.UI });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -416,6 +590,8 @@ const EditArticle = (props) => {
                 selected={categories && categories.ML}
                 onChange={() => {
                   setCategories({ ...categories, ML: !categories.ML });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -434,6 +610,8 @@ const EditArticle = (props) => {
                 selected={codeLanguage && codeLanguage.PY}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, PY: !codeLanguage.PY });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -448,6 +626,8 @@ const EditArticle = (props) => {
                     ...codeLanguage,
                     JAVA: !codeLanguage.JAVA,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -459,6 +639,8 @@ const EditArticle = (props) => {
                 selected={codeLanguage && codeLanguage.JS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, JS: !codeLanguage.JS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -470,6 +652,8 @@ const EditArticle = (props) => {
                 selected={codeLanguage && codeLanguage.CPP}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CPP: !codeLanguage.CPP });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -481,6 +665,8 @@ const EditArticle = (props) => {
                 selected={codeLanguage && codeLanguage.CS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CS: !codeLanguage.CS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -495,6 +681,8 @@ const EditArticle = (props) => {
                     ...codeLanguage,
                     HTML: !codeLanguage.HTML,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -506,6 +694,8 @@ const EditArticle = (props) => {
                 selected={codeLanguage && codeLanguage.CSS}
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CSS: !codeLanguage.CSS });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -520,6 +710,8 @@ const EditArticle = (props) => {
                     ...codeLanguage,
                     RUBY: !codeLanguage.RUBY,
                   });
+                  setSaveState(false);
+                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >

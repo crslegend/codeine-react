@@ -8,7 +8,14 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  ListItem,
+  Typography,
+  Popover,
+  IconButton,
+} from "@material-ui/core";
 import PrivateRoute from "../../components/Routes/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";
 import Toast from "../../components/Toast.js";
@@ -90,6 +97,13 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "uppercase",
     // color: theme.palette.primary.main,
   },
+  popover: {
+    width: "300px",
+  },
+  typography: {
+    padding: theme.spacing(3),
+    cursor: "pointer",
+  },
 }));
 
 const MemberLanding = () => {
@@ -113,24 +127,103 @@ const MemberLanding = () => {
     profile_photo: "",
   });
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   const memberNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
+        <IconButton onClick={handleClick} size="small">
+          <Avatar
+            src={user.profile_photo}
+            alt=""
+            style={{ width: "34px", height: "34px" }}
+          />
+        </IconButton>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
           }}
-          onClick={() => {
-            Service.removeCredentials();
-            history.push("/");
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
           }}
         >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
+          <div className={classes.popever}>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Courses
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Consultations
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Industry Projects
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Helpdesk
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              Profile
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              My Payments
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                Service.removeCredentials();
+                history.push("/");
+              }}
+            >
+              Log out
+            </Typography>
+          </div>
+        </Popover>
       </ListItem>
     </Fragment>
   );
@@ -332,7 +425,7 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/helpdesk"
-              render={() => <Helpdesk />}
+              render={() => <Helpdesk history={history} />}
             />
             <PrivateRoute
               exact
