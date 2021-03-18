@@ -13,6 +13,8 @@ import {
   Button,
   TextField,
   Avatar,
+  MenuItem,
+  Chip,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
@@ -40,7 +42,43 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(15),
     height: theme.spacing(15),
   },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: "4px 0px 5px 10px",
+    backgroundColor: "#164D8F",
+    color: "#FFFFFF",
+  },
 }));
+
+const categories = [
+  {
+    value: "ML",
+    label: "Machine Learning",
+  },
+  {
+    value: "DB",
+    label: "Database Administration",
+  },
+  {
+    value: "SEC",
+    label: "Security",
+  },
+  {
+    value: "UI",
+    label: "UI/UX",
+  },
+  {
+    value: "FE",
+    label: "Frontend",
+  },
+  {
+    value: "BE",
+    label: "Backend",
+  },
+];
 
 const AdminLearnersAchievementPage = () => {
   const classes = useStyles();
@@ -50,6 +88,11 @@ const AdminLearnersAchievementPage = () => {
   const [newBadge, setNewBadge] = useState({
     badge: "",
     title: "",
+  });
+  const [newBadgeRequirement, setNewBadgeRequirement] = useState({
+    experience_point: "0",
+    category: [],
+    coding_languages: [],
   });
   const [avatar, setAvatar] = useState();
 
@@ -66,6 +109,7 @@ const AdminLearnersAchievementPage = () => {
 
   const submitNewAchievement = () => {
     console.log(newBadge);
+    console.log(newBadgeRequirement);
   };
 
   const getBadgesData = () => {
@@ -180,8 +224,102 @@ const AdminLearnersAchievementPage = () => {
         <DialogContent>
           <DialogContentText>
             <Grid container>
-              <Grid item xs={9}></Grid>
-              <Grid item xs={3}>
+              <Grid item xs={8}>
+                <div style={{ marginBottom: "20px" }}>
+                  <label htmlFor="title">
+                    <Typography variant="body2">Badge Title</Typography>
+                  </label>
+                  <TextField
+                    id="title"
+                    style={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                    margin="dense"
+                    value={newBadge && newBadge.title}
+                    onChange={(e) =>
+                      setNewBadge({
+                        ...newBadge,
+                        title: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div style={{ marginBottom: "20px" }}>
+                  <label htmlFor="points">
+                    <Typography variant="body2">Experience Points</Typography>
+                  </label>
+                  <TextField
+                    id="points"
+                    style={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                    margin="dense"
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0 },
+                    }}
+                    value={
+                      newBadgeRequirement &&
+                      newBadgeRequirement.experience_point
+                    }
+                    onChange={(e) =>
+                      setNewBadgeRequirement({
+                        ...newBadgeRequirement,
+                        experience_point: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginBottom: "20px" }}>
+                  <label htmlFor="categories">
+                    <Typography variant="body2">Categories</Typography>
+                  </label>
+                  <TextField
+                    id="categories"
+                    style={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                    margin="dense"
+                    select
+                    SelectProps={{
+                      multiple: true,
+                      renderValue: (selected) => (
+                        <div className={classes.chips}>
+                          {selected.map((value) => (
+                            <Chip
+                              key={value}
+                              label={value}
+                              className={classes.chip}
+                            />
+                          ))}
+                        </div>
+                      ),
+                    }}
+                    value={newBadgeRequirement && newBadgeRequirement.category}
+                    onChange={(e) => {
+                      setNewBadgeRequirement({
+                        ...newBadgeRequirement,
+                        category: e.target.value,
+                      });
+                    }}
+                  >
+                    {categories.map((option) => (
+                      <MenuItem
+                        style={{ height: "35px", fontSize: "14px" }}
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
                 <div
                   style={{
                     marginBottom: "10px",
@@ -204,7 +342,6 @@ const AdminLearnersAchievementPage = () => {
                       </Avatar>
                     )}
                   </IconButton>
-                  {console.log(newBadge)}
                 </div>
               </Grid>
             </Grid>
@@ -237,11 +374,9 @@ const AdminLearnersAchievementPage = () => {
             maxFileSize={5000000}
             fileObjects={avatar}
             onAdd={(newPhoto) => {
-              // console.log("onAdd", newPhoto);
               setAvatar(newPhoto);
             }}
             onDelete={(deletePhotoObj) => {
-              // console.log("onDelete", deletePhotoObj);
               setAvatar();
             }}
             previewGridProps={{
