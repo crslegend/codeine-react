@@ -11,7 +11,7 @@ import components from "./components/NavbarComponents";
 // import PageTitle from "../components/PageTitle";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, People, Person } from "@material-ui/icons";
+import { Add, Forum, People, Person } from "@material-ui/icons";
 // import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
 // import ReactQuill from "react-quill";
@@ -353,8 +353,7 @@ const ViewAllCodeReviews = () => {
             marginRight: "auto",
           }}
         >
-          {codeReviews &&
-            codeReviews.length > 0 &&
+          {codeReviews && codeReviews.length > 0 ? (
             codeReviews.map((code, index) => {
               return (
                 <Paper key={index} className={classes.codeReview}>
@@ -457,7 +456,15 @@ const ViewAllCodeReviews = () => {
                   </div>
                 </Paper>
               );
-            })}
+            })
+          ) : (
+            <div style={{ textAlign: "center" }}>
+              <Forum fontSize="large" />
+              <Typography variant="h2">
+                No Code Snippets for Review Yet
+              </Typography>
+            </div>
+          )}
         </div>
       </div>
       <AddSnippetDialog
