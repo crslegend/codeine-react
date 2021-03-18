@@ -802,6 +802,7 @@ const ViewCodeReviewDetails = () => {
               startIcon={<Add />}
               style={{ height: 30, alignItems: "center" }}
               onClick={() => setAddSnippetDialog(true)}
+              disabled={!loggedIn}
             >
               Add Code Snippet
             </Button>

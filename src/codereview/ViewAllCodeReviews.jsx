@@ -11,7 +11,7 @@ import components from "./components/NavbarComponents";
 // import PageTitle from "../components/PageTitle";
 import { Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add } from "@material-ui/icons";
+import { Add, People, Person } from "@material-ui/icons";
 // import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
 // import ReactQuill from "react-quill";
@@ -108,6 +108,7 @@ const ViewAllCodeReviews = () => {
 
   const [addSnippetDialog, setAddSnippetDialog] = useState(false);
 
+  const [viewMySnippet, setViewMySnippet] = useState(false);
   const [codeReviews, setCodeReviews] = useState();
 
   const checkIfLoggedIn = () => {
@@ -271,16 +272,44 @@ const ViewAllCodeReviews = () => {
           <Typography variant="h2" className={classes.heading}>
             code review
           </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Add />}
-            onClick={() => setAddSnippetDialog(true)}
-            style={{ height: 30 }}
-            disabled={!loggedIn}
-          >
-            Add Code Snippet
-          </Button>
+          <div>
+            {loggedIn &&
+              (viewMySnippet ? (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<People />}
+                  style={{ height: 30 }}
+                  onClick={() => {
+                    setViewMySnippet(false);
+                  }}
+                >
+                  View All Snippets
+                </Button>
+              ) : (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<Person />}
+                  style={{ height: 30 }}
+                  onClick={() => {
+                    setViewMySnippet(true);
+                  }}
+                >
+                  View My Snippets
+                </Button>
+              ))}
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<Add />}
+              onClick={() => setAddSnippetDialog(true)}
+              style={{ height: 30, marginLeft: "10px" }}
+              disabled={!loggedIn}
+            >
+              Add Code Snippet
+            </Button>
+          </div>
         </div>
         <div style={{ marginTop: "40px" }}>
           {codeReviews &&
