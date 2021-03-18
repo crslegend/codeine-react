@@ -43,11 +43,11 @@ const memberNavbar = (
   </Fragment>
 );
 
-const loggedInNavbar = (onClickFn) => {
+const loggedInNavbar = (onClickFn, user) => {
   return (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/home" style={{ textDecoration: "none" }}>
+        <Link to={`/${user}/home`} style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}

@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
-// import jwt_decode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
 // import PageTitle from "../components/PageTitle";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
@@ -87,6 +87,8 @@ const ViewAllCodeReviews = () => {
   });
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState();
+
   const [snippet, setSnippet] = useState("");
   const [snippetTitle, setSnippetTitle] = useState("");
   const [codeLanguage, setCodeLanguage] = useState({
@@ -117,6 +119,23 @@ const ViewAllCodeReviews = () => {
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+          if (res.data.member) {
+            setUser("member");
+          } else {
+            if (res.data.partner) {
+              setUser("partner");
+            } else {
+              setUser("admin");
+            }
+          }
+        })
+        .catch((err) => {});
     }
   };
 
@@ -276,7 +295,7 @@ const ViewAllCodeReviews = () => {
                 Service.removeCredentials();
                 setLoggedIn(false);
                 history.push("/");
-              })
+              }, user && user)
             : components.memberNavbar
         }
       />

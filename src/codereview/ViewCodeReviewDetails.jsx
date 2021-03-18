@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
 import { Add, ArrowBack, Delete, Edit } from "@material-ui/icons";
-import logo from "../assets/CodeineLogos/Member.svg";
+import components from "./components/NavbarComponents";
 
 import AddSnippetDialog from "./components/AddSnippetDialog";
 import { calculateDateInterval } from "../utils.js";
@@ -106,6 +106,8 @@ const ViewCodeReviewDetails = () => {
   });
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState();
+
   const [selectedValue, setSelectedValue] = useState();
   const [code, setCode] = useState();
   const [codeComments, setCodeComments] = useState([]);
@@ -178,6 +180,23 @@ const ViewCodeReviewDetails = () => {
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+          if (res.data.member) {
+            setUser("member");
+          } else {
+            if (res.data.partner) {
+              setUser("partner");
+            } else {
+              setUser("admin");
+            }
+          }
+        })
+        .catch((err) => {});
     }
   };
 
@@ -226,104 +245,6 @@ const ViewCodeReviewDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Teach on Codeine
-          </Typography>
-        </Link>
-      </ListItem>
-      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/industry" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Partners for Enterprise
-          </Typography>
-        </Link>
-      </ListItem> */}
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/member/register"
-          style={{
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const loggedInNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link
-          to="/member/home"
-          style={{
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const navLogo = (
-    <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" alt="codeine logo" />
-      </Link>
-    </Fragment>
-  );
-
   const resuableChip = (label, index, backgroundColor, fontColor) => {
     return (
       <Chip
@@ -340,118 +261,118 @@ const ViewCodeReviewDetails = () => {
     );
   };
 
-  const singleComment = (comment) => {
-    return (
-      <Fragment>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          {comment.user.profile_photo && comment.user.profile_photo ? (
-            <Avatar
-              style={{ marginRight: "15px" }}
-              src={comment.user && comment.user.profile_photo}
-            />
-          ) : (
-            <Avatar style={{ marginRight: "15px" }}>
-              {comment.user && comment.user.first_name.charAt(0)}
-            </Avatar>
-          )}
-          <div style={{ flexDirection: "column" }}>
-            <Typography variant="body2" style={{ fontWeight: 600 }}>
-              {comment.user && comment.user.first_name}{" "}
-              {comment.user && comment.user.last_name}
-            </Typography>
-            <Typography variant="body2" style={{ opacity: 0.7 }}>
-              {comment && calculateDateInterval(comment.timestamp)}
-            </Typography>
-          </div>
-          {checkIfOwnerOfComment(comment.user && comment.user.id) && (
-            <div
-              style={{
-                flexDirection: "row",
-                order: 2,
-                marginLeft: "auto",
-              }}
-            >
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setEditMode(true);
-                  setSelectedCommentId(comment.id);
-                  setSelectedComment(comment);
-                }}
-                disabled={editMode && selectedCommentId === comment.id}
-              >
-                <Edit fontSize="small" />
-              </IconButton>
+  // const singleComment = (comment) => {
+  //   return (
+  //     <Fragment>
+  //       <div
+  //         style={{
+  //           display: "flex",
+  //           flexDirection: "row",
+  //         }}
+  //       >
+  //         {comment.user.profile_photo && comment.user.profile_photo ? (
+  //           <Avatar
+  //             style={{ marginRight: "15px" }}
+  //             src={comment.user && comment.user.profile_photo}
+  //           />
+  //         ) : (
+  //           <Avatar style={{ marginRight: "15px" }}>
+  //             {comment.user && comment.user.first_name.charAt(0)}
+  //           </Avatar>
+  //         )}
+  //         <div style={{ flexDirection: "column" }}>
+  //           <Typography variant="body2" style={{ fontWeight: 600 }}>
+  //             {comment.user && comment.user.first_name}{" "}
+  //             {comment.user && comment.user.last_name}
+  //           </Typography>
+  //           <Typography variant="body2" style={{ opacity: 0.7 }}>
+  //             {comment && calculateDateInterval(comment.timestamp)}
+  //           </Typography>
+  //         </div>
+  //         {checkIfOwnerOfComment(comment.user && comment.user.id) && (
+  //           <div
+  //             style={{
+  //               flexDirection: "row",
+  //               order: 2,
+  //               marginLeft: "auto",
+  //             }}
+  //           >
+  //             <IconButton
+  //               size="small"
+  //               onClick={() => {
+  //                 setEditMode(true);
+  //                 setSelectedCommentId(comment.id);
+  //                 setSelectedComment(comment);
+  //               }}
+  //               disabled={editMode && selectedCommentId === comment.id}
+  //             >
+  //               <Edit fontSize="small" />
+  //             </IconButton>
 
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setSelectedCommentId(comment.id);
-                  setDeleteCommentDialog(true);
-                }}
-              >
-                <Delete fontSize="small" />
-              </IconButton>
-            </div>
-          )}
-        </div>
-        <div>
-          {editMode && selectedCommentId === comment.id ? (
-            <Fragment>
-              <TextField
-                margin="dense"
-                variant="outlined"
-                value={selectedComment && selectedComment.comment}
-                onChange={(e) =>
-                  setSelectedComment({
-                    ...selectedComment,
-                    comment: e.target.value,
-                  })
-                }
-                InputProps={{
-                  classes: { input: classes.input },
-                }}
-                fullWidth
-                autoFocus
-              />
-              <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{ marginRight: "10px" }}
-                  onClick={() => handleUpdateComment()}
-                  disabled={selectedComment.comment === ""}
-                >
-                  Save
-                </Button>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    setEditMode(false);
-                    setSelectedComment();
-                    setSelectedCommentId();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </Fragment>
-          ) : (
-            <Typography style={{ fontSize: 13, paddingTop: "10px" }}>
-              {comment.comment}
-            </Typography>
-          )}
-        </div>
-      </Fragment>
-    );
-  };
+  //             <IconButton
+  //               size="small"
+  //               onClick={() => {
+  //                 setSelectedCommentId(comment.id);
+  //                 setDeleteCommentDialog(true);
+  //               }}
+  //             >
+  //               <Delete fontSize="small" />
+  //             </IconButton>
+  //           </div>
+  //         )}
+  //       </div>
+  //       <div>
+  //         {editMode && selectedCommentId === comment.id ? (
+  //           <Fragment>
+  //             <TextField
+  //               margin="dense"
+  //               variant="outlined"
+  //               value={selectedComment && selectedComment.comment}
+  //               onChange={(e) =>
+  //                 setSelectedComment({
+  //                   ...selectedComment,
+  //                   comment: e.target.value,
+  //                 })
+  //               }
+  //               InputProps={{
+  //                 classes: { input: classes.input },
+  //               }}
+  //               fullWidth
+  //               autoFocus
+  //             />
+  //             <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+  //               <Button
+  //                 variant="contained"
+  //                 color="primary"
+  //                 size="small"
+  //                 style={{ marginRight: "10px" }}
+  //                 onClick={() => handleUpdateComment()}
+  //                 disabled={selectedComment.comment === ""}
+  //               >
+  //                 Save
+  //               </Button>
+  //               <Button
+  //                 variant="contained"
+  //                 size="small"
+  //                 onClick={() => {
+  //                   setEditMode(false);
+  //                   setSelectedComment();
+  //                   setSelectedCommentId();
+  //                 }}
+  //               >
+  //                 Cancel
+  //               </Button>
+  //             </div>
+  //           </Fragment>
+  //         ) : (
+  //           <Typography style={{ fontSize: 13, paddingTop: "10px" }}>
+  //             {comment.comment}
+  //           </Typography>
+  //         )}
+  //       </div>
+  //     </Fragment>
+  //   );
+  // };
 
   const handleAddNewSnippet = () => {
     if (!newSnippetTitle || newSnippetTitle === "") {
@@ -776,9 +697,17 @@ const ViewCodeReviewDetails = () => {
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Navbar
-        logo={navLogo}
+        logo={components.navLogo}
         bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
+        navbarItems={
+          loggedIn && loggedIn
+            ? components.loggedInNavbar(() => {
+                Service.removeCredentials();
+                setLoggedIn(false);
+                history.push("/");
+              }, user && user)
+            : components.memberNavbar
+        }
       />
       <div className={classes.content}>
         <div
