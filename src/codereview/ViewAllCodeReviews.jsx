@@ -11,7 +11,7 @@ import components from "./components/NavbarComponents";
 // import PageTitle from "../components/PageTitle";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, Forum, People, Person } from "@material-ui/icons";
+import { Add, Favorite, Forum, People, Person } from "@material-ui/icons";
 // import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
 // import ReactQuill from "react-quill";
@@ -144,7 +144,7 @@ const ViewAllCodeReviews = () => {
       Service.client
         .get(`/code-reviews/member/`)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
@@ -152,7 +152,7 @@ const ViewAllCodeReviews = () => {
       Service.client
         .get(`/code-reviews`)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
@@ -422,36 +422,42 @@ const ViewAllCodeReviews = () => {
                         }
                       })}
                   </div>
-                  <div
-                    style={{
-                      marginLeft: "auto",
-                      display: "flex",
-                    }}
-                  >
-                    <div>
-                      {code.member.profile_photo &&
-                      code.member.profile_photo ? (
-                        <Avatar
-                          style={{ marginRight: "15px" }}
-                          src={code.member && code.member.profile_photo}
-                        />
-                      ) : (
-                        <Avatar style={{ marginRight: "15px" }}>
-                          {code.member && code.member.first_name.charAt(0)}
-                        </Avatar>
-                      )}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Favorite style={{ marginRight: "5px" }} />
+                      {`${code && code.likes}`}
                     </div>
-                    <div style={{ flexDirection: "column" }}>
-                      <LinkMui className={classes.linkMui1}>
-                        {`${code && code.member.first_name} ${
-                          code && code.member.last_name
-                        }`}
-                      </LinkMui>
-                      <Typography variant="body2" style={{ opacity: 0.8 }}>
-                        {` asked ${
-                          code && calculateDateInterval(code.timestamp)
-                        }`}
-                      </Typography>
+                    <div
+                      style={{
+                        marginLeft: "auto",
+                        display: "flex",
+                      }}
+                    >
+                      <div>
+                        {code.member.profile_photo &&
+                        code.member.profile_photo ? (
+                          <Avatar
+                            style={{ marginRight: "15px" }}
+                            src={code.member && code.member.profile_photo}
+                          />
+                        ) : (
+                          <Avatar style={{ marginRight: "15px" }}>
+                            {code.member && code.member.first_name.charAt(0)}
+                          </Avatar>
+                        )}
+                      </div>
+                      <div style={{ flexDirection: "column" }}>
+                        <LinkMui className={classes.linkMui1}>
+                          {`${code && code.member.first_name} ${
+                            code && code.member.last_name
+                          }`}
+                        </LinkMui>
+                        <Typography variant="body2" style={{ opacity: 0.8 }}>
+                          {` asked ${
+                            code && calculateDateInterval(code.timestamp)
+                          }`}
+                        </Typography>
+                      </div>
                     </div>
                   </div>
                 </Paper>

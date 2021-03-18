@@ -14,7 +14,13 @@ import LinkMui from "@material-ui/core/Link";
 import { calculateDateInterval } from "../../utils.js";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Comment, Delete, Edit } from "@material-ui/icons";
+import {
+  Comment,
+  Delete,
+  Edit,
+  Favorite,
+  FavoriteBorder,
+} from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -106,6 +112,8 @@ const CommentSection = ({
   replyCommentDialog,
   setReplyCommentDialog,
   handleReplyToComment,
+  handleLikeUnlikeComment,
+  handleLikeUnlikeSnippet,
 }) => {
   const classes = styles();
 
@@ -228,6 +236,24 @@ const CommentSection = ({
                         style={{ marginRight: "5px" }}
                         size="small"
                         onClick={() => {
+                          handleLikeUnlikeComment(
+                            codeComment.id,
+                            codeComment.current_user_liked
+                          );
+                        }}
+                        disabled={!loggedIn}
+                      >
+                        {codeComment.current_user_liked ? (
+                          <Favorite fontSize="small" color="primary" />
+                        ) : (
+                          <FavoriteBorder fontSize="small" />
+                        )}
+                      </IconButton>
+                      {`${codeComment.likes}`}
+                      <IconButton
+                        style={{ marginRight: "5px", marginLeft: "10px" }}
+                        size="small"
+                        onClick={() => {
                           setSelectedCommentId(codeComment.id);
                           setReplyCommentDialog(true);
                         }}
@@ -235,10 +261,7 @@ const CommentSection = ({
                       >
                         <Comment fontSize="small" />
                       </IconButton>
-                      {`${codeComment.reply_count}` +
-                        (codeComment.reply_count > 1
-                          ? ` responses`
-                          : ` response`)}
+                      {`${codeComment.reply_count}`}
                     </div>
                     <div
                       style={{
@@ -396,7 +419,26 @@ const CommentSection = ({
                             alignItems: "center",
                           }}
                         >
-                          <div>LIKES</div>
+                          <div>
+                            <IconButton
+                              style={{ marginRight: "5px" }}
+                              size="small"
+                              onClick={() => {
+                                handleLikeUnlikeComment(
+                                  reply.id,
+                                  reply.current_user_liked
+                                );
+                              }}
+                              disabled={!loggedIn}
+                            >
+                              {reply.current_user_liked ? (
+                                <Favorite fontSize="small" color="primary" />
+                              ) : (
+                                <FavoriteBorder fontSize="small" />
+                              )}
+                            </IconButton>
+                            {`${reply.likes}`}
+                          </div>
                           <div
                             style={{
                               marginLeft: "auto",
