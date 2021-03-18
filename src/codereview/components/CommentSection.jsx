@@ -86,7 +86,6 @@ const format = [
 
 const CommentSection = ({
   codeComments,
-  replyToCommentArr,
   comment,
   setComment,
   reply,
@@ -119,8 +118,8 @@ const CommentSection = ({
           </Typography>
           {codeComments.map((codeComment, index) => {
             return (
-              <Fragment>
-                <div className="replyblock" key={index}>
+              <div key={index}>
+                <div className="replyblock">
                   <div style={{ marginLeft: "auto", marginBottom: "20px" }}>
                     {checkIfOwnerOfComment(
                       codeComment.user && codeComment.user.id
@@ -443,7 +442,7 @@ const CommentSection = ({
                       </div>
                     );
                   })}
-              </Fragment>
+              </div>
             );
           })}
           <div className={classes.divider} />

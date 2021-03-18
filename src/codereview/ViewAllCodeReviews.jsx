@@ -39,6 +39,9 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "90%",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   heading: {
     lineHeight: "50px",
@@ -117,14 +120,24 @@ const ViewAllCodeReviews = () => {
     }
   };
 
-  const getAllCodeReview = () => {
-    Service.client
-      .get(`/code-reviews`)
-      .then((res) => {
-        console.log(res);
-        setCodeReviews(res.data);
-      })
-      .catch((err) => console.log(err));
+  const getAllCodeReview = (text) => {
+    if (text) {
+      Service.client
+        .get(`/code-reviews/member/`)
+        .then((res) => {
+          // console.log(res);
+          setCodeReviews(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .get(`/code-reviews`)
+        .then((res) => {
+          // console.log(res);
+          setCodeReviews(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   useEffect(() => {
@@ -282,6 +295,7 @@ const ViewAllCodeReviews = () => {
                   style={{ height: 30 }}
                   onClick={() => {
                     setViewMySnippet(false);
+                    getAllCodeReview();
                   }}
                 >
                   View All Snippets
@@ -294,6 +308,7 @@ const ViewAllCodeReviews = () => {
                   style={{ height: 30 }}
                   onClick={() => {
                     setViewMySnippet(true);
+                    getAllCodeReview("my");
                   }}
                 >
                   View My Snippets
@@ -311,7 +326,14 @@ const ViewAllCodeReviews = () => {
             </Button>
           </div>
         </div>
-        <div style={{ marginTop: "40px" }}>
+        <div
+          style={{
+            marginTop: "40px",
+            width: "90%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
           {codeReviews &&
             codeReviews.length > 0 &&
             codeReviews.map((code, index) => {

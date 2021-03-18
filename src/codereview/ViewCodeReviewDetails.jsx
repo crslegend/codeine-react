@@ -170,10 +170,10 @@ const ViewCodeReviewDetails = () => {
 
   // const [showReplyField, setShowReplyField] = useState(false);
   const [reply, setReply] = useState();
-  const [replyToCommentArr, setReplyToCommentArr] = useState([]);
+  // const [replyToCommentArr, setReplyToCommentArr] = useState([]);
 
-  const [replyParentId, setReplyParentId] = useState();
-  const [replyParentComment, setReplyParentComment] = useState();
+  // const [replyParentId, setReplyParentId] = useState();
+  // const [replyParentComment, setReplyParentComment] = useState();
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -213,8 +213,8 @@ const ViewCodeReviewDetails = () => {
         // setCodeComments([]); // to reset the state of sidenotes
         parentCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setCodeComments(parentCommentArr);
-        replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
-        setReplyToCommentArr(replyCommentArr);
+        // replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
+        // setReplyToCommentArr(replyCommentArr);
       })
       .catch((err) => console.log(err));
   };
@@ -900,7 +900,6 @@ const ViewCodeReviewDetails = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <CommentSection
             codeComments={codeComments}
-            replyToCommentArr={replyToCommentArr}
             comment={comment}
             setComment={setComment}
             reply={reply}
