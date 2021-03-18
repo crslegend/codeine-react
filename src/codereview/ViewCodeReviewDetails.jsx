@@ -179,7 +179,7 @@ const ViewCodeReviewDetails = () => {
 
   // const [showReplyField, setShowReplyField] = useState(false);
   const [reply, setReply] = useState();
-  // const [replyToCommentArr, setReplyToCommentArr] = useState([]);
+  const [replyToCommentArr, setReplyToCommentArr] = useState([]);
 
   // const [replyParentId, setReplyParentId] = useState();
   // const [replyParentComment, setReplyParentComment] = useState();
@@ -239,8 +239,8 @@ const ViewCodeReviewDetails = () => {
         // setCodeComments([]); // to reset the state of sidenotes
         parentCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setCodeComments(parentCommentArr);
-        // replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
-        // setReplyToCommentArr(replyCommentArr);
+        replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
+        setReplyToCommentArr(replyCommentArr);
       })
       .catch((err) => console.log(err));
   };
@@ -679,7 +679,6 @@ const ViewCodeReviewDetails = () => {
       Service.client
         .delete(`/code-reviews/${id}/comments/${commentId}/engagements`)
         .then((res) => {
-          getCodeReview();
           getCodeReviewComments();
         })
         .catch((err) => console.log(err));
@@ -687,7 +686,6 @@ const ViewCodeReviewDetails = () => {
       Service.client
         .post(`/code-reviews/${id}/comments/${commentId}/engagements`)
         .then((res) => {
-          getCodeReview();
           getCodeReviewComments();
         })
         .catch((err) => console.log(err));
@@ -914,7 +912,7 @@ const ViewCodeReviewDetails = () => {
             setReplyCommentDialog={setReplyCommentDialog}
             handleReplyToComment={handleReplyToComment}
             handleLikeUnlikeComment={handleLikeUnlikeComment}
-            handleLikeUnlikeSnippet={handleLikeUnlikeSnippet}
+            replyToCommentArr={replyToCommentArr}
           />
         </div>
       </div>
