@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../../components/Navbar";
 import {
@@ -134,6 +134,8 @@ const EnrollCourse = () => {
   const [canBookConsult, setCanBookConsult] = useState(true);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
+  const chosenCourseMaterialRef = useRef(null);
+  chosenCourseMaterialRef.current = chosenCourseMaterial;
 
   const [expanded, setExpanded] = useState("overview");
 
@@ -182,7 +184,7 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
-  const handleLogPauseCourse = () => {
+  const handleLogPauseCourse = (material) => {
     // ANALYTICS: log pause course by enrolled members
     Service.client
       .post(
@@ -196,32 +198,43 @@ const EnrollCourse = () => {
       )
       .then((res) => {
         // console.log(res);
+        // ANALYTICS: to log pause last viewed course material/quiz when pausing the course\
+        if (material.material_type === "FINAL") {
+          handleLogStopFinalQuiz(material.id);
+        } else {
+          handleLogPauseCourseMaterial(material && material.id, null);
+        }
       })
       .catch((err) => console.log(err));
   };
 
   const handleLogContinueCourseMaterial = (courseMaterialId) => {
-    Service.client
-      .post(
-        `/analytics`,
-        { payload: "continue course material" },
-        {
-          params: {
-            course_material_id: courseMaterialId,
-          },
-        }
-      )
-      .then((res) => {
-        // console.log(res);
-      })
-      .catch((err) => console.log(err));
+    // ANALYTICS: log continue course material by enrolled members
+    if (courseMaterialId) {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "continue course material" },
+          {
+            params: {
+              course_material_id: courseMaterialId,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const handleLogPauseCourseMaterial = (
     courseMaterialId,
-    nextCourseMaterialId
+    nextCourseMaterial
   ) => {
+    // ANALYTICS: log pause course material by enrolled members
     if (courseMaterialId) {
+      // console.log(courseMaterialId);
       Service.client
         .post(
           `/analytics`,
@@ -234,12 +247,63 @@ const EnrollCourse = () => {
         )
         .then((res) => {
           // console.log(res);
-          handleLogContinueCourseMaterial(nextCourseMaterialId);
+          if (nextCourseMaterial) {
+            if (nextCourseMaterial.material_type === "FINAL") {
+              handleLogStartFinalQuiz(nextCourseMaterial.id);
+            } else {
+              handleLogContinueCourseMaterial(nextCourseMaterial.id);
+            }
+          }
         })
         .catch((err) => console.log(err));
     } else {
-      handleLogContinueCourseMaterial(nextCourseMaterialId);
+      if (nextCourseMaterial) {
+        if (nextCourseMaterial.material_type === "FINAL") {
+          handleLogStartFinalQuiz(nextCourseMaterial.id);
+        } else {
+          handleLogContinueCourseMaterial(nextCourseMaterial.id);
+        }
+      }
     }
+  };
+
+  const handleLogStartFinalQuiz = (quizId) => {
+    // ANALYTICS: log start final quiz by enrolled members
+    Service.client
+      .post(
+        `/analytics`,
+        { payload: "start assessment" },
+        {
+          params: {
+            quiz_id: quizId,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleLogStopFinalQuiz = (quizId, materialId) => {
+    // ANALYTICS: log stop final quiz by enrolled members
+    Service.client
+      .post(
+        `/analytics`,
+        { payload: "stop assessment" },
+        {
+          params: {
+            quiz_id: quizId,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        if (materialId) {
+          handleLogContinueCourseMaterial(materialId);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const getCourse = () => {
@@ -321,7 +385,8 @@ const EnrollCourse = () => {
     checkIfCanBookConsultations();
 
     return () => {
-      handleLogPauseCourse();
+      // console.log(chosenCourseMaterial);
+      handleLogPauseCourse(chosenCourseMaterialRef.current);
       // console.log("cleaned up");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -365,10 +430,23 @@ const EnrollCourse = () => {
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
-    handleLogPauseCourseMaterial(
-      chosenCourseMaterial && chosenCourseMaterial.id,
-      material.id
-    );
+    if (
+      chosenCourseMaterial &&
+      chosenCourseMaterial.material_type === "FINAL"
+    ) {
+      // previously accessing final quiz
+      handleLogStopFinalQuiz(
+        chosenCourseMaterial && chosenCourseMaterial.id,
+        material.id
+      );
+    } else {
+      // previous accessing course material
+      handleLogPauseCourseMaterial(
+        chosenCourseMaterial && chosenCourseMaterial.id,
+        material
+      );
+    }
+
     setChosenCourseMaterial(material);
   };
 
