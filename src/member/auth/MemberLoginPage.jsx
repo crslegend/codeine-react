@@ -165,6 +165,7 @@ const MemberLoginPage = () => {
             onChange={handleEmailChange}
             type="email"
             required
+            autoFocus
           />
           <TextField
             variant="outlined"

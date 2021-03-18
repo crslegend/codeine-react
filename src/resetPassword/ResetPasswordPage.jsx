@@ -163,6 +163,7 @@ const ResetPasswordPage = (props) => {
             onChange={handleEmailChange}
             type="email"
             required
+            autoFocus
           />
           <Button
             disabled={loading}

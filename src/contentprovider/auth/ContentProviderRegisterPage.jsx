@@ -180,6 +180,7 @@ const ContentProviderRegisterPage = () => {
               type="text"
               required
               name="first"
+              autoFocus
             />
             <TextField
               variant="outlined"

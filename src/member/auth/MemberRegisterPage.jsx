@@ -144,6 +144,7 @@ const MemberRegisterPage = () => {
             onChange={handleFirstNameChange}
             type="text"
             required
+            autoFocus
           />
           <TextField
             variant="outlined"
