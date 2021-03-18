@@ -38,6 +38,11 @@ const styles = makeStyles((theme) => ({
   title: {
     paddingTop: theme.spacing(3),
   },
+  heading: {
+    lineHeight: "50px",
+    fontWeight: 600,
+    fontFamily: "Roboto Mono",
+  },
   cards: {
     display: "flex",
     flexDirection: "row",
@@ -229,7 +234,9 @@ const ViewAllCourses = () => {
       />
       <div className={classes.courses}>
         <div className={classes.title}>
-          <PageTitle title="All Courses" />
+          <Typography variant="h2" className={classes.heading}>
+            all courses
+          </Typography>
         </div>
         <div className={classes.searchSection}>
           <div className={classes.searchBar}>
