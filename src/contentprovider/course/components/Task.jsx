@@ -52,11 +52,11 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     cursor: "pointer",
-    display: "inline-block",
-    maxWidth: 170,
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    // display: "inline-block",
+    // maxWidth: 170,
+    // whiteSpace: "nowrap",
+    // overflow: "hidden",
+    // textOverflow: "ellipsis",
   },
   dialogButtons: {
     width: 100,

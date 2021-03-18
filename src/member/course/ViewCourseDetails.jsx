@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Breadcrumbs,
   LinearProgress,
   Typography,
@@ -23,6 +24,7 @@ import Footer from "../landing/Footer";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import {
   Assignment,
   AttachFile,
@@ -35,6 +37,7 @@ import {
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
+import { calculateDateInterval } from "../../utils.js";
 import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
@@ -134,6 +137,8 @@ const ViewCourseDetails = () => {
     autoHideDuration: 3000,
   });
 
+  const [onlyForProDialog, setOnlyForProDialog] = useState(false);
+
   const ref = React.createRef();
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -205,52 +210,37 @@ const ViewCourseDetails = () => {
     return "";
   };
 
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
-
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
-
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `${seconds} seconds ago`;
-        }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
-
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
-      Service.client
-        .post(`/courses/${id}/enrollments`)
-        .then((res) => {
-          console.log(res);
-          history.push(`/courses/enroll/${id}`);
-        })
-        .catch((err) => console.log(err));
+      if (course.pro) {
+        const decoded = jwt_decode(Cookies.get("t1"));
+        Service.client
+          .get(`/auth/members/${decoded.user_id}`)
+          .then((res) => {
+            // console.log(res);
+            // to check whether member enrolling in course is pro-tier
+            if (res.data.member.membership_tier !== "FREE") {
+              Service.client
+                .post(`/courses/${id}/enrollments`)
+                .then((res) => {
+                  // console.log(res);
+                  history.push(`/courses/enroll/${id}`);
+                })
+                .catch((err) => console.log(err));
+            } else {
+              setOnlyForProDialog(true);
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        Service.client
+          .post(`/courses/${id}/enrollments`)
+          .then((res) => {
+            // console.log(res);
+            history.push(`/courses/enroll/${id}`);
+          })
+          .catch((err) => console.log(err));
+      }
     }
   };
 
@@ -921,6 +911,39 @@ const ViewCourseDetails = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={onlyForProDialog}
+        onClose={() => setOnlyForProDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>This course is only for pro-tier members</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOnlyForProDialog(false);
+            }}
+          >
+            Stay as Free-Tier
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              // direct user to pay for pro-tier membership
+              history.push(`/member/home/transaction`);
+            }}
+          >
+            Upgrade to Pro-Tier
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Footer />
       <Dialog
         open={unenrollDialog}

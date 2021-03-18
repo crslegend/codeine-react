@@ -122,6 +122,16 @@ const ContentProviderHome = () => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <a href={`/codereview`} style={{ textDecoration: "none" }}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Code Review
+          </Typography>
+        </a>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
           color="primary"
@@ -260,16 +270,18 @@ const ContentProviderHome = () => {
           </Typography>
         </label>
       </div>
-      <ListItem
-        component={NavLink}
-        to="/partner/home/contributions"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <AttachMoney className={classes.listIcon} />
-        <Typography variant="body1">Contributions</Typography>
-      </ListItem>
+      {user && user.partner && user.partner.organization && (
+        <ListItem
+          component={NavLink}
+          to="/partner/home/contributions"
+          activeClassName={classes.activeLink}
+          className={classes.listItem}
+          button
+        >
+          <AttachMoney className={classes.listIcon} />
+          <Typography variant="body1">Funding</Typography>
+        </ListItem>
+      )}
       <ListItem
         component={NavLink}
         to="/partner/home/earnings"
