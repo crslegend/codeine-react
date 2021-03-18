@@ -237,6 +237,8 @@ const EnrollCourse = () => {
           handleLogContinueCourseMaterial(nextCourseMaterialId);
         })
         .catch((err) => console.log(err));
+    } else {
+      handleLogContinueCourseMaterial(nextCourseMaterialId);
     }
   };
 
