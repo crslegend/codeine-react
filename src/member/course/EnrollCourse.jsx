@@ -164,6 +164,42 @@ const EnrollCourse = () => {
     }
   };
 
+  const handleLogContinueCourse = () => {
+    // ANALYTICS: log continue course by enrolled members
+    Service.client
+      .post(
+        `/analytics`,
+        { payload: "continue course" },
+        {
+          params: {
+            course_id: id,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleLogPauseCourse = () => {
+    // ANALYTICS: log pause course by enrolled members
+    Service.client
+      .post(
+        `/analytics`,
+        { payload: "pause course" },
+        {
+          params: {
+            course_id: id,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const getCourse = () => {
     if (Cookies.get("t1")) {
       Service.client
@@ -179,7 +215,7 @@ const EnrollCourse = () => {
           Service.client
             .get(`enrollments`, { params: { courseId: id } })
             .then((res) => {
-              console.log(res);
+              // console.log(res);
               setProgress(res.data[0].progress);
               if (!res.data[0].materials_done) {
                 setProgressArr([]);
@@ -237,9 +273,15 @@ const EnrollCourse = () => {
 
   useEffect(() => {
     checkIfLoggedIn();
+    handleLogContinueCourse();
     getCourse();
     getCourseReviews();
     checkIfCanBookConsultations();
+
+    return () => {
+      handleLogPauseCourse();
+      // console.log("cleaned up");
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -422,7 +464,7 @@ const EnrollCourse = () => {
               disabled={canBookConsult ? false : true}
               to={`/courses/enroll/consultation/${course && course.partner.id}`}
             >
-              {console.log(canBookConsult)} Book consultation
+              Book consultation
             </Button>
             {givenCourseReview && givenCourseReview ? (
               <Button variant="contained" color="primary" disabled>
