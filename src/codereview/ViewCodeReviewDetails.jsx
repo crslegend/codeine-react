@@ -166,8 +166,9 @@ const ViewCodeReviewDetails = () => {
   const [editMode, setEditMode] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState();
   const [selectedComment, setSelectedComment] = useState();
+  const [replyCommentDialog, setReplyCommentDialog] = useState();
 
-  const [showReplyField, setShowReplyField] = useState(false);
+  // const [showReplyField, setShowReplyField] = useState(false);
   const [reply, setReply] = useState();
   const [replyToCommentArr, setReplyToCommentArr] = useState([]);
 
@@ -209,7 +210,8 @@ const ViewCodeReviewDetails = () => {
             parentCommentArr.push(res.data[i]);
           }
         }
-        setCodeComments([]); // to reset the state of sidenotes
+        // setCodeComments([]); // to reset the state of sidenotes
+        parentCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setCodeComments(parentCommentArr);
         replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setReplyToCommentArr(replyCommentArr);
@@ -726,16 +728,17 @@ const ViewCodeReviewDetails = () => {
 
   const handleReplyToComment = () => {
     const data = {
-      highlighted_code: replyParentComment.highlighted_code,
       comment: reply,
-      parent_comment_id: replyParentId,
+      parent_comment_id: selectedCommentId,
     };
 
     Service.client
       .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
         console.log(res);
+        setReplyCommentDialog(false);
         setReply();
+        setSelectedCommentId();
         getCodeReview();
         getCodeReviewComments();
       })
@@ -782,7 +785,6 @@ const ViewCodeReviewDetails = () => {
           style={{
             display: "flex",
             flexDirection: "column",
-            marginBottom: "20px",
           }}
         >
           <div
@@ -916,6 +918,9 @@ const ViewCodeReviewDetails = () => {
             setDeleteCommentDialog={setDeleteCommentDialog}
             handleDeleteComment={handleDeleteComment}
             handleUpdateComment={handleUpdateComment}
+            replyCommentDialog={replyCommentDialog}
+            setReplyCommentDialog={setReplyCommentDialog}
+            handleReplyToComment={handleReplyToComment}
           />
         </div>
       </div>
