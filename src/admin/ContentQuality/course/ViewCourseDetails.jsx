@@ -216,6 +216,22 @@ const ViewCourseDetails = () => {
     }
   };
 
+  const resuableChip = (label, index, backgroundColor, fontColor) => {
+    return (
+      <Chip
+        key={index}
+        label={label}
+        style={{
+          marginRight: "10px",
+          marginBottom: "10px",
+          color: fontColor ? fontColor : "#000",
+          fontWeight: 600,
+          backgroundColor: backgroundColor,
+        }}
+      />
+    );
+  };
+
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -605,53 +621,23 @@ const ViewCourseDetails = () => {
                   course.categories.length > 0 &&
                   course.categories.map((category, index) => {
                     if (category === "FE") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Frontend"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Frontend", index, "#DD8B8B");
                     } else if (category === "BE") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Backend"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (category === "UI") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="UI/UX"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Backend", index, "#A0DD8B");
                     } else if (category === "DB") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Database Administration"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
+                      return resuableChip(
+                        "Database Administration",
+                        index,
+                        "#8B95DD"
                       );
+                    } else if (category === "SEC") {
+                      return resuableChip("Security", index, "#DDB28B");
+                    } else if (category === "UI") {
+                      return resuableChip("UI/UX", index, "#DDD58B");
                     } else if (category === "ML") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Machine Learning"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Machine Learning", index, "#8BD8DD");
                     } else {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Security"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return null;
                     }
                   })}
 
@@ -665,61 +651,23 @@ const ViewCourseDetails = () => {
                   course.coding_languages.length > 0 &&
                   course.coding_languages.map((language, index) => {
                     if (language === "PY") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Python"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Python", index, "#3675A9", "#fff");
                     } else if (language === "JAVA") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Java"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Java", index, "#E57001", "#fff");
                     } else if (language === "JS") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Javascript"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (language === "CPP") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="C++"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (language === "CS") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="C#"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Javascript", index, "#F7DF1E");
                     } else if (language === "RUBY") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Ruby"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Ruby", index, "#CC0000");
+                    } else if (language === "CPP") {
+                      return resuableChip("C++", index, "#004482", "#fff");
+                    } else if (language === "CS") {
+                      return resuableChip("C#", index, "#6A1577", "#fff");
+                    } else if (language === "HTML") {
+                      return resuableChip("HTML", index, "#E44D26", "#fff");
+                    } else if (language === "CSS") {
+                      return resuableChip("CSS", index, "#264DE4", "#fff");
                     } else {
-                      return (
-                        <Chip
-                          key={index}
-                          label={language}
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return null;
                     }
                   })}
               </div>
