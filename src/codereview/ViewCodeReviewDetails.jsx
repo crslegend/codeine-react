@@ -16,7 +16,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, ArrowBack, Delete, Edit } from "@material-ui/icons";
+import {
+  Add,
+  ArrowBack,
+  Delete,
+  Edit,
+  Favorite,
+  FavoriteBorder,
+} from "@material-ui/icons";
 import components from "./components/NavbarComponents";
 
 import AddSnippetDialog from "./components/AddSnippetDialog";
@@ -172,7 +179,7 @@ const ViewCodeReviewDetails = () => {
 
   // const [showReplyField, setShowReplyField] = useState(false);
   const [reply, setReply] = useState();
-  // const [replyToCommentArr, setReplyToCommentArr] = useState([]);
+  const [replyToCommentArr, setReplyToCommentArr] = useState([]);
 
   // const [replyParentId, setReplyParentId] = useState();
   // const [replyParentComment, setReplyParentComment] = useState();
@@ -232,8 +239,8 @@ const ViewCodeReviewDetails = () => {
         // setCodeComments([]); // to reset the state of sidenotes
         parentCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
         setCodeComments(parentCommentArr);
-        // replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
-        // setReplyToCommentArr(replyCommentArr);
+        replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
+        setReplyToCommentArr(replyCommentArr);
       })
       .catch((err) => console.log(err));
   };
@@ -470,7 +477,7 @@ const ViewCodeReviewDetails = () => {
     Service.client
       .post(`/code-reviews`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setAddCommentDialog(false);
         history.push(`/codereview/${res.data.id}`);
         history.go();
@@ -609,7 +616,7 @@ const ViewCodeReviewDetails = () => {
     Service.client
       .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setComment();
         getCodeReview();
         getCodeReviewComments();
@@ -637,7 +644,7 @@ const ViewCodeReviewDetails = () => {
     Service.client
       .put(`/code-reviews/${id}/comments/${selectedCommentId}`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setEditMode(false);
         setSelectedComment();
         setSelectedCommentId();
@@ -656,7 +663,7 @@ const ViewCodeReviewDetails = () => {
     Service.client
       .post(`/code-reviews/${id}/comments`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setReplyCommentDialog(false);
         setReply();
         setSelectedCommentId();
@@ -666,6 +673,44 @@ const ViewCodeReviewDetails = () => {
       .catch((err) => console.log(err));
   };
   // console.log(lineNum);
+
+  const handleLikeUnlikeComment = (commentId, isLiked) => {
+    if (isLiked) {
+      Service.client
+        .delete(`/code-reviews/${id}/comments/${commentId}/engagements`)
+        .then((res) => {
+          getCodeReviewComments();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/code-reviews/${id}/comments/${commentId}/engagements`)
+        .then((res) => {
+          getCodeReviewComments();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const handleLikeUnlikeSnippet = (isLiked) => {
+    if (isLiked) {
+      Service.client
+        .delete(`/code-reviews/${id}/engagements`)
+        .then((res) => {
+          getCodeReview();
+          getCodeReviewComments();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .post(`/code-reviews/${id}/engagements`)
+        .then((res) => {
+          getCodeReview();
+          getCodeReviewComments();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
 
   const loadDataForEditSnippet = () => {
     if (code) {
@@ -746,16 +791,33 @@ const ViewCodeReviewDetails = () => {
             }}
           >
             <Typography variant="h1">{code && code.title}</Typography>
-            {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
-              <div style={{ marginLeft: "auto" }}>
-                <IconButton onClick={() => loadDataForEditSnippet()}>
-                  <Edit />
+            <div style={{ marginLeft: "auto", display: "flex" }}>
+              {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
+                <div>
+                  <IconButton onClick={() => loadDataForEditSnippet()}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => setDeleteSnippetDialog(true)}>
+                    <Delete />
+                  </IconButton>
+                </div>
+              )}
+              <div>
+                <IconButton
+                  onClick={() => {
+                    handleLikeUnlikeSnippet(code && code.current_member_liked);
+                  }}
+                  disabled={!loggedIn}
+                >
+                  {code && code.current_member_liked ? (
+                    <Favorite color="primary" />
+                  ) : (
+                    <FavoriteBorder />
+                  )}
                 </IconButton>
-                <IconButton onClick={() => setDeleteSnippetDialog(true)}>
-                  <Delete />
-                </IconButton>
+                {`${code && code.likes}`}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -849,6 +911,8 @@ const ViewCodeReviewDetails = () => {
             replyCommentDialog={replyCommentDialog}
             setReplyCommentDialog={setReplyCommentDialog}
             handleReplyToComment={handleReplyToComment}
+            handleLikeUnlikeComment={handleLikeUnlikeComment}
+            replyToCommentArr={replyToCommentArr}
           />
         </div>
       </div>

@@ -14,7 +14,13 @@ import LinkMui from "@material-ui/core/Link";
 import { calculateDateInterval } from "../../utils.js";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Comment, Delete, Edit } from "@material-ui/icons";
+import {
+  Comment,
+  Delete,
+  Edit,
+  Favorite,
+  FavoriteBorder,
+} from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -106,6 +112,8 @@ const CommentSection = ({
   replyCommentDialog,
   setReplyCommentDialog,
   handleReplyToComment,
+  handleLikeUnlikeComment,
+  replyToCommentArr,
 }) => {
   const classes = styles();
 
@@ -228,6 +236,24 @@ const CommentSection = ({
                         style={{ marginRight: "5px" }}
                         size="small"
                         onClick={() => {
+                          handleLikeUnlikeComment(
+                            codeComment.id,
+                            codeComment.current_user_liked
+                          );
+                        }}
+                        disabled={!loggedIn}
+                      >
+                        {codeComment.current_user_liked ? (
+                          <Favorite fontSize="small" color="primary" />
+                        ) : (
+                          <FavoriteBorder fontSize="small" />
+                        )}
+                      </IconButton>
+                      {`${codeComment.likes}`}
+                      <IconButton
+                        style={{ marginRight: "5px", marginLeft: "10px" }}
+                        size="small"
+                        onClick={() => {
                           setSelectedCommentId(codeComment.id);
                           setReplyCommentDialog(true);
                         }}
@@ -235,10 +261,7 @@ const CommentSection = ({
                       >
                         <Comment fontSize="small" />
                       </IconButton>
-                      {`${codeComment.reply_count}` +
-                        (codeComment.reply_count > 1
-                          ? ` responses`
-                          : ` response`)}
+                      {`${codeComment.reply_count}`}
                     </div>
                     <div
                       style={{
@@ -285,162 +308,190 @@ const CommentSection = ({
                     </div>
                   </div>
                 </div>
-                {codeComment.replies.length > 0 &&
-                  codeComment.replies.map((reply, index2) => {
-                    return (
-                      <div className="replytocommentblock" key={index2}>
-                        <div
-                          style={{ marginLeft: "auto", marginBottom: "20px" }}
-                        >
-                          {checkIfOwnerOfComment(
-                            reply.user && reply.user.id
-                          ) && (
-                            <div>
-                              <IconButton
-                                size="small"
-                                onClick={() => {
-                                  setEditMode(true);
-                                  setSelectedCommentId(reply.id);
-                                  setSelectedComment(reply);
-                                }}
-                                disabled={
-                                  editMode && selectedCommentId === reply.id
-                                }
-                              >
-                                <Edit fontSize="small" />
-                              </IconButton>
+                {replyToCommentArr.length > 0 &&
+                  replyToCommentArr.map((reply, index2) => {
+                    if (
+                      reply.parent_comment &&
+                      reply.parent_comment.id === codeComment.id
+                    ) {
+                      return (
+                        <div className="replytocommentblock" key={index2}>
+                          <div
+                            style={{ marginLeft: "auto", marginBottom: "20px" }}
+                          >
+                            {checkIfOwnerOfComment(
+                              reply.user && reply.user.id
+                            ) && (
+                              <div>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    setEditMode(true);
+                                    setSelectedCommentId(reply.id);
+                                    setSelectedComment(reply);
+                                  }}
+                                  disabled={
+                                    editMode && selectedCommentId === reply.id
+                                  }
+                                >
+                                  <Edit fontSize="small" />
+                                </IconButton>
 
-                              <IconButton
-                                size="small"
-                                onClick={() => {
-                                  setSelectedCommentId(reply.id);
-                                  setDeleteCommentDialog(true);
-                                }}
-                              >
-                                <Delete fontSize="small" />
-                              </IconButton>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                          }}
-                        >
-                          <div style={{ marginBottom: "20px", width: "100%" }}>
-                            {editMode && selectedCommentId === reply.id ? (
-                              <Fragment>
-                                <ReactQuill
-                                  value={
-                                    selectedComment && selectedComment.comment
-                                  }
-                                  onChange={(value) =>
-                                    setSelectedComment({
-                                      ...selectedComment,
-                                      comment: value,
-                                    })
-                                  }
-                                  modules={editor}
-                                  format={format}
-                                  theme={"snow"}
-                                />
-                                <div
-                                  style={{
-                                    marginTop: "10px",
-                                    marginBottom: "10px",
-                                    float: "right",
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    setSelectedCommentId(reply.id);
+                                    setDeleteCommentDialog(true);
                                   }}
                                 >
-                                  <Button
-                                    variant="contained"
-                                    color="primary"
-                                    size="small"
-                                    style={{ marginRight: "10px" }}
-                                    onClick={() => handleUpdateComment()}
-                                    disabled={
-                                      selectedComment &&
-                                      selectedComment.comment === ""
-                                    }
-                                    style={{ height: 30 }}
-                                  >
-                                    Save
-                                  </Button>
-                                  <Button
-                                    variant="contained"
-                                    size="small"
-                                    onClick={() => {
-                                      setEditMode(false);
-                                      setSelectedComment();
-                                      setSelectedCommentId();
-                                    }}
-                                    style={{ height: 30, marginLeft: "10px" }}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </div>
-                              </Fragment>
-                            ) : (
-                              <ReactQuill
-                                value={reply ? reply.comment : ""}
-                                readOnly={true}
-                                theme={"bubble"}
-                                modules={editor}
-                              />
+                                  <Delete fontSize="small" />
+                                </IconButton>
+                              </div>
                             )}
                           </div>
-                        </div>
-
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div>LIKES</div>
                           <div
                             style={{
-                              marginLeft: "auto",
                               display: "flex",
                             }}
                           >
-                            <div>
-                              {reply.user.profile_photo &&
-                              reply.user.profile_photo ? (
-                                <Avatar
-                                  style={{ marginRight: "15px" }}
-                                  src={reply.user && reply.user.profile_photo}
-                                />
+                            <div
+                              style={{ marginBottom: "20px", width: "100%" }}
+                            >
+                              {editMode && selectedCommentId === reply.id ? (
+                                <Fragment>
+                                  <ReactQuill
+                                    value={
+                                      selectedComment && selectedComment.comment
+                                    }
+                                    onChange={(value) =>
+                                      setSelectedComment({
+                                        ...selectedComment,
+                                        comment: value,
+                                      })
+                                    }
+                                    modules={editor}
+                                    format={format}
+                                    theme={"snow"}
+                                  />
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                      marginBottom: "10px",
+                                      float: "right",
+                                    }}
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      size="small"
+                                      style={{ marginRight: "10px" }}
+                                      onClick={() => handleUpdateComment()}
+                                      disabled={
+                                        selectedComment &&
+                                        selectedComment.comment === ""
+                                      }
+                                      style={{ height: 30 }}
+                                    >
+                                      Save
+                                    </Button>
+                                    <Button
+                                      variant="contained"
+                                      size="small"
+                                      onClick={() => {
+                                        setEditMode(false);
+                                        setSelectedComment();
+                                        setSelectedCommentId();
+                                      }}
+                                      style={{ height: 30, marginLeft: "10px" }}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </Fragment>
                               ) : (
-                                <Avatar style={{ marginRight: "15px" }}>
-                                  {reply.user &&
-                                    reply.user.first_name.charAt(0)}
-                                </Avatar>
+                                <ReactQuill
+                                  value={reply ? reply.comment : ""}
+                                  readOnly={true}
+                                  theme={"bubble"}
+                                  modules={editor}
+                                />
                               )}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div>
+                              <IconButton
+                                style={{ marginRight: "5px" }}
+                                size="small"
+                                onClick={() => {
+                                  handleLikeUnlikeComment(
+                                    reply.id,
+                                    reply.current_user_liked
+                                  );
+                                }}
+                                disabled={!loggedIn}
+                              >
+                                {reply.current_user_liked ? (
+                                  <Favorite fontSize="small" color="primary" />
+                                ) : (
+                                  <FavoriteBorder fontSize="small" />
+                                )}
+                              </IconButton>
+                              {`${reply.likes}`}
                             </div>
                             <div
                               style={{
-                                flexDirection: "column",
+                                marginLeft: "auto",
+                                display: "flex",
                               }}
                             >
-                              <LinkMui className={classes.linkMui}>
-                                {`${reply && reply.user.first_name} ${
-                                  reply && reply.user.last_name
-                                }`}
-                              </LinkMui>
-                              <Typography
-                                variant="subtitle1"
-                                style={{ opacity: 0.8 }}
+                              <div>
+                                {reply.user.profile_photo &&
+                                reply.user.profile_photo ? (
+                                  <Avatar
+                                    style={{ marginRight: "15px" }}
+                                    src={reply.user && reply.user.profile_photo}
+                                  />
+                                ) : (
+                                  <Avatar style={{ marginRight: "15px" }}>
+                                    {reply.user &&
+                                      reply.user.first_name.charAt(0)}
+                                  </Avatar>
+                                )}
+                              </div>
+                              <div
+                                style={{
+                                  flexDirection: "column",
+                                }}
                               >
-                                {` answered ${
-                                  reply &&
-                                  calculateDateInterval(reply.timestamp)
-                                }`}
-                              </Typography>
+                                <LinkMui className={classes.linkMui}>
+                                  {`${reply && reply.user.first_name} ${
+                                    reply && reply.user.last_name
+                                  }`}
+                                </LinkMui>
+                                <Typography
+                                  variant="subtitle1"
+                                  style={{ opacity: 0.8 }}
+                                >
+                                  {` answered ${
+                                    reply &&
+                                    calculateDateInterval(reply.timestamp)
+                                  }`}
+                                </Typography>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    );
+                      );
+                    } else {
+                      return null;
+                    }
                   })}
               </div>
             );
