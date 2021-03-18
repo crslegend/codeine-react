@@ -256,6 +256,7 @@ const ContributionsPage = () => {
 
   useEffect(() => {
     getAllContributions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatDate = (date) => {
