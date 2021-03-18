@@ -898,12 +898,23 @@ const ViewCodeReviewDetails = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <CommentSection
             codeComments={codeComments}
+            replyToCommentArr={replyToCommentArr}
             comment={comment}
             setComment={setComment}
             reply={reply}
             setReply={setReply}
             loggedIn={loggedIn}
             handleAddComment={handleAddComment}
+            checkIfOwnerOfComment={checkIfOwnerOfComment}
+            setSelectedComment={setSelectedComment}
+            selectedCommentId={selectedCommentId}
+            setSelectedCommentId={setSelectedCommentId}
+            editMode={editMode}
+            setEditMode={setEditMode}
+            deleteCommentDialog={deleteCommentDialog}
+            setDeleteCommentDialog={setDeleteCommentDialog}
+            handleDeleteComment={handleDeleteComment}
+            handleUpdateComment={handleUpdateComment}
           />
         </div>
       </div>
@@ -968,41 +979,6 @@ const ViewCodeReviewDetails = () => {
             onClick={() => handleAddComment()}
           >
             Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={deleteCommentDialog}
-        onClose={() => {
-          setDeleteCommentDialog(false);
-          setSelectedCommentId();
-        }}
-        PaperProps={{
-          style: {
-            width: "400px",
-          },
-        }}
-      >
-        <DialogTitle>Delete Comment Thread?</DialogTitle>
-        <DialogContent>This action cannot be reverted.</DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setDeleteCommentDialog(false);
-              setSelectedCommentId();
-            }}
-            style={{ width: 100 }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ width: 100 }}
-            onClick={() => handleDeleteComment()}
-          >
-            Confirm
           </Button>
         </DialogActions>
       </Dialog>

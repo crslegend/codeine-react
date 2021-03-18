@@ -57,6 +57,22 @@ article .anchor.selected {
   display: block;
 }
 
+.replyblock {
+  background: #ffff;
+  border: 1px solid #ddd;
+  border-left: 3px solid #164D8F;
+  color: #666;
+  page-break-inside: avoid;
+  /* font-family: monospace; */
+  /* font-size: 15px; */
+  line-height: 1.6;
+  margin-bottom: 50px;
+  overflow: auto;
+  padding: 1em 1.5em;
+  display: flex;
+  flex-direction: column;
+}
+
 .ql-editor{
   /* min-height:200px; */
 
