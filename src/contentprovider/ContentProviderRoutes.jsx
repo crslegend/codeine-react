@@ -37,6 +37,7 @@ import DashboardPage from "./dashboard/DashboardPage";
 import ContributionsPage from "./contributions/ContributionsPage";
 import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
+import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -349,6 +350,13 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              path="/partner/home/dashboard/:id"
+              strict
+              sensitive
+              render={(match) => <CourseDetailAnalytics match={match} />}
               user="partner"
             />
             <PrivateRoute
