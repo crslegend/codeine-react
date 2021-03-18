@@ -200,6 +200,46 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleLogContinueCourseMaterial = (courseMaterialId) => {
+    Service.client
+      .post(
+        `/analytics`,
+        { payload: "continue course material" },
+        {
+          params: {
+            course_material_id: courseMaterialId,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleLogPauseCourseMaterial = (
+    courseMaterialId,
+    nextCourseMaterialId
+  ) => {
+    if (courseMaterialId) {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "stop course material" },
+          {
+            params: {
+              course_material_id: courseMaterialId,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res);
+          handleLogContinueCourseMaterial(nextCourseMaterialId);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   const getCourse = () => {
     if (Cookies.get("t1")) {
       Service.client
@@ -323,6 +363,10 @@ const EnrollCourse = () => {
 
   const handleChosenCourseMaterial = (material) => {
     console.log(material);
+    handleLogPauseCourseMaterial(
+      chosenCourseMaterial && chosenCourseMaterial.id,
+      material.id
+    );
     setChosenCourseMaterial(material);
   };
 
