@@ -6,9 +6,13 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   Tooltip,
   Typography,
 } from "@material-ui/core";
@@ -43,6 +47,21 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     // marginBottom: "5px",
   },
+  formControl: {
+    marginTop: 0,
+    paddingTop: "15px",
+    paddingBottom: "10px",
+    width: "200px",
+    "& label": {
+      paddingLeft: "7px",
+      paddingRight: "7px",
+      paddingTop: "7px",
+      marginLeft: "10px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: "0px",
+    },
+  },
 }));
 
 const DashboardPage = () => {
@@ -51,22 +70,40 @@ const DashboardPage = () => {
 
   const [courses, setCourses] = useState([]);
   const [overallData, setOverallData] = useState();
+  const [numDays, setNumDays] = useState();
 
   const getConversionRate = () => {
-    Service.client
-      .get(`/analytics/course-conversion-rate`, { params: { days: 1 } })
-      .then((res) => {
-        console.log(res);
-        // let arr = res.data.breakdown;
-        setCourses(res.data.breakdown);
-        setOverallData({
-          enrollments: res.data.enrollments,
-          overall_conversion_rate: res.data.overall_conversion_rate,
-          overall_view: res.data.overall_view,
-          total_enrollments: res.data.total_enrollments,
-        });
-      })
-      .catch((err) => console.log(err));
+    if (numDays !== "") {
+      Service.client
+        .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
+        .then((res) => {
+          console.log(res);
+          // let arr = res.data.breakdown;
+          setCourses(res.data.breakdown);
+          setOverallData({
+            enrollments: res.data.enrollments,
+            overall_conversion_rate: res.data.overall_conversion_rate,
+            overall_view: res.data.overall_view,
+            total_enrollments: res.data.total_enrollments,
+          });
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .get(`/analytics/course-conversion-rate`)
+        .then((res) => {
+          console.log(res);
+          // let arr = res.data.breakdown;
+          setCourses(res.data.breakdown);
+          setOverallData({
+            enrollments: res.data.enrollments,
+            overall_conversion_rate: res.data.overall_conversion_rate,
+            overall_view: res.data.overall_view,
+            total_enrollments: res.data.total_enrollments,
+          });
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   useEffect(() => {
@@ -74,9 +111,37 @@ const DashboardPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    getConversionRate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numDays]);
+
   return (
     <div>
       <PageTitle title="Dashboard" />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <FormControl margin="dense" className={classes.formControl}>
+          <InputLabel>Date Range</InputLabel>
+          <Select
+            label="Date Range"
+            variant="outlined"
+            value={numDays ? numDays : ""}
+            onChange={(e) => {
+              setNumDays(e.target.value);
+            }}
+          >
+            <MenuItem value="">
+              <em>Select a date range</em>
+            </MenuItem>
+            <MenuItem value="7">Past Week</MenuItem>
+            <MenuItem value="14">Past 2 Weeks</MenuItem>
+            <MenuItem value="30">Past Month</MenuItem>
+            <MenuItem value="90">Past 3 Months</MenuItem>
+            <MenuItem value="240">Past 6 Months</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
+
       <Paper className={classes.paper}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex" }}>
@@ -105,7 +170,7 @@ const DashboardPage = () => {
             <Tooltip
               title={
                 <Typography variant="body2">
-                  % of total views across all of courses converted to new
+                  % of total views across all of your courses converted to new
                   enrollments
                 </Typography>
               }
