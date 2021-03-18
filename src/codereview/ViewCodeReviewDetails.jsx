@@ -906,6 +906,7 @@ const ViewCodeReviewDetails = () => {
             loggedIn={loggedIn}
             handleAddComment={handleAddComment}
             checkIfOwnerOfComment={checkIfOwnerOfComment}
+            selectedComment={selectedComment}
             setSelectedComment={setSelectedComment}
             selectedCommentId={selectedCommentId}
             setSelectedCommentId={setSelectedCommentId}

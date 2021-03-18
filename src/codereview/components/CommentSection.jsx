@@ -93,6 +93,7 @@ const CommentSection = ({
   loggedIn,
   handleAddComment,
   checkIfOwnerOfComment,
+  selectedComment,
   setSelectedComment,
   selectedCommentId,
   setSelectedCommentId,
@@ -115,50 +116,98 @@ const CommentSection = ({
           {codeComments.map((codeComment) => {
             return (
               <div className="replyblock">
+                <div style={{ marginLeft: "auto", marginBottom: "20px" }}>
+                  {checkIfOwnerOfComment(
+                    codeComment.user && codeComment.user.id
+                  ) && (
+                    <div>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setEditMode(true);
+                          setSelectedCommentId(codeComment.id);
+                          setSelectedComment(codeComment);
+                        }}
+                        disabled={
+                          editMode && selectedCommentId === codeComment.id
+                        }
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setSelectedCommentId(codeComment.id);
+                          setDeleteCommentDialog(true);
+                        }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </div>
+                  )}
+                </div>
                 <div
                   style={{
                     display: "flex",
-                    marginBottom: "20px",
-                    alignItems: "center",
                   }}
                 >
-                  <div style={{ width: "90%" }}>
-                    <ReactQuill
-                      value={codeComment ? codeComment.comment : ""}
-                      readOnly={true}
-                      theme={"bubble"}
-                      modules={editor}
-                    />
-                  </div>
-                  <div style={{ width: "10%" }}>
-                    {checkIfOwnerOfComment(
-                      codeComment.user && codeComment.user.id
-                    ) && (
-                      <div>
-                        <IconButton
-                          size="small"
-                          onClick={() => {
-                            setEditMode(true);
-                            setSelectedCommentId(codeComment.id);
-                            setSelectedComment(codeComment);
-                          }}
-                          disabled={
-                            editMode && selectedCommentId === codeComment.id
+                  <div style={{ marginBottom: "20px", width: "100%" }}>
+                    {editMode && selectedCommentId === codeComment.id ? (
+                      <Fragment>
+                        <ReactQuill
+                          value={selectedComment && selectedComment.comment}
+                          onChange={(value) =>
+                            setSelectedComment({
+                              ...selectedComment,
+                              comment: value,
+                            })
                           }
-                        >
-                          <Edit fontSize="small" />
-                        </IconButton>
-
-                        <IconButton
-                          size="small"
-                          onClick={() => {
-                            setSelectedCommentId(codeComment.id);
-                            setDeleteCommentDialog(true);
+                          modules={editor}
+                          format={format}
+                          theme={"snow"}
+                        />
+                        <div
+                          style={{
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                            float: "right",
                           }}
                         >
-                          <Delete fontSize="small" />
-                        </IconButton>
-                      </div>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            style={{ marginRight: "10px" }}
+                            onClick={() => handleUpdateComment()}
+                            disabled={
+                              selectedComment && selectedComment.comment === ""
+                            }
+                            style={{ height: 30 }}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => {
+                              setEditMode(false);
+                              setSelectedComment();
+                              setSelectedCommentId();
+                            }}
+                            style={{ height: 30, marginLeft: "10px" }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </Fragment>
+                    ) : (
+                      <ReactQuill
+                        value={codeComment ? codeComment.comment : ""}
+                        readOnly={true}
+                        theme={"bubble"}
+                        modules={editor}
+                      />
                     )}
                   </div>
                 </div>
