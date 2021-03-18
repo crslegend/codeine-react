@@ -1,9 +1,8 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
-  Avatar,
   Button,
   Chip,
   Dialog,
@@ -11,7 +10,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  ListItem,
   TextField,
   Typography,
 } from "@material-ui/core";
