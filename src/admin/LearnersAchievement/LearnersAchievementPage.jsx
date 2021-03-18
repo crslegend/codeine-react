@@ -19,6 +19,7 @@ import {
 import SearchBar from "material-ui-search-bar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Add, Close } from "@material-ui/icons";
+import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +48,8 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   chip: {
-    margin: "4px 0px 5px 10px",
+    margin: "2px 0px 2px 10px",
+    fontSize: "12px",
     backgroundColor: "#164D8F",
     color: "#FFFFFF",
   },
@@ -80,8 +82,54 @@ const categories = [
   },
 ];
 
+const languages = [
+  {
+    value: "PY",
+    label: "Python",
+  },
+  {
+    value: "JAVA",
+    label: "Java",
+  },
+  {
+    value: "JS",
+    label: "Javascript",
+  },
+  {
+    value: "CPP",
+    label: "C++",
+  },
+  {
+    value: "CS",
+    label: "C#",
+  },
+  {
+    value: "HTML",
+    label: "HTML",
+  },
+  {
+    value: "CSS",
+    label: "CSS",
+  },
+  {
+    value: "RUBY",
+    label: "Ruby",
+  },
+];
+
 const AdminLearnersAchievementPage = () => {
   const classes = useStyles();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [badges, setBadges] = useState([]);
   const [searchValue, setSearchValue] = useState("");
@@ -110,6 +158,101 @@ const AdminLearnersAchievementPage = () => {
   const submitNewAchievement = () => {
     console.log(newBadge);
     console.log(newBadgeRequirement);
+    if (newBadge.title === "" || newBadge.title === undefined) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter a badge title",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (newBadge.badge === undefined || newBadge.badge === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Attach a logo to the badge",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      newBadgeRequirement.experience_point === undefined ||
+      newBadgeRequirement.experience_point === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter experience points requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      newBadgeRequirement.coding_languages.length === 0 &&
+      newBadgeRequirement.category.length === 0
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "State language and/or category requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", newBadge.title);
+    formData.append("badge", newBadge.badge);
+
+    Service.client
+      .post(`/achievements`, formData)
+      .then((res) => {
+        console.log(res);
+        Service.client
+          .post(
+            `/achievements/${res.data.id}/requirements`,
+            newBadgeRequirement
+          )
+          .then((res) => {
+            setOpenAchievementDialog(false);
+            getBadgesData();
+            setSbOpen(true);
+            setSnackbar({
+              message: "New badge successfully created!",
+              severity: "success",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            setOpenAchievementDialog(false);
+            getBadgesData();
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const getBadgesData = () => {
@@ -138,7 +281,8 @@ const AdminLearnersAchievementPage = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ height: "calc(100vh - 115px)" }}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Grid container style={{ marginBottom: "20px" }}>
         <Grid item xs={12}>
           <Typography variant="h3" style={{ fontWeight: 700 }}>
@@ -287,6 +431,16 @@ const AdminLearnersAchievementPage = () => {
                     select
                     SelectProps={{
                       multiple: true,
+                      MenuProps: {
+                        style: {
+                          height: "250px",
+                        },
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        },
+                        getContentAnchorEl: null,
+                      },
                       renderValue: (selected) => (
                         <div className={classes.chips}>
                           {selected.map((value) => (
@@ -318,12 +472,72 @@ const AdminLearnersAchievementPage = () => {
                     ))}
                   </TextField>
                 </div>
+                <div style={{ marginBottom: "20px" }}>
+                  <label htmlFor="languages">
+                    <Typography variant="body2">Coding Languages</Typography>
+                  </label>
+                  <TextField
+                    id="languages"
+                    style={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                    margin="dense"
+                    select
+                    SelectProps={{
+                      multiple: true,
+                      MenuProps: {
+                        style: {
+                          height: "250px",
+                        },
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        },
+                        getContentAnchorEl: null,
+                      },
+                      renderValue: (selected) => (
+                        <div className={classes.chips}>
+                          {selected.map((value) => (
+                            <Chip
+                              key={value}
+                              label={value}
+                              className={classes.chip}
+                            >
+                              {console.log(value)}
+                            </Chip>
+                          ))}
+                        </div>
+                      ),
+                    }}
+                    value={
+                      newBadgeRequirement &&
+                      newBadgeRequirement.coding_languages
+                    }
+                    onChange={(e) => {
+                      setNewBadgeRequirement({
+                        ...newBadgeRequirement,
+                        coding_languages: e.target.value,
+                      });
+                    }}
+                  >
+                    {languages.map((option) => (
+                      <MenuItem
+                        style={{ height: "35px", fontSize: "14px" }}
+                        key={option.label}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </div>
               </Grid>
               <Grid item xs={4}>
                 <div
                   style={{
-                    marginBottom: "10px",
                     display: "flex",
+                    marginTop: "20px",
                     justifyContent: "center",
                   }}
                 >
@@ -338,7 +552,7 @@ const AdminLearnersAchievementPage = () => {
                         className={classes.avatar}
                         style={{ padding: "20px" }}
                       >
-                        Upload badge Logo
+                        Upload badge logo
                       </Avatar>
                     )}
                   </IconButton>
@@ -349,7 +563,12 @@ const AdminLearnersAchievementPage = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => submitNewAchievement()} color="secondary">
+          <Button
+            style={{ margin: "10px 15px" }}
+            variant="contained"
+            onClick={() => submitNewAchievement()}
+            color="secondary"
+          >
             Create
           </Button>
         </DialogActions>
