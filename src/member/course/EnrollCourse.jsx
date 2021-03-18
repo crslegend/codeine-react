@@ -65,9 +65,7 @@ const styles = makeStyles((theme) => ({
   },
   unenrollButton: {
     marginLeft: "25px",
-    marginRight: "25px",
     backgroundColor: theme.palette.red.main,
-    // textTransform: "none",
     color: "#fff",
     "&:hover": {
       backgroundColor: "#8E0000",
@@ -78,7 +76,7 @@ const styles = makeStyles((theme) => ({
   },
   courseSection: {
     display: "flex",
-    marginTop: "15px",
+    marginTop: "30px",
   },
   content: {
     minHeight: 400,
@@ -133,6 +131,7 @@ const EnrollCourse = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
   const [givenCourseReview, setGivenCourseReview] = useState(false);
+  const [canBookConsult, setCanBookConsult] = useState(true);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
 
@@ -213,10 +212,34 @@ const EnrollCourse = () => {
   };
   // console.log(course);
 
+  const checkIfCanBookConsultations = () => {
+    Service.client
+      .get("/consultations/member/applications", {
+        params: { is_upcoming: "True" },
+      })
+      .then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+          if (
+            res.data[i].member.membership_tier === "FREE" &&
+            new Date(res.data[i].consultation_slot.start_time).getMonth() ===
+              new Date().getMonth()
+          ) {
+            setCanBookConsult(false);
+            break;
+          }
+        }
+        console.log(canBookConsult);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
     getCourse();
     getCourseReviews();
+    checkIfCanBookConsultations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -364,7 +387,7 @@ const EnrollCourse = () => {
           }}
         >
           <Breadcrumbs
-            style={{ margin: "20px 0px" }}
+            style={{ margin: "10px 0px" }}
             separator="›"
             aria-label="breadcrumb"
           >
@@ -396,9 +419,10 @@ const EnrollCourse = () => {
               color="primary"
               variant="contained"
               component={Link}
+              disabled={canBookConsult ? false : true}
               to={`/courses/enroll/consultation/${course && course.partner.id}`}
             >
-              Book consultation
+              {console.log(canBookConsult)} Book consultation
             </Button>
             {givenCourseReview && givenCourseReview ? (
               <Button variant="contained" color="primary" disabled>

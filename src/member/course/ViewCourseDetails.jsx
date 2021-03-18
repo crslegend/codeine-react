@@ -38,6 +38,7 @@ import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
 import { calculateDateInterval } from "../../utils.js";
+import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -83,6 +84,15 @@ const styles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
+  unenrollButton: {
+    margin: "auto",
+    marginBottom: "20px",
+    backgroundColor: theme.palette.red.main,
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#8E0000",
+    },
+  },
   reviews: {
     display: "flex",
     flexDirection: "column",
@@ -114,6 +124,18 @@ const ViewCourseDetails = () => {
   const [progress, setProgress] = useState();
 
   const [expanded, setExpanded] = useState(false);
+  const [unenrollDialog, setUnenrollDialog] = useState(false);
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [onlyForProDialog, setOnlyForProDialog] = useState(false);
 
@@ -222,8 +244,31 @@ const ViewCourseDetails = () => {
     }
   };
 
+  const handleUnenrollment = () => {
+    Service.client
+      .delete(`/courses/${id}/enrollments`)
+      .then((res) => {
+        console.log(res);
+        // setProgress(res.data.progress);
+        setUnenrollDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "You have successfully unenrolled from this course.",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Navbar
         logo={components.navLogo}
         bgColor="#fff"
@@ -254,6 +299,7 @@ const ViewCourseDetails = () => {
           </Link>
           <Typography variant="body1">Overview</Typography>
         </Breadcrumbs>
+
         <div className={classes.courseSection}>
           <div style={{ width: "60%" }}>
             <Typography
@@ -592,7 +638,11 @@ const ViewCourseDetails = () => {
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
             <div
-              style={{ maxWidth: 400, margin: "auto", marginBottom: "20px" }}
+              style={{
+                maxWidth: 400,
+                margin: "auto",
+                marginBottom: "20px",
+              }}
             >
               <img
                 src={course && course.thumbnail}
@@ -647,19 +697,32 @@ const ViewCourseDetails = () => {
                       </Box>
                     </Box>
                   </div>
-                  <Button
-                    variant="contained"
+                  <div
                     style={{
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "20px",
+                      display: "flex",
+                      justifyContent: "space-between",
                     }}
-                    color="primary"
-                    component={Link}
-                    to={`/courses/enroll/${id}`}
                   >
-                    Continue Course
-                  </Button>
+                    <Button
+                      variant="contained"
+                      style={{
+                        margin: "auto",
+                        marginBottom: "20px",
+                      }}
+                      color="primary"
+                      component={Link}
+                      to={`/courses/enroll/${id}`}
+                    >
+                      Continue Course
+                    </Button>
+                    <Button
+                      variant="contained"
+                      className={classes.unenrollButton}
+                      onClick={() => setUnenrollDialog(true)}
+                    >
+                      Unenroll
+                    </Button>
+                  </div>
                 </Fragment>
               )}
 
@@ -882,6 +945,42 @@ const ViewCourseDetails = () => {
       </Dialog>
 
       <Footer />
+      <Dialog
+        open={unenrollDialog}
+        onClose={() => setUnenrollDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Unenroll from this course?</DialogTitle>
+        <DialogContent>
+          You will not be able to access the course contents after unenrollment.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setUnenrollDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              // to call unenroll endpoint
+              handleUnenrollment();
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
