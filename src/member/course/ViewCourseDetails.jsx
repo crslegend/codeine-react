@@ -67,8 +67,9 @@ const styles = makeStyles((theme) => ({
   },
   learningObjectives: {
     marginTop: theme.spacing(8),
-    border: "1px solid",
-    borderRadius: "5px",
+    backgroundColor: "#FFF",
+    border: "2px solid",
+    borderRadius: "3px",
     minHeight: "100px",
     padding: theme.spacing(3),
   },
