@@ -137,10 +137,11 @@ const AdminLearnersAchievementPage = () => {
     badge: "",
     title: "",
   });
+  const [category, setCategory] = useState([]);
+  const [codingLanguages, setCodingLanguages] = useState([]);
   const [newBadgeRequirement, setNewBadgeRequirement] = useState({
     experience_point: "0",
-    category: [],
-    coding_languages: [],
+    stat: [],
   });
   const [avatar, setAvatar] = useState();
 
@@ -155,9 +156,18 @@ const AdminLearnersAchievementPage = () => {
     setOpenAchievementDialog(false);
   };
 
+  const handleResetFields = () => {
+    setAvatar();
+    setNewBadge({ badge: "", title: "" });
+    setCategory([]);
+    setCodingLanguages([]);
+    setNewBadgeRequirement({ experience_point: "0", stat: [] });
+  };
+
   const submitNewAchievement = () => {
     console.log(newBadge);
     console.log(newBadgeRequirement);
+
     if (newBadge.title === "" || newBadge.title === undefined) {
       setSbOpen(true);
       setSnackbar({
@@ -200,10 +210,7 @@ const AdminLearnersAchievementPage = () => {
       });
       return;
     }
-    if (
-      newBadgeRequirement.coding_languages.length === 0 &&
-      newBadgeRequirement.category.length === 0
-    ) {
+    if (newBadgeRequirement.stat.length === 0) {
       setSbOpen(true);
       setSnackbar({
         message: "State language and/or category requirements",
@@ -232,6 +239,7 @@ const AdminLearnersAchievementPage = () => {
           )
           .then((res) => {
             setOpenAchievementDialog(false);
+            handleResetFields();
             getBadgesData();
             setSbOpen(true);
             setSnackbar({
@@ -247,7 +255,6 @@ const AdminLearnersAchievementPage = () => {
           .catch((err) => {
             console.log(err);
             setOpenAchievementDialog(false);
-            getBadgesData();
           });
       })
       .catch((err) => {
@@ -453,11 +460,12 @@ const AdminLearnersAchievementPage = () => {
                         </div>
                       ),
                     }}
-                    value={newBadgeRequirement && newBadgeRequirement.category}
+                    value={category}
                     onChange={(e) => {
+                      setCategory(e.target.value);
                       setNewBadgeRequirement({
                         ...newBadgeRequirement,
-                        category: e.target.value,
+                        stat: codingLanguages.concat(e.target.value),
                       });
                     }}
                   >
@@ -503,21 +511,17 @@ const AdminLearnersAchievementPage = () => {
                               key={value}
                               label={value}
                               className={classes.chip}
-                            >
-                              {console.log(value)}
-                            </Chip>
+                            />
                           ))}
                         </div>
                       ),
                     }}
-                    value={
-                      newBadgeRequirement &&
-                      newBadgeRequirement.coding_languages
-                    }
+                    value={codingLanguages}
                     onChange={(e) => {
+                      setCodingLanguages(e.target.value);
                       setNewBadgeRequirement({
                         ...newBadgeRequirement,
-                        coding_languages: e.target.value,
+                        stat: category.concat(e.target.value),
                       });
                     }}
                   >
