@@ -122,7 +122,7 @@ const ContentProviderHome = () => {
 
   const loggedInNavbar = (
     <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <a href={`/codereview`} style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
@@ -131,7 +131,7 @@ const ContentProviderHome = () => {
             Code Review
           </Typography>
         </a>
-      </ListItem>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
