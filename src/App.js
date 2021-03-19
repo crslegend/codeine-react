@@ -6,7 +6,11 @@ import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
 import ViewArticlePage from "./member/article/ArticleMain";
 import MemberArticlePage from "./member/article/MemberArticleList";
+import MemberCoursePage from "./member/profile/Courses/CoursesPage";
+import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
+import MemberProfilePage from "./member/profile/Profile/ProfilePage";
 import MemberEditArticlePage from "./member/article/EditArticle";
+import MemberPaymentPage from "./member/profile/Payment/PaymentPage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
@@ -106,8 +110,32 @@ const App = () => {
       />
       <PrivateRoute
         exact
-        path="/member/articles/"
+        path="/member/articles"
         component={MemberArticlePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/courses"
+        component={MemberCoursePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/consultations"
+        component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/profile"
+        component={MemberProfilePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/payment"
+        component={MemberPaymentPage}
         user="member"
       />
       <PrivateRoute

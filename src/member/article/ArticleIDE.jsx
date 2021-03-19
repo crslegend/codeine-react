@@ -7,6 +7,7 @@ import {
   TextField,
   Fragment,
   ListItem,
+  Avatar,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -14,6 +15,7 @@ import Service from "../../AxiosService";
 import Toast from "../../components/Toast.js";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import ReactQuill from "react-quill";
+import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,13 +23,14 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
-    paddingTop: "65px",
   },
   tile: {
     height: "100%",
+    padding: theme.spacing(3),
+    overflow: "auto",
   },
   split: {
-    height: "calc(100vh - 65px)",
+    height: "100vh",
   },
 }));
 
@@ -53,7 +56,30 @@ const MemberArticleIDE = (props) => {
     //checkIfLoggedIn();
   }, []);
 
-  const [loading, setLoading] = useState(false);
+  const options = {
+    replace: (domNode) => {
+      if (domNode.attribs && domNode.name === "img") {
+        const props = attributesToProps(domNode.attribs);
+        return <img style={{ width: "100%" }} alt="" {...props} />;
+      }
+    },
+  };
+
+  const formatDate = (date) => {
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
 
   return (
     <div className={classes.root}>
@@ -61,12 +87,53 @@ const MemberArticleIDE = (props) => {
         <Splitter direction={SplitDirection.Horizontal}>
           <div className={classes.tile}>
             <div style={{ height: "100%" }}>
-              <Typography>{articleDetails.title}</Typography>
-              <ReactQuill
+              <Typography
+                variant="h1"
+                style={{ fontWeight: "600", marginBottom: "10px" }}
+              >
+                {articleDetails.title}
+              </Typography>
+
+              {articleDetails.member && (
+                <div
+                  style={{
+                    display: "flex",
+                    marginRight: "15px",
+                    alignItems: "right",
+                    marginBottom: "20px",
+                    order: 2,
+                  }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <Avatar
+                      src={articleDetails.member.profile_photo}
+                      alt=""
+                      style={{ marginRight: "15px" }}
+                    ></Avatar>
+                  </div>
+                  <div style={{ flexDirection: "column" }}>
+                    <Typography
+                      style={{ display: "flex", fontWeight: "550" }}
+                      variant="body2"
+                    >
+                      {articleDetails.member.first_name +
+                        " " +
+                        articleDetails.member.last_name}
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatDate(articleDetails.date_created)}
+                    </Typography>
+                  </div>
+                </div>
+              )}
+              <div style={{ fontSize: "20px" }}>
+                {parse(articleDetails.content, options)}
+              </div>
+              {/* <ReactQuill
                 value={articleDetails.content}
                 readOnly={true}
                 theme={"bubble"}
-              />
+              /> */}
 
               <br />
               <Button

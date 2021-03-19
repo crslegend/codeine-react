@@ -69,6 +69,79 @@ const ViewAllArticles = () => {
       });
   };
 
+  // const navLogo = (
+  //   <Fragment>
+  //     <div style={{ display: "flex", alignItems: "center" }}>
+  //       <Link
+  //         to="/"
+  //         style={{
+  //           paddingTop: "10px",
+  //           paddingBottom: "10px",
+  //           paddingLeft: "10px",
+  //           marginRight: "35px",
+  //           width: 100,
+  //         }}
+  //       >
+  //         <img src={logo} width="120%" alt="codeine logo" />
+  //       </Link>
+  //       {user && !articleDetails.is_published && (
+  //         <div style={{ display: "flex", alignItems: "center" }}>
+  //           <Typography
+  //             variant="h6"
+  //             style={{ fontSize: "15px", color: "#000000" }}
+  //           >
+  //             Draft in {user.first_name + " " + user.last_name}
+  //           </Typography>
+  //           <Typography
+  //             variant="h6"
+  //             style={{ fontSize: "15px", color: "#0000008a" }}
+  //           >
+  //             {saveState ? "-Saved" : "-Saving"}
+  //           </Typography>
+  //         </div>
+  //       )}
+  //     </div>
+  //   </Fragment>
+  // );
+
+  // const loggedInNavbar = (
+  //   <Fragment>
+  //     <ListItem style={{ whiteSpace: "nowrap" }}>
+  //       <Link
+  //         to="/member/home"
+  //         style={{
+  //           textDecoration: "none",
+  //         }}
+  //       >
+  //         <Typography
+  //           variant="h6"
+  //           style={{ fontSize: "15px", color: "#437FC7" }}
+  //         >
+  //           Dashboard
+  //         </Typography>
+  //       </Link>
+  //     </ListItem>
+  //     <ListItem style={{ whiteSpace: "nowrap" }}>
+  //       <Button
+  //         variant="contained"
+  //         color="primary"
+  //         style={{
+  //           textTransform: "capitalize",
+  //         }}
+  //         onClick={() => {
+  //           Service.removeCredentials();
+  //           setLoggedIn(false);
+  //           history.push("/");
+  //         }}
+  //       >
+  //         <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+  //           Logout
+  //         </Typography>
+  //       </Button>
+  //     </ListItem>
+  //   </Fragment>
+  // );
+
   return (
     <div className={classes.root}>
       <div style={{ display: "flex" }}>

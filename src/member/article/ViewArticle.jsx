@@ -16,6 +16,8 @@ import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 
@@ -57,6 +59,7 @@ const ViewArticle = (props) => {
   const history = useHistory();
 
   const {
+    user,
     articleDetails,
     setArticleDetails,
     drawerOpen,
@@ -81,6 +84,14 @@ const ViewArticle = (props) => {
       return newDate;
     }
     return "";
+  };
+
+  const checkIfOwnerOfComment = (userId) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    if (decoded.user_id === userId) {
+      return true;
+    }
+    return false;
   };
 
   useEffect(() => {
@@ -210,53 +221,86 @@ const ViewArticle = (props) => {
 
   return (
     <div className={classes.root}>
-      <Container maxWidth="sm">
-        <div>
-          <Menu onClick={(e) => handleClick(e)} />
-          <Popover
-            id={popoverid}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
+      <Container maxWidth="md">
+        <Typography
+          variant="h1"
+          style={{ fontWeight: "600", marginBottom: "10px" }}
+        >
+          {articleDetails.title}
+        </Typography>
+        {articleDetails.member && (
+          <div
+            style={{
+              display: "flex",
+              marginRight: "15px",
+              alignItems: "right",
+              marginBottom: "20px",
+              order: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              className={classes.typography}
-              onClick={() => history.push(`/article/edit/${id}`)}
-            >
-              Edit article
-            </Typography>
-            <Typography
-              variant="body2"
-              className={classes.typography}
-              onClick={() => {
-                // setDeleteCommentDialog(true);
-              }}
-            >
-              Delete
-            </Typography>
-          </Popover>
-          {!openIDE && (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                textTransform: "capitalize",
-              }}
-              onClick={() => openingIDE()}
-            >
-              Open IDE
-            </Button>
-          )}
+            <div style={{ display: "flex" }}>
+              <Avatar
+                src={articleDetails.member.profile_photo}
+                alt=""
+                style={{ marginRight: "15px" }}
+              ></Avatar>
+            </div>
+            <div style={{ flexDirection: "column" }}>
+              <Typography
+                style={{ display: "flex", fontWeight: "550" }}
+                variant="body2"
+              >
+                {articleDetails.member.first_name +
+                  " " +
+                  articleDetails.member.last_name}
+              </Typography>
+              <Typography variant="body2">
+                {formatDate(articleDetails.date_created)}
+              </Typography>
+            </div>
+            {user && checkIfOwnerOfComment(user.id) && (
+              <div style={{ marginLeft: "auto" }}>
+                <Menu onClick={(e) => handleClick(e)} />
+                <Popover
+                  id={popoverid}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={() => history.push(`/article/edit/${id}`)}
+                  >
+                    Edit article
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={() => {
+                      // setDeleteCommentDialog(true);
+                    }}
+                  >
+                    Delete
+                  </Typography>
+                </Popover>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ fontSize: "20px" }}>
+          {parse(articleDetails.content, options)}
         </div>
+
         <div style={{ alignItems: "center", display: "flex" }}>
           <UseAnimations
             animation={heart}
@@ -265,12 +309,23 @@ const ViewArticle = (props) => {
             onClick={(e) => handleLikeArticle(e)}
           />
           <Typography>{numOfLikes}</Typography>
-        </div>
-        <div style={{ alignItems: "center", display: "flex" }}>
           <CommentIcon onClick={() => setDrawerOpen(true)} />
           <Typography style={{ display: "inline-flex" }}>
             {articleDetails.top_level_comments.length}
           </Typography>
+          {!openIDE && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                textTransform: "capitalize",
+                marginLeft: "auto",
+              }}
+              onClick={() => openingIDE()}
+            >
+              Open IDE
+            </Button>
+          )}
         </div>
 
         <div style={{ display: "flex" }}>
@@ -430,39 +485,6 @@ const ViewArticle = (props) => {
               );
             }
           })}
-        <Typography
-          variant="h1"
-          style={{ fontWeight: "600", marginBottom: "10px" }}
-        >
-          {articleDetails.title}
-        </Typography>
-        {articleDetails.member && (
-          <div style={{ display: "flex", marginRight: "15px" }}>
-            <div style={{ display: "flex" }}>
-              <Avatar
-                src={articleDetails.member.profile_photo}
-                alt=""
-                style={{ marginRight: "15px" }}
-              ></Avatar>
-            </div>
-            <div style={{ flexDirection: "column" }}>
-              <Typography
-                style={{ display: "flex", fontWeight: "550" }}
-                variant="body2"
-              >
-                {articleDetails.member.first_name +
-                  " " +
-                  articleDetails.member.last_name}
-              </Typography>
-              <Typography variant="body2">
-                {formatDate(articleDetails.date_created)}
-              </Typography>
-            </div>
-          </div>
-        )}
-        <div style={{ fontSize: "20px" }}>
-          {parse(articleDetails.content, options)}
-        </div>
 
         {/* <ReactQuill
           value={articleDetails.content}

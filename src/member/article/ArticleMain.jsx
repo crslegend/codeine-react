@@ -235,23 +235,21 @@ const ArticleMain = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={navLogo}
-        bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
-      />
 
-      <CommentDrawer
-        user={user}
-        openIDE={openIDE}
-        setOpenIDE={setOpenIDE}
-        articleDetails={articleDetails}
-        setArticleDetails={setArticleDetails}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        setSnackbar={setSnackbar}
-        setSbOpen={setSbOpen}
-      />
+      {drawerOpen && (
+        <CommentDrawer
+          user={user}
+          openIDE={openIDE}
+          setOpenIDE={setOpenIDE}
+          articleDetails={articleDetails}
+          setArticleDetails={setArticleDetails}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          setSnackbar={setSnackbar}
+          setSbOpen={setSbOpen}
+        />
+      )}
+
       {openIDE ? (
         <ArticleIDE
           user={user}
@@ -265,19 +263,26 @@ const ArticleMain = () => {
           setSbOpen={setSbOpen}
         />
       ) : (
-        <ViewArticle
-          user={user}
-          openIDE={openIDE}
-          setOpenIDE={setOpenIDE}
-          articleDetails={articleDetails}
-          setArticleDetails={setArticleDetails}
-          drawerOpen={drawerOpen}
-          setDrawerOpen={setDrawerOpen}
-          setSnackbar={setSnackbar}
-          setSbOpen={setSbOpen}
-        />
+        <>
+          <Navbar
+            logo={navLogo}
+            bgColor="#fff"
+            navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
+          />
+          <ViewArticle
+            user={user}
+            openIDE={openIDE}
+            setOpenIDE={setOpenIDE}
+            articleDetails={articleDetails}
+            setArticleDetails={setArticleDetails}
+            drawerOpen={drawerOpen}
+            setDrawerOpen={setDrawerOpen}
+            setSnackbar={setSnackbar}
+            setSbOpen={setSbOpen}
+          />
+          <Footer />
+        </>
       )}
-      <Footer />
     </div>
   );
 };
