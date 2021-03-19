@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
+  CardMedia,
   Typography,
   Grid,
   Dialog,
@@ -15,12 +16,14 @@ import {
   Avatar,
   MenuItem,
   Chip,
+  Tooltip,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Add, Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
+import Label from "../../member/landing/components/Label";
 
 const useStyles = makeStyles((theme) => ({
   cardroot: {
@@ -52,6 +55,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "12px",
     backgroundColor: "#164D8F",
     color: "#FFFFFF",
+  },
+  cardmedia: {
+    height: "120px",
+    width: "120px",
+    borderRadius: "50%",
+    margin: "28px",
+  },
+  description: {
+    borderRadius: 0,
+    backgroundColor: "none",
+    padding: "15px 10px",
   },
 }));
 
@@ -147,6 +161,21 @@ const AdminLearnersAchievementPage = () => {
 
   const [openAchievementDialog, setOpenAchievementDialog] = useState(false);
   const [openBadgePicDialog, setOpenBadgePicDialog] = useState(false);
+
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
 
   const handleOpenAchievementDialog = (e) => {
     setOpenAchievementDialog(true);
@@ -266,6 +295,7 @@ const AdminLearnersAchievementPage = () => {
     Service.client
       .get(`/achievements`, { params: { title: searchValue } })
       .then((res) => {
+        res.data.sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
         console.log(res.data);
       })
@@ -319,7 +349,96 @@ const AdminLearnersAchievementPage = () => {
               display: "flex",
               marginRight: "10px",
             }}
-          ></div>
+          >
+            {badges && badges.length > 0 ? (
+              badges.map((badge) => (
+                <Tooltip
+                  title={
+                    <Card className={classes.description}>
+                      <Typography
+                        variant="h6"
+                        style={{
+                          textAlign: "center",
+                          fontWeight: 700,
+                          marginBottom: badge.is_deleted ? "0px" : "5px",
+                          color: "#164D8F",
+                        }}
+                      >
+                        {badge.title}
+                      </Typography>
+                      {badge && badge.is_deleted ? (
+                        <Typography
+                          variant="body2"
+                          style={{
+                            color: "#CC0000",
+                            textAlign: "center",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          [Deleted]
+                        </Typography>
+                      ) : (
+                        ""
+                      )}
+                      <Typography variant="body2">
+                        Date created: {formatDate(badge.timestamp)}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        style={{
+                          fontWeight: 700,
+                          margin: "10px 0px 3px",
+                        }}
+                      >
+                        Requirements
+                      </Typography>
+                      <Typography variant="body2">
+                        Experience points:{" "}
+                        {badge &&
+                          badge.achievement_requirements[0].experience_point}
+                        <br />
+                        {/*badge &&
+                          badge.achievement_requirements[0].stat.map(
+                            (label) => <Label label={label} />
+                          )*/}
+                      </Typography>
+                    </Card>
+                  }
+                >
+                  <CardMedia
+                    className={classes.cardmedia}
+                    image={badge.badge}
+                    style={{
+                      webkitFilter: badge.is_deleted
+                        ? "brightness(50%)"
+                        : "brightness(100%)",
+                    }}
+                  />
+                </Tooltip>
+              ))
+            ) : (
+              <div
+                style={{
+                  height: "100px",
+                  display: "grid",
+                  margin: "0 auto",
+                }}
+              >
+                <Typography
+                  variant="h3"
+                  style={{
+                    textAlign: "center",
+                    lineHeight: "40px",
+                    margin: "60px auto",
+                    color: "#9B9B9B",
+                  }}
+                >
+                  Codeine has no achievement badges. <br />
+                  Help create one today!
+                </Typography>
+              </div>
+            )}
+          </div>
         </Grid>
         <Grid item xs={3}>
           <Card className={classes.cardroot}>
