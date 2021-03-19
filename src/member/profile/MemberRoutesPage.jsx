@@ -29,6 +29,7 @@ import {
   Assignment,
   Payment,
 } from "@material-ui/icons";
+import MemberNavBar from "../MemberNavBar";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -140,93 +141,93 @@ const MemberLanding = () => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <IconButton onClick={handleClick} size="small">
-          <Avatar
-            src={user.profile_photo}
-            alt=""
-            style={{ width: "34px", height: "34px" }}
-          />
-        </IconButton>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <div className={classes.popever}>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Courses
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Consultations
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Industry Projects
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Helpdesk
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Profile
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              My Payments
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                Service.removeCredentials();
-                history.push("/");
-              }}
-            >
-              Log out
-            </Typography>
-          </div>
-        </Popover>
-      </ListItem>
-    </Fragment>
-  );
+  // const memberNavbar = (
+  //   <Fragment>
+  //     <ListItem style={{ whiteSpace: "nowrap" }}>
+  //       <IconButton onClick={handleClick} size="small">
+  //         <Avatar
+  //           src={user.profile_photo}
+  //           alt=""
+  //           style={{ width: "34px", height: "34px" }}
+  //         />
+  //       </IconButton>
+  //       <Popover
+  //         id={id}
+  //         open={open}
+  //         anchorEl={anchorEl}
+  //         onClose={handleClose}
+  //         anchorOrigin={{
+  //           vertical: "bottom",
+  //           horizontal: "right",
+  //         }}
+  //         transformOrigin={{
+  //           vertical: "top",
+  //           horizontal: "right",
+  //         }}
+  //       >
+  //         <div className={classes.popover}>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Courses
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Consultations
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Industry Projects
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Helpdesk
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Profile
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               history.push("/");
+  //             }}
+  //           >
+  //             My Payments
+  //           </Typography>
+  //           <Typography
+  //             className={classes.typography}
+  //             onClick={() => {
+  //               Service.removeCredentials();
+  //               history.push("/");
+  //             }}
+  //           >
+  //             Log out
+  //           </Typography>
+  //         </div>
+  //       </Popover>
+  //     </ListItem>
+  //   </Fragment>
+  // );
 
   const sidebarHead = (
     <Fragment>
@@ -397,7 +398,11 @@ const MemberLanding = () => {
     <BrowserRouter>
       <div className={classes.root}>
         <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-        <Navbar logo={navLogo} navbarItems={memberNavbar} bgColor="#fff" />
+        <Navbar
+          logo={navLogo}
+          navbarItems={<MemberNavBar user={user} />}
+          bgColor="#fff"
+        />
         <Sidebar head={sidebarHead} list={sidebarList} />
         <main className={classes.content}>
           <div className={classes.toolbar} />
