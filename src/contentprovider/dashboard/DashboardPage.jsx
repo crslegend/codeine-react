@@ -33,10 +33,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   cardRoot: {
-    width: "300px",
+    width: "250px",
     padding: "10px 10px",
-    marginTop: "30px",
-    marginRight: "50px",
     border: "1px solid",
     borderRadius: 0,
     height: "100%",
@@ -225,7 +223,7 @@ const DashboardPage = () => {
           courses.length > 0 &&
           courses.map((course, index) => {
             return (
-              <Grid item xs={4} key={index}>
+              <Grid item xs={3} key={index}>
                 <Card elevation={0} className={classes.cardRoot}>
                   <CardActionArea
                     style={{ height: "100%" }}
