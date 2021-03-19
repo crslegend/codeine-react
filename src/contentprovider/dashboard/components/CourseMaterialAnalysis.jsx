@@ -112,6 +112,16 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
     setData(loadedData);
   };
 
+  const findIndexOfChapter = () => {
+    if (selectedChapterId !== "") {
+      for (let i = 0; i < timeTakenCourseMaterial.length; i++) {
+        if (timeTakenCourseMaterial[i].chapter_id === selectedChapterId) {
+          return i + 1;
+        }
+      }
+    }
+  };
+
   const [data, setData] = useState([]);
   const [selectedChapterId, setSelectedChapterId] = useState("");
 
@@ -197,16 +207,16 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           height={400}
           data={data}
           margin={{
-            top: 15,
+            top: 25,
             right: 30,
             left: 40,
-            bottom: 25,
+            bottom: 30,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name">
             <Label
-              value="Course Materials in Chapter"
+              value={`Course Materials in Chapter ${findIndexOfChapter()}`}
               position="bottom"
               offset={10}
               style={{ textAnchor: "middle" }}

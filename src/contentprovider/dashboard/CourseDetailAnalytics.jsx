@@ -276,6 +276,7 @@ const CourseDetailAnalytics = () => {
                     return (
                       <CourseMaterialAnalysis
                         timeTakenCourseMaterial={timeTakenCourseMaterial}
+                        // formatSecondsToHours={formatSecondsToHours}
                       />
                     );
                   } else {
