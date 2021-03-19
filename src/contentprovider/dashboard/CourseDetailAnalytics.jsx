@@ -234,7 +234,9 @@ const CourseDetailAnalytics = () => {
               Average Time Taken
             </Typography>
             <Typography variant="h1" className={classes.numbers}>
-              {timeTakenCourse && formatSecondsToHours(timeTakenCourse) + `hrs`}
+              {timeTakenCourse
+                ? formatSecondsToHours(timeTakenCourse) + `hrs`
+                : `0 hrs`}
             </Typography>
           </div>
         </div>

@@ -223,7 +223,7 @@ const DashboardPage = () => {
           courses.length > 0 &&
           courses.map((course, index) => {
             return (
-              <Grid item xs={3} key={index}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <Card elevation={0} className={classes.cardRoot}>
                   <CardActionArea
                     style={{ height: "100%" }}
@@ -244,6 +244,7 @@ const DashboardPage = () => {
                       <Typography
                         style={{
                           fontWeight: 600,
+                          paddingBottom: "10px",
                         }}
                         variant="h6"
                       >
