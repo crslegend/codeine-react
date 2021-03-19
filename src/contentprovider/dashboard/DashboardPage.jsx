@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     "& label": {
       paddingLeft: "7px",
       paddingRight: "7px",
-      paddingTop: "7px",
+      paddingTop: "5px",
       marginLeft: "10px",
     },
     [theme.breakpoints.down("sm")]: {

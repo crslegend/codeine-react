@@ -3,7 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import Service from "../../AxiosService";
 import { useParams } from "react-router";
 import PageTitle from "../../components/PageTitle";
-import { Avatar, Paper, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Box,
+  Divider,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+} from "@material-ui/core";
+import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,11 +62,46 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(10),
     height: theme.spacing(10),
   },
+  tab: {
+    textTransform: "capitalize",
+    fontSize: 18,
+    fontWeight: 600,
+    color: "#000000",
+  },
+  tabPanel: {
+    minHeight: "400px",
+  },
 }));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={0}>
+          <Typography component={"span"}>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
 
 const CourseDetailAnalytics = () => {
   const classes = useStyles();
   const { id } = useParams();
+
+  const [value, setValue] = useState(0);
+  const tabPanelsArr = [0, 1];
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const [overallData, setOverallData] = useState();
   const [courseDetail, setCourseDetail] = useState();
@@ -195,6 +239,50 @@ const CourseDetailAnalytics = () => {
           </div>
         </div>
       </Paper>
+
+      <div>
+        <Tabs
+          value={value}
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={handleChange}
+          classes={{
+            root: classes.tabs,
+          }}
+        >
+          <Tab className={classes.tab} label="Course Materials" />
+          <Tab className={classes.tab} label="Final Quiz" />
+        </Tabs>
+        <Divider
+          style={{
+            height: "1px",
+            backgroundColor: "#000000",
+            width: "100%",
+          }}
+        />
+        {tabPanelsArr &&
+          tabPanelsArr.map((tabPanel, index) => {
+            return (
+              <TabPanel
+                key={index}
+                value={value}
+                index={tabPanel}
+                className={classes.tabPanel}
+              >
+                {(() => {
+                  if (value === 0) {
+                    return (
+                      <CourseMaterialAnalysis
+                        timeTakenCourseMaterial={timeTakenCourseMaterial}
+                      />
+                    );
+                  } else {
+                  }
+                })()}
+              </TabPanel>
+            );
+          })}
+      </div>
     </div>
   );
 };
