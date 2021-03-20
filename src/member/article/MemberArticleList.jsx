@@ -31,6 +31,12 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "none",
     marginBottom: "20px",
   },
+  articlelists: {
+    paddingTop: theme.spacing(2),
+  },
+  divider: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 function TabPanel(props) {
@@ -174,8 +180,10 @@ const ViewAllArticles = () => {
       <div className={classes.root}>
         <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
-        <div style={{ display: "flex" }}>
-          <Typography variant="h2" style={{ fontWeight: "600" }}>
+        <div
+          style={{ display: "flex", marginTop: "50px", marginBottom: "30px" }}
+        >
+          <Typography variant="h1" style={{ fontWeight: "700" }}>
             Your articles
           </Typography>
           <Button
@@ -196,8 +204,8 @@ const ViewAllArticles = () => {
         >
           <Tabs
             value={value}
-            indicatorColor="secondary"
-            textColor="secondary"
+            indicatorColor="primary"
+            textColor="primary"
             onChange={handleChange}
             aria-label="simple tabs example"
             classes={{
@@ -220,16 +228,23 @@ const ViewAllArticles = () => {
                     onClick={() => {
                       history.push(`/member/article/edit/${article.id}`);
                     }}
+                    className={classes.articlelists}
                   >
-                    <Typography style={{ fontWeight: "600" }}>
+                    <Typography
+                      style={{ fontWeight: "700", cursor: "pointer" }}
+                    >
                       {article.title.length === 0
                         ? "Untitled article"
                         : article.title}
                     </Typography>
-                    <Typography>
-                      Edited {calculateDateInterval(article.date_edited)}
+                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
+                      Last edited{" "}
+                      {calculateDateInterval(article.date_edited) +
+                        " ~ " +
+                        article.content.length +
+                        " words so far"}
                     </Typography>
-                    <div className={classes.childcommentdivider}>
+                    <div className={classes.divider}>
                       <Divider />
                     </div>
                   </div>
@@ -243,14 +258,27 @@ const ViewAllArticles = () => {
             return (
               <Fragment>
                 {article.is_published && (
-                  <div key={article.id}>
+                  <div
+                    key={article.id}
+                    onClick={() => {
+                      history.push(`/article/${article.id}`);
+                    }}
+                    className={classes.articlelists}
+                  >
                     <Typography
-                      onClick={() => {
-                        history.push(`/article/${article.id}`);
+                      style={{
+                        fontWeight: "700",
+                        cursor: "pointer",
                       }}
                     >
-                      {article.id + " - " + article.title}
+                      {article.title}
                     </Typography>
+                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
+                      Published {calculateDateInterval(article.date_edited)}
+                    </Typography>
+                    <div className={classes.divider}>
+                      <Divider />
+                    </div>
                   </div>
                 )}
               </Fragment>
