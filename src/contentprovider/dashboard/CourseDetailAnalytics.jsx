@@ -15,6 +15,7 @@ import {
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 import StudentAnalysis from "./components/StudentAnalysis";
+import StudentDemographics from "./components/StudentDemographics";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -350,7 +351,7 @@ const CourseDetailAnalytics = () => {
                     );
                   } else if (value === 3) {
                     return (
-                      <StudentAnalysis
+                      <StudentDemographics
                         memberDemographics={memberDemographics}
                         courseId={id}
                       />

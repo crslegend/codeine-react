@@ -10,7 +10,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-ui/core";
-import Service from "../../../AxiosService";
+// import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,11 +46,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       marginLeft: "0px",
     },
-  },
-  tooltip: {
-    backgroundColor: "#fff",
-    border: "1px solid #ddd",
-    padding: theme.spacing(1),
   },
 }));
 
@@ -101,7 +96,7 @@ const StudentAnalysis = ({
           variant="h6"
           style={{
             fontWeight: 600,
-            paddingBottom: "10px",
+            paddingBottom: "20px",
             textAlign: "center",
           }}
         >

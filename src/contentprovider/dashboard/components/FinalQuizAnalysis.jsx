@@ -81,19 +81,17 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
           variant="h6"
           style={{
             fontWeight: 600,
-            paddingBottom: "10px",
+            paddingBottom: "20px",
             textAlign: "center",
           }}
         >
           Final Quiz Perfomance for The Course
         </Typography>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
-              alignItems: "center",
             }}
           >
             <div style={{ display: "flex" }}>
@@ -126,8 +124,6 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
             style={{
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
-              alignItems: "center",
             }}
           >
             <div style={{ display: "flex" }}>
