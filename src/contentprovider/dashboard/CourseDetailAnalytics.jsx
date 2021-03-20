@@ -188,7 +188,7 @@ const CourseDetailAnalytics = () => {
         params: { course_id: id },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setInactiveMembers(res.data);
       })
       .catch((err) => console.log(err));
@@ -199,7 +199,7 @@ const CourseDetailAnalytics = () => {
         params: { course_id: id },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setFalseStarters(res.data);
       })
       .catch((err) => console.log(err));
@@ -343,7 +343,9 @@ const CourseDetailAnalytics = () => {
                     return (
                       <StudentAnalysis
                         inactiveMembers={inactiveMembers}
+                        setInactiveMembers={setInactiveMembers}
                         falseStarters={falseStarters}
+                        setFalseStarters={setFalseStarters}
                         numDaysForStudents={numDaysForStudents}
                         setNumDaysForStudents={setNumDaysForStudents}
                         courseId={id}

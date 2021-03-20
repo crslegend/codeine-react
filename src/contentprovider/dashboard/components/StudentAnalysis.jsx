@@ -10,7 +10,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-ui/core";
-// import Service from "../../../AxiosService";
+import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,12 +51,64 @@ const useStyles = makeStyles((theme) => ({
 
 const StudentAnalysis = ({
   inactiveMembers,
+  setInactiveMembers,
   falseStarters,
+  setFalseStarters,
   numDaysForStudents,
   setNumDaysForStudents,
   courseId,
 }) => {
   const classes = useStyles();
+
+  const handleChangeNumberOfDays = async (e) => {
+    setNumDaysForStudents(e.target.value);
+
+    if (e.target.value !== "") {
+      // get inactive members (with days)
+      Service.client
+        .get(`/analytics/inactive-members`, {
+          params: { course_id: courseId, days: e.target.value },
+        })
+        .then((res) => {
+          // console.log(res);
+          setInactiveMembers(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      // get false starters (with days)
+      Service.client
+        .get(`/analytics/course-members-stats`, {
+          params: { course_id: courseId, days: e.target.value },
+        })
+        .then((res) => {
+          // console.log(res);
+          setFalseStarters(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      // get inactive members (default without days)
+      Service.client
+        .get(`/analytics/inactive-members`, {
+          params: { course_id: courseId },
+        })
+        .then((res) => {
+          // console.log(res);
+          setInactiveMembers(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      // get false starters (default without days)
+      Service.client
+        .get(`/analytics/course-members-stats`, {
+          params: { course_id: courseId },
+        })
+        .then((res) => {
+          // console.log(res);
+          setFalseStarters(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -77,7 +129,7 @@ const StudentAnalysis = ({
             variant="outlined"
             value={numDaysForStudents ? numDaysForStudents : ""}
             onChange={(e) => {
-              setNumDaysForStudents(e.target.value);
+              handleChangeNumberOfDays(e);
             }}
           >
             <MenuItem value="">
