@@ -146,9 +146,13 @@ const StudentDemographics = ({ memberDemographics }) => {
                 </IconButton>
               </TooltipMui>
             </div>
-            <Typography variant="h1" className={classes.numbers}>
-              {memberDemographics && memberDemographics.average_age}
-            </Typography>
+            {memberDemographics && memberDemographics.average_age ? (
+              <Typography variant="h1" className={classes.numbers}>
+                {memberDemographics.average_age}
+              </Typography>
+            ) : (
+              <Typography variant="body1">Not Available</Typography>
+            )}
           </div>
         </div>
         <div style={{ display: "flex", width: "100%" }}>
@@ -158,27 +162,33 @@ const StudentDemographics = ({ memberDemographics }) => {
             <Typography variant="h6" style={{ textAlign: "center" }}>
               Gender Breakdown
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={genderData && genderData}
-                  innerRadius={60}
-                  outerRadius={80}
-                  dataKey="number"
-                  nameKey="gender"
-                  label
-                >
-                  {genderData &&
-                    genderData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {genderData && genderData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={genderData && genderData}
+                    innerRadius={60}
+                    outerRadius={80}
+                    dataKey="number"
+                    nameKey="gender"
+                    label
+                  >
+                    {genderData &&
+                      genderData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <Typography variant="body1" style={{ textAlign: "center" }}>
+                Not available
+              </Typography>
+            )}
           </div>
           <div
             style={{ display: "flex", flexDirection: "column", width: "70%" }}

@@ -227,9 +227,13 @@ const StudentAnalysis = ({
               </Tooltip>
             </div>
             <Typography variant="h1" className={classes.numbers}>
-              {inactiveMembers && inactiveMembers.length === 0
-                ? 0
-                : inactiveMembers.length}
+              {inactiveMembers && inactiveMembers.length === 0 ? (
+                0
+              ) : (
+                <span style={{ color: "#C74343" }}>
+                  {inactiveMembers.length}
+                </span>
+              )}
             </Typography>
           </div>
         </div>
