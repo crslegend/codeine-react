@@ -21,19 +21,20 @@ import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(5),
+    padding: theme.spacing(4),
     width: "70%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
-    justifyContent: "space-between",
+    flexDirection: "column",
+    // justifyContent: "space-between",
     marginBottom: "30px",
   },
   numbers: {
     color: theme.palette.primary.main,
   },
   cardRoot: {
-    width: "250px",
+    width: "270px",
     padding: "10px 10px",
     border: "1px solid",
     borderRadius: 0,
@@ -68,6 +69,7 @@ const DashboardPage = () => {
 
   const [courses, setCourses] = useState([]);
   const [overallData, setOverallData] = useState();
+  const [finalQuizPerformance, setFinalQuizPerformance] = useState();
   const [numDays, setNumDays] = useState();
 
   const getConversionRate = () => {
@@ -75,7 +77,7 @@ const DashboardPage = () => {
       Service.client
         .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           // let arr = res.data.breakdown;
           setCourses(res.data.breakdown);
           setOverallData({
@@ -90,7 +92,7 @@ const DashboardPage = () => {
       Service.client
         .get(`/analytics/course-conversion-rate`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           // let arr = res.data.breakdown;
           setCourses(res.data.breakdown);
           setOverallData({
@@ -104,8 +106,22 @@ const DashboardPage = () => {
     }
   };
 
-  useEffect(() => {
+  const getOverallAnalytics = async () => {
+    // get conversion rates
     getConversionRate();
+
+    // get final quiz performance for course
+    Service.client
+      .get(`/analytics/course-assessment-performance`)
+      .then((res) => {
+        console.log(res);
+        setFinalQuizPerformance(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getOverallAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -150,75 +166,152 @@ const DashboardPage = () => {
       </div>
 
       <Paper className={classes.paper}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex" }}>
-            <Typography variant="h6" style={{ paddingRight: "5px" }}>
-              Overall Views
+        <Typography
+          variant="h6"
+          style={{ fontWeight: 600, paddingBottom: "10px" }}
+        >
+          Enrollment and Conversion Statistics
+        </Typography>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" style={{ paddingRight: "5px" }}>
+                Overall Views
+              </Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    The total number of views across all of your courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {overallData && overallData.overall_view}
             </Typography>
-            <Tooltip
-              title={
-                <Typography variant="body2">
-                  The total number of views across all of your courses
-                </Typography>
-              }
-            >
-              <IconButton disableRipple size="small">
-                <Info fontSize="small" color="primary" />
-              </IconButton>
-            </Tooltip>
           </div>
-          <Typography variant="h1" className={classes.numbers}>
-            {overallData && overallData.overall_view}
-          </Typography>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Overall Conversion Rate</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    % of total views across all of your courses converted to new
+                    enrollments
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {overallData &&
+                (overallData.overall_conversion_rate === 0 ? (
+                  <span style={{ color: "#C74343" }}>{"0%"}</span>
+                ) : overallData.overall_conversion_rate < 1 ? (
+                  <span style={{ color: "#C74343" }}>{"<1%"}</span>
+                ) : (
+                  overallData.overall_conversion_rate.toFixed(4) + "%"
+                ))}
+            </Typography>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Total Enrollments</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    The total number of enrollments across all of your courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {`${overallData && overallData.total_enrollments}`}
+            </Typography>
+          </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex" }}>
-            <Typography variant="h6">Overall Conversion Rate</Typography>
-            <Tooltip
-              title={
-                <Typography variant="body2">
-                  % of total views across all of your courses converted to new
-                  enrollments
-                </Typography>
-              }
-            >
-              <IconButton disableRipple size="small">
-                <Info fontSize="small" color="primary" />
-              </IconButton>
-            </Tooltip>
+        <Typography
+          variant="h6"
+          style={{ fontWeight: 600, paddingBottom: "10px", paddingTop: "20px" }}
+        >
+          Final Quizzes Performance
+        </Typography>
+        <div style={{ display: "flex" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+          >
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Overall Average Score</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    Overall average score in % of final quizzes by your students
+                    across all of your courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {finalQuizPerformance &&
+                (finalQuizPerformance.overall_average_score < 0.5 ? (
+                  <span style={{ color: "#C74343" }}>{`${(
+                    finalQuizPerformance.overall_average_score * 100
+                  ).toFixed(1)}%`}</span>
+                ) : (
+                  (finalQuizPerformance.overall_average_score * 100).toFixed(
+                    1
+                  ) + "%"
+                ))}
+            </Typography>
           </div>
-          <Typography variant="h1" className={classes.numbers}>
-            {overallData &&
-              (overallData.overall_conversion_rate === 0 ? (
-                <span style={{ color: "#C74343" }}>{"0%"}</span>
-              ) : overallData.overall_conversion_rate < 1 ? (
-                <span style={{ color: "#C74343" }}>{"< 1%"}</span>
-              ) : (
-                overallData.overall_conversion_rate.toFixed(4) + "%"
-              ))}
-          </Typography>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex" }}>
-            <Typography variant="h6">Total Enrollments</Typography>
-            <Tooltip
-              title={
-                <Typography variant="body2">
-                  The total number of enrollments across all of your courses
-                </Typography>
-              }
-            >
-              <IconButton disableRipple size="small">
-                <Info fontSize="small" color="primary" />
-              </IconButton>
-            </Tooltip>
+          <div
+            style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+          >
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Overall Passing Rate</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    Overall passing rate of final quizzes across all of your
+                    courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {finalQuizPerformance &&
+                (finalQuizPerformance.overall_passing_rate < 0.5 ? (
+                  <span style={{ color: "#C74343" }}>{`${(
+                    finalQuizPerformance.overall_passing_rate * 100
+                  ).toFixed(1)}%`}</span>
+                ) : (
+                  (finalQuizPerformance.overall_passing_rate * 100).toFixed(1) +
+                  "%"
+                ))}
+            </Typography>
           </div>
-          <Typography variant="h1" className={classes.numbers}>
-            {`${overallData && overallData.total_enrollments}`}
-          </Typography>
         </div>
       </Paper>
-      <Grid container>
+      <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
           courses.length > 0 &&
           courses.map((course, index) => {
@@ -284,7 +377,7 @@ const DashboardPage = () => {
                             {course.conversion_rate === 0 ? (
                               <span style={{ color: "#C74343" }}>{"0%"}</span>
                             ) : course.conversion_rate < 1 ? (
-                              <span style={{ color: "#C74343" }}>{"< 1%"}</span>
+                              <span style={{ color: "#C74343" }}>{"<1%"}</span>
                             ) : (
                               course.conversion_rate.toFixed(4) + "%"
                             )}

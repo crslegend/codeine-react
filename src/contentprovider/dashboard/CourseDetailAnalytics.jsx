@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
+import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -98,7 +99,7 @@ const CourseDetailAnalytics = () => {
   const { id } = useParams();
 
   const [value, setValue] = useState(0);
-  const tabPanelsArr = [0, 1];
+  const tabPanelsArr = [0, 1, 2];
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -121,7 +122,8 @@ const CourseDetailAnalytics = () => {
     }
   };
 
-  const getConversionRate = () => {
+  const getAnalytics = async () => {
+    // get conversion rate
     Service.client
       .get(`/analytics/course-conversion-rate`)
       .then((res) => {
@@ -135,9 +137,8 @@ const CourseDetailAnalytics = () => {
         }
       })
       .catch((err) => console.log(err));
-  };
 
-  const getTimeTakenCourseMaterial = () => {
+    // get time taken for course material
     Service.client
       .get(`/analytics/course-material-time`, {
         params: { course_id: id },
@@ -148,9 +149,8 @@ const CourseDetailAnalytics = () => {
         setTimeTakenCourseMaterial(res.data.chapters);
       })
       .catch((err) => console.log(err));
-  };
 
-  const getTimeTakenCourse = () => {
+    // get time taken for course
     Service.client
       .get(`/analytics/course-time`, {
         params: { course_id: id },
@@ -164,12 +164,20 @@ const CourseDetailAnalytics = () => {
         });
       })
       .catch((err) => console.log(err));
+
+    // get final quiz performance for course
+    Service.client
+      .get(`/analytics/course-assessment-performance`)
+      .then((res) => {
+        console.log(res);
+        // setFinalQuizPerformance(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
-    getConversionRate();
-    getTimeTakenCourseMaterial();
-    getTimeTakenCourse();
+    getAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -254,6 +262,7 @@ const CourseDetailAnalytics = () => {
         >
           <Tab className={classes.tab} label="Course Materials" />
           <Tab className={classes.tab} label="Final Quiz" />
+          <Tab className={classes.tab} label="Students" />
         </Tabs>
         <Divider
           style={{
@@ -279,7 +288,8 @@ const CourseDetailAnalytics = () => {
                         // formatSecondsToHours={formatSecondsToHours}
                       />
                     );
-                  } else {
+                  } else if (value === 1) {
+                    return <FinalQuizAnalysis />;
                   }
                 })()}
               </TabPanel>

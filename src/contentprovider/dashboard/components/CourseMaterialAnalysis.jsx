@@ -18,7 +18,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import DefaultTooltipContent from "recharts/lib/component/DefaultTooltipContent";
+// import DefaultTooltipContent from "recharts/lib/component/DefaultTooltipContent";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,24 +35,6 @@ const useStyles = makeStyles((theme) => ({
     height: "40px",
     justifyContent: "center",
     alignItems: "center",
-  },
-  numbers: {
-    color: theme.palette.primary.main,
-  },
-  cardRoot: {
-    width: "300px",
-    padding: "10px 10px",
-    marginTop: "30px",
-    marginRight: "50px",
-    border: "1px solid",
-    borderRadius: 0,
-    height: "100%",
-  },
-  individualStats: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    // marginBottom: "5px",
   },
   formControl: {
     marginTop: 0,
@@ -78,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   const classes = useStyles();
-  console.log(timeTakenCourseMaterial);
+  // console.log(timeTakenCourseMaterial);
 
   const handleSelectChapter = (e) => {
     setSelectedChapterId(e.target.value);
@@ -119,6 +101,8 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           return i + 1;
         }
       }
+    } else {
+      return "";
     }
   };
 
