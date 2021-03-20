@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#000000",
   },
   tabPanel: {
-    minHeight: "400px",
+    minHeight: "200px",
   },
 }));
 
@@ -109,6 +109,7 @@ const CourseDetailAnalytics = () => {
   const [coursePic, setCoursePic] = useState();
   const [timeTakenCourse, setTimeTakenCourse] = useState();
   const [timeTakenCourseMaterial, setTimeTakenCourseMaterial] = useState();
+  const [finalQuizPerformance, setFinalQuizPerformance] = useState();
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
@@ -170,7 +171,7 @@ const CourseDetailAnalytics = () => {
       .get(`/analytics/course-assessment-performance`)
       .then((res) => {
         console.log(res);
-        // setFinalQuizPerformance(res.data);
+        setFinalQuizPerformance(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -289,7 +290,12 @@ const CourseDetailAnalytics = () => {
                       />
                     );
                   } else if (value === 1) {
-                    return <FinalQuizAnalysis />;
+                    return (
+                      <FinalQuizAnalysis
+                        finalQuizPerformance={finalQuizPerformance}
+                        courseId={id}
+                      />
+                    );
                   }
                 })()}
               </TabPanel>

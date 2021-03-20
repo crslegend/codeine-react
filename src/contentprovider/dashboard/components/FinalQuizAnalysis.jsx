@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { IconButton, Paper, Tooltip, Typography } from "@material-ui/core";
+import { Info } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -10,12 +12,15 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    minWidth: "300px",
+    minWidth: "70%",
     display: "flex",
+    flexDirection: "column",
     // marginBottom: "30px",
-    height: "40px",
     justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "center",
+  },
+  numbers: {
+    color: theme.palette.primary.main,
   },
   formControl: {
     marginTop: 0,
@@ -39,10 +44,122 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FinalQuizAnalysis = () => {
+const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
   const classes = useStyles();
+  //   console.log(finalQuizPerformance);
+  //   console.log(courseId);
 
-  return <div></div>;
+  const [finalQuiz, setFinalQuiz] = useState();
+
+  const loadFinalQuizForSelectedCourse = () => {
+    // console.log(finalQuizPerformance);
+    if (finalQuizPerformance) {
+      for (
+        let i = 0;
+        i < finalQuizPerformance.breakdown_by_course.length;
+        i++
+      ) {
+        if (
+          finalQuizPerformance.breakdown_by_course[i].course_id === courseId
+        ) {
+          setFinalQuiz(finalQuizPerformance.breakdown_by_course[i]);
+          break;
+        }
+      }
+    }
+  };
+  console.log(finalQuiz);
+
+  useEffect(() => {
+    loadFinalQuizForSelectedCourse();
+  }, []);
+
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <Typography
+          variant="h6"
+          style={{
+            fontWeight: 600,
+            paddingBottom: "10px",
+            textAlign: "center",
+          }}
+        >
+          Final Quiz Perfomance for The Course
+        </Typography>
+        <div style={{ display: "flex" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Overall Average Score</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    Overall average score in % of final quizzes attempted by
+                    your students across all of your courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {finalQuiz &&
+                (finalQuiz.average_score < 0.5 ? (
+                  <span style={{ color: "#C74343" }}>{`${(
+                    finalQuiz.average_score * 100
+                  ).toFixed(1)}%`}</span>
+                ) : (
+                  (finalQuiz.average_score * 100).toFixed(1) + "%"
+                ))}
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6">Overall Passing Rate</Typography>
+              <Tooltip
+                title={
+                  <Typography variant="body2">
+                    Overall passing rate of final quizzes across all of your
+                    courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {finalQuiz &&
+                (finalQuiz.passing_rate < 0.5 ? (
+                  <span style={{ color: "#C74343" }}>{`${(
+                    finalQuiz.passing_rate * 100
+                  ).toFixed(1)}%`}</span>
+                ) : (
+                  (finalQuiz.passing_rate * 100).toFixed(1) + "%"
+                ))}
+            </Typography>
+          </div>
+        </div>
+      </Paper>
+    </div>
+  );
 };
 
 export default FinalQuizAnalysis;

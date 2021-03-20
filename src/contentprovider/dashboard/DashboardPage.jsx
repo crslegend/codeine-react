@@ -256,8 +256,8 @@ const DashboardPage = () => {
               <Tooltip
                 title={
                   <Typography variant="body2">
-                    Overall average score in % of final quizzes by your students
-                    across all of your courses
+                    Overall average score in % of final quizzes attempted by
+                    your students across all of your courses
                   </Typography>
                 }
               >
