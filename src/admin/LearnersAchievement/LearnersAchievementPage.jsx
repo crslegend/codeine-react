@@ -19,11 +19,11 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
+import Pagination from "@material-ui/lab/Pagination";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Add, Close } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
-import Label from "../../member/landing/components/Label";
 
 const useStyles = makeStyles((theme) => ({
   cardroot: {
@@ -57,8 +57,8 @@ const useStyles = makeStyles((theme) => ({
     color: "#FFFFFF",
   },
   cardmedia: {
-    height: "120px",
-    width: "120px",
+    height: "150px",
+    width: "150px",
     borderRadius: "50%",
     margin: "28px",
   },
@@ -66,6 +66,20 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 0,
     backgroundColor: "none",
     padding: "15px 10px",
+  },
+  paginationSection: {
+    float: "right",
+    marginRight: "30px",
+    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(5),
+  },
+  pagination: {
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+    [theme.breakpoints.down("sm")]: {
+      size: "small",
+    },
   },
 }));
 
@@ -159,6 +173,12 @@ const AdminLearnersAchievementPage = () => {
   });
   const [avatar, setAvatar] = useState();
 
+  const itemsPerPage = 5;
+  const [page, setPage] = useState(1);
+  const [noOfPages, setNumPages] = useState(
+    Math.ceil(badges.length / itemsPerPage)
+  );
+
   const [openAchievementDialog, setOpenAchievementDialog] = useState(false);
   const [openBadgePicDialog, setOpenBadgePicDialog] = useState(false);
 
@@ -183,6 +203,10 @@ const AdminLearnersAchievementPage = () => {
 
   const handleCloseAchievementDialog = () => {
     setOpenAchievementDialog(false);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   const handleResetFields = () => {
@@ -297,6 +321,7 @@ const AdminLearnersAchievementPage = () => {
       .then((res) => {
         res.data.sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
+        setNumPages(Math.ceil(res.data.length / itemsPerPage));
         console.log(res.data);
       })
       .catch((err) => {
@@ -347,75 +372,79 @@ const AdminLearnersAchievementPage = () => {
           <div
             style={{
               display: "flex",
+              width: "100%",
               marginRight: "10px",
+              flexWrap: "wrap",
             }}
           >
             {badges && badges.length > 0 ? (
-              badges.map((badge) => (
-                <Tooltip
-                  title={
-                    <Card className={classes.description}>
-                      <Typography
-                        variant="h6"
-                        style={{
-                          textAlign: "center",
-                          fontWeight: 700,
-                          marginBottom: badge.is_deleted ? "0px" : "5px",
-                          color: "#164D8F",
-                        }}
-                      >
-                        {badge.title}
-                      </Typography>
-                      {badge && badge.is_deleted ? (
+              badges
+                .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                .map((badge) => (
+                  <Tooltip
+                    title={
+                      <Card className={classes.description}>
                         <Typography
-                          variant="body2"
+                          variant="h6"
                           style={{
-                            color: "#CC0000",
                             textAlign: "center",
-                            marginBottom: "5px",
+                            fontWeight: 700,
+                            marginBottom: badge.is_deleted ? "0px" : "5px",
+                            color: "#164D8F",
                           }}
                         >
-                          [Deleted]
+                          {badge.title}
                         </Typography>
-                      ) : (
-                        ""
-                      )}
-                      <Typography variant="body2">
-                        Date created: {formatDate(badge.timestamp)}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        style={{
-                          fontWeight: 700,
-                          margin: "10px 0px 3px",
-                        }}
-                      >
-                        Requirements
-                      </Typography>
-                      <Typography variant="body2">
-                        Experience points:{" "}
-                        {/* {badge &&
-                          badge.achievement_requirements[0].experience_point} */}
-                        <br />
-                        {/*badge &&
+                        {badge && badge.is_deleted ? (
+                          <Typography
+                            variant="body2"
+                            style={{
+                              color: "#CC0000",
+                              textAlign: "center",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            [Deleted]
+                          </Typography>
+                        ) : (
+                          ""
+                        )}
+                        <Typography variant="body2">
+                          Date created: {formatDate(badge.timestamp)}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          style={{
+                            fontWeight: 700,
+                            margin: "10px 0px 3px",
+                          }}
+                        >
+                          Requirements
+                        </Typography>
+                        <Typography variant="body2">
+                          Experience points:{" "}
+                          {badge.achievement_requirements[0] &&
+                            badge.achievement_requirements[0].experience_point}
+                          <br />
+                          {/*badge &&
                           badge.achievement_requirements[0].stat.map(
                             (label) => <Label label={label} />
                           )*/}
-                      </Typography>
-                    </Card>
-                  }
-                >
-                  <CardMedia
-                    className={classes.cardmedia}
-                    image={badge.badge}
-                    style={{
-                      webkitFilter: badge.is_deleted
-                        ? "brightness(50%)"
-                        : "brightness(100%)",
-                    }}
-                  />
-                </Tooltip>
-              ))
+                        </Typography>
+                      </Card>
+                    }
+                  >
+                    <CardMedia
+                      className={classes.cardmedia}
+                      image={badge.badge}
+                      style={{
+                        webkitFilter: badge.is_deleted
+                          ? "brightness(50%)"
+                          : "brightness(100%)",
+                      }}
+                    />
+                  </Tooltip>
+                ))
             ) : (
               <div
                 style={{
@@ -437,6 +466,21 @@ const AdminLearnersAchievementPage = () => {
                   Help create one today!
                 </Typography>
               </div>
+            )}
+          </div>
+          <div className={classes.paginationSection}>
+            {badges && badges.length > 0 && (
+              <Pagination
+                count={noOfPages}
+                page={page}
+                onChange={handlePageChange}
+                defaultPage={1}
+                color="primary"
+                size="medium"
+                showFirstButton
+                showLastButton
+                className={classes.pagination}
+              />
             )}
           </div>
         </Grid>
@@ -745,7 +789,7 @@ const AdminLearnersAchievementPage = () => {
               setAvatar(avatar && avatar);
               setNewBadge({
                 ...newBadge,
-                badge: avatar && avatar[0].data,
+                badge: avatar && avatar[0].file.name,
               });
               setOpenBadgePicDialog(false);
             }}

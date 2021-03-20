@@ -98,7 +98,7 @@ const TopPicks = () => {
     Service.client
       .get(`/code-reviews`)
       .then((res) => {
-        res.data = res.data.slice(0, 3);
+        res.data = res.data.slice(0, 4);
         setCodeReviews(res.data);
       })
       .catch((err) => console.log(err));
@@ -108,7 +108,7 @@ const TopPicks = () => {
     Service.client
       .get(`/articles`)
       .then((res) => {
-        res.data = res.data.slice(0, 3);
+        res.data = res.data.slice(0, 4);
         setArticles(res.data);
         console.log(res.data);
       })
