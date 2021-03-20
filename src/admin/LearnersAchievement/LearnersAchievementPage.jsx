@@ -255,7 +255,7 @@ const AdminLearnersAchievementPage = () => {
 
     const formData = new FormData();
     formData.append("title", newBadge.title);
-    formData.append("badge", newBadge.badge);
+    formData.append("badge", avatar[0].file);
 
     Service.client
       .post(`/achievements`, formData)
@@ -394,8 +394,8 @@ const AdminLearnersAchievementPage = () => {
                       </Typography>
                       <Typography variant="body2">
                         Experience points:{" "}
-                        {badge &&
-                          badge.achievement_requirements[0].experience_point}
+                        {/* {badge &&
+                          badge.achievement_requirements[0].experience_point} */}
                         <br />
                         {/*badge &&
                           badge.achievement_requirements[0].stat.map(
