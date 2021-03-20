@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "15px 10px",
   },
   paginationSection: {
-    float: "right",
+    marginLeft: "auto",
     marginRight: "30px",
     marginTop: theme.spacing(2),
     paddingBottom: theme.spacing(5),
@@ -173,7 +173,7 @@ const AdminLearnersAchievementPage = () => {
   });
   const [avatar, setAvatar] = useState();
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(badges.length / itemsPerPage)
@@ -368,7 +368,16 @@ const AdminLearnersAchievementPage = () => {
       </Grid>
 
       <Grid container>
-        <Grid item xs={8}>
+        <Grid
+          item
+          xs={8}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "650px",
+          }}
+        >
           <div
             style={{
               display: "flex",
