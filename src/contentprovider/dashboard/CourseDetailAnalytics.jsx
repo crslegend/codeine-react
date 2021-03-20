@@ -355,7 +355,6 @@ const CourseDetailAnalytics = () => {
                     return (
                       <StudentDemographics
                         memberDemographics={memberDemographics}
-                        courseId={id}
                       />
                     );
                   } else {
