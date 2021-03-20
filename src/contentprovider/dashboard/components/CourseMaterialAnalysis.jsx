@@ -110,7 +110,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   const [selectedChapterId, setSelectedChapterId] = useState("");
 
   const CustomTooltip = (props) => {
-    const { active, payload, label } = props;
+    const { active, payload } = props;
     // console.log(props);
     if (active && payload && payload.length) {
       return (
