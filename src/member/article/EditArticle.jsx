@@ -99,9 +99,9 @@ const EditArticle = () => {
 
   const [user, setUser] = useState(null);
   const [articleDetails, setArticleDetails] = useState({
-    title: "",
-    content: "",
+    title: "title",
   });
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -128,21 +128,20 @@ const EditArticle = () => {
   const [debouncedText] = useDebounce(articleDetails, 1500);
   const [saveState, setSaveState] = useState(true);
 
-  // useEffect(() => {
-  //   if (debouncedText) {
-  //     setSaveState(true);
-  //     if (!articleDetails.is_published) {
-  //       Service.client
-  //         .put(`/articles/${id}`, articleDetails)
-  //         .then((res) => {
-  //           setSaveState(true);
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         });
-  //     }
-  //   }
-  // }, [debouncedText]);
+  useEffect(() => {
+    if (debouncedText) {
+      if (!articleDetails.is_published) {
+        Service.client
+          .put(`/articles/${id}`, articleDetails)
+          .then((res) => {
+            setSaveState(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+  }, [debouncedText]);
 
   const [languages, setLanguages] = useState({
     ENG: false,
@@ -170,8 +169,42 @@ const EditArticle = () => {
     RUBY: false,
   });
 
-  const getFields = (currentarticle) => {
+  useEffect(() => {
+    let data = {
+      ...articleDetails,
+      content: content,
+      coding_languages: [],
+      languages: [],
+      categories: [],
+    };
+
+    for (const property in languages) {
+      if (languages[property]) {
+        data.languages.push(property);
+      }
+    }
+
+    for (const property in categories) {
+      if (categories[property]) {
+        data.categories.push(property);
+      }
+    }
+
+    for (const property in codeLanguage) {
+      if (codeLanguage[property]) {
+        data.coding_languages.push(property);
+      }
+    }
+
+    console.log("content");
+    console.log(content);
+    setArticleDetails(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, languages, categories, codeLanguage]);
+
+  function getFields(currentarticle) {
     setArticleDetails(currentarticle);
+    setContent(currentarticle.content);
     let newLanguages = { ...languages };
     for (let i = 0; i < currentarticle.languages.length; i++) {
       newLanguages = {
@@ -198,35 +231,7 @@ const EditArticle = () => {
       };
     }
     setCodeLanguage(newCodeLanguages);
-  };
-
-  const saveFields = () => {
-    let data = {
-      ...articleDetails,
-      coding_languages: [],
-      languages: [],
-      categories: [],
-    };
-
-    for (const property in languages) {
-      if (languages[property]) {
-        data.languages.push(property);
-      }
-    }
-
-    for (const property in categories) {
-      if (categories[property]) {
-        data.categories.push(property);
-      }
-    }
-
-    for (const property in codeLanguage) {
-      if (codeLanguage[property]) {
-        data.coding_languages.push(property);
-      }
-    }
-    setArticleDetails(data);
-  };
+  }
 
   const handleSubmit = () => {
     if (articleDetails.title === "") {
@@ -309,8 +314,6 @@ const EditArticle = () => {
       return;
     }
 
-    saveFields();
-
     Service.client
       .put(`/articles/${id}`, articleDetails)
       .then((res) => {
@@ -325,6 +328,7 @@ const EditArticle = () => {
           },
           autoHideDuration: 3000,
         });
+        history.push(`/article/${res.data.id}`);
       })
       .catch((err) => {
         console.log(err);
@@ -352,13 +356,13 @@ const EditArticle = () => {
               variant="h6"
               style={{ fontSize: "15px", color: "#000000" }}
             >
-              Draft in {user.first_name + " " + user.last_name}
+              Draft in {user.first_name + " " + user.last_name}&nbsp;
             </Typography>
             <Typography
               variant="h6"
               style={{ fontSize: "15px", color: "#0000008a" }}
             >
-              {saveState ? "-Saved" : "-Saving"}
+              {saveState ? "Saved" : "Saving"}
             </Typography>
           </div>
         )}
@@ -430,18 +434,15 @@ const EditArticle = () => {
 
           <ReactQuill
             theme={"snow"}
-            value={articleDetails && articleDetails.content}
+            value={content}
             modules={editor}
             format={format}
             id="content"
             name="content"
             style={{ height: "78vh", marginBottom: "50px" }}
             onChange={(event) => {
-              setArticleDetails({
-                ...articleDetails,
-                content: event,
-              });
               setSaveState(false);
+              setContent(event);
             }}
             placeholder="Compose an epic..."
           />
@@ -467,7 +468,7 @@ const EditArticle = () => {
               }}
               onClick={() => history.push(`/article/${id}`)}
             >
-              Back to article
+              Preview article
             </Button>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Course Language (Choose at least 1)
@@ -480,7 +481,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setLanguages({ ...languages, ENG: !languages.ENG });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -493,7 +493,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setLanguages({ ...languages, MAN: !languages.MAN });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -506,7 +505,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setLanguages({ ...languages, FRE: !languages.FRE });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={classes.languageButtons}
               >
@@ -526,7 +524,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, SEC: !categories.SEC });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -539,7 +536,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, DB: !categories.DB });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -552,7 +548,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, FE: !categories.FE });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -565,7 +560,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, BE: !categories.BE });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -578,7 +572,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, UI: !categories.UI });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -591,7 +584,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCategories({ ...categories, ML: !categories.ML });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.categoryButtons}`}
               >
@@ -611,7 +603,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, PY: !codeLanguage.PY });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -627,7 +618,6 @@ const EditArticle = () => {
                     JAVA: !codeLanguage.JAVA,
                   });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -640,7 +630,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, JS: !codeLanguage.JS });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -653,7 +642,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CPP: !codeLanguage.CPP });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -666,7 +654,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CS: !codeLanguage.CS });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -682,7 +669,6 @@ const EditArticle = () => {
                     HTML: !codeLanguage.HTML,
                   });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -695,7 +681,6 @@ const EditArticle = () => {
                 onChange={() => {
                   setCodeLanguage({ ...codeLanguage, CSS: !codeLanguage.CSS });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >
@@ -711,7 +696,6 @@ const EditArticle = () => {
                     RUBY: !codeLanguage.RUBY,
                   });
                   setSaveState(false);
-                  saveFields();
                 }}
                 className={`${classes.languageButtons} ${classes.categoryButtons}`}
               >

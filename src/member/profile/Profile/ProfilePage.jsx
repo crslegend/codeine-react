@@ -1,27 +1,30 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
+  Box,
   Button,
   CircularProgress,
   Paper,
   TextField,
   Typography,
   Avatar,
+  Badge,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@material-ui/core";
-import Service from "../../../AxiosService";
-import jwt_decode from "jwt-decode";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import { useHistory } from "react-router-dom";
+import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
 import Toast from "../../../components/Toast.js";
 import validator from "validator";
-import Badge from "@material-ui/core/Badge";
 import EditIcon from "../../../assets/editIcon.svg";
-import Box from "@material-ui/core/Box";
+import Cookies from "js-cookie";
+import Service from "../../../AxiosService";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -64,6 +67,7 @@ const SmallAvatar = withStyles((theme) => ({
 
 const Profile = (props) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const { setProfile } = props;
 
@@ -77,6 +81,14 @@ const Profile = (props) => {
     },
     autoHideDuration: 3000,
   });
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const [loading, setLoading] = useState(false);
 
@@ -93,6 +105,7 @@ const Profile = (props) => {
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
+    checkIfLoggedIn();
     getProfileDetails();
   }, []);
 
@@ -238,14 +251,22 @@ const Profile = (props) => {
 
   return (
     <Fragment>
-      <Box className={classes.heading}>
-        <Typography variant="h5" style={{ marginLeft: "40px", color: "#fff" }}>
-          Profile Details
-        </Typography>
-      </Box>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <Paper elevation={0} className={classes.paper}>
+          <div style={{ display: "flex", marginTop: "65px" }}>
+            <Typography variant="h5">Profile Details</Typography>
+            <Button
+              style={{ marginLeft: "auto" }}
+              onClick={() => {
+                history.push("/member/profile/changepassword");
+              }}
+            >
+              Change Password
+            </Button>
+          </div>
+
           <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
             <div style={{ width: "20%", marginLeft: "30px" }}>
               <br />

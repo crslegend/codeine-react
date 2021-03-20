@@ -196,8 +196,6 @@ const ViewArticle = (props) => {
     },
   };
 
-  const [loading, setLoading] = useState(false);
-
   const openingIDE = () => {
     setOpenIDE(true);
   };
@@ -278,7 +276,7 @@ const ViewArticle = (props) => {
                   <Typography
                     variant="body2"
                     className={classes.typography}
-                    onClick={() => history.push(`/article/edit/${id}`)}
+                    onClick={() => history.push(`/member/article/edit/${id}`)}
                   >
                     Edit article
                   </Typography>

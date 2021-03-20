@@ -1,30 +1,65 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import logo from "../assets/CodeineLogos/Member.svg";
 import {
   Avatar,
   ListItem,
   Typography,
   Popover,
+  Button,
   IconButton,
 } from "@material-ui/core";
 import Service from "../AxiosService";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   popover: {
     width: "300px",
   },
   typography: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     cursor: "pointer",
   },
 }));
 
-const MemberLanding = (props) => {
+const MemberNavBar = (props) => {
   const classes = useStyles();
+  const { loggedIn, setLoggedIn } = props;
   const history = useHistory();
 
-  const { user } = props;
+  const [user, setUser] = useState({
+    first_name: "Member",
+    email: "Member panel",
+    profile_photo: "",
+  });
+
+  const getUserDetails = () => {
+    if (Cookies.get("t1")) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      // console.log(decoded);
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+
+          if (!res.data.member) {
+            history.push("/404");
+          } else {
+            setUser(res.data);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  useEffect(() => {
+    getUserDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -38,16 +73,68 @@ const MemberLanding = (props) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  return (
+  const navLogo = (
+    <Fragment>
+      <a
+        href="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          width: 100,
+        }}
+      >
+        <img src={logo} width="120%" alt="" />
+      </a>
+    </Fragment>
+  );
+
+  const loggedOutNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <IconButton onClick={handleClick} size="small">
-          <Avatar
-            src={user.profile_photo}
-            alt=""
-            style={{ width: "34px", height: "34px" }}
-          />
-        </IconButton>
+        <Link to="/partner" style={{ textDecoration: "none" }}>
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
+            Teach on Codeine
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Link to="/member/login" style={{ textDecoration: "none" }}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Log In
+          </Typography>
+        </Link>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/member/register"
+          style={{
+            textTransform: "capitalize",
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Sign Up
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
+  const loggedInNavBar = (
+    <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Avatar
+          onClick={handleClick}
+          src={user && user.profile_photo}
+          alt=""
+          style={{ width: "34px", height: "34px" }}
+        />
         <Popover
           id={id}
           open={open}
@@ -66,7 +153,16 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                history.push("/");
+                //history.push("/member/dashboard");
+                alert("Clicked on Dashboard");
+              }}
+            >
+              Dashboard
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/member/courses");
               }}
             >
               Courses
@@ -74,7 +170,7 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                history.push("/");
+                history.push("/member/consultations");
               }}
             >
               Consultations
@@ -82,7 +178,16 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                history.push("/");
+                history.push("/member/articles");
+              }}
+            >
+              Articles
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                //history.push("/");
+                alert("clicked on Industry projects");
               }}
             >
               Industry Projects
@@ -90,7 +195,8 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                history.push("/");
+                //history.push("/");
+                alert("clicked on Helpdesk");
               }}
             >
               Helpdesk
@@ -98,15 +204,7 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                history.push("/");
-              }}
-            >
-              Profile
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/");
+                history.push("/member/payment");
               }}
             >
               My Payments
@@ -114,7 +212,17 @@ const MemberLanding = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
+                history.push("/member/profile");
+              }}
+            >
+              Manage my account
+            </Typography>
+
+            <Typography
+              className={classes.typography}
+              onClick={() => {
                 Service.removeCredentials();
+                setLoggedIn(false);
                 history.push("/");
               }}
             >
@@ -125,6 +233,14 @@ const MemberLanding = (props) => {
       </ListItem>
     </Fragment>
   );
+
+  return (
+    <Navbar
+      logo={navLogo}
+      navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar}
+      bgColor="#fff"
+    />
+  );
 };
 
-export default MemberLanding;
+export default MemberNavBar;

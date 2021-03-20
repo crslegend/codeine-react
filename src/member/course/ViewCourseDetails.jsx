@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   Accordion,
   AccordionDetails,
@@ -223,19 +223,8 @@ const ViewCourseDetails = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+
       <div className={classes.mainSection}>
         <div style={{ marginTop: "20px" }}>
           <IconButton onClick={() => history.goBack()}>

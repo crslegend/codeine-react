@@ -9,12 +9,12 @@ import MemberArticlePage from "./member/article/MemberArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
 import MemberProfilePage from "./member/profile/Profile/ProfilePage";
+import MemberPasswordPage from "./member/profile/Password/PasswordPage";
 import MemberEditArticlePage from "./member/article/EditArticle";
 import MemberPaymentPage from "./member/profile/Payment/PaymentPage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
-import MemberHome from "./member/profile/MemberRoutesPage";
 import PrivateRoute from "./components/Routes/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderRoutes";
@@ -84,11 +84,6 @@ const App = () => {
         sensitive
         component={BookConsult}
       />
-      <PrivateRoute
-        path="/member/home"
-        render={() => <MemberHome />}
-        user="member"
-      />
       <LandingPageRoute
         exact
         path="/member/login"
@@ -134,13 +129,19 @@ const App = () => {
       />
       <PrivateRoute
         exact
+        path="/member/profile/changepassword"
+        component={MemberPasswordPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
         path="/member/payment"
         component={MemberPaymentPage}
         user="member"
       />
       <PrivateRoute
         exact
-        path="/article/edit/:id"
+        path="/member/article/edit/:id"
         component={MemberEditArticlePage}
         user="member"
       />

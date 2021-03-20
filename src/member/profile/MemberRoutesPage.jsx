@@ -400,7 +400,7 @@ const MemberLanding = () => {
         <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <Navbar
           logo={navLogo}
-          navbarItems={<MemberNavBar user={user} />}
+          navbarItems={<MemberNavBar user={user} history={history} />}
           bgColor="#fff"
         />
         <Sidebar head={sidebarHead} list={sidebarList} />
