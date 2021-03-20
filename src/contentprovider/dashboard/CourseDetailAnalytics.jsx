@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
+import StudentAnalysis from "./components/StudentAnalysis";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -99,7 +100,7 @@ const CourseDetailAnalytics = () => {
   const { id } = useParams();
 
   const [value, setValue] = useState(0);
-  const tabPanelsArr = [0, 1, 2];
+  const tabPanelsArr = [0, 1, 2, 3];
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -110,6 +111,11 @@ const CourseDetailAnalytics = () => {
   const [timeTakenCourse, setTimeTakenCourse] = useState();
   const [timeTakenCourseMaterial, setTimeTakenCourseMaterial] = useState();
   const [finalQuizPerformance, setFinalQuizPerformance] = useState();
+
+  const [inactiveMembers, setInactiveMembers] = useState();
+  const [falseStarters, setFalseStarters] = useState();
+  const [memberDemographics, setMemberDemographics] = useState();
+  const [numDaysForStudents, setNumDaysForStudents] = useState();
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
@@ -128,7 +134,7 @@ const CourseDetailAnalytics = () => {
     Service.client
       .get(`/analytics/course-conversion-rate`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         // let arr = res.data.breakdown;
         for (let i = 0; i < res.data.breakdown.length; i++) {
           if (res.data.breakdown[i].course_id === id) {
@@ -145,7 +151,7 @@ const CourseDetailAnalytics = () => {
         params: { course_id: id },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setCoursePic(res.data.course_image);
         setTimeTakenCourseMaterial(res.data.chapters);
       })
@@ -157,7 +163,7 @@ const CourseDetailAnalytics = () => {
         params: { course_id: id },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setTimeTakenCourse(res.data.average_time_taken);
         setCourseDetail({
           course_title: res.data.course_title,
@@ -170,8 +176,41 @@ const CourseDetailAnalytics = () => {
     Service.client
       .get(`/analytics/course-assessment-performance`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setFinalQuizPerformance(res.data);
+      })
+      .catch((err) => console.log(err));
+
+    // get inactive members (default without days)
+    Service.client
+      .get(`/analytics/inactive-members`, {
+        params: { course_id: id },
+      })
+      .then((res) => {
+        console.log(res);
+        setInactiveMembers(res.data);
+      })
+      .catch((err) => console.log(err));
+
+    // get false starters (default without days)
+    Service.client
+      .get(`/analytics/course-members-stats`, {
+        params: { course_id: id },
+      })
+      .then((res) => {
+        console.log(res);
+        setFalseStarters(res.data);
+      })
+      .catch((err) => console.log(err));
+
+    // get members' demographics
+    Service.client
+      .get(`/analytics/members-demographics`, {
+        params: { course_id: id },
+      })
+      .then((res) => {
+        // console.log(res);
+        setMemberDemographics(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -186,7 +225,7 @@ const CourseDetailAnalytics = () => {
       <PageTitle title="Course Analysis" />
 
       <Paper className={classes.paper}>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar} src={coursePic && coursePic} />
           <div style={{ marginLeft: "20px" }}>
             <Typography
@@ -232,7 +271,7 @@ const CourseDetailAnalytics = () => {
                 (overallData.conversion_rate === 0 ? (
                   <span style={{ color: "#C74343" }}>{"0%"}</span>
                 ) : overallData.conversion_rate < 1 ? (
-                  <span style={{ color: "#C74343" }}>{"< 1%"}</span>
+                  <span style={{ color: "#C74343" }}>{"<1%"}</span>
                 ) : (
                   overallData.conversion_rate.toFixed(4) + "%"
                 ))}
@@ -256,6 +295,8 @@ const CourseDetailAnalytics = () => {
           value={value}
           indicatorColor="primary"
           textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
           onChange={handleChange}
           classes={{
             root: classes.tabs,
@@ -263,7 +304,8 @@ const CourseDetailAnalytics = () => {
         >
           <Tab className={classes.tab} label="Course Materials" />
           <Tab className={classes.tab} label="Final Quiz" />
-          <Tab className={classes.tab} label="Students" />
+          <Tab className={classes.tab} label="Students' Engagement" />
+          <Tab className={classes.tab} label="Students' Demographics" />
         </Tabs>
         <Divider
           style={{
@@ -296,6 +338,25 @@ const CourseDetailAnalytics = () => {
                         courseId={id}
                       />
                     );
+                  } else if (value === 2) {
+                    return (
+                      <StudentAnalysis
+                        inactiveMembers={inactiveMembers}
+                        falseStarters={falseStarters}
+                        numDaysForStudents={numDaysForStudents}
+                        setNumDaysForStudents={setNumDaysForStudents}
+                        courseId={id}
+                      />
+                    );
+                  } else if (value === 3) {
+                    return (
+                      <StudentAnalysis
+                        memberDemographics={memberDemographics}
+                        courseId={id}
+                      />
+                    );
+                  } else {
+                    return null;
                   }
                 })()}
               </TabPanel>
