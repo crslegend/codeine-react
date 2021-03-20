@@ -97,7 +97,7 @@ const IconPage = () => {
                       fontFamily: "Roboto Mono",
                     }}
                   >
-                    - Readibe and Simplified Syntax
+                    - Readable and Simplified Syntax
                     <br />
                     - Open Source <br />- Dynamically Typed
                   </Typography>

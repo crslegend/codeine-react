@@ -13,7 +13,7 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "Sen",
+    fontFamily: "Roboto mono",
     h1: {
       fontSize: 36,
     },

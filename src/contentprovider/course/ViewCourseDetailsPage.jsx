@@ -31,6 +31,7 @@ import {
   RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
+import { calculateDateInterval } from "../../utils.js";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -129,43 +130,6 @@ const ViewCourseDetailsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
-
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
-
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `${seconds} seconds ago`;
-        }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
-
   const formatDate = (date) => {
     const options = {
       weekday: "long",
@@ -210,7 +174,10 @@ const ViewCourseDetailsPage = () => {
       } else {
         // check course materials in each chapter
         for (let i = 0; i < chapters.length; i++) {
-          if (!chapters[i].course_materials || chapters[i].course_materials.length === 0) {
+          if (
+            !chapters[i].course_materials ||
+            chapters[i].course_materials.length === 0
+          ) {
             return false;
           } else {
             for (let j = 0; j < chapters[i].course_materials.length; j++) {
@@ -231,13 +198,45 @@ const ViewCourseDetailsPage = () => {
     return true;
   };
 
-  const publishedChip = <Chip label="Published" size="small" style={{ color: "#fff", backgroundColor: "green" }} />;
+  const publishedChip = (
+    <Chip
+      label="Published"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "green" }}
+    />
+  );
   const unPublishedChip = <Chip label="Not Published" size="small" />;
-  const deletedChip = <Chip label="Deleted" size="small" style={{ color: "#fff", backgroundColor: "#C74343" }} />;
+  const deletedChip = (
+    <Chip
+      label="Deleted"
+      size="small"
+      style={{ color: "#fff", backgroundColor: "#C74343" }}
+    />
+  );
 
   const notReadyChip = (
-    <Chip label="Incomplete Course" size="small" style={{ color: "#000", backgroundColor: "#fcdb03" }} />
+    <Chip
+      label="Incomplete Course"
+      size="small"
+      style={{ color: "#000", backgroundColor: "#fcdb03" }}
+    />
   );
+
+  const resuableChip = (label, index, backgroundColor, fontColor) => {
+    return (
+      <Chip
+        key={index}
+        label={label}
+        style={{
+          marginRight: "10px",
+          marginBottom: "10px",
+          color: fontColor ? fontColor : "#000",
+          fontWeight: 600,
+          backgroundColor: backgroundColor,
+        }}
+      />
+    );
+  };
 
   return (
     <Fragment>
@@ -256,23 +255,36 @@ const ViewCourseDetailsPage = () => {
       </div>
       <div className={classes.courseSection}>
         <div style={{ width: "50%" }}>
-          <Typography variant="h3" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+          <Typography
+            variant="h3"
+            style={{ fontWeight: 600, paddingBottom: "10px" }}
+          >
             {course && course.title}
           </Typography>
           <Typography variant="h6" style={{ paddingBottom: "30px" }}>
             Experience Points: {course && course.exp_points}
           </Typography>
-          <Rating name="read-only" readOnly value={course && course.rating ? parseFloat(course.rating) : 0} />
+          <Rating
+            name="read-only"
+            readOnly
+            value={course && course.rating ? parseFloat(course.rating) : 0}
+          />
           {course && course.published_date ? (
             <Typography variant="body1" style={{ paddingBottom: "10px" }}>
               Published on:{` ${formatDate(course.published_date)}`}
             </Typography>
           ) : checkIfCourseIsReadyToPublish() ? (
-            <Typography variant="body1" style={{ color: "red", paddingBottom: "10px" }}>
+            <Typography
+              variant="body1"
+              style={{ color: "red", paddingBottom: "10px" }}
+            >
               Not Published
             </Typography>
           ) : (
-            <Typography variant="body1" style={{ color: "red", paddingBottom: "10px" }}>
+            <Typography
+              variant="body1"
+              style={{ color: "red", paddingBottom: "10px" }}
+            >
               Incomplete Course
             </Typography>
           )}
@@ -302,7 +314,10 @@ const ViewCourseDetailsPage = () => {
               })}
           </div>
           <div className={classes.learningObjectives}>
-            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "10px" }}
+            >
               Learning Objectives
             </Typography>
             {course &&
@@ -331,7 +346,10 @@ const ViewCourseDetailsPage = () => {
           </div>
           <div className={classes.courseContent}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="h5" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingBottom: "10px" }}
+              >
                 Course Content
               </Typography>
             </div>
@@ -342,11 +360,20 @@ const ViewCourseDetailsPage = () => {
                   ? "1 Chapter (excluding Course Overview) + Final Quiz"
                   : `${course.chapters.length} Chapters (excluding Course Overview) + Final Quiz`)}
             </Typography>
-            <Accordion expanded={expanded === `overview`} onChange={handleChange(`overview`)}>
-              <AccordionSummary expandIcon={<ExpandMore />} id={`overview`} style={{ backgroundColor: "#F4F4F4" }}>
+            <Accordion
+              expanded={expanded === `overview`}
+              onChange={handleChange(`overview`)}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                id={`overview`}
+                style={{ backgroundColor: "#F4F4F4" }}
+              >
                 <Typography>Course Overview</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ display: "flex", justifyContent: "center" }}>
+              <AccordionDetails
+                style={{ display: "flex", justifyContent: "center" }}
+              >
                 <ReactPlayer
                   ref={ref}
                   url={course && course.introduction_video_url}
@@ -360,7 +387,11 @@ const ViewCourseDetailsPage = () => {
               course.chapters.length > 0 &&
               course.chapters.map((chapter, index) => {
                 return (
-                  <Accordion expanded={expanded === `${index}`} onChange={handleChange(`${index}`)} key={index}>
+                  <Accordion
+                    expanded={expanded === `${index}`}
+                    onChange={handleChange(`${index}`)}
+                    key={index}
+                  >
                     <AccordionSummary
                       expandIcon={<ExpandMore />}
                       id={`${index}`}
@@ -375,7 +406,10 @@ const ViewCourseDetailsPage = () => {
                         padding: "20px",
                       }}
                     >
-                      <Typography variant="body1" style={{ paddingBottom: "15px" }}>
+                      <Typography
+                        variant="body1"
+                        style={{ paddingBottom: "15px" }}
+                      >
                         {chapter.overview && chapter.overview}
                       </Typography>
                       {chapter.course_materials &&
@@ -391,7 +425,10 @@ const ViewCourseDetailsPage = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <AttachFile fontSize="small" style={{ marginRight: "10px" }} />
+                                <AttachFile
+                                  fontSize="small"
+                                  style={{ marginRight: "10px" }}
+                                />
                                 {material.title}
                               </div>
                             );
@@ -405,7 +442,10 @@ const ViewCourseDetailsPage = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <Movie fontSize="small" style={{ marginRight: "10px" }} />
+                                <Movie
+                                  fontSize="small"
+                                  style={{ marginRight: "10px" }}
+                                />
                                 {material.title}
                               </div>
                             );
@@ -419,7 +459,10 @@ const ViewCourseDetailsPage = () => {
                                   marginBottom: "15px",
                                 }}
                               >
-                                <Assignment fontSize="small" style={{ marginRight: "10px" }} />
+                                <Assignment
+                                  fontSize="small"
+                                  style={{ marginRight: "10px" }}
+                                />
                                 {material.title}
                               </div>
                             );
@@ -457,7 +500,10 @@ const ViewCourseDetailsPage = () => {
             </Button>
           </div>
           <div className={classes.requirement}>
-            <Typography variant="h5" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+            <Typography
+              variant="h5"
+              style={{ fontWeight: 600, paddingBottom: "10px" }}
+            >
               Requirements
             </Typography>
             {course &&
@@ -484,13 +530,21 @@ const ViewCourseDetailsPage = () => {
               })}
           </div>
           <div className={classes.descriptionSection}>
-            <Typography variant="h5" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+            <Typography
+              variant="h5"
+              style={{ fontWeight: 600, paddingBottom: "10px" }}
+            >
               Description
             </Typography>
-            <Typography variant="body1">{course && course.description}</Typography>
+            <Typography variant="body1">
+              {course && course.description}
+            </Typography>
           </div>
           <div className={classes.reviews}>
-            <Typography variant="h5" style={{ fontWeight: 600, paddingBottom: "10px" }}>
+            <Typography
+              variant="h5"
+              style={{ fontWeight: 600, paddingBottom: "10px" }}
+            >
               Reviews
             </Typography>
             <Typography
@@ -503,26 +557,44 @@ const ViewCourseDetailsPage = () => {
             >
               {course && parseFloat(course.rating).toFixed(1)}
             </Typography>
-            <Rating name="read-only" readOnly value={course && course.rating ? parseFloat(course.rating) : 0} />
+            <Rating
+              name="read-only"
+              readOnly
+              value={course && course.rating ? parseFloat(course.rating) : 0}
+            />
             {courseReviews && courseReviews.length > 0 ? (
               <div style={{ marginTop: "30px" }}>
                 {courseReviews.map((review, index) => {
                   return (
-                    <div key={index} style={{ display: "flex", marginBottom: "20px" }}>
-                      {review.member.profile_photo && review.member.profile_photo ? (
-                        <Avatar style={{ marginRight: "15px" }} src={review.member.profile_photo} />
+                    <div
+                      key={index}
+                      style={{ display: "flex", marginBottom: "20px" }}
+                    >
+                      {review.member.profile_photo &&
+                      review.member.profile_photo ? (
+                        <Avatar
+                          style={{ marginRight: "15px" }}
+                          src={review.member.profile_photo}
+                        />
                       ) : (
-                        <Avatar style={{ marginRight: "15px" }}>{review.member.first_name.charAt(0)}</Avatar>
+                        <Avatar style={{ marginRight: "15px" }}>
+                          {review.member.first_name.charAt(0)}
+                        </Avatar>
                       )}
                       <div style={{ flexDirection: "column" }}>
                         <Typography variant="h6" style={{ fontWeight: 600 }}>
-                          {review.member && review.member.first_name} {review.member && review.member.last_name}
+                          {review.member && review.member.first_name}{" "}
+                          {review.member && review.member.last_name}
                         </Typography>
                         <div style={{ display: "flex", marginBottom: "10px" }}>
                           <Rating
                             name="read-only"
                             readOnly
-                            value={review && review.rating ? parseFloat(review.rating) : 0}
+                            value={
+                              review && review.rating
+                                ? parseFloat(review.rating)
+                                : 0
+                            }
                             size="small"
                             style={{ marginRight: "20px" }}
                           />
@@ -531,7 +603,9 @@ const ViewCourseDetailsPage = () => {
                           </Typography>
                         </div>
                         <div>
-                          <Typography variant="body2">{review.description}</Typography>
+                          <Typography variant="body2">
+                            {review.description}
+                          </Typography>
                         </div>
                       </div>
                     </div>
@@ -558,7 +632,10 @@ const ViewCourseDetailsPage = () => {
 
           <Card className={classes.cardOnRight}>
             <div style={{ width: "80%", margin: "auto" }}>
-              <Typography variant="body1" style={{ fontWeight: 600, marginBottom: "10px" }}>
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, marginBottom: "10px" }}
+              >
                 Course Status:{" "}
                 <span>
                   {(() => {
@@ -577,36 +654,33 @@ const ViewCourseDetailsPage = () => {
                   })()}
                 </span>
               </Typography>
-              <Typography variant="body1" style={{ fontWeight: 600, marginBottom: "10px" }}>
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, marginBottom: "10px" }}
+              >
                 Categories this course falls under:
               </Typography>
               {course &&
                 course.categories.length > 0 &&
                 course.categories.map((category, index) => {
                   if (category === "FE") {
-                    return <Chip key={index} label="Frontend" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Frontend", index, "#DD8B8B");
                   } else if (category === "BE") {
-                    return <Chip key={index} label="Backend" style={{ marginRight: "10px", marginBottom: "10px" }} />;
-                  } else if (category === "UI") {
-                    return <Chip key={index} label="UI/UX" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Backend", index, "#A0DD8B");
                   } else if (category === "DB") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Database Administration"
-                        style={{ marginRight: "10px", marginBottom: "10px" }}
-                      />
+                    return resuableChip(
+                      "Database Administration",
+                      index,
+                      "#8B95DD"
                     );
+                  } else if (category === "SEC") {
+                    return resuableChip("Security", index, "#DDB28B");
+                  } else if (category === "UI") {
+                    return resuableChip("UI/UX", index, "#DDD58B");
                   } else if (category === "ML") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Machine Learning"
-                        style={{ marginRight: "10px", marginBottom: "10px" }}
-                      />
-                    );
+                    return resuableChip("Machine Learning", index, "#8BD8DD");
                   } else {
-                    return <Chip key={index} label="Security" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return null;
                   }
                 })}
 
@@ -624,21 +698,23 @@ const ViewCourseDetailsPage = () => {
                 course.coding_languages.length > 0 &&
                 course.coding_languages.map((language, index) => {
                   if (language === "PY") {
-                    return <Chip key={index} label="Python" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Python", index, "#3675A9", "#fff");
                   } else if (language === "JAVA") {
-                    return <Chip key={index} label="Java" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Java", index, "#E57001", "#fff");
                   } else if (language === "JS") {
-                    return (
-                      <Chip key={index} label="Javascript" style={{ marginRight: "10px", marginBottom: "10px" }} />
-                    );
-                  } else if (language === "CPP") {
-                    return <Chip key={index} label="C++" style={{ marginRight: "10px", marginBottom: "10px" }} />;
-                  } else if (language === "CS") {
-                    return <Chip key={index} label="C#" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Javascript", index, "#F7DF1E");
                   } else if (language === "RUBY") {
-                    return <Chip key={index} label="Ruby" style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return resuableChip("Ruby", index, "#CC0000");
+                  } else if (language === "CPP") {
+                    return resuableChip("C++", index, "#004482", "#fff");
+                  } else if (language === "CS") {
+                    return resuableChip("C#", index, "#6A1577", "#fff");
+                  } else if (language === "HTML") {
+                    return resuableChip("HTML", index, "#E44D26", "#fff");
+                  } else if (language === "CSS") {
+                    return resuableChip("CSS", index, "#264DE4", "#fff");
                   } else {
-                    return <Chip key={index} label={language} style={{ marginRight: "10px", marginBottom: "10px" }} />;
+                    return null;
                   }
                 })}
             </div>
@@ -652,7 +728,10 @@ const ViewCourseDetailsPage = () => {
               Edit Course
             </Button>
             {course && !course.is_deleted && (
-              <Button style={{ color: "red", width: "90%" }} onClick={() => setDeleteCourseDialog(true)}>
+              <Button
+                style={{ color: "red", width: "90%" }}
+                onClick={() => setDeleteCourseDialog(true)}
+              >
                 Delete Course
               </Button>
             )}

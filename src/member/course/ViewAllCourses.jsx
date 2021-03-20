@@ -38,6 +38,11 @@ const styles = makeStyles((theme) => ({
   title: {
     paddingTop: theme.spacing(3),
   },
+  heading: {
+    lineHeight: "50px",
+    fontWeight: 600,
+    fontFamily: "Roboto Mono",
+  },
   cards: {
     display: "flex",
     flexDirection: "row",
@@ -148,6 +153,22 @@ const ViewAllCourses = () => {
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
+
+    // ANALYTICS: log search strings when members search for courses
+    if (loggedIn && queryParams.search !== "") {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "search course" },
+          {
+            params: {
+              search_string: queryParams.search,
+            },
+          }
+        )
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
   };
   //console.log(allCourses);
 
@@ -213,7 +234,9 @@ const ViewAllCourses = () => {
       />
       <div className={classes.courses}>
         <div className={classes.title}>
-          <PageTitle title="All Courses" />
+          <Typography variant="h2" className={classes.heading}>
+            all courses
+          </Typography>
         </div>
         <div className={classes.searchSection}>
           <div className={classes.searchBar}>

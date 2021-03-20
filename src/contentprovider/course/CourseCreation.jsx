@@ -1,12 +1,15 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  IconButton,
+  Paper,
   Radio,
   RadioGroup,
   TextField,
@@ -30,10 +33,10 @@ import validator from "validator";
 // const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
-  buttonSection: {
+  topSection: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    // justifyContent: "space-between",
+    // alignItems: "center",
   },
   dialogButtons: {
     width: 100,
@@ -42,6 +45,17 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     overflow: "auto",
     marginBottom: "20px",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3),
+    marginBottom: "20px",
+    width: "100%",
+  },
+  avatar: {
+    width: theme.spacing(15),
+    height: theme.spacing(15),
   },
 }));
 
@@ -129,6 +143,11 @@ const CourseCreation = () => {
   const [editMode, setEditMode] = useState(false);
   // console.log(courseDetails);
 
+  const [courseDetailsCard, setCourseDetailsCard] = useState({
+    title: "",
+    description: "",
+  });
+
   const [paymentDialog, setPaymentDialog] = useState(false);
   // const [paymentAmount, setPaymentAmount] = useState();
 
@@ -177,7 +196,7 @@ const CourseCreation = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Please enter a valid URL!",
+        message: "Please enter a valid URL for the introduction video!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -186,6 +205,29 @@ const CourseCreation = () => {
         autoHideDuration: 3000,
       });
       return;
+    }
+
+    // check if github repo is a valid URL
+    if (courseDetails.github_repo || courseDetails.github_repo !== "") {
+      if (
+        !validator.isURL(courseDetails.github_repo, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+          allow_underscores: true,
+        })
+      ) {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please enter a valid URL for the github repository!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
     }
 
     let neverChooseOne = true;
@@ -263,7 +305,6 @@ const CourseCreation = () => {
       coding_languages: [],
       languages: [],
       categories: [],
-      price: 20,
       thumbnail: coursePicAvatar[0].file,
       requirements: requirementsArr,
       learning_objectives: learnObjectivesArr,
@@ -307,6 +348,12 @@ const CourseCreation = () => {
     formData.append("categories", JSON.stringify(data.categories));
     formData.append("price", data.price);
     formData.append("exp_points", data.exp_points);
+    formData.append("pro", data.pro);
+    formData.append("duration", data.duration);
+
+    if (!data.github_repo || data.github_repo !== "") {
+      formData.append("github_repo", data.github_repo);
+    }
 
     if (courseId) {
       Service.client
@@ -377,6 +424,13 @@ const CourseCreation = () => {
             requirements: res.data.requirements.join(),
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
+            pro: res.data.pro,
+            github_repo: res.data.github_repo,
+            duration: res.data.duration,
+          });
+          setCourseDetailsCard({
+            title: res.data.title,
+            description: res.data.description,
           });
           const obj = {
             data: res.data.thumbnail,
@@ -730,34 +784,11 @@ const CourseCreation = () => {
 
   const handleLastPageSave = () => {
     if (isPublished === "true") {
-      let check = true;
       Service.client
-        .get(`/contributions`, { params: { latest: 1 } })
+        .patch(`/courses/${courseId}/publish`)
         .then((res) => {
-          // console.log(res);
-
-          if (res.data.expiry_date) {
-            const futureDate = new Date(res.data.expiry_date);
-            const currentDate = new Date();
-            const diffTime = futureDate - currentDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays > 29) {
-              check = false;
-            }
-          }
-
-          if (check) {
-            localStorage.removeItem("courseId");
-            setPaymentDialog(true);
-          } else {
-            Service.client
-              .patch(`/courses/${courseId}/publish`)
-              .then((res) => {
-                localStorage.removeItem("courseId");
-                history.push(`/partner/home/content`);
-              })
-              .catch((err) => console.log(err));
-          }
+          localStorage.removeItem("courseId");
+          history.push(`/partner/home/content`);
         })
         .catch((err) => console.log(err));
     } else {
@@ -834,25 +865,72 @@ const CourseCreation = () => {
           if (pageNum === 1) {
             return (
               <Fragment>
-                <div className={classes.buttonSection}>
-                  <PageTitle title="Course and Chapter" />
-                  <div>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => setDrawerOpen(true)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Course Details
-                    </Button>
-                    <Button
-                      variant="contained"
-                      startIcon={<Add />}
-                      onClick={() => setChapterDialog(true)}
-                    >
-                      Add New Chapter
-                    </Button>
+                <div className={classes.topSection}>
+                  <div style={{ maxWidth: "100%" }}>
+                    <Paper className={classes.paper}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ marginRight: "25px" }}>
+                          {coursePicAvatar ? (
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
+                          ) : (
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
+                              No Course Logo Yet
+                            </Avatar>
+                          )}
+                        </div>
+                        <div style={{ flexDirection: "column" }}>
+                          <Typography
+                            variant="h5"
+                            style={{
+                              marginRight: "10px",
+                              fontWeight: 600,
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            {` ${courseDetailsCard && courseDetailsCard.title}`}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
+                          </Typography>
+                        </div>
+                        <div>
+                          <IconButton onClick={() => setDrawerOpen(true)}>
+                            <Edit />
+                          </IconButton>
+                        </div>
+                      </div>
+                    </Paper>
                   </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "50px" }}>
+                    <PageTitle title="Chapters" />
+                  </div>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => setChapterDialog(true)}
+                    style={{ height: 30 }}
+                  >
+                    Add New Chapter
+                  </Button>
                 </div>
                 <div className={classes.kanban}>
                   <CourseKanbanBoard
@@ -876,29 +954,73 @@ const CourseCreation = () => {
           } else if (pageNum === 2) {
             return (
               <Fragment>
-                <div className={classes.buttonSection}>
-                  <PageTitle title="Final Quiz" />
-                  <div>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => setDrawerOpen(true)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Course Details
-                    </Button>
-                    <Button
-                      variant="contained"
-                      startIcon={<Edit />}
-                      onClick={() => {
-                        setFinalQuizDialog(true);
-                        setEditMode(true);
-                      }}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Edit Final Quiz Details
-                    </Button>
+                <div className={classes.topSection}>
+                  <div style={{ maxWidth: "100%" }}>
+                    <Paper className={classes.paper}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ marginRight: "25px" }}>
+                          {coursePicAvatar ? (
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
+                          ) : (
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
+                              No Course Logo Yet
+                            </Avatar>
+                          )}
+                        </div>
+                        <div style={{ flexDirection: "column" }}>
+                          <Typography
+                            variant="h5"
+                            style={{
+                              marginRight: "10px",
+                              fontWeight: 600,
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            {` ${courseDetailsCard && courseDetailsCard.title}`}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
+                          </Typography>
+                        </div>
+                        <div>
+                          <IconButton onClick={() => setDrawerOpen(true)}>
+                            <Edit />
+                          </IconButton>
+                        </div>
+                      </div>
+                    </Paper>
                   </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <PageTitle title="Final Quiz" />
+
+                  <Button
+                    variant="contained"
+                    startIcon={<Edit />}
+                    onClick={() => {
+                      setFinalQuizDialog(true);
+                      setEditMode(true);
+                    }}
+                    style={{ marginLeft: "30px", height: 30 }}
+                  >
+                    Edit Final Quiz Details
+                  </Button>
                 </div>
                 <QuizKanbanBoard
                   finalQuiz={finalQuiz}
