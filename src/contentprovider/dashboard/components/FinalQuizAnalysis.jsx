@@ -72,6 +72,7 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
 
   useEffect(() => {
     loadFinalQuizForSelectedCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

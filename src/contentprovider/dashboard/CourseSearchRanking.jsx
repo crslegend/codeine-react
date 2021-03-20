@@ -54,6 +54,7 @@ const CourseSearchRanking = () => {
 
   useEffect(() => {
     getSearchRanking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
