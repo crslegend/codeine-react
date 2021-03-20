@@ -14,6 +14,7 @@ import {
   Pie,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from "recharts";
 
 const useStyles = makeStyles((theme) => ({
@@ -194,21 +195,36 @@ const StudentDemographics = ({ memberDemographics }) => {
             style={{ display: "flex", flexDirection: "column", width: "70%" }}
           >
             <Typography variant="h6" style={{ textAlign: "center" }}>
-              Location Breakdown
+              Country of Origin Breakdown
             </Typography>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={400}>
               <BarChart
                 data={locationData}
                 margin={{
                   top: 10,
                   right: 30,
                   left: 20,
-                  bottom: 5,
+                  bottom: 35,
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="location" />
-                <YAxis />
+                <XAxis dataKey="location">
+                  <Label
+                    value={`Country of Origin`}
+                    position="bottom"
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </XAxis>
+                <YAxis>
+                  <Label
+                    value="Number of Enrolled Students"
+                    position="left"
+                    angle={-90}
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
                 <Tooltip />
 
                 <Bar dataKey="Number" fill="#164D8F" />
