@@ -38,6 +38,7 @@ import ContributionsPage from "./contributions/ContributionsPage";
 import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
+import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -350,6 +351,12 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/dashboard/search"
+              render={() => <CourseSearchRanking />}
               user="partner"
             />
             <PrivateRoute

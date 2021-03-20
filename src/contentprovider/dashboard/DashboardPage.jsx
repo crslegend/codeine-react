@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 import { Info } from "@material-ui/icons";
 import { useHistory } from "react-router";
+import LinkMui from "@material-ui/core/Link";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -114,7 +115,7 @@ const DashboardPage = () => {
     Service.client
       .get(`/analytics/course-assessment-performance`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setFinalQuizPerformance(res.data);
       })
       .catch((err) => console.log(err));
@@ -310,6 +311,16 @@ const DashboardPage = () => {
             </Typography>
           </div>
         </div>
+        <Typography variant="body2" style={{ paddingTop: "20px" }}>
+          <LinkMui
+            style={{ cursor: "pointer" }}
+            onClick={() => history.push(`/partner/home/dashboard/search`)}
+          >
+            Click here
+          </LinkMui>{" "}
+          to know what keywords our students are using when searching for
+          courses.
+        </Typography>
       </Paper>
       <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
