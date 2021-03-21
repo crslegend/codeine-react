@@ -68,7 +68,7 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
       }
     }
   };
-  console.log(finalQuiz);
+  // console.log(finalQuiz);
 
   useEffect(() => {
     loadFinalQuizForSelectedCourse();
