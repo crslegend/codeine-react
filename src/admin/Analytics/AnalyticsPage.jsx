@@ -105,6 +105,13 @@ const AdminAnalyticsPage = () => {
   const [firstCoursesRanking, setFirstCoursesRaking] = useState();
   const [courseSearches, setCourseSearches] = useState();
 
+  const [popularSkill, setPopularSkill] = useState();
+  const [projectSearches, setProjectSearches] = useState();
+  const [
+    projectApplicantConversion,
+    setProjectApplicantConversion,
+  ] = useState();
+
   const getAnalytics = async () => {
     if (numDays && numDays !== "") {
       Service.client
@@ -192,6 +199,30 @@ const AdminAnalyticsPage = () => {
           setCourseSearches(arr);
         })
         .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/ip-search-ranking`, { params: { days: numDays } })
+        .then((res) => {
+          // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              keyword: res.data[i].search_string,
+              Occurences: res.data[i].search_count,
+            };
+            arr.push(obj);
+          }
+          setProjectSearches(arr);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/ip-application-rate`, { params: { days: numDays } })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
     } else {
       Service.client
         .get(`/analytics/first-enrollment-count`)
@@ -276,14 +307,60 @@ const AdminAnalyticsPage = () => {
           setCourseSearches(arr);
         })
         .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/ip-search-ranking`)
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/ip-application-rate`)
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
     }
 
-    // Service.client
-    //   .get(`/analytics/ip-popular-skills`)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => console.log(err));
+    Service.client
+      .get(`/analytics/ip-popular-skills`)
+      .then((res) => {
+        // console.log(res);
+        let arr = [];
+        let counts = {};
+        if (res.data.length > 0) {
+          res.data.map((item) => {
+            return item.categories.forEach((category) => arr.push(category));
+          });
+          // console.log(arr);
+          arr.forEach((x) => {
+            if (x === "FE") {
+              counts["Frontend"] = (counts["Frontend"] || 0) + 1;
+            } else if (x === "BE") {
+              counts["Backend"] = (counts["Backend"] || 0) + 1;
+            } else if (x === "DB") {
+              counts["Database Administration"] =
+                (counts["Database Administration"] || 0) + 1;
+            } else if (x === "SEC") {
+              counts["Security"] = (counts["Security"] || 0) + 1;
+            } else if (x === "UI") {
+              counts["UI/UX"] = (counts["UI/UX"] || 0) + 1;
+            } else if (x === "ML") {
+              counts["Machine Learning"] =
+                (counts["Machine Learning"] || 0) + 1;
+            }
+          });
+          // console.log(counts);
+          arr = [];
+          for (const skill in counts) {
+            arr.push({ skill: skill, Number: counts[skill] });
+          }
+          // console.log(arr);
+        }
+        setPopularSkill(arr);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -934,7 +1011,7 @@ const AdminAnalyticsPage = () => {
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="keyword">
                                   <Label
-                                    value={`Keywords Entered by Students`}
+                                    value={`Keywords Entered by Members`}
                                     position="bottom"
                                     offset={5}
                                     style={{ textAnchor: "middle" }}
@@ -961,12 +1038,156 @@ const AdminAnalyticsPage = () => {
                   } else if (value === 3) {
                     return (
                       <Paper className={classes.paper}>
-                        <Typography
-                          variant="h6"
-                          style={{ fontWeight: 600, paddingBottom: "10px" }}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          Project Listings Report
-                        </Typography>
+                          <Typography
+                            variant="h6"
+                            style={{ fontWeight: 600, paddingBottom: "10px" }}
+                          >
+                            Project Listings Report
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() =>
+                              history.push(`/admin/analytics/projects`)
+                            }
+                          >
+                            View More Project-Related Analysis
+                          </Button>
+                        </div>
+
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "80%",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                paddingBottom: "20px",
+                                paddingTop: "20px",
+                              }}
+                            >
+                              <Typography variant="h6">
+                                Skills Breakdown
+                              </Typography>
+                              <TooltipMui
+                                title={
+                                  <Typography variant="body2">
+                                    Breakdown of skills required in project
+                                    listings
+                                  </Typography>
+                                }
+                              >
+                                <IconButton disableRipple size="small">
+                                  <Info fontSize="small" color="primary" />
+                                </IconButton>
+                              </TooltipMui>
+                            </div>
+                            <ResponsiveContainer width="100%" height={430}>
+                              <BarChart
+                                data={popularSkill && popularSkill}
+                                margin={{
+                                  top: 10,
+                                  right: 30,
+                                  left: 20,
+                                  bottom: 20,
+                                }}
+                              >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="skill">
+                                  <Label
+                                    value={`Skills Required in Listed Projects`}
+                                    position="bottom"
+                                    offset={5}
+                                    style={{ textAnchor: "middle" }}
+                                  />
+                                </XAxis>
+                                <YAxis>
+                                  <Label
+                                    value="Number of Projects"
+                                    position="left"
+                                    angle={-90}
+                                    offset={5}
+                                    style={{ textAnchor: "middle" }}
+                                  />
+                                </YAxis>
+                                <Tooltip />
+
+                                <Bar dataKey="Number" fill="#164D8F" />
+                              </BarChart>
+                            </ResponsiveContainer>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                paddingBottom: "20px",
+                                paddingTop: "20px",
+                              }}
+                            >
+                              <Typography variant="h6">
+                                Project Searches
+                              </Typography>
+                              <TooltipMui
+                                title={
+                                  <Typography variant="body2">
+                                    Keywords entered by the students and the
+                                    respective occurences when searching for
+                                    projects on Codeine
+                                  </Typography>
+                                }
+                              >
+                                <IconButton disableRipple size="small">
+                                  <Info fontSize="small" color="primary" />
+                                </IconButton>
+                              </TooltipMui>
+                            </div>
+                            <ResponsiveContainer width="100%" height={430}>
+                              <BarChart
+                                data={projectSearches && projectSearches}
+                                margin={{
+                                  top: 10,
+                                  right: 30,
+                                  left: 20,
+                                  bottom: 20,
+                                }}
+                              >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="keyword">
+                                  <Label
+                                    value={`Keywords Entered by Members`}
+                                    position="bottom"
+                                    offset={5}
+                                    style={{ textAnchor: "middle" }}
+                                  />
+                                </XAxis>
+                                <YAxis>
+                                  <Label
+                                    value="Number of Occurences for that keyword"
+                                    position="left"
+                                    angle={-90}
+                                    offset={5}
+                                    style={{ textAnchor: "middle" }}
+                                  />
+                                </YAxis>
+                                <Tooltip />
+
+                                <Bar dataKey="Occurences" fill="#164D8F" />
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
                       </Paper>
                     );
                   } else {
