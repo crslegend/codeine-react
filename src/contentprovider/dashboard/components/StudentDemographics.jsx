@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const StudentDemographics = ({ memberDemographics }) => {
   const classes = useStyles();
-  console.log(memberDemographics);
+  // console.log(memberDemographics);
 
   const [genderData, setGenderData] = useState();
   const [locationData, setLocationData] = useState();
@@ -98,7 +98,7 @@ const StudentDemographics = ({ memberDemographics }) => {
         };
         arr.push(obj);
       }
-      console.log(arr);
+      // console.log(arr);
       setLocationData(arr);
     }
   };
