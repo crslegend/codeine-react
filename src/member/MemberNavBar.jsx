@@ -9,7 +9,7 @@ import {
   Typography,
   Popover,
   Button,
-  IconButton,
+  Divider,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -18,10 +18,24 @@ import Cookies from "js-cookie";
 const useStyles = makeStyles((theme) => ({
   popover: {
     width: "300px",
+    padding: theme.spacing(1),
   },
   typography: {
-    padding: theme.spacing(2),
     cursor: "pointer",
+    padding: theme.spacing(1),
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+      cursor: "pointer",
+    },
+  },
+  toprow: {
+    display: "flex",
+    marginBottom: "5px",
+    padding: theme.spacing(1),
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+      cursor: "pointer",
+    },
   },
 }));
 
@@ -133,7 +147,7 @@ const MemberNavBar = (props) => {
           onClick={handleClick}
           src={user && user.profile_photo}
           alt=""
-          style={{ width: "34px", height: "34px" }}
+          style={{ width: "34px", height: "34px", cursor: "pointer" }}
         />
         <Popover
           id={id}
@@ -150,6 +164,44 @@ const MemberNavBar = (props) => {
           }}
         >
           <div className={classes.popover}>
+            <div className={classes.toprow}>
+              <Avatar
+                src={user && user.profile_photo}
+                alt=""
+                style={{ width: "55px", height: "55px", marginRight: "15px" }}
+              />
+              <div
+                style={{
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  history.push("/member/profile");
+                }}
+              >
+                <Typography
+                  style={{
+                    fontWeight: "600",
+                    paddingTop: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {user && user.first_name + " " + user.last_name}
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    color: "#757575",
+                    cursor: "pointer",
+                  }}
+                >
+                  Manage your profile
+                </Typography>
+              </div>
+            </div>
+
+            <Divider style={{ marginBottom: "5px" }} />
+
             <Typography
               className={classes.typography}
               onClick={() => {
@@ -209,15 +261,6 @@ const MemberNavBar = (props) => {
             >
               My Payments
             </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/profile");
-              }}
-            >
-              Manage my account
-            </Typography>
-
             <Typography
               className={classes.typography}
               onClick={() => {

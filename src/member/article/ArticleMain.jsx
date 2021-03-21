@@ -3,13 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, ListItem, Typography } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Member.svg";
-import Navbar from "../../components/Navbar";
 import CommentDrawer from "./ArticleComments";
 import ViewArticle from "./ViewArticle";
 import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
-import Cookies from "js-cookie";
+import MemberNavBar from "../MemberNavBar";
 import Toast from "../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 
@@ -120,117 +118,7 @@ const ArticleMain = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
 
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Teach on Codeine
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/member/register"
-          style={{
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const loggedInNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link
-          to="/member/home"
-          style={{
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
   const [saveState, setSaveState] = useState(true);
-
-  const navLogo = (
-    <Fragment>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <Link
-          to="/"
-          style={{
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            paddingLeft: "10px",
-            marginRight: "35px",
-            width: 100,
-          }}
-        >
-          <img src={logo} width="120%" alt="codeine logo" />
-        </Link>
-        {user && !articleDetails.is_published && (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              variant="h6"
-              style={{ fontSize: "15px", color: "#000000" }}
-            >
-              Draft in {user.first_name + " " + user.last_name}
-            </Typography>
-            <Typography
-              variant="h6"
-              style={{ fontSize: "15px", color: "#0000008a" }}
-            >
-              {saveState ? "-Saved" : "-Saving"}
-            </Typography>
-          </div>
-        )}
-      </div>
-    </Fragment>
-  );
 
   return (
     <div className={classes.root}>
@@ -264,11 +152,8 @@ const ArticleMain = () => {
         />
       ) : (
         <>
-          <Navbar
-            logo={navLogo}
-            bgColor="#fff"
-            navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
-          />
+          <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+
           <ViewArticle
             user={user}
             openIDE={openIDE}

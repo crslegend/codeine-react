@@ -6,6 +6,9 @@ import {
   Typography,
   Grid,
   ListItem,
+  Avatar,
+  Divider,
+  Popover,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
@@ -49,6 +52,27 @@ const useStyles = makeStyles((theme) => ({
   gridlayout: {
     padding: theme.spacing(3),
   },
+  popover: {
+    width: "300px",
+    padding: theme.spacing(1),
+  },
+  typography: {
+    cursor: "pointer",
+    padding: theme.spacing(1),
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+      cursor: "pointer",
+    },
+  },
+  toprow: {
+    display: "flex",
+    marginBottom: "5px",
+    padding: theme.spacing(1),
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+      cursor: "pointer",
+    },
+  },
 }));
 
 const EditArticle = () => {
@@ -66,6 +90,27 @@ const EditArticle = () => {
     },
     autoHideDuration: 3000,
   });
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
 
   const editor = {
     toolbar: [
@@ -110,6 +155,7 @@ const EditArticle = () => {
         .get(`/auth/members/${memberid}`)
         .then((res) => {
           setUser(res.data);
+          setLoggedIn(true);
         })
         .catch((err) => {
           setUser();
@@ -373,37 +419,136 @@ const EditArticle = () => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link
-          to="/member/home"
-          style={{
-            textDecoration: "none",
+        <Avatar
+          onClick={handleClick}
+          src={user && user.profile_photo}
+          alt=""
+          style={{ width: "34px", height: "34px", cursor: "pointer" }}
+        />
+        <Popover
+          id={popoverid}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
           }}
         >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            //setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
+          <div className={classes.popover}>
+            <div className={classes.toprow}>
+              <Avatar
+                src={user && user.profile_photo}
+                alt=""
+                style={{ width: "55px", height: "55px", marginRight: "15px" }}
+              />
+              <div
+                style={{
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  history.push("/member/profile");
+                }}
+              >
+                <Typography
+                  style={{
+                    fontWeight: "600",
+                    paddingTop: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {user && user.first_name + " " + user.last_name}
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    color: "#757575",
+                    cursor: "pointer",
+                  }}
+                >
+                  Manage your profile
+                </Typography>
+              </div>
+            </div>
+
+            <Divider style={{ marginBottom: "5px" }} />
+
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                //history.push("/member/dashboard");
+                alert("Clicked on Dashboard");
+              }}
+            >
+              Dashboard
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/member/courses");
+              }}
+            >
+              Courses
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/member/consultations");
+              }}
+            >
+              Consultations
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/member/articles");
+              }}
+            >
+              Articles
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                //history.push("/");
+                alert("clicked on Industry projects");
+              }}
+            >
+              Industry Projects
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                //history.push("/");
+                alert("clicked on Helpdesk");
+              }}
+            >
+              Helpdesk
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                history.push("/member/payment");
+              }}
+            >
+              My Payments
+            </Typography>
+            <Typography
+              className={classes.typography}
+              onClick={() => {
+                Service.removeCredentials();
+                setLoggedIn(false);
+                history.push("/");
+              }}
+            >
+              Log out
+            </Typography>
+          </div>
+        </Popover>
       </ListItem>
     </Fragment>
   );
