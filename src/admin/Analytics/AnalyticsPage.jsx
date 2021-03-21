@@ -144,7 +144,7 @@ const AdminAnalyticsPage = () => {
       Service.client
         .get(`/analytics/course-search-ranking`, { params: { days: numDays } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           let arr = [];
           let obj = {};
           for (let i = 0; i < res.data.length; i++) {
@@ -222,13 +222,6 @@ const AdminAnalyticsPage = () => {
         .then((res) => {
           // console.log(res);
           setPlatformReport(res.data);
-        })
-        .catch((err) => console.log(err));
-
-      Service.client
-        .get(`/analytics/course-conversion-rate`)
-        .then((res) => {
-          // console.log(res);
         })
         .catch((err) => console.log(err));
 
@@ -557,7 +550,8 @@ const AdminAnalyticsPage = () => {
               <TooltipMui
                 title={
                   <Typography variant="body2">
-                    Total number of project listings newly added by our partners
+                    Total number of project listings newly added by
+                    organizations
                   </Typography>
                 }
               >

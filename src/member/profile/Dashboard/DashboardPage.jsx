@@ -248,7 +248,7 @@ const DashboardPage = () => {
               <TooltipMui
                 title={
                   <Typography variant="body2">
-                    The total time you spent on this platform so far (in hours)
+                    Total number of hours you have spent on Codeine
                   </Typography>
                 }
               >
