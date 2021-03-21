@@ -138,7 +138,7 @@ const EnrollCourse = () => {
 
   const [expanded, setExpanded] = useState("overview");
 
-  const [unenrollDialog, setUnenrollDialog] = useState(false);
+  // const [unenrollDialog, setUnenrollDialog] = useState(false);
   const [reviewDialog, setReviewDialog] = useState(false);
 
   const [review, setReview] = useState({
@@ -610,6 +610,72 @@ const EnrollCourse = () => {
                     </Typography>
                   </Paper>
                 );
+              } else if (chosenCourseMaterial.material_type === "FILE") {
+                return (
+                  <div>
+                    <Paper
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                      >
+                        {chosenCourseMaterial.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        style={{ paddingBottom: "30px" }}
+                      >
+                        {chosenCourseMaterial.description}
+                      </Typography>
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        {chosenCourseMaterial.course_file.zip_file &&
+                          chosenCourseMaterial.course_file.zip_file && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                textTransform: "capitalize",
+                                height: 25,
+                              }}
+                              href={chosenCourseMaterial.course_file.zip_file}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download File
+                            </Button>
+                          )}
+                        {chosenCourseMaterial.course_file.google_drive_url &&
+                          chosenCourseMaterial.course_file.google_drive_url && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                textTransform: "capitalize",
+                                height: 25,
+                                marginLeft: "10px",
+                              }}
+                              href={
+                                chosenCourseMaterial.course_file
+                                  .google_drive_url
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              File URL
+                            </Button>
+                          )}
+                      </div>
+                    </Paper>
+                  </div>
+                );
               } else if (chosenCourseMaterial.material_type === "VIDEO") {
                 return (
                   <div>
@@ -848,45 +914,47 @@ const EnrollCourse = () => {
                                     >
                                       {material.title}
                                     </LinkMui>
-                                    <div
-                                      style={{ marginLeft: "auto", order: 2 }}
-                                    >
-                                      {material.course_file.zip_file &&
-                                        material.course_file.zip_file && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                            }}
-                                            href={material.course_file.zip_file}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            Download File
-                                          </Button>
-                                        )}
-                                      {material.course_file.google_drive_url &&
-                                        material.course_file
-                                          .google_drive_url && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                              marginLeft: "10px",
-                                            }}
-                                            href={
-                                              material.course_file
-                                                .google_drive_url
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            File URL
-                                          </Button>
-                                        )}
-                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                      marginBottom: "10px",
+                                    }}
+                                  >
+                                    {material.course_file.zip_file &&
+                                      material.course_file.zip_file && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                          }}
+                                          href={material.course_file.zip_file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          Download File
+                                        </Button>
+                                      )}
+                                    {material.course_file.google_drive_url &&
+                                      material.course_file.google_drive_url && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                            marginLeft: "10px",
+                                          }}
+                                          href={
+                                            material.course_file
+                                              .google_drive_url
+                                          }
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          File URL
+                                        </Button>
+                                      )}
                                   </div>
                                   <Typography
                                     style={{
