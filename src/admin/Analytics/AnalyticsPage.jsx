@@ -578,7 +578,6 @@ const AdminAnalyticsPage = () => {
           <Button
             variant="outlined"
             color="primary"
-            style={{ textTransform: "capitalize" }}
             onClick={() => history.push(`/admin/analytics/courses`)}
           >
             View More Course-Related Analysis

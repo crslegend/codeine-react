@@ -15,7 +15,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Info } from "@material-ui/icons";
+import { ArrowBack, Info } from "@material-ui/icons";
 import { useHistory } from "react-router";
 import LinkMui from "@material-ui/core/Link";
 
@@ -128,9 +128,18 @@ const CourseRelatedAnalytics = () => {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" style={{ paddingBottom: "20px" }}>
-        Course-Related Analytics
-      </Typography>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+      >
+        <IconButton
+          onClick={() => history.push(`/admin/analytics`)}
+          style={{ marginRight: "20px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h2">Course-Related Analytics</Typography>
+      </div>
+
       <div
         style={{
           display: "flex",
