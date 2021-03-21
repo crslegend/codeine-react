@@ -17,12 +17,9 @@ import {
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
-  PieChart,
-  Pie,
   Tooltip,
   ResponsiveContainer,
   Label,
