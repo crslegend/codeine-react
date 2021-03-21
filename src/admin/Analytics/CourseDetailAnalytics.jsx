@@ -16,6 +16,7 @@ import { ArrowBack } from "@material-ui/icons";
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 import StudentAnalysis from "./components/StudentAnalysis";
+import StudentDemographics from "./components/StudentDemographics";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -370,14 +371,11 @@ const CourseDetailAnalytics = () => {
                       />
                     );
                   } else if (value === 3) {
-                    return null;
-                    {
-                      /* return (
+                    return (
                       <StudentDemographics
                         memberDemographics={memberDemographics}
                       />
-                    ); */
-                    }
+                    );
                   } else {
                     return null;
                   }

@@ -277,6 +277,13 @@ const AdminAnalyticsPage = () => {
         })
         .catch((err) => console.log(err));
     }
+
+    // Service.client
+    //   .get(`/analytics/ip-popular-skills`)
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
   useEffect(() => {

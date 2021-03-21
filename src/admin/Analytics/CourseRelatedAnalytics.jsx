@@ -73,7 +73,7 @@ const CourseRelatedAnalytics = () => {
       Service.client
         .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           // let arr = res.data.breakdown;
           setCourses(res.data.breakdown);
           setOverallData({
