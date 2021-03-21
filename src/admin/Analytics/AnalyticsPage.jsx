@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Button,
   FormControl,
   IconButton,
   InputLabel,
@@ -12,6 +13,17 @@ import {
 import TooltipMui from "@material-ui/core/Tooltip";
 import { Add, DragHandle, Info } from "@material-ui/icons";
 import Service from "../../AxiosService";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Label,
+} from "recharts";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,10 +54,14 @@ const useStyles = makeStyles((theme) => ({
 
 const AdminAnalyticsPage = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [numDays, setNumDays] = useState(7);
   const [earningsReport, setEarningsReport] = useState();
   const [platformReport, setPlatformReport] = useState();
+  const [coursesRanking, setCoursesRanking] = useState();
+  const [firstCoursesRanking, setFirstCoursesRaking] = useState();
+  const [courseSearches, setCourseSearches] = useState();
 
   const getAnalytics = async () => {
     if (numDays && numDays !== "") {
@@ -53,6 +69,16 @@ const AdminAnalyticsPage = () => {
         .get(`/analytics/first-enrollment-count`, { params: { days: numDays } })
         .then((res) => {
           // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              title: res.data[i].course_title,
+              Enrollment: res.data[i].first_enrollment_count,
+            };
+            arr.push(obj);
+          }
+          setFirstCoursesRaking(arr);
         })
         .catch((err) => console.log(err));
 
@@ -62,6 +88,16 @@ const AdminAnalyticsPage = () => {
         })
         .then((res) => {
           // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              title: res.data[i].course_title,
+              Enrollment: res.data[i].enrollment_count,
+            };
+            arr.push(obj);
+          }
+          setCoursesRanking(arr);
         })
         .catch((err) => console.log(err));
 
@@ -93,8 +129,32 @@ const AdminAnalyticsPage = () => {
       Service.client
         .get(`/analytics/platform-health-check`, { params: { days: numDays } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setPlatformReport(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/course-search-ranking`, { params: { days: numDays } })
+        .then((res) => {
+          console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              keyword: res.data[i].search_string,
+              Occurences: res.data[i].search_count,
+            };
+            arr.push(obj);
+          }
+          setCourseSearches(arr);
         })
         .catch((err) => console.log(err));
     } else {
@@ -102,6 +162,16 @@ const AdminAnalyticsPage = () => {
         .get(`/analytics/first-enrollment-count`)
         .then((res) => {
           // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              title: res.data[i].course_title,
+              Enrollment: res.data[i].first_enrollment_count,
+            };
+            arr.push(obj);
+          }
+          setFirstCoursesRaking(arr);
         })
         .catch((err) => console.log(err));
 
@@ -109,6 +179,16 @@ const AdminAnalyticsPage = () => {
         .get(`/analytics/course-enrollment-count`)
         .then((res) => {
           // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              title: res.data[i].course_title,
+              Enrollment: res.data[i].enrollment_count,
+            };
+            arr.push(obj);
+          }
+          setCoursesRanking(arr);
         })
         .catch((err) => console.log(err));
 
@@ -142,6 +222,30 @@ const AdminAnalyticsPage = () => {
         .then((res) => {
           // console.log(res);
           setPlatformReport(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/course-conversion-rate`)
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
+
+      Service.client
+        .get(`/analytics/course-search-ranking`)
+        .then((res) => {
+          // console.log(res);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              keyword: res.data[i].search_string,
+              Occurences: res.data[i].search_count,
+            };
+            arr.push(obj);
+          }
+          setCourseSearches(arr);
         })
         .catch((err) => console.log(err));
     }
@@ -473,6 +577,196 @@ const AdminAnalyticsPage = () => {
                   platformReport.new_industry_projects
                 ))}
             </Typography>
+          </div>
+        </div>
+      </Paper>
+      <Paper className={classes.paper}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography
+            variant="h6"
+            style={{ fontWeight: 600, paddingBottom: "10px" }}
+          >
+            Courses Report
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            style={{ textTransform: "capitalize" }}
+            onClick={() => history.push(`/admin/analytics/courses`)}
+          >
+            View More Course-Related Analysis
+          </Button>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", width: "80%" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingBottom: "20px",
+                paddingTop: "20px",
+              }}
+            >
+              <Typography variant="h6">Popularity Ranking</Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Ranking of popularity of courses by number of enrollments
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart
+                data={coursesRanking && coursesRanking}
+                margin={{
+                  top: 0,
+                  right: 30,
+                  left: 20,
+                  bottom: 25,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="title">
+                  <Label
+                    value={`Courses on Codeine`}
+                    position="bottom"
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </XAxis>
+                <YAxis>
+                  <Label
+                    value="Number of Enrollments"
+                    position="left"
+                    angle={-90}
+                    offset={-10}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
+                <Tooltip />
+
+                <Bar dataKey="Enrollment" fill="#164D8F" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingBottom: "20px",
+                paddingTop: "20px",
+              }}
+            >
+              <Typography variant="h6">First-Enrollment Courses</Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Number of users who registered and enrolled in their
+                    respective first courses
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart
+                data={firstCoursesRanking && firstCoursesRanking}
+                margin={{
+                  top: 0,
+                  right: 30,
+                  left: 20,
+                  bottom: 25,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="title">
+                  <Label
+                    value={`First-Enrolled Courses on Codeine`}
+                    position="bottom"
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </XAxis>
+                <YAxis>
+                  <Label
+                    value="Number of Enrollments"
+                    position="left"
+                    angle={-90}
+                    offset={-10}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
+                <Tooltip />
+
+                <Bar dataKey="Enrollment" fill="#164D8F" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingBottom: "20px",
+                paddingTop: "20px",
+              }}
+            >
+              <Typography variant="h6">Course Searches</Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Keywords entered by the students and the respective
+                    occurences when searching for courses on Codeine
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <ResponsiveContainer width="100%" height={430}>
+              <BarChart
+                data={courseSearches && courseSearches}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 20,
+                  bottom: 20,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="keyword">
+                  <Label
+                    value={`Keywords Entered by Students`}
+                    position="bottom"
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </XAxis>
+                <YAxis>
+                  <Label
+                    value="Number of Occurences for that keyword"
+                    position="left"
+                    angle={-90}
+                    offset={5}
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
+                <Tooltip />
+
+                <Bar dataKey="Occurences" fill="#164D8F" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </Paper>
