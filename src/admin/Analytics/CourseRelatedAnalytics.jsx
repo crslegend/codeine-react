@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import { ArrowBack, Info } from "@material-ui/icons";
 import { useHistory } from "react-router";
-import LinkMui from "@material-ui/core/Link";
+// import LinkMui from "@material-ui/core/Link";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +66,7 @@ const CourseRelatedAnalytics = () => {
   const [courses, setCourses] = useState([]);
   const [overallData, setOverallData] = useState();
   const [finalQuizPerformance, setFinalQuizPerformance] = useState();
-  const [numDays, setNumDays] = useState();
+  const [numDays, setNumDays] = useState(7);
 
   const getConversionRate = () => {
     if (numDays && numDays !== "") {
