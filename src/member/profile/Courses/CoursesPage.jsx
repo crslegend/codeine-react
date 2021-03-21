@@ -264,7 +264,7 @@ const CoursesPage = () => {
                 return (
                   <Card key={index} className={classes.card}>
                     <a
-                      href={`/courses/${course.id}`}
+                      href={`/courses/enroll/${course.id}`}
                       className={classes.link}
                       style={{ height: "100%" }}
                     >
