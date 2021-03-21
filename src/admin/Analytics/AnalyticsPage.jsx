@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme) => ({
 const AdminAnalyticsPage = () => {
   const classes = useStyles();
 
-  const [numDays, setNumDays] = useState();
+  const [numDays, setNumDays] = useState(7);
   const [earningsReport, setEarningsReport] = useState();
+  const [platformReport, setPlatformReport] = useState();
 
   const getAnalytics = async () => {
     if (numDays && numDays !== "") {
@@ -92,7 +93,8 @@ const AdminAnalyticsPage = () => {
       Service.client
         .get(`/analytics/platform-health-check`, { params: { days: numDays } })
         .then((res) => {
-          // console.log(res);
+          console.log(res);
+          setPlatformReport(res.data);
         })
         .catch((err) => console.log(err));
     } else {
@@ -113,7 +115,7 @@ const AdminAnalyticsPage = () => {
       Service.client
         .get(`/analytics/admin-earnings-report`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           let obj = {
             expenses: res.data.expenses,
             total_contribution_income:
@@ -139,6 +141,7 @@ const AdminAnalyticsPage = () => {
         .get(`/analytics/platform-health-check`)
         .then((res) => {
           // console.log(res);
+          setPlatformReport(res.data);
         })
         .catch((err) => console.log(err));
     }
@@ -345,7 +348,134 @@ const AdminAnalyticsPage = () => {
           </div>
         </div>
       </Paper>
-      <Paper className={classes.paper}></Paper>
+      <Paper className={classes.paper}>
+        <Typography
+          variant="h6"
+          style={{ fontWeight: 600, paddingBottom: "10px" }}
+        >
+          Codeine's Health Report
+        </Typography>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" style={{ paddingRight: "5px" }}>
+                New Content
+              </Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Total number of hours of new content produced by the
+                    partners
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {platformReport &&
+                platformReport.hours_of_content &&
+                (platformReport.hours_of_content <= 1 ? (
+                  <span
+                    style={{ color: "#C74343" }}
+                  >{`${platformReport.hours_of_content}hr`}</span>
+                ) : (
+                  platformReport.hours_of_content + "hrs"
+                ))}
+            </Typography>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" style={{ paddingRight: "5px" }}>
+                New Consultation
+              </Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Total number of consultation slots newly added by the
+                    partners
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {platformReport &&
+                platformReport.new_consultation_slots &&
+                (platformReport.new_consultation_slots === 0 ? (
+                  <span style={{ color: "#C74343" }}>
+                    {platformReport.new_consultation_slots}
+                  </span>
+                ) : (
+                  platformReport.new_consultation_slots
+                ))}
+            </Typography>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" style={{ paddingRight: "5px" }}>
+                New Pro-Tier Members
+              </Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Total number of members who upgraded to pro-tier
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {platformReport &&
+                platformReport.new_pro_members &&
+                (platformReport.new_pro_members === 0 ? (
+                  <span style={{ color: "#C74343" }}>
+                    {platformReport.new_pro_members}
+                  </span>
+                ) : (
+                  platformReport.new_pro_members
+                ))}
+            </Typography>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" style={{ paddingRight: "5px" }}>
+                New Projects
+              </Typography>
+              <TooltipMui
+                title={
+                  <Typography variant="body2">
+                    Total number of project listings newly added by our partners
+                  </Typography>
+                }
+              >
+                <IconButton disableRipple size="small">
+                  <Info fontSize="small" color="primary" />
+                </IconButton>
+              </TooltipMui>
+            </div>
+            <Typography variant="h1" className={classes.numbers}>
+              {platformReport &&
+                platformReport.new_industry_projects &&
+                (platformReport.new_industry_projects === 0 ? (
+                  <span style={{ color: "#C74343" }}>
+                    {platformReport.new_industry_projects}
+                  </span>
+                ) : (
+                  platformReport.new_industry_projects
+                ))}
+            </Typography>
+          </div>
+        </div>
+      </Paper>
     </div>
   );
 };
