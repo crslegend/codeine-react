@@ -81,7 +81,7 @@ const ArticleMain = () => {
           setLoggedIn(true);
         })
         .catch((err) => {
-          setUser();
+          setUser(null);
         });
     }
   };

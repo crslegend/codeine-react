@@ -156,7 +156,7 @@ const ArticleComment = (props) => {
     if (days === 0) {
       if (hours === 0) {
         if (minutes === 0) {
-          return `${seconds} seconds ago`;
+          return `a few seconds ago`;
         }
 
         if (minutes === 1) {
@@ -559,7 +559,7 @@ const ArticleComment = (props) => {
     return (
       <div key={`reply` + replyIndex}>
         <div className={classes.childcommentheader} style={{ display: "flex" }}>
-          {reply.user && reply.user.profile_photo && (
+          {reply.user && (
             <Avatar
               style={{ marginRight: "15px" }}
               src={reply.user.profile_photo}
@@ -756,13 +756,13 @@ const ArticleComment = (props) => {
         Responses ({articleDetails.top_level_comments.length})
       </Typography>
 
-      <Card className={classes.commentcard}>
-        <CardContent>
-          {user && (
+      {user && (
+        <Card className={classes.commentcard}>
+          <CardContent>
             <div>
               <div className={classes.cardheadername}>
                 <Avatar
-                  src={user.profile_photo}
+                  src={user && user.profile_photo}
                   alt=""
                   style={{ marginRight: "15px" }}
                 />
@@ -810,9 +810,9 @@ const ArticleComment = (props) => {
                 </Button>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Fragment>
@@ -823,7 +823,7 @@ const ArticleComment = (props) => {
                   <Fragment>
                     <div key={comment.id} className={classes.parentcommentcard}>
                       <div className={classes.parentcommentheader}>
-                        {comment.user.profile_photo && (
+                        {comment.user && (
                           <Avatar
                             style={{ marginRight: "15px" }}
                             src={comment.user.profile_photo}

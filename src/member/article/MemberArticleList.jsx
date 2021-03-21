@@ -147,7 +147,7 @@ const ViewAllArticles = () => {
 
   const getArticles = () => {
     Service.client
-      .get(`/articles/member/`)
+      .get(`/articles/user/`)
       .then((res) => {
         setArticleList(res.data);
       })
@@ -168,7 +168,13 @@ const ViewAllArticles = () => {
     Service.client
       .post(`/articles`, emptyArticle)
       .then((res) => {
-        history.push("/member/article/edit/" + res.data.id);
+        if (res.data.user.member !== null) {
+          history.push("/member/article/edit/" + res.data.id);
+        } else if (res.data.user.partner !== null) {
+          history.push("/partner/article/edit/" + res.data.id);
+        } else if (res.data.is_admin) {
+          history.push("/admin/article/edit/" + res.data.id);
+        }
       })
       .catch((err) => {
         console.log(err);

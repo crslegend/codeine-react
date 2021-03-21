@@ -9,6 +9,11 @@ import {
   Avatar,
   Divider,
   Popover,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
@@ -109,6 +114,16 @@ const EditArticle = () => {
     setAnchorEl(null);
   };
 
+  const [dialogopen, setDialogOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   const open = Boolean(anchorEl);
   const popoverid = open ? "simple-popover" : undefined;
 
@@ -144,7 +159,8 @@ const EditArticle = () => {
 
   const [user, setUser] = useState(null);
   const [articleDetails, setArticleDetails] = useState({
-    title: "title",
+    title: "",
+    content: "",
   });
   const [content, setContent] = useState("");
 
@@ -163,20 +179,19 @@ const EditArticle = () => {
       Service.client
         .get(`/articles/${id}`)
         .then((res1) => {
-          console.log(res1.data);
-          //setArticleDetails(res1.data);
           getFields(res1.data);
         })
         .catch(() => {});
     }
   }, []);
 
-  const [debouncedText] = useDebounce(articleDetails, 1500);
+  const [debouncedText] = useDebounce(articleDetails, 2500);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
     if (debouncedText) {
-      if (!articleDetails.is_published) {
+      if (!articleDetails.is_published && articleDetails.title !== "") {
+        console.log("useeffect 1 debounce");
         Service.client
           .put(`/articles/${id}`, articleDetails)
           .then((res) => {
@@ -216,35 +231,35 @@ const EditArticle = () => {
   });
 
   useEffect(() => {
-    let data = {
-      ...articleDetails,
-      content: content,
-      coding_languages: [],
-      languages: [],
-      categories: [],
-    };
+    if (!articleDetails.is_published && articleDetails.title !== "") {
+      console.log("useeffect 2");
+      let data = {
+        ...articleDetails,
+        content: content,
+        coding_languages: [],
+        languages: [],
+        categories: [],
+      };
 
-    for (const property in languages) {
-      if (languages[property]) {
-        data.languages.push(property);
+      for (const property in languages) {
+        if (languages[property]) {
+          data.languages.push(property);
+        }
       }
-    }
 
-    for (const property in categories) {
-      if (categories[property]) {
-        data.categories.push(property);
+      for (const property in categories) {
+        if (categories[property]) {
+          data.categories.push(property);
+        }
       }
-    }
 
-    for (const property in codeLanguage) {
-      if (codeLanguage[property]) {
-        data.coding_languages.push(property);
+      for (const property in codeLanguage) {
+        if (codeLanguage[property]) {
+          data.coding_languages.push(property);
+        }
       }
+      setArticleDetails(data);
     }
-
-    console.log("content");
-    console.log(content);
-    setArticleDetails(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, languages, categories, codeLanguage]);
 
@@ -279,7 +294,7 @@ const EditArticle = () => {
     setCodeLanguage(newCodeLanguages);
   }
 
-  const handleSubmit = () => {
+  const validateArticle = () => {
     if (articleDetails.title === "") {
       setSbOpen(true);
       setSnackbar({
@@ -291,7 +306,7 @@ const EditArticle = () => {
         },
         autoHideDuration: 3000,
       });
-      return;
+      return true;
     }
     let neverChooseOne = true;
     for (const property in languages) {
@@ -312,7 +327,7 @@ const EditArticle = () => {
         },
         autoHideDuration: 3000,
       });
-      return;
+      return true;
     }
 
     neverChooseOne = true;
@@ -334,7 +349,7 @@ const EditArticle = () => {
         },
         autoHideDuration: 3000,
       });
-      return;
+      return true;
     }
 
     neverChooseOne = true;
@@ -357,28 +372,86 @@ const EditArticle = () => {
         },
         autoHideDuration: 3000,
       });
-      return;
+      return true;
     }
+  };
 
-    Service.client
-      .put(`/articles/${id}`, articleDetails)
-      .then((res) => {
-        setArticleDetails(res.data);
-        setSbOpen(true);
-        setSnackbar({
-          message: "Article updated successfully",
-          severity: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
+  const publishArticle = () => {
+    if (!validateArticle()) {
+      Service.client
+        .patch(`/articles/${id}/publish`)
+        .then((res) => {
+          history.push(`/article/${res.data.id}`);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        history.push(`/article/${res.data.id}`);
+    }
+  };
+
+  const unpublishArticle = () => {
+    Service.client
+      .patch(`/articles/${id}/unpublish`)
+      .then((res) => {
+        alert("to check if member/admin/partner");
+        history.push(`/member/articles`);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const deleteArticle = () => {
+    Service.client
+      .delete(`/articles/${id}`)
+      .then((res) => {
+        alert("to check if member/admin/partner");
+        history.push(`/member/articles`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const saveAndPublishArticle = () => {
+    if (!validateArticle()) {
+      let data = {
+        ...articleDetails,
+        content: content,
+        coding_languages: [],
+        languages: [],
+        categories: [],
+      };
+
+      for (const property in languages) {
+        if (languages[property]) {
+          data.languages.push(property);
+        }
+      }
+
+      for (const property in categories) {
+        if (categories[property]) {
+          data.categories.push(property);
+        }
+      }
+
+      for (const property in codeLanguage) {
+        if (codeLanguage[property]) {
+          data.coding_languages.push(property);
+        }
+      }
+
+      Service.client
+        .put(`/articles/${id}`, data)
+        .then((res) => {
+          console.log(data);
+          setSaveState(true);
+          history.push(`/article/${id}`);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const navLogo = (
@@ -584,7 +657,7 @@ const EditArticle = () => {
             format={format}
             id="content"
             name="content"
-            style={{ height: "78vh", marginBottom: "50px" }}
+            style={{ height: "75vh" }}
             onChange={(event) => {
               setSaveState(false);
               setContent(event);
@@ -594,27 +667,6 @@ const EditArticle = () => {
         </Grid>
         <Grid item xs={4} className={classes.gridlayout}>
           <div style={{ marginBottom: "30px" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                textTransform: "capitalize",
-              }}
-              onClick={(e) => handleSubmit(e)}
-            >
-              {articleDetails && articleDetails.is_published
-                ? "Save and publish"
-                : "Publish"}
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                textTransform: "capitalize",
-              }}
-              onClick={() => history.push(`/article/${id}`)}
-            >
-              Preview article
-            </Button>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Course Language (Choose at least 1)
             </Typography>
@@ -848,8 +900,91 @@ const EditArticle = () => {
               </ToggleButton>
             </div>
           </div>
+          {articleDetails && articleDetails.is_published && (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{
+                  textTransform: "capitalize",
+                }}
+                onClick={(e) => saveAndPublishArticle(e)}
+              >
+                Save and publish
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  textTransform: "capitalize",
+                  marginLeft: "15px",
+                  marginRight: "15px",
+                }}
+                onClick={() => history.push(`/article/${id}`)}
+              >
+                Back to Article
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{
+                  textTransform: "capitalize",
+                }}
+                onClick={(e) => unpublishArticle()}
+              >
+                Unpublish
+              </Button>
+            </>
+          )}
+          {articleDetails && !articleDetails.is_published && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                textTransform: "capitalize",
+                marginRight: "15px",
+              }}
+              onClick={(e) => publishArticle(e)}
+            >
+              Publish
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              textTransform: "capitalize",
+            }}
+            onClick={handleClickOpen}
+          >
+            Delete Article
+          </Button>
         </Grid>
       </Grid>
+      <Dialog
+        open={dialogopen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this article?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => deleteArticle()}
+            variant="contained"
+            color="primary"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     padding: theme.spacing(1),
     "&:hover": {
-      backgroundColor: "#e0e0e0",
+      backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
   },
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "5px",
     padding: theme.spacing(1),
     "&:hover": {
-      backgroundColor: "#e0e0e0",
+      backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
   },

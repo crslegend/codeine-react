@@ -7,6 +7,11 @@ import {
   Chip,
   Typography,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@material-ui/core";
 import { Language } from "@material-ui/icons";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -45,7 +50,8 @@ const useStyles = makeStyles((theme) => ({
     width: 120,
   },
   typography: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
+    color: "#5c5c5c",
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
@@ -86,6 +92,16 @@ const ViewArticle = (props) => {
     return "";
   };
 
+  const [dialogopen, setDialogOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   const checkIfOwnerOfComment = (userId) => {
     const decoded = jwt_decode(Cookies.get("t1"));
     if (decoded.user_id === userId) {
@@ -103,63 +119,56 @@ const ViewArticle = (props) => {
   const [articleLikedStatus, setArticleLikedStatus] = useState(false);
 
   const getNumOfLikes = () => {
-    let likes = 0;
-    Service.client
-      .get(`/articles/${id}/engagement`)
-      .then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          likes = likes + res.data[i].like;
-        }
-        setNumOfLikes(likes);
-      })
-      .catch((err1) => {
-        console.log(err1);
-      });
+    if (user) {
+      let likes = 0;
+      Service.client
+        .get(`/articles/${id}/engagement`)
+        .then((res) => {
+          for (let i = 0; i < res.data.length; i++) {
+            likes = likes + res.data[i].like;
+          }
+          setNumOfLikes(likes);
+        })
+        .catch((err1) => {
+          console.log(err1);
+        });
+    }
   };
 
   const getNumStatus = () => {
     let queryParams = {
       is_user: true,
     };
-    Service.client
-      .get(`/articles/${id}/engagement`, {
-        params: { ...queryParams },
-      })
-      .then((res) => {
-        if (res.data[0].like === 0) {
-          setArticleLikedStatus(false);
-        } else {
-          setArticleLikedStatus(true);
-        }
-      })
-      .catch((err) => console.log(err));
+    if (user) {
+      Service.client
+        .get(`/articles/${id}/engagement`, {
+          params: { ...queryParams },
+        })
+        .then((res) => {
+          if (res.data[0].like === 0) {
+            setArticleLikedStatus(false);
+          } else {
+            setArticleLikedStatus(true);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const handleLikeArticle = (e) => {
-    setArticleLikedStatus(!articleLikedStatus);
-    let queryParams = {
-      is_user: true,
-    };
-    Service.client
-      .get(`/articles/${articleDetails.id}/engagement`, {
-        params: { ...queryParams },
-      })
-      .then((res) => {
-        if (res.data.length === 0) {
-          Service.client
-            .post(`/articles/${articleDetails.id}/engagement`, {
-              like: 1,
-            })
-            .then((res1) => {
-              getNumOfLikes();
-            })
-            .catch((err1) => {
-              console.log(err1);
-            });
-        } else {
-          if (res.data[0].like === 0) {
+    if (user) {
+      setArticleLikedStatus(!articleLikedStatus);
+      let queryParams = {
+        is_user: true,
+      };
+      Service.client
+        .get(`/articles/${articleDetails.id}/engagement`, {
+          params: { ...queryParams },
+        })
+        .then((res) => {
+          if (res.data.length === 0) {
             Service.client
-              .put(`/articles/${id}/engagement/${res.data[0].id}`, {
+              .post(`/articles/${articleDetails.id}/engagement`, {
                 like: 1,
               })
               .then((res1) => {
@@ -169,22 +178,39 @@ const ViewArticle = (props) => {
                 console.log(err1);
               });
           } else {
-            Service.client
-              .put(`/articles/${id}/engagement/${res.data[0].id}`, {
-                like: 0,
-              })
-              .then((res1) => {
-                getNumOfLikes();
-              })
-              .catch((err1) => {
-                console.log(err1);
-              });
+            if (res.data[0].like === 0) {
+              Service.client
+                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
+                  like: 1,
+                })
+                .then((res1) => {
+                  getNumOfLikes();
+                })
+                .catch((err1) => {
+                  console.log(err1);
+                });
+            } else {
+              Service.client
+                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
+                  like: 0,
+                })
+                .then((res1) => {
+                  getNumOfLikes();
+                })
+                .catch((err1) => {
+                  console.log(err1);
+                });
+            }
           }
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      alert(
+        "please login! - to discuss the flow, should we redirect to member login page? but not all viewers of article are members..."
+      );
+    }
   };
 
   const options = {
@@ -200,10 +226,6 @@ const ViewArticle = (props) => {
     setOpenIDE(true);
   };
 
-  const openingEditor = () => {
-    setOpenIDE(false);
-  };
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -217,6 +239,31 @@ const ViewArticle = (props) => {
   const open = Boolean(anchorEl);
   const popoverid = open ? "simple-popover" : undefined;
 
+  const deleteArticle = () => {
+    handleDialogClose();
+    Service.client
+      .delete(`/articles/${id}`)
+      .then((res) => {
+        alert("to check if member/admin/partner");
+        history.push(`/member/articles`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const unpublishArticle = () => {
+    Service.client
+      .patch(`/articles/${id}/unpublish`)
+      .then((res) => {
+        alert("to check if member/admin/partner");
+        history.push(`/member/articles`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className={classes.root}>
       <Container maxWidth="md">
@@ -226,7 +273,7 @@ const ViewArticle = (props) => {
         >
           {articleDetails.title}
         </Typography>
-        {articleDetails.member && (
+        {articleDetails.user && (
           <div
             style={{
               display: "flex",
@@ -238,7 +285,7 @@ const ViewArticle = (props) => {
           >
             <div style={{ display: "flex" }}>
               <Avatar
-                src={articleDetails.member.profile_photo}
+                src={articleDetails.user.profile_photo}
                 alt=""
                 style={{ marginRight: "15px" }}
               ></Avatar>
@@ -248,9 +295,9 @@ const ViewArticle = (props) => {
                 style={{ display: "flex", fontWeight: "550" }}
                 variant="body2"
               >
-                {articleDetails.member.first_name +
+                {articleDetails.user.first_name +
                   " " +
-                  articleDetails.member.last_name}
+                  articleDetails.user.last_name}
               </Typography>
               <Typography variant="body2">
                 {formatDate(articleDetails.date_created)}
@@ -258,44 +305,24 @@ const ViewArticle = (props) => {
             </div>
             {user && checkIfOwnerOfComment(user.id) && (
               <div style={{ marginLeft: "auto" }}>
-                <Menu onClick={(e) => handleClick(e)} />
-                <Popover
-                  id={popoverid}
-                  open={open}
-                  anchorEl={anchorEl}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => history.push(`/member/article/edit/${id}`)}
-                  >
-                    Edit article
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      // setDeleteCommentDialog(true);
+                {!openIDE && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      textTransform: "capitalize",
                     }}
+                    onClick={() => openingIDE()}
                   >
-                    Delete
-                  </Typography>
-                </Popover>
+                    Open IDE
+                  </Button>
+                )}
               </div>
             )}
           </div>
         )}
 
-        <div style={{ fontSize: "20px" }}>
+        <div style={{ fontSize: "20px", marginBottom: "50px" }}>
           {parse(articleDetails.content, options)}
         </div>
 
@@ -306,24 +333,56 @@ const ViewArticle = (props) => {
             reverse={articleLikedStatus}
             onClick={(e) => handleLikeArticle(e)}
           />
-          <Typography>{numOfLikes}</Typography>
+          <Typography style={{ marginRight: "15px" }}>{numOfLikes}</Typography>
           <CommentIcon onClick={() => setDrawerOpen(true)} />
           <Typography style={{ display: "inline-flex" }}>
             {articleDetails.top_level_comments.length}
           </Typography>
-          {!openIDE && (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                textTransform: "capitalize",
-                marginLeft: "auto",
-              }}
-              onClick={() => openingIDE()}
-            >
-              Open IDE
-            </Button>
+          {user && checkIfOwnerOfComment(user.id) && (
+            <Menu
+              onClick={(e) => handleClick(e)}
+              style={{ marginLeft: "auto", cursor: "pointer" }}
+            />
           )}
+
+          <Popover
+            id={popoverid}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div style={{ padding: "5px" }}>
+              <Typography
+                variant="body2"
+                className={classes.typography}
+                onClick={() => history.push(`/member/article/edit/${id}`)}
+              >
+                Edit article
+              </Typography>
+              <Typography
+                variant="body2"
+                className={classes.typography}
+                onClick={() => unpublishArticle()}
+              >
+                Unpublish
+              </Typography>
+              <Typography
+                variant="body2"
+                className={classes.typography}
+                onClick={handleClickOpen}
+              >
+                Delete
+              </Typography>
+            </div>
+          </Popover>
         </div>
 
         <div style={{ display: "flex" }}>
@@ -490,6 +549,31 @@ const ViewArticle = (props) => {
           theme={"bubble"}
         /> */}
       </Container>
+      <Dialog
+        open={dialogopen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this article?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => deleteArticle()}
+            variant="contained"
+            color="primary"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

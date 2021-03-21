@@ -84,7 +84,7 @@ const MemberArticleIDE = (props) => {
   return (
     <div className={classes.root}>
       <div className={classes.split}>
-        <Splitter direction={SplitDirection.Horizontal}>
+        <Splitter direction={SplitDirection.Horizontal} initialSizes={[30, 70]}>
           <div className={classes.tile}>
             <div style={{ height: "100%" }}>
               <Typography
@@ -94,7 +94,7 @@ const MemberArticleIDE = (props) => {
                 {articleDetails.title}
               </Typography>
 
-              {articleDetails.member && (
+              {articleDetails.user && (
                 <div
                   style={{
                     display: "flex",
@@ -106,7 +106,7 @@ const MemberArticleIDE = (props) => {
                 >
                   <div style={{ display: "flex" }}>
                     <Avatar
-                      src={articleDetails.member.profile_photo}
+                      src={articleDetails.user.profile_photo}
                       alt=""
                       style={{ marginRight: "15px" }}
                     ></Avatar>
@@ -116,9 +116,9 @@ const MemberArticleIDE = (props) => {
                       style={{ display: "flex", fontWeight: "550" }}
                       variant="body2"
                     >
-                      {articleDetails.member.first_name +
+                      {articleDetails.user.first_name +
                         " " +
-                        articleDetails.member.last_name}
+                        articleDetails.user.last_name}
                     </Typography>
                     <Typography variant="body2">
                       {formatDate(articleDetails.date_created)}

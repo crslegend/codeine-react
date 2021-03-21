@@ -82,6 +82,16 @@ const Profile = (props) => {
     autoHideDuration: 3000,
   });
 
+  const [dialogopen, setDialogOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   const [loggedIn, setLoggedIn] = useState(false);
 
   const checkIfLoggedIn = () => {
@@ -220,7 +230,7 @@ const Profile = (props) => {
     );
 
     if (profilePhoto.length > 0) {
-      formData.append("profile_photo", profilePhoto[0].file);
+      formData.append("profile_pic", profilePhoto[0].file);
     }
 
     // submit form-data as per usual
