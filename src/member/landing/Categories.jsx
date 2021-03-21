@@ -80,7 +80,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/codereview"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",

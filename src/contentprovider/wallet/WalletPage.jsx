@@ -24,6 +24,7 @@ import PageTitle from "../../components/PageTitle";
 import { Add } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import { DataGrid } from "@material-ui/data-grid";
+import { Cell, PieChart, Pie, Tooltip, ResponsiveContainer } from "recharts";
 
 const useStyles = makeStyles((theme) => ({
   topSection: {
@@ -54,6 +55,16 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "#3D3D3D",
     },
+  },
+  breakdownPaper: {
+    padding: theme.spacing(4),
+    width: "70%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "flex",
+    flexDirection: "column",
+    // justifyContent: "space-between",
+    marginBottom: "30px",
   },
 }));
 
@@ -89,22 +100,59 @@ const WalletPage = () => {
   // Transactions datagrid
   const [allTransactionList, setAllTransactionList] = useState([]);
 
+  const [earningsBreakdown, setEarningsBreakdown] = useState();
+  const [data, setData] = useState();
+  // const data = [
+  //   { name: "Group A", value: 400 },
+  //   { name: "Group B", value: 300 },
+  //   { name: "Group C", value: 300 },
+  //   { name: "Group D", value: 200 },
+  // ];
+
   const getTransactionData = () => {
     Service.client
       .get("/consultations/partner/payments")
       .then((res) => {
         setAllTransactionList(res.data);
-        console.log(res.data);
+        // console.log(res.data);
         setEarnings(res.data);
       })
       .catch((error) => {
         setAllTransactionList(null);
       });
   };
-  console.log(allTransactionList);
+  // console.log(allTransactionList);
+  const COLORS = ["#00C49F", "#FFBB28", "#FF8042"];
+
+  const getEarnings = () => {
+    Service.client
+      .get("/analytics/partner-earnings-report")
+      .then((res) => {
+        // setAllTransactionList(res.data);
+        console.log(res);
+        setEarningsBreakdown(res.data);
+        const arr = [
+          {
+            name: "Your Cut",
+            value:
+              res.data.partner_cut_amount > 0 ? res.data.partner_cut_amount : 0,
+          },
+          {
+            name: "Remaining Pool",
+            value:
+              res.data.profit_sharing_pool > 0
+                ? res.data.profit_sharing_pool - res.data.partner_cut_amount
+                : 0,
+          },
+        ];
+        setData(arr);
+      })
+      .catch((error) => console.log(error));
+  };
 
   useEffect(() => {
     getTransactionData();
+    getEarnings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -565,6 +613,93 @@ const WalletPage = () => {
           </Grid>
         </Grid>
       ) : null}
+      <Paper className={classes.breakdownPaper}>
+        <Typography
+          variant="h6"
+          style={{ fontWeight: 600, paddingBottom: "20px" }}
+        >
+          Earnings Breakdown for the Month
+        </Typography>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "30%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+              Earnings from Consultation
+            </Typography>
+            <Typography variant="h1" style={{ paddingBottom: "10px" }}>
+              {earningsBreakdown &&
+                (earningsBreakdown.consultation_earnings
+                  ? `$${earningsBreakdown.consultation_earnings}`
+                  : `$0`)}
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "30%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+              Pending Earnings from Consultation
+            </Typography>
+            <Typography variant="h1" style={{ paddingBottom: "10px" }}>
+              {earningsBreakdown &&
+                (earningsBreakdown.pending_consultation_earnings
+                  ? `$${earningsBreakdown.pending_consultation_earnings}`
+                  : `$0`)}
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "30%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+              Earnings from Profit Sharing
+            </Typography>
+            <Typography variant="h1" style={{ paddingBottom: "10px" }}>
+              {earningsBreakdown &&
+                (earningsBreakdown.partner_cut_amount > 0
+                  ? `$${earningsBreakdown.pending_consultation_earnings}`
+                  : `$0`)}
+            </Typography>
+          </div>
+        </div>
+        {earningsBreakdown && earningsBreakdown.profit_sharing_pool > 0 && (
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={data && data}
+                innerRadius={60}
+                outerRadius={80}
+                dataKey="value"
+                nameKey="name"
+                label
+              >
+                {data &&
+                  data.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </Paper>
       <Typography
         variant="h5"
         style={{ fontWeight: 600, paddingBottom: "10px" }}

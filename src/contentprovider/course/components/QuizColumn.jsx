@@ -6,14 +6,14 @@ import { Droppable } from "react-beautiful-dnd";
 import Toast from "../../../components/Toast";
 
 // import Service from "../../../AxiosService";
-import { Button, Typography } from "@material-ui/core";
-import { Assignment } from "@material-ui/icons";
+import { Button, IconButton, Typography } from "@material-ui/core";
+import { Add, Assignment } from "@material-ui/icons";
 import QuestionDialog from "./QuestionDialog";
 import SubTask from "./SubTask";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: 250,
+    width: 300,
     margin: "auto",
     marginBottom: "30px",
     border: "1px solid lightgrey",
@@ -62,10 +62,29 @@ const QuizColumn = ({ column, getCourse, tasks }) => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.container}>
-        <div style={{ padding: "5px" }}>
-          <Typography style={{ textAlign: "center" }}>Final Quiz</Typography>
-        </div>
         <div
+          style={{
+            display: "flex",
+            padding: "5px",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography style={{ marginLeft: "auto", position: "absolute" }}>
+            Final Quiz
+          </Typography>
+          <IconButton
+            size="small"
+            onClick={() => {
+              setQuizId(column.id);
+              setAddQuestionDialog(true);
+            }}
+            style={{ marginLeft: "auto" }}
+          >
+            <Add />
+          </IconButton>
+        </div>
+        {/* <div
           style={{
             display: "flex",
             justifyContent: "center",
@@ -83,7 +102,7 @@ const QuizColumn = ({ column, getCourse, tasks }) => {
           >
             Add Question
           </Button>
-        </div>
+        </div> */}
 
         <Droppable droppableId="quiz-column">
           {(provided, snapshot) => {

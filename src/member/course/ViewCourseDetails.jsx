@@ -10,7 +10,12 @@ import {
   Button,
   Card,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
+  Breadcrumbs,
   LinearProgress,
   Typography,
 } from "@material-ui/core";
@@ -19,8 +24,8 @@ import Footer from "../landing/Footer";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import {
-  ArrowBack,
   Assignment,
   AttachFile,
   ExpandMore,
@@ -32,6 +37,8 @@ import {
 import { Rating } from "@material-ui/lab";
 import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
+import { calculateDateInterval } from "../../utils.js";
+import Toast from "../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -46,14 +53,23 @@ const styles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(15),
     paddingRight: theme.spacing(10),
   },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
+  },
   courseSection: {
     display: "flex",
     marginTop: "15px",
   },
   learningObjectives: {
     marginTop: theme.spacing(8),
-    border: "1px solid",
-    borderRadius: "5px",
+    backgroundColor: "#FFF",
+    border: "2px solid",
+    borderRadius: "3px",
     minHeight: "100px",
     padding: theme.spacing(3),
   },
@@ -68,6 +84,15 @@ const styles = makeStyles((theme) => ({
   descriptionSection: {
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
+  },
+  unenrollButton: {
+    margin: "auto",
+    marginBottom: "20px",
+    backgroundColor: theme.palette.red.main,
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#8E0000",
+    },
   },
   reviews: {
     display: "flex",
@@ -100,6 +125,20 @@ const ViewCourseDetails = () => {
   const [progress, setProgress] = useState();
 
   const [expanded, setExpanded] = useState(false);
+  const [unenrollDialog, setUnenrollDialog] = useState(false);
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
+  const [onlyForProDialog, setOnlyForProDialog] = useState(false);
 
   const ref = React.createRef();
 
@@ -120,6 +159,24 @@ const ViewCourseDetails = () => {
         .then((res) => {
           // console.log(res);
           setCourse(res.data);
+
+          if (!res.data.is_member_enrolled) {
+            // ANALYITCS: log course view by unenrolled members
+            Service.client
+              .post(
+                `/analytics`,
+                { payload: "course view" },
+                {
+                  params: {
+                    course_id: id,
+                  },
+                }
+              )
+              .then((res) => {
+                // console.log(res);
+              })
+              .catch((err) => console.log(err));
+          }
         })
         .catch((err) => console.log(err));
 
@@ -172,65 +229,100 @@ const ViewCourseDetails = () => {
     return "";
   };
 
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
-
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
-
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `${seconds} seconds ago`;
-        }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
-
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
-      Service.client
-        .post(`/courses/${id}/enrollments`)
-        .then((res) => {
-          console.log(res);
-          history.push(`/courses/enroll/${id}`);
-        })
-        .catch((err) => console.log(err));
+      if (course.pro) {
+        const decoded = jwt_decode(Cookies.get("t1"));
+        Service.client
+          .get(`/auth/members/${decoded.user_id}`)
+          .then((res) => {
+            // console.log(res);
+            // to check whether member enrolling in course is pro-tier
+            if (res.data.member.membership_tier !== "FREE") {
+              Service.client
+                .post(`/courses/${id}/enrollments`)
+                .then((res) => {
+                  // console.log(res);
+                  history.push(`/courses/enroll/${id}`);
+                })
+                .catch((err) => console.log(err));
+            } else {
+              setOnlyForProDialog(true);
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        Service.client
+          .post(`/courses/${id}/enrollments`)
+          .then((res) => {
+            // console.log(res);
+            history.push(`/courses/enroll/${id}`);
+          })
+          .catch((err) => console.log(err));
+      }
     }
+  };
+
+  const handleUnenrollment = () => {
+    Service.client
+      .delete(`/courses/${id}/enrollments`)
+      .then((res) => {
+        console.log(res);
+        // setProgress(res.data.progress);
+        setUnenrollDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "You have successfully unenrolled from this course.",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const resuableChip = (label, index, backgroundColor, fontColor) => {
+    return (
+      <Chip
+        key={index}
+        label={label}
+        style={{
+          marginRight: "10px",
+          marginBottom: "10px",
+          color: fontColor ? fontColor : "#000",
+          fontWeight: 600,
+          backgroundColor: backgroundColor,
+        }}
+      />
+    );
   };
 
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
       <div className={classes.mainSection}>
-        <div style={{ marginTop: "20px" }}>
-          <IconButton onClick={() => history.goBack()}>
-            <ArrowBack />
-          </IconButton>
-        </div>
+        <Breadcrumbs
+          style={{ margin: "20px 0px" }}
+          separator="›"
+          aria-label="breadcrumb"
+        >
+          <Link
+            className={classes.backLink}
+            onClick={() => history.push("/courses")}
+          >
+            <Typography style={{ marginRight: "8px" }} variant="body1">
+              All Courses
+            </Typography>
+          </Link>
+          <Typography variant="body1">Overview</Typography>
+        </Breadcrumbs>
+
         <div className={classes.courseSection}>
           <div style={{ width: "60%" }}>
             <Typography
@@ -569,7 +661,11 @@ const ViewCourseDetails = () => {
           <div style={{ width: "5%" }} />
           <div style={{ width: "35%" }}>
             <div
-              style={{ maxWidth: 400, margin: "auto", marginBottom: "20px" }}
+              style={{
+                maxWidth: 400,
+                margin: "auto",
+                marginBottom: "20px",
+              }}
             >
               <img
                 src={course && course.thumbnail}
@@ -624,19 +720,32 @@ const ViewCourseDetails = () => {
                       </Box>
                     </Box>
                   </div>
-                  <Button
-                    variant="contained"
+                  <div
                     style={{
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "20px",
+                      display: "flex",
+                      justifyContent: "space-between",
                     }}
-                    color="primary"
-                    component={Link}
-                    to={`/courses/enroll/${id}`}
                   >
-                    Continue Course
-                  </Button>
+                    <Button
+                      variant="contained"
+                      style={{
+                        margin: "auto",
+                        marginBottom: "20px",
+                      }}
+                      color="primary"
+                      component={Link}
+                      to={`/courses/enroll/${id}`}
+                    >
+                      Continue Course
+                    </Button>
+                    <Button
+                      variant="contained"
+                      className={classes.unenrollButton}
+                      onClick={() => setUnenrollDialog(true)}
+                    >
+                      Unenroll
+                    </Button>
+                  </div>
                 </Fragment>
               )}
 
@@ -648,53 +757,23 @@ const ViewCourseDetails = () => {
                   course.categories.length > 0 &&
                   course.categories.map((category, index) => {
                     if (category === "FE") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Frontend"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Frontend", index, "#DD8B8B");
                     } else if (category === "BE") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Backend"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (category === "UI") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="UI/UX"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Backend", index, "#A0DD8B");
                     } else if (category === "DB") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Database Administration"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
+                      return resuableChip(
+                        "Database Administration",
+                        index,
+                        "#8B95DD"
                       );
+                    } else if (category === "SEC") {
+                      return resuableChip("Security", index, "#DDB28B");
+                    } else if (category === "UI") {
+                      return resuableChip("UI/UX", index, "#DDD58B");
                     } else if (category === "ML") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Machine Learning"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Machine Learning", index, "#8BD8DD");
                     } else {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Security"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return null;
                     }
                   })}
 
@@ -708,61 +787,23 @@ const ViewCourseDetails = () => {
                   course.coding_languages.length > 0 &&
                   course.coding_languages.map((language, index) => {
                     if (language === "PY") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Python"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Python", index, "#3675A9", "#fff");
                     } else if (language === "JAVA") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Java"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Java", index, "#E57001", "#fff");
                     } else if (language === "JS") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Javascript"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (language === "CPP") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="C++"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
-                    } else if (language === "CS") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="C#"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Javascript", index, "#F7DF1E");
                     } else if (language === "RUBY") {
-                      return (
-                        <Chip
-                          key={index}
-                          label="Ruby"
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return resuableChip("Ruby", index, "#CC0000");
+                    } else if (language === "CPP") {
+                      return resuableChip("C++", index, "#004482", "#fff");
+                    } else if (language === "CS") {
+                      return resuableChip("C#", index, "#6A1577", "#fff");
+                    } else if (language === "HTML") {
+                      return resuableChip("HTML", index, "#E44D26", "#fff");
+                    } else if (language === "CSS") {
+                      return resuableChip("CSS", index, "#264DE4", "#fff");
                     } else {
-                      return (
-                        <Chip
-                          key={index}
-                          label={language}
-                          style={{ marginRight: "10px", marginBottom: "10px" }}
-                        />
-                      );
+                      return null;
                     }
                   })}
               </div>
@@ -825,7 +866,76 @@ const ViewCourseDetails = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={onlyForProDialog}
+        onClose={() => setOnlyForProDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>This course is only for pro-tier members</DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOnlyForProDialog(false);
+            }}
+          >
+            Stay as Free-Tier
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              // direct user to pay for pro-tier membership
+              history.push(`/member/home/transaction`);
+            }}
+          >
+            Upgrade to Pro-Tier
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Footer />
+      <Dialog
+        open={unenrollDialog}
+        onClose={() => setUnenrollDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Unenroll from this course?</DialogTitle>
+        <DialogContent>
+          You will not be able to access the course contents after unenrollment.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            className={classes.dialogButtons}
+            onClick={() => {
+              setUnenrollDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.dialogButtons}
+            onClick={() => {
+              // to call unenroll endpoint
+              handleUnenrollment();
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

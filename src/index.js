@@ -11,16 +11,21 @@ import DateFnsUtils from "@date-io/date-fns";
 
 import theme from "../src/theme";
 
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
 let render = () => {
   ReactDOM.render(
-    <BrowserRouter>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
-      </MuiPickersUtilsProvider>
-    </BrowserRouter>,
+    <Provider store={store}>
+      <BrowserRouter>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </MuiPickersUtilsProvider>
+      </BrowserRouter>
+    </Provider>,
     document.getElementById("root")
   );
 };

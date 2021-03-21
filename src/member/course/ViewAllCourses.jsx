@@ -13,7 +13,7 @@ import { useHistory } from "react-router-dom";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
-import PageTitle from "../../components/PageTitle";
+// import PageTitle from "../../components/PageTitle";
 
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
@@ -37,6 +37,11 @@ const styles = makeStyles((theme) => ({
   },
   title: {
     paddingTop: theme.spacing(3),
+  },
+  heading: {
+    lineHeight: "50px",
+    fontWeight: 600,
+    fontFamily: "Roboto Mono",
   },
   cards: {
     display: "flex",
@@ -148,6 +153,22 @@ const ViewAllCourses = () => {
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
+
+    // ANALYTICS: log search strings when members search for courses
+    if (loggedIn && queryParams.search !== "") {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "search course" },
+          {
+            params: {
+              search_string: queryParams.search,
+            },
+          }
+        )
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
   };
   //console.log(allCourses);
 
@@ -180,28 +201,30 @@ const ViewAllCourses = () => {
     } // eslint-disable-next-line
   }, [searchValue]);
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+  // const formatDate = (date) => {
+  //   const options = {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   };
 
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
+  //   if (date !== null) {
+  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
+  //     // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+  //     // console.log(newDate);
+  //     return newDate;
+  //   }
+  //   return "";
+  // };
 
   return (
     <div className={classes.root}>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div className={classes.courses}>
         <div className={classes.title}>
-          <PageTitle title="All Courses" />
+          <Typography variant="h2" className={classes.heading}>
+            all courses
+          </Typography>
         </div>
         <div className={classes.searchSection}>
           <div className={classes.searchBar}>

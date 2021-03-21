@@ -37,6 +37,8 @@ import DashboardPage from "./dashboard/DashboardPage";
 import ContributionsPage from "./contributions/ContributionsPage";
 import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
+import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
+import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -121,6 +123,16 @@ const ContentProviderHome = () => {
 
   const loggedInNavbar = (
     <Fragment>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
+        <a href={`/codereview`} style={{ textDecoration: "none" }}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
+            Code Review
+          </Typography>
+        </a>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
@@ -260,16 +272,18 @@ const ContentProviderHome = () => {
           </Typography>
         </label>
       </div>
-      <ListItem
-        component={NavLink}
-        to="/partner/home/contributions"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <AttachMoney className={classes.listIcon} />
-        <Typography variant="body1">Contributions</Typography>
-      </ListItem>
+      {user && user.partner && user.partner.organization && (
+        <ListItem
+          component={NavLink}
+          to="/partner/home/contributions"
+          activeClassName={classes.activeLink}
+          className={classes.listItem}
+          button
+        >
+          <AttachMoney className={classes.listIcon} />
+          <Typography variant="body1">Funding</Typography>
+        </ListItem>
+      )}
       <ListItem
         component={NavLink}
         to="/partner/home/earnings"
@@ -337,6 +351,19 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/dashboard/search"
+              render={() => <CourseSearchRanking />}
+              user="partner"
+            />
+            <PrivateRoute
+              path="/partner/home/dashboard/:id"
+              strict
+              sensitive
+              render={(match) => <CourseDetailAnalytics match={match} />}
               user="partner"
             />
             <PrivateRoute
