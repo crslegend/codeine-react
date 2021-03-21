@@ -48,19 +48,9 @@ const useStyles = makeStyles((theme) => ({
     // marginBottom: "5px",
   },
   formControl: {
-    marginTop: 0,
-    paddingTop: "15px",
-    paddingBottom: "10px",
+    marginTop: "15px",
+    marginBottom: "10px",
     width: "200px",
-    "& label": {
-      paddingLeft: "7px",
-      paddingRight: "7px",
-      paddingTop: "5px",
-      marginLeft: "10px",
-    },
-    [theme.breakpoints.down("sm")]: {
-      marginLeft: "0px",
-    },
   },
 }));
 
@@ -144,15 +134,19 @@ const DashboardPage = () => {
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
           View By
         </Typography>
-        <FormControl margin="dense" className={classes.formControl}>
+        <FormControl
+          margin="dense"
+          variant="outlined"
+          className={classes.formControl}
+        >
           <InputLabel>Date Range</InputLabel>
           <Select
             label="Date Range"
-            variant="outlined"
             value={numDays ? numDays : ""}
             onChange={(e) => {
               setNumDays(e.target.value);
             }}
+            style={{ backgroundColor: "#fff" }}
           >
             <MenuItem value="">
               <em>Select a date range</em>

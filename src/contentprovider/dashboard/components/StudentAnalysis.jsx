@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
     minWidth: "70%",
     display: "flex",
     flexDirection: "column",
@@ -33,19 +33,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   formControl: {
-    marginTop: 0,
-    paddingTop: "15px",
-    paddingBottom: "10px",
+    marginTop: "15px",
+    marginBottom: "10px",
     width: "200px",
-    "& label": {
-      paddingLeft: "7px",
-      paddingRight: "7px",
-      paddingTop: "5px",
-      marginLeft: "10px",
-    },
-    [theme.breakpoints.down("sm")]: {
-      marginLeft: "0px",
-    },
   },
 }));
 
@@ -122,15 +112,19 @@ const StudentAnalysis = ({
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
           View By
         </Typography>
-        <FormControl margin="dense" className={classes.formControl}>
+        <FormControl
+          margin="dense"
+          variant="outlined"
+          className={classes.formControl}
+        >
           <InputLabel>Date Range</InputLabel>
           <Select
             label="Date Range"
-            variant="outlined"
             value={numDaysForStudents ? numDaysForStudents : ""}
             onChange={(e) => {
               handleChangeNumberOfDays(e);
             }}
+            style={{ backgroundColor: "#fff" }}
           >
             <MenuItem value="">
               <em>Select a date range</em>

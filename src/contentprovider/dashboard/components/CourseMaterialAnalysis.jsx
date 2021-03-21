@@ -37,19 +37,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   formControl: {
-    marginTop: 0,
-    paddingTop: "15px",
-    paddingBottom: "10px",
+    marginTop: "15px",
+    marginBottom: "10px",
     width: "200px",
-    "& label": {
-      paddingLeft: "7px",
-      paddingRight: "7px",
-      paddingTop: "5px",
-      marginLeft: "10px",
-    },
-    [theme.breakpoints.down("sm")]: {
-      marginLeft: "0px",
-    },
   },
   tooltip: {
     backgroundColor: "#fff",
@@ -132,15 +122,19 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
     <div className={classes.root}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <div>
-          <FormControl margin="dense" className={classes.formControl}>
+          <FormControl
+            margin="dense"
+            variant="outlined"
+            className={classes.formControl}
+          >
             <InputLabel>Select Chapter</InputLabel>
             <Select
               label="Select Chapter"
-              variant="outlined"
               value={selectedChapterId ? selectedChapterId : ""}
               onChange={(e) => {
                 handleSelectChapter(e);
               }}
+              style={{ backgroundColor: "#fff" }}
             >
               {timeTakenCourseMaterial &&
                 timeTakenCourseMaterial.length > 0 &&
@@ -185,46 +179,52 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart
-          width={600}
+      <Paper style={{ width: "100%", padding: "24px" }}>
+        <ResponsiveContainer
+          width="100%"
           height={400}
-          data={data}
-          margin={{
-            top: 25,
-            right: 30,
-            left: 40,
-            bottom: 30,
-          }}
+          style={{ backgroundColor: "#fff" }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name">
-            <Label
-              value={`Course Materials in Chapter ${findIndexOfChapter()}`}
-              position="bottom"
-              offset={10}
-              style={{ textAnchor: "middle" }}
+          <LineChart
+            width={600}
+            height={400}
+            data={data}
+            margin={{
+              top: 25,
+              right: 30,
+              left: 40,
+              bottom: 30,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name">
+              <Label
+                value={`Course Materials in Chapter ${findIndexOfChapter()}`}
+                position="bottom"
+                offset={10}
+                style={{ textAnchor: "middle" }}
+              />
+            </XAxis>
+            <YAxis>
+              <Label
+                value="Average Time Taken (Hours)"
+                position="left"
+                angle={-90}
+                offset={30}
+                style={{ textAnchor: "middle" }}
+              />
+            </YAxis>
+            <Tooltip content={<CustomTooltip />} />
+            <Line
+              type="monotone"
+              dataKey="Time"
+              stroke="#437FC7"
+              strokeWidth={2}
+              activeDot={{ r: 7 }}
             />
-          </XAxis>
-          <YAxis>
-            <Label
-              value="Average Time Taken (Hours)"
-              position="left"
-              angle={-90}
-              offset={30}
-              style={{ textAnchor: "middle" }}
-            />
-          </YAxis>
-          <Tooltip content={<CustomTooltip />} />
-          <Line
-            type="monotone"
-            dataKey="Time"
-            stroke="#437FC7"
-            strokeWidth={2}
-            activeDot={{ r: 7 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+          </LineChart>
+        </ResponsiveContainer>
+      </Paper>
     </div>
   );
 };
