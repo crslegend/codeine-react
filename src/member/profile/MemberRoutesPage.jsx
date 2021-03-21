@@ -31,6 +31,7 @@ import Password from "./Password/PasswordPage";
 import Transaction from "./Payment/PaymentPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
 import CoursesPage from "./Courses/CoursesPage";
+import DashboardPage from "./Dashboard/DashboardPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -311,7 +312,7 @@ const MemberLanding = () => {
             <PrivateRoute
               exact
               path="/member/home/dashboard"
-              render={() => <div></div>}
+              render={() => <DashboardPage />}
             />
             <PrivateRoute
               exact

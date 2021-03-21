@@ -64,7 +64,7 @@ const DashboardPage = () => {
   const [numDays, setNumDays] = useState();
 
   const getConversionRate = () => {
-    if (numDays !== "") {
+    if (numDays && numDays !== "") {
       Service.client
         .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
         .then((res) => {
