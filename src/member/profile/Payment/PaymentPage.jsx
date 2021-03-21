@@ -4,6 +4,8 @@ import { DataGrid } from "@material-ui/data-grid";
 import { Box, Typography } from "@material-ui/core";
 // import jwt_decode from "jwt-decode";
 import Service from "../../../AxiosService";
+import Cookies from "js-cookie";
+import MemberNavBar from "../../MemberNavBar";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -12,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
+    marginTop: "65px",
   },
   dataGrid: {
     "@global": {
@@ -26,6 +29,18 @@ const Payment = () => {
   const classes = useStyles();
   const [allTransactions, setAllTransactions] = useState([]);
   // const [application, setApplication] = useState();
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
 
   const getTransactionData = () => {
     Service.client
@@ -148,6 +163,7 @@ const Payment = () => {
   }
   return (
     <Fragment>
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <Box className={classes.heading}>
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
           Past Transactions
