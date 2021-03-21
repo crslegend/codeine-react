@@ -14,6 +14,8 @@ import {
 } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
+import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
+import StudentAnalysis from "./components/StudentAnalysis";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -349,19 +351,14 @@ const CourseDetailAnalytics = () => {
                       />
                     );
                   } else if (value === 1) {
-                    return null;
-                    {
-                      /* return (
+                    return (
                       <FinalQuizAnalysis
                         finalQuizPerformance={finalQuizPerformance}
                         courseId={id}
                       />
-                    ); */
-                    }
+                    );
                   } else if (value === 2) {
-                    return null;
-                    {
-                      /* return (
+                    return (
                       <StudentAnalysis
                         inactiveMembers={inactiveMembers}
                         setInactiveMembers={setInactiveMembers}
@@ -371,8 +368,7 @@ const CourseDetailAnalytics = () => {
                         setNumDaysForStudents={setNumDaysForStudents}
                         courseId={id}
                       />
-                    ); */
-                    }
+                    );
                   } else if (value === 3) {
                     return null;
                     {
