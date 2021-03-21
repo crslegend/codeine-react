@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  DialogContentText,
   IconButton,
   Button,
   TextField,
@@ -20,7 +19,7 @@ import {
 import SearchBar from "material-ui-search-bar";
 import Pagination from "@material-ui/lab/Pagination";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { Add, Close, Clear } from "@material-ui/icons";
+import { Add, Close, Clear, Done } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 
@@ -167,6 +166,7 @@ const AdminLearnersAchievementPage = () => {
     stat: "",
   });
   const [avatar, setAvatar] = useState();
+  const [temporarystat, setTemporarystat] = useState([...stats]);
 
   const itemsPerPage = 20;
   const [page, setPage] = useState(1);
@@ -205,26 +205,14 @@ const AdminLearnersAchievementPage = () => {
     setPage(value);
   };
 
-  const handleSetPoint = (event) => {
-    setNewBadgeRequirement({
-      ...newBadgeRequirement,
-      experience_point: event.target.value,
-    });
-  };
-
-  const handleSetStat = (event) => {
-    setNewBadgeRequirement({
-      ...newBadgeRequirement,
-      stat: event.target.value,
-    });
-  };
-
   const handleDeleteStat = (index) => {
-    // console.log(index);
-
+    for (var i = stats.length; i--; ) {
+      if (stats[i].value === requirementList[index].stat) {
+        temporarystat.push(stats[i]);
+      }
+    }
     let arr = [...requirementList];
-    arr.splice(index, 1); // use this instead of filter to cover the case where all values are the same
-    // console.log(arr);
+    arr.splice(index, 1);
     setRequirementList(arr);
   };
 
@@ -258,8 +246,12 @@ const AdminLearnersAchievementPage = () => {
       return;
     } else {
       setRequirementList(requirementList.concat(newBadgeRequirement));
+      for (var i = temporarystat.length; i--; ) {
+        if (temporarystat[i].value === newBadgeRequirement.stat) {
+          temporarystat.splice(i, 1);
+        }
+      }
       setNewBadgeRequirement({ experience_point: "", stat: "" });
-      console.log(requirementList);
     }
   };
 
@@ -268,11 +260,12 @@ const AdminLearnersAchievementPage = () => {
     setNewBadge({ badge: "", title: "" });
     setRequirementList([]);
     setNewBadgeRequirement({ experience_point: "0", stat: "" });
+    setTemporarystat([...stats]);
   };
 
   const submitNewAchievement = () => {
     console.log(newBadge);
-    console.log(requirementList);
+    console.log(newBadgeRequirement);
 
     if (newBadge.title === "" || newBadge.title === undefined) {
       setSbOpen(true);
@@ -329,49 +322,75 @@ const AdminLearnersAchievementPage = () => {
       });
       return;
     }
+    if (
+      requirementList.length !== 0 &&
+      newBadgeRequirement.stat !== "" &&
+      newBadgeRequirement.experience_point !== ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("title", newBadge.title);
     formData.append("badge", avatar[0].file);
 
-    // to handle submission with only one stat requirement
-    if (
-      requirementList.length === 0 &&
-      newBadgeRequirement.stat !== "" &&
-      newBadgeRequirement.experience_point !== ""
-    ) {
+    if (requirementList.length !== 0) {
       Service.client
         .post(`/achievements`, formData)
         .then((res) => {
-          console.log(res);
-          Service.client
-            .post(
-              `/achievements/${res.data.id}/requirements`,
-              newBadgeRequirement
-            )
-            .then((res) => {
-              setOpenAchievementDialog(false);
-              handleResetFields();
-              getBadgesData();
-              setSbOpen(true);
-              setSnackbar({
-                message: "New badge successfully created!",
-                severity: "success",
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "center",
-                },
-                autoHideDuration: 3000,
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-              setOpenAchievementDialog(false);
+          requirementList &&
+            requirementList.forEach((list, index) => {
+              Service.client
+                .post(`/achievements/${res.data.id}/requirements`, list)
+                .then((res) => {
+                  if (index === requirementList.length - 1) {
+                    setOpenAchievementDialog(false);
+                    handleResetFields();
+                    getBadgesData();
+                    setSbOpen(true);
+                    setSnackbar({
+                      message: "New badge successfully created!",
+                      severity: "success",
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "center",
+                      },
+                      autoHideDuration: 3000,
+                    });
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                  setOpenAchievementDialog(false);
+                });
             });
         })
         .catch((err) => {
           console.log(err);
+          setOpenAchievementDialog(false);
         });
+    } else if (requirementList.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
     }
   };
 
@@ -384,7 +403,6 @@ const AdminLearnersAchievementPage = () => {
           .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
         setBadges(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -451,8 +469,9 @@ const AdminLearnersAchievementPage = () => {
             {badges && badges.length > 0 ? (
               badges
                 .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                .map((badge) => (
+                .map((badge, index) => (
                   <Tooltip
+                    key={index}
                     title={
                       <Card className={classes.description}>
                         <Typography
@@ -509,7 +528,7 @@ const AdminLearnersAchievementPage = () => {
                       className={classes.cardmedia}
                       image={badge.badge}
                       style={{
-                        webkitFilter: badge.is_deleted
+                        WebkitFilter: badge.is_deleted
                           ? "brightness(50%)"
                           : "brightness(100%)",
                       }}
@@ -607,225 +626,235 @@ const AdminLearnersAchievementPage = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            <Grid container>
-              <Grid item xs={4}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginBottom: "15px",
-                  }}
-                >
-                  <IconButton onClick={() => setOpenBadgePicDialog(true)}>
-                    {avatar ? (
-                      <Avatar
-                        className={classes.avatar}
-                        src={avatar[0].data}
-                      ></Avatar>
-                    ) : (
-                      <Avatar
-                        className={classes.avatar}
-                        style={{ padding: "20px" }}
-                      >
-                        Upload badge logo
-                      </Avatar>
-                    )}
-                  </IconButton>
-                </div>
-              </Grid>
-              <Grid item xs={8}>
-                <div>
-                  <label htmlFor="title">
-                    <Typography
-                      variant="body2"
-                      style={{
-                        marginTop: "30px",
-                      }}
-                    >
-                      Badge Title
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="title"
-                    style={{
-                      width: "85%",
-                    }}
-                    variant="outlined"
-                    margin="dense"
-                    value={newBadge && newBadge.title}
-                    onChange={(e) =>
-                      setNewBadge({
-                        ...newBadge,
-                        title: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography
-                  variant="body1"
-                  style={{
-                    color: "#000000",
-                    marginBottom: "10px",
-                  }}
-                >
-                  Requirements
-                </Typography>
-              </Grid>
-            </Grid>
-            {requirementList &&
-              requirementList.map((option, index) => {
-                return (
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <label htmlFor="stat">
-                        <Typography variant="body2">Statistics</Typography>
-                      </label>
-                      <TextField
-                        id="stat"
-                        fullWidth
-                        disabled
-                        variant="outlined"
-                        margin="dense"
-                        value={option && option.stat}
-                      >
-                        {stats.map((options) => (
-                          <MenuItem
-                            style={{ height: "35px", fontSize: "14px" }}
-                            key={options.value}
-                            value={options.stat}
-                          >
-                            {options.label}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={1} />
-                    <Grid item xs={3}>
-                      <div>
-                        <label htmlFor="points">
-                          <Typography variant="body2">Exp. Points</Typography>
-                        </label>
-                        <TextField
-                          id="points"
-                          disabled
-                          fullWidth
-                          variant="outlined"
-                          margin="dense"
-                          type="number"
-                          InputProps={{
-                            inputProps: { min: 0 },
-                          }}
-                          value={option && option.experience_point}
-                        />
-                      </div>
-                    </Grid>
-                    {requirementList && requirementList.length > 0 && (
-                      <IconButton
-                        size="small"
-                        style={{ marginLeft: "25px", marginTop: "20px" }}
-                        onClick={() => {
-                          handleDeleteStat(index);
-                        }}
-                      >
-                        <Clear color="secondary" />
-                      </IconButton>
-                    )}
-                  </Grid>
-                );
-              })}
-
-            <Grid
-              container
-              style={{ marginTop: requirementList.length > 0 ? "30px" : "0px" }}
-            >
-              <Grid item xs={6}>
-                <div>
-                  <label htmlFor="stat">
-                    <Typography variant="body2">Statistics</Typography>
-                  </label>
-                  <TextField
-                    id="stat"
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                    select
-                    SelectProps={{
-                      MenuProps: {
-                        style: {
-                          height: "250px",
-                        },
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        },
-                        getContentAnchorEl: null,
-                      },
-                    }}
-                    value={newBadgeRequirement && newBadgeRequirement.stat}
-                    onChange={(e) =>
-                      setNewBadgeRequirement({
-                        ...newBadgeRequirement,
-                        stat: e.target.value,
-                      })
-                    }
-                  >
-                    {stats.map((option) => (
-                      <MenuItem
-                        style={{ height: "35px", fontSize: "14px" }}
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </div>
-              </Grid>
-              <Grid item xs={1} />
-              <Grid item xs={3}>
-                <div>
-                  <label htmlFor="points">
-                    <Typography variant="body2">Exp. Points</Typography>
-                  </label>
-                  <TextField
-                    id="points"
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                    type="number"
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
-                    value={
-                      newBadgeRequirement &&
-                      newBadgeRequirement.experience_point
-                    }
-                    onChange={(e) =>
-                      setNewBadgeRequirement({
-                        ...newBadgeRequirement,
-                        experience_point: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </Grid>
-              <IconButton
-                size="small"
-                style={{ marginLeft: "25px", marginTop: "20px" }}
-                onClick={() => {
-                  handleAddToList(newBadgeRequirement);
+          <Grid container>
+            <Grid item xs={4}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "15px",
                 }}
               >
-                <Add color="secondary" />
-              </IconButton>
+                <IconButton onClick={() => setOpenBadgePicDialog(true)}>
+                  {avatar ? (
+                    <Avatar
+                      className={classes.avatar}
+                      src={avatar[0].data}
+                    ></Avatar>
+                  ) : (
+                    <Avatar
+                      className={classes.avatar}
+                      style={{ padding: "20px" }}
+                    >
+                      Upload badge logo
+                    </Avatar>
+                  )}
+                </IconButton>
+              </div>
             </Grid>
-          </DialogContentText>
+            <Grid item xs={8}>
+              <div>
+                <label htmlFor="title">
+                  <Typography
+                    variant="body2"
+                    style={{
+                      marginTop: "30px",
+                    }}
+                  >
+                    Badge Title
+                  </Typography>
+                </label>
+                <TextField
+                  id="title"
+                  style={{
+                    width: "85%",
+                  }}
+                  variant="outlined"
+                  margin="dense"
+                  value={newBadge && newBadge.title}
+                  onChange={(e) =>
+                    setNewBadge({
+                      ...newBadge,
+                      title: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography
+                variant="body1"
+                style={{
+                  color: "#000000",
+                  fontWeight: 700,
+                  marginBottom: "5px",
+                }}
+              >
+                Requirements
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{
+                  color: "#000000",
+
+                  marginBottom: "20px",
+                }}
+              >
+                Click on the{" "}
+                {<Done color="secondary" style={{ fontSize: "12px" }} />} icon
+                to confirm requirement.
+              </Typography>
+            </Grid>
+          </Grid>
+          {requirementList &&
+            requirementList.map((option, index) => {
+              return (
+                <Grid container>
+                  <Grid item xs={6}>
+                    <label htmlFor="stat">
+                      <Typography variant="body2">Statistics</Typography>
+                    </label>
+                    <TextField
+                      id="stat"
+                      fullWidth
+                      disabled
+                      variant="outlined"
+                      margin="dense"
+                      value={option && option.stat}
+                    >
+                      {temporarystat.map((options) => (
+                        <MenuItem
+                          style={{ height: "35px", fontSize: "14px" }}
+                          key={options.value}
+                          value={options.stat}
+                        >
+                          {options.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={1} />
+                  <Grid item xs={3}>
+                    <div>
+                      <label htmlFor="points">
+                        <Typography variant="body2">Exp. Points</Typography>
+                      </label>
+                      <TextField
+                        id="points"
+                        disabled
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        type="number"
+                        InputProps={{
+                          inputProps: { min: 0 },
+                        }}
+                        value={option && option.experience_point}
+                      />
+                    </div>
+                  </Grid>
+                  {requirementList && requirementList.length > 0 && (
+                    <IconButton
+                      size="small"
+                      style={{ marginLeft: "25px", marginTop: "20px" }}
+                      onClick={() => {
+                        handleDeleteStat(index);
+                      }}
+                    >
+                      <Clear color="secondary" />
+                    </IconButton>
+                  )}
+                </Grid>
+              );
+            })}
+
+          <Grid
+            container
+            style={{ marginTop: requirementList.length > 0 ? "30px" : "0px" }}
+          >
+            <Grid item xs={6}>
+              <div>
+                <label htmlFor="stat">
+                  <Typography variant="body2">Statistics</Typography>
+                </label>
+                <TextField
+                  id="stat"
+                  fullWidth
+                  variant="outlined"
+                  margin="dense"
+                  select
+                  SelectProps={{
+                    MenuProps: {
+                      style: {
+                        height: "250px",
+                      },
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      getContentAnchorEl: null,
+                    },
+                  }}
+                  value={newBadgeRequirement && newBadgeRequirement.stat}
+                  onChange={(e) =>
+                    setNewBadgeRequirement({
+                      ...newBadgeRequirement,
+                      stat: e.target.value,
+                    })
+                  }
+                >
+                  {temporarystat.map((option) => (
+                    <MenuItem
+                      style={{ height: "35px", fontSize: "14px" }}
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </div>
+            </Grid>
+            <Grid item xs={1} />
+            <Grid item xs={3}>
+              <div>
+                <label htmlFor="points">
+                  <Typography variant="body2">Exp. Points</Typography>
+                </label>
+                <TextField
+                  id="points"
+                  fullWidth
+                  variant="outlined"
+                  margin="dense"
+                  type="number"
+                  InputProps={{
+                    inputProps: { min: 0 },
+                  }}
+                  value={
+                    newBadgeRequirement && newBadgeRequirement.experience_point
+                  }
+                  onChange={(e) =>
+                    setNewBadgeRequirement({
+                      ...newBadgeRequirement,
+                      experience_point: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </Grid>
+            <IconButton
+              size="small"
+              style={{ marginLeft: "25px", marginTop: "20px" }}
+              onClick={() => {
+                handleAddToList(newBadgeRequirement);
+              }}
+            >
+              <Done color="secondary" />
+            </IconButton>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button
