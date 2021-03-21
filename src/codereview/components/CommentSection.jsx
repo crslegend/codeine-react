@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -190,13 +190,12 @@ const CommentSection = ({
                               variant="contained"
                               color="primary"
                               size="small"
-                              style={{ marginRight: "10px" }}
+                              style={{ marginRight: "10px", height: 30 }}
                               onClick={() => handleUpdateComment()}
                               disabled={
                                 selectedComment &&
                                 selectedComment.comment === ""
                               }
-                              style={{ height: 30 }}
                             >
                               Save
                             </Button>
@@ -384,13 +383,15 @@ const CommentSection = ({
                                       variant="contained"
                                       color="primary"
                                       size="small"
-                                      style={{ marginRight: "10px" }}
+                                      style={{
+                                        marginRight: "10px",
+                                        height: 30,
+                                      }}
                                       onClick={() => handleUpdateComment()}
                                       disabled={
                                         selectedComment &&
                                         selectedComment.comment === ""
                                       }
-                                      style={{ height: 30 }}
                                     >
                                       Save
                                     </Button>

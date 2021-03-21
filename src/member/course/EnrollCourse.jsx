@@ -185,11 +185,11 @@ const EnrollCourse = () => {
   };
 
   const handleLogPauseCourse = (material) => {
-    // ANALYTICS: log pause course by enrolled members
+    // ANALYTICS: log stop course by enrolled members
     Service.client
       .post(
         `/analytics`,
-        { payload: "pause course" },
+        { payload: "stop course" },
         {
           params: {
             course_id: id,
@@ -272,7 +272,7 @@ const EnrollCourse = () => {
     Service.client
       .post(
         `/analytics`,
-        { payload: "start assessment" },
+        { payload: "continue assessment" },
         {
           params: {
             quiz_id: quizId,
