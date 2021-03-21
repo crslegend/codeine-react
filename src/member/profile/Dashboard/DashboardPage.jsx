@@ -155,7 +155,10 @@ const DashboardPage = () => {
 
     if (numDays && numDays !== "") {
       Service.client
-        .get(`/analytics/time-spent-breakdown`, { params: { days: numDays } })
+        .get(`/analytics/time-spent-breakdown`, {
+          params: { days: numDays },
+          timeout: 20000,
+        })
         .then((res) => {
           //   console.log(res);
           setTimeSpentOnPlatform(res.data.total_time_spent);
@@ -164,7 +167,7 @@ const DashboardPage = () => {
         .catch((err) => console.log(err));
     } else {
       Service.client
-        .get(`/analytics/time-spent-breakdown`)
+        .get(`/analytics/time-spent-breakdown`, { timeout: 20000 })
         .then((res) => {
           //   console.log(res);
           setTimeSpentOnPlatform(res.data.total_time_spent);
