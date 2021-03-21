@@ -37,6 +37,8 @@ import DashboardPage from "./dashboard/DashboardPage";
 import ContributionsPage from "./contributions/ContributionsPage";
 import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
+import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
+import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -121,7 +123,7 @@ const ContentProviderHome = () => {
 
   const loggedInNavbar = (
     <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <a href={`/codereview`} style={{ textDecoration: "none" }}>
           <Typography
             variant="h6"
@@ -130,7 +132,7 @@ const ContentProviderHome = () => {
             Code Review
           </Typography>
         </a>
-      </ListItem>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
@@ -349,6 +351,19 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/dashboard"
               render={() => <DashboardPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/dashboard/search"
+              render={() => <CourseSearchRanking />}
+              user="partner"
+            />
+            <PrivateRoute
+              path="/partner/home/dashboard/:id"
+              strict
+              sensitive
+              render={(match) => <CourseDetailAnalytics match={match} />}
               user="partner"
             />
             <PrivateRoute
