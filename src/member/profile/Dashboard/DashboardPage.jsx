@@ -4,7 +4,7 @@ import TooltipMui from "@material-ui/core/Tooltip";
 import PageTitle from "../../../components/PageTitle";
 import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 import {
   FormControl,
   IconButton,
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardPage = () => {
   const classes = useStyles();
-  const history = useHistory();
+  //   const history = useHistory();
 
   const [numDays, setNumDays] = useState();
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
