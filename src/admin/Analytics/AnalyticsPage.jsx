@@ -135,13 +135,6 @@ const AdminAnalyticsPage = () => {
         .catch((err) => console.log(err));
 
       Service.client
-        .get(`/analytics/course-conversion-rate`, { params: { days: numDays } })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log(err));
-
-      Service.client
         .get(`/analytics/course-search-ranking`, { params: { days: numDays } })
         .then((res) => {
           // console.log(res);
