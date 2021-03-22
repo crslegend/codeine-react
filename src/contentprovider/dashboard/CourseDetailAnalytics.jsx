@@ -123,17 +123,15 @@ const CourseDetailAnalytics = () => {
   const [inactiveMembers, setInactiveMembers] = useState();
   const [falseStarters, setFalseStarters] = useState();
   const [memberDemographics, setMemberDemographics] = useState();
-  const [numDaysForStudents, setNumDaysForStudents] = useState();
+  const [numDaysForStudents, setNumDaysForStudents] = useState(7);
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
 
-    if (newTime.toString().length >= 5) {
-      return newTime.toFixed(5);
-    } else if (newTime.toString.length <= 3) {
-      return newTime.toFixed(3);
+    if (newTime.toString().length >= 3) {
+      return newTime.toFixed(1);
     } else {
-      return newTime.toFixed(newTime.toString.length);
+      return newTime.toFixed(newTime.toString().length);
     }
   };
 

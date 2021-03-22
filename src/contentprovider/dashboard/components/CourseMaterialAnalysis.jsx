@@ -76,7 +76,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             .toUpperCase() +
           courseMaterials[i].material_type.toLowerCase().slice(1),
         Time: parseFloat(
-          (courseMaterials[i].average_time_taken / 3600).toFixed(6)
+          (courseMaterials[i].average_time_taken / 60).toFixed(1)
         ),
       };
       loadedData.push(obj);
@@ -111,7 +111,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           <br />
           <span
             style={{ color: "#437FC7" }}
-          >{`${payload[0].payload.Time} hrs`}</span>
+          >{`${payload[0].payload.Time} mins`}</span>
         </div>
       );
     }
