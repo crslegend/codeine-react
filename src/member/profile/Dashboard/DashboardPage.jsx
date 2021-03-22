@@ -4,6 +4,8 @@ import TooltipMui from "@material-ui/core/Tooltip";
 import PageTitle from "../../../components/PageTitle";
 import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
+import Cookies from "js-cookie";
+import MemberNavBar from "../../MemberNavBar";
 // import { useHistory } from "react-router";
 import {
   FormControl,
@@ -63,9 +65,17 @@ const DashboardPage = () => {
   const classes = useStyles();
   //   const history = useHistory();
 
+  const [loggedIn, setLoggedIn] = useState(false);
+
   const [numDays, setNumDays] = useState(7);
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
   const [timeSpentCategories, setTimeSpentCategories] = useState();
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const formatDataIntoArr = (data) => {
     // console.log(data);
@@ -179,6 +189,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     getAnalytics();
+    checkIfLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -189,6 +200,7 @@ const DashboardPage = () => {
 
   return (
     <div>
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <PageTitle title="Dashboard" />
       <div
         style={{
