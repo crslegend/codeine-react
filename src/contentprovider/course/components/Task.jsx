@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     display: "flex",
     flexDirection: "column",
-    boxShadow:
-      "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
     // alignItems: "center",
   },
   containerDragging: {
@@ -43,8 +42,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "8px",
     backgroundColor: "#e0e0e0",
     display: "flex",
-    boxShadow:
-      "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
     alignItems: "center",
   },
   handle: {
@@ -65,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "190px",
     "@global": {
       ".MuiDropzoneArea-root": {
-        minHeight: "190px",
+        minHeight: "150px",
       },
     },
   },
@@ -106,9 +104,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
 
-  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
-    false
-  );
+  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(false);
 
   const [addQuestionDialog, setAddQuestionDialog] = useState(false);
 
@@ -122,11 +118,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        editVideo.title === "" ||
-        editVideo.description === "" ||
-        editVideo.video_url === ""
-      ) {
+      if (editVideo.title === "" || editVideo.description === "" || editVideo.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -238,11 +230,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         })
         .catch((err) => console.log(err));
     } else {
-      if (
-        editQuiz.title === "" ||
-        editQuiz.description === "" ||
-        editQuiz.passing_marks === ""
-      ) {
+      if (editQuiz.title === "" || editQuiz.description === "" || editQuiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all required fields!",
@@ -294,11 +282,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         {(provided, snapshot) => {
           return (
             <div
-              className={
-                snapshot.isDragging
-                  ? classes.containerDragging
-                  : classes.container
-              }
+              className={snapshot.isDragging ? classes.containerDragging : classes.container}
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
@@ -312,10 +296,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                 {(() => {
                   if (task.material_type === "FILE") {
                     return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
+                      <div {...provided.dragHandleProps} className={classes.handle}>
                         <Avatar
                           variant="rounded"
                           style={{
@@ -330,10 +311,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     );
                   } else if (task.material_type === "VIDEO") {
                     return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
+                      <div {...provided.dragHandleProps} className={classes.handle}>
                         <Avatar
                           variant="rounded"
                           style={{
@@ -348,10 +326,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     );
                   } else if (task.material_type === "QUIZ") {
                     return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
+                      <div {...provided.dragHandleProps} className={classes.handle}>
                         <Avatar
                           variant="rounded"
                           style={{
@@ -464,21 +439,17 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            minWidth: "600px",
           },
         }}
       >
         <DialogTitle>
-          Course Material{" "}
-          <span style={{ textTransform: "capitalize" }}>({materialType})</span>
+          Course Material <span style={{ textTransform: "capitalize" }}>({materialType})</span>
           <div style={{ float: "right" }}>
             {/* <IconButton size="small" onClick={() => setEditMode(true)}>
               <Edit />
             </IconButton> */}
-            <IconButton
-              size="small"
-              onClick={() => setDeleteCourseMaterialDialog(true)}
-            >
+            <IconButton size="small" onClick={() => setDeleteCourseMaterialDialog(true)}>
               <Delete />
             </IconButton>
           </div>
@@ -503,6 +474,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         title: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
@@ -522,10 +494,11 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         description: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Description"
                     multiline
-                    rows={4}
+                    rows={6}
                     style={{ marginBottom: "25px" }}
                   />
                   <div
@@ -540,6 +513,19 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     <Typography variant="body2" style={{ marginTop: "10px" }}>
                       Upload File (to replace the current file)
                     </Typography>
+                    {editFile && editFile.zip_file && (
+                      <div style={{ display: "flex" }}>
+                        <Typography variant="body2" style={{ margin: "5px 0" }}>
+                          <LinkMui
+                            href={editFile.zip_file ? editFile.zip_file.replace("#", "") : "#"}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            &gt; Uploaded File
+                          </LinkMui>
+                        </Typography>
+                      </div>
+                    )}
                     <DropzoneAreaBase
                       dropzoneText="Drag and drop a zip file or click&nbsp;here"
                       dropzoneClass={classes.dropzoneContainer}
@@ -562,30 +548,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     />
                   </div>
 
-                  {editFile && editFile.zip_file && (
-                    <div style={{ display: "flex" }}>
-                      <Typography
-                        variant="body2"
-                        style={{ marginTop: "5px", marginRight: "10px" }}
-                      >
-                        <LinkMui
-                          href={
-                            editFile.zip_file
-                              ? editFile.zip_file.replace("#", "")
-                              : "#"
-                          }
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          Uploaded File
-                        </LinkMui>
-                      </Typography>
-                    </div>
-                  )}
-                  <Typography
-                    variant="h6"
-                    style={{ textAlign: "center", marginTop: "10px" }}
-                  >
+                  <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                     OR
                   </Typography>
                   <label htmlFor="url">
@@ -596,17 +559,14 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     variant="outlined"
                     fullWidth
                     margin="dense"
-                    value={
-                      editFile && editFile.google_drive_url !== null
-                        ? editFile.google_drive_url
-                        : ""
-                    }
+                    value={editFile && editFile.google_drive_url !== null ? editFile.google_drive_url : ""}
                     onChange={(e) => {
                       setEditFile({
                         ...editFile,
                         google_drive_url: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="https://drive.google.com"
                     style={{ marginBottom: "15px" }}
@@ -631,14 +591,13 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         title: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Video
-                    </Typography>
+                    <Typography variant="body2">Description of Video</Typography>
                   </label>
                   <TextField
                     id="description"
@@ -652,10 +611,11 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         description: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Description"
                     multiline
-                    rows={4}
+                    rows={6}
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="url">
@@ -673,6 +633,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         video_url: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="https://www.google.com"
                     style={{ marginBottom: "15px" }}
@@ -683,9 +644,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
               return (
                 <Fragment>
                   <label htmlFor="title">
-                    <Typography variant="body2">
-                      Title of Quiz (Required)
-                    </Typography>
+                    <Typography variant="body2">Title of Quiz (Required)</Typography>
                   </label>
                   <TextField
                     id="title"
@@ -699,14 +658,13 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         title: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Quiz (Required)
-                    </Typography>
+                    <Typography variant="body2">Description of Quiz (Required)</Typography>
                   </label>
                   <TextField
                     id="description"
@@ -721,15 +679,14 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                       });
                     }}
                     required
+                    inputProps={{ style: { fontSize: "14px" } }}
                     placeholder="Enter Description"
                     multiline
-                    rows={4}
+                    rows={6}
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="marks">
-                    <Typography variant="body2">
-                      Passing Marks (Required)
-                    </Typography>
+                    <Typography variant="body2">Passing Marks (Required)</Typography>
                   </label>
                   <TextField
                     id="marks"
@@ -746,6 +703,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     InputProps={{
                       inputProps: { min: 0 },
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     style={{ marginBottom: "15px" }}
                     type="number"
@@ -765,9 +723,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         instructions: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     multiline
-                    rows={4}
+                    rows={6}
                     placeholder="eg. Read the questions carefully"
                     style={{ marginBottom: "15px" }}
                   />
