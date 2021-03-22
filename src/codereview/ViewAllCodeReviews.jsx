@@ -434,22 +434,21 @@ const ViewAllCodeReviews = () => {
                       }}
                     >
                       <div>
-                        {code.member.profile_photo &&
-                        code.member.profile_photo ? (
+                        {code.user.profile_photo && code.user.profile_photo ? (
                           <Avatar
                             style={{ marginRight: "15px" }}
-                            src={code.member && code.member.profile_photo}
+                            src={code.user && code.user.profile_photo}
                           />
                         ) : (
                           <Avatar style={{ marginRight: "15px" }}>
-                            {code.member && code.member.first_name.charAt(0)}
+                            {code.user && code.user.first_name.charAt(0)}
                           </Avatar>
                         )}
                       </div>
                       <div style={{ flexDirection: "column" }}>
                         <LinkMui className={classes.linkMui1}>
-                          {`${code && code.member.first_name} ${
-                            code && code.member.last_name
+                          {`${code && code.user.first_name} ${
+                            code && code.user.last_name
                           }`}
                         </LinkMui>
                         <Typography variant="body2" style={{ opacity: 0.8 }}>
