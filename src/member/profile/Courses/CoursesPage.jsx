@@ -271,18 +271,19 @@ const CoursesPage = () => {
               </FormControl>
             </div>
           </div>
-          <div className={classes.courses}>
-            {allCourses && allCourses.length > 0 ? (
-              allCourses
-                .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                .map((course, index) => {
-                  return (
-                    <Card key={index} className={classes.card}>
-                      <a
-                        href={`/courses/${course.id}`}
-                        className={classes.link}
-                        style={{ height: "100%" }}
-                      >
+        </div>
+        <div className={classes.courses}>
+          {allCourses && allCourses.length > 0 ? (
+            allCourses
+              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+              .map((course, index) => {
+                return (
+                  <Card key={index} className={classes.card}>
+                    <a
+                      href={`/courses/enroll/${course.id}`}
+                      className={classes.link}
+                      style={{ height: "100%" }}
+                    >
                         <CardActionArea
                           // onClick={() => {
                           //   return <a href={`/courses/${course.id}`} />;

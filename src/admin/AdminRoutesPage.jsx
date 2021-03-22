@@ -33,6 +33,8 @@ import ViewCourseDetail from "./ContentQuality/course/ViewCourseDetails";
 import ViewCourseContent from "./ContentQuality/course/EnrollCourse";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
+import CourseRelatedAnalytics from "./Analytics/CourseRelatedAnalytics";
+import CourseDetailAnalytics from "./Analytics/CourseDetailAnalytics";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -324,6 +326,17 @@ const AdminRoutesPage = () => {
             exact
             path="/admin/analytics"
             render={() => <AnalyticsPage />}
+          />
+          <Route
+            exact
+            path="/admin/analytics/courses"
+            render={() => <CourseRelatedAnalytics />}
+          />
+          <Route
+            strict
+            sensitive
+            path="/admin/analytics/courses/:id"
+            render={(match) => <CourseDetailAnalytics match={match} />}
           />
           <Route
             exact
