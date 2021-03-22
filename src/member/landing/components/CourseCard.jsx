@@ -45,7 +45,7 @@ const CourseCard = (props) => {
     <Card elevation={0} className={classes.root}>
       <Link
         style={{ height: "100%" }}
-        to={`/courses/enroll/${course && course.id}`}
+        to={`/courses/${course && course.id}`}
         component={CardActionArea}
       >
         <CardContent
