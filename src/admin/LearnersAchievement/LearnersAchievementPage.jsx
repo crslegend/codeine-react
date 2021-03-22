@@ -27,13 +27,13 @@ import Service from "../../AxiosService";
 const useStyles = makeStyles((theme) => ({
   cardroot: {
     backgroundColor: "#164D8F",
-    height: "300px",
+    height: "420px",
     borderRadius: 0,
   },
   cardnumber: {
     color: "#FFFFFF",
-    lineHeight: "40px",
-    margin: "30px 0px 20px 30px",
+    lineHeight: "35px",
+    margin: "30px 0px 15px 30px",
   },
   closeButton: {
     position: "absolute",
@@ -158,6 +158,8 @@ const AdminLearnersAchievementPage = () => {
   });
 
   const [badges, setBadges] = useState([]);
+  const [selectedBadge, setSelectedBadge] = useState();
+
   const [searchValue, setSearchValue] = useState("");
   const [newBadge, setNewBadge] = useState({
     badge: "",
@@ -168,6 +170,8 @@ const AdminLearnersAchievementPage = () => {
     experience_point: "0",
     stat: "",
   });
+  const [totalBadge, setTotalBadge] = useState("0");
+  const [availableBadge, setAvailableBadge] = useState("0");
   const [avatar, setAvatar] = useState();
   const [temporarystat, setTemporarystat] = useState([...stats]);
 
@@ -200,8 +204,21 @@ const AdminLearnersAchievementPage = () => {
     setOpenAchievementDialog(true);
   };
 
+  const handleOpenEditDialog = (badge) => {
+    setOpenAchievementDialog(true);
+    setSelectedBadge(badge);
+    setRequirementList(badge.achievement_requirements);
+    for (var i = temporarystat.length; i--; ) {
+      if (temporarystat[i].value === badge.achievement_requirements.stat) {
+        temporarystat.splice(i, 1);
+      }
+    }
+  };
+
   const handleCloseAchievementDialog = () => {
     setOpenAchievementDialog(false);
+    setSelectedBadge();
+    handleResetFields();
   };
 
   const handlePageChange = (event, value) => {
@@ -410,6 +427,17 @@ const AdminLearnersAchievementPage = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    Service.client
+      .get(`/achievements`, { params: { title: "" } })
+      .then((res) => {
+        setTotalBadge(res.data.length);
+        res.data.filter((item) => !item.is_deleted);
+        setAvailableBadge(res.data.length);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleRequestSearch = () => {
@@ -421,12 +449,14 @@ const AdminLearnersAchievementPage = () => {
   };
 
   useEffect(() => {
-    getBadgesData();
+    if (searchValue === "") {
+      getBadgesData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchValue]);
 
   return (
-    <div style={{ height: "700px" }}>
+    <div style={{ height: "730px" }}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Grid container>
         <Grid item xs={12}>
@@ -543,6 +573,7 @@ const AdminLearnersAchievementPage = () => {
                     }
                   >
                     <CardMedia
+                      onClick={() => handleOpenEditDialog(badge)}
                       className={classes.cardmedia}
                       image={badge.badge}
                       style={{
@@ -595,10 +626,9 @@ const AdminLearnersAchievementPage = () => {
         <Grid item xs={3}>
           <Card className={classes.cardroot}>
             <Typography variant="h4" className={classes.cardnumber}>
-              Total number of <br />
+              Active <br />
               badges:
             </Typography>
-
             <Typography
               style={{
                 color: "#FFFFFF",
@@ -607,7 +637,21 @@ const AdminLearnersAchievementPage = () => {
                 marginLeft: "30px",
               }}
             >
-              {badges && badges.length}
+              {availableBadge}
+            </Typography>
+            <Typography variant="h4" className={classes.cardnumber}>
+              Total no. of <br />
+              badges:
+            </Typography>
+            <Typography
+              style={{
+                color: "#FFFFFF",
+                fontSize: "54px",
+                fontWeight: 700,
+                marginLeft: "30px",
+              }}
+            >
+              {totalBadge}
             </Typography>
           </Card>
           <Button
@@ -628,13 +672,14 @@ const AdminLearnersAchievementPage = () => {
 
       <Dialog
         open={openAchievementDialog}
+        transitionDuration={{ exit: "0" }}
         onClose={handleCloseAchievementDialog}
         aria-labelledby="form-dialog-title"
         maxWidth="sm"
         fullWidth={true}
       >
         <DialogTitle id="form-dialog-title">
-          Create a New Badge
+          {selectedBadge !== undefined ? "Edit Badge" : "Create a New Badge"}
           <IconButton
             aria-label="close"
             className={classes.closeButton}
@@ -658,6 +703,11 @@ const AdminLearnersAchievementPage = () => {
                     <Avatar
                       className={classes.avatar}
                       src={avatar[0].data}
+                    ></Avatar>
+                  ) : selectedBadge !== undefined ? (
+                    <Avatar
+                      className={classes.avatar}
+                      src={selectedBadge.badge}
                     ></Avatar>
                   ) : (
                     <Avatar
@@ -689,7 +739,11 @@ const AdminLearnersAchievementPage = () => {
                   }}
                   variant="outlined"
                   margin="dense"
-                  value={newBadge && newBadge.title}
+                  value={
+                    selectedBadge !== undefined
+                      ? selectedBadge.title
+                      : newBadge && newBadge.title
+                  }
                   onChange={(e) =>
                     setNewBadge({
                       ...newBadge,
