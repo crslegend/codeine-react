@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import { Assignment, AttachFile, Delete, DragIndicator, Movie } from "@material-ui/icons";
+import { Assignment, AttachFile, Delete, DragIndicator, InsertDriveFile, Theaters } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -13,6 +13,7 @@ import {
   IconButton,
   TextField,
   Typography,
+  Tooltip,
 } from "@material-ui/core";
 import validator from "validator";
 import { DropzoneAreaBase } from "material-ui-dropzone";
@@ -344,36 +345,46 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 }}
               >
                 <Typography variant="body2">Add Material:</Typography>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setMaterialType("file");
-                    setCourseMaterialDialog(true);
-                    setChapterIdForCourseMaterial(column.id);
-                  }}
-                >
-                  <AttachFile />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setMaterialType("video");
-                    setCourseMaterialDialog(true);
-                    setChapterIdForCourseMaterial(column.id);
-                  }}
-                >
-                  <Movie />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setMaterialType("quiz");
-                    setCourseMaterialDialog(true);
-                    setChapterIdForCourseMaterial(column.id);
-                  }}
-                >
-                  <Assignment />
-                </IconButton>
+                <Tooltip title="File">
+                  <IconButton
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      setMaterialType("file");
+                      setCourseMaterialDialog(true);
+                      setChapterIdForCourseMaterial(column.id);
+                    }}
+                  >
+                    <InsertDriveFile />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Video">
+                  <IconButton
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      setMaterialType("video");
+                      setCourseMaterialDialog(true);
+                      setChapterIdForCourseMaterial(column.id);
+                    }}
+                  >
+                    <Theaters />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Quiz">
+                  <IconButton
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      setMaterialType("quiz");
+                      setCourseMaterialDialog(true);
+                      setChapterIdForCourseMaterial(column.id);
+                    }}
+                  >
+                    <Assignment />
+                  </IconButton>
+                </Tooltip>
               </div>
 
               <Droppable droppableId={column.id} type="task">

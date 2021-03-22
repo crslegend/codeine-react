@@ -872,19 +872,20 @@ const CourseCreation = () => {
                     </Paper>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "50px", marginLeft: "8px" }}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                  <div style={{ margin: "8px" }}>
                     <PageTitle title="Chapters" />
                   </div>
-
-                  <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => setChapterDialog(true)}
-                    style={{ height: 30 }}
-                  >
-                    Add New Chapter
-                  </Button>
+                  <div>
+                    <Button
+                      color="primary"
+                      startIcon={<Add />}
+                      onClick={() => setChapterDialog(true)}
+                      // style={{ height: 30 }}
+                    >
+                      Add New Chapter
+                    </Button>
+                  </div>
                 </div>
                 <div className={classes.kanban}>
                   <CourseKanbanBoard
