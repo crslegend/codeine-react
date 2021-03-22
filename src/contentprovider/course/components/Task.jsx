@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Assignment, Delete, InsertDriveFile, Theaters } from "@material-ui/icons";
+import { Assignment, Delete, InsertDriveFile, Theaters, DragHandle } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
@@ -25,27 +25,26 @@ import QuestionDialog from "./QuestionDialog";
 const useStyles = makeStyles((theme) => ({
   container: {
     border: "1px solid lightgrey",
-    borderRadius: "10px",
-    padding: 8,
+    borderRadius: "5px",
     marginBottom: "8px",
-    backgroundColor: "#fff",
+    backgroundColor: "#fcfcfc",
     display: "flex",
     flexDirection: "column",
-    boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    // boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    boxShadow: "2px 3px 3px 0px rgba(0,0,0,0.16)",
     // alignItems: "center",
   },
   containerDragging: {
-    border: "2px solid blue",
-    borderRadius: "10px",
-    padding: 8,
+    border: "1px solid grey",
+    borderRadius: "5px",
     marginBottom: "8px",
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#fcfcfc",
     display: "flex",
-    boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
-    alignItems: "center",
+    flexDirection: "column",
+    // boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
   },
   handle: {
-    marginRight: "10px",
+    color: "#6e6e6e",
   },
   title: {
     cursor: "pointer",
@@ -54,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
     // whiteSpace: "nowrap",
     // overflow: "hidden",
     // textOverflow: "ellipsis",
-    color: "#1e1e1e",
   },
   dialogButtons: {
     width: 100,
@@ -279,6 +277,16 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       .catch((err) => console.log(err));
   };
 
+  const getColor = () => {
+    if (task.material_type === "VIDEO") {
+      return theme.palette.secondary.main;
+    } else if (task.material_type === "FILE") {
+      return theme.palette.orange.main;
+    } else {
+      return theme.palette.red.main;
+    }
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -294,110 +302,122 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  alignItems: "center",
+                  // justifyContent: "center",
+                  padding: theme.spacing(1),
+                  borderLeft: `5px solid ${getColor()}`,
+                  borderRadius: "5px",
                 }}
               >
-                {(() => {
-                  if (task.material_type === "FILE") {
-                    return (
-                      <div {...provided.dragHandleProps} className={classes.handle}>
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: theme.palette.secondary.main,
-                          }}
-                        >
-                          <InsertDriveFile fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  } else if (task.material_type === "VIDEO") {
-                    return (
-                      <div {...provided.dragHandleProps} className={classes.handle}>
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: theme.palette.secondary.main,
-                          }}
-                        >
-                          <Theaters fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  } else if (task.material_type === "QUIZ") {
-                    return (
-                      <div {...provided.dragHandleProps} className={classes.handle}>
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: theme.palette.secondary.main,
-                          }}
-                        >
-                          <Assignment fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  }
-                })()}
-
-                <LinkMui
-                  className={classes.title}
-                  style={{ textDecoration: "none" }}
-                  onClick={() => {
-                    setCourseMaterialDialog(true);
-
-                    if (task.material_type === "VIDEO") {
-                      setEditVideo({
-                        title: task.title,
-                        description: task.description,
-                        video_url: task.video.video_url,
-                      });
-                      setMaterialType("video");
-                      setCourseMaterialId(task.id);
-                    } else if (task.material_type === "FILE") {
-                      setEditFile({
-                        title: task.title,
-                        description: task.description,
-                        google_drive_url: task.course_file.google_drive_url,
-                        zip_file: task.course_file.zip_file,
-                      });
-                      setMaterialType("file");
-                      setCourseMaterialId(task.id);
-                    } else {
-                      setEditQuiz({
-                        title: task.title,
-                        description: task.description,
-                        passing_marks: task.quiz.passing_marks,
-                        instructions: task.quiz.instructions,
-                      });
-                      setMaterialType("quiz");
-                      setCourseMaterialId(task.id);
-                    }
+                <div
+                  style={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    marginRight: "3px",
                   }}
                 >
-                  {task.title}
-                </LinkMui>
-
-                {/* {task.material_type === "QUIZ" && (
-                  <IconButton
-                    size="small"
-                    style={{ marginLeft: "auto", order: 2 }}
+                  <LinkMui
+                    className={classes.title}
+                    style={{ textDecoration: "none" }}
                     onClick={() => {
-                      setQuizId(task.quiz.id);
-                      setAddQuestionDialog(true);
+                      setCourseMaterialDialog(true);
+
+                      if (task.material_type === "VIDEO") {
+                        setEditVideo({
+                          title: task.title,
+                          description: task.description,
+                          video_url: task.video.video_url,
+                        });
+                        setMaterialType("video");
+                        setCourseMaterialId(task.id);
+                      } else if (task.material_type === "FILE") {
+                        setEditFile({
+                          title: task.title,
+                          description: task.description,
+                          google_drive_url: task.course_file.google_drive_url,
+                          zip_file: task.course_file.zip_file,
+                        });
+                        setMaterialType("file");
+                        setCourseMaterialId(task.id);
+                      } else {
+                        setEditQuiz({
+                          title: task.title,
+                          description: task.description,
+                          passing_marks: task.quiz.passing_marks,
+                          instructions: task.quiz.instructions,
+                        });
+                        setMaterialType("quiz");
+                        setCourseMaterialId(task.id);
+                      }
                     }}
                   >
-                    <Add />
-                  </IconButton>
-                )} */}
-              </div>
+                    {task.title}
+                  </LinkMui>
 
+                  {(() => {
+                    if (task.material_type === "FILE") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <InsertDriveFile
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    } else if (task.material_type === "VIDEO") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <Theaters
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    } else if (task.material_type === "QUIZ") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <Assignment
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    }
+                  })()}
+                </div>
+
+                <div {...provided.dragHandleProps} className={classes.handle}>
+                  <DragHandle />
+                </div>
+              </div>
               {/* {task.material_type === "QUIZ" && (
                 <Droppable droppableId={task.id} type="subtask">
                   {(provided) => {
