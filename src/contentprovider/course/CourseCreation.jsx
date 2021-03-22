@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Edit } from "@material-ui/icons";
+import { Add, Edit, PlaylistAddCheck } from "@material-ui/icons";
 import CourseDetailsDrawer from "./components/CourseDetailsDrawer";
 import PageTitle from "../../components/PageTitle";
 
@@ -878,12 +878,23 @@ const CourseCreation = () => {
                   </div>
                   <div>
                     <Button
+                      variant="contained"
+                      size="small"
                       color="primary"
                       startIcon={<Add />}
                       onClick={() => setChapterDialog(true)}
-                      // style={{ height: 30 }}
+                      style={{ margin: "8px" }}
                     >
                       Add New Chapter
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<PlaylistAddCheck />}
+                      onClick={() => setChapterDialog(true)}
+                      style={{ margin: "8px" }}
+                    >
+                      Manage Questions
                     </Button>
                   </div>
                 </div>

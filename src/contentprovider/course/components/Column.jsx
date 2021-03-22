@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import { Assignment, AttachFile, Delete, DragIndicator, InsertDriveFile, Theaters } from "@material-ui/icons";
+import { Assignment, Delete, DragIndicator, InsertDriveFile, Theaters } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     cursor: "pointer",
     display: "inline-block",
-    maxWidth: 170,
+    maxWidth: 200,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",

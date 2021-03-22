@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Draggable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
 import {
@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Assignment, AttachFile, Delete, Movie } from "@material-ui/icons";
+import { Assignment, Delete, InsertDriveFile, Theaters } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     // whiteSpace: "nowrap",
     // overflow: "hidden",
     // textOverflow: "ellipsis",
+    color: "#1e1e1e",
   },
   dialogButtons: {
     width: 100,
@@ -78,6 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Task = ({ task, index, getCourse, subtasks }) => {
   const classes = useStyles();
+  const theme = useTheme();
   // console.log(task);
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -304,10 +306,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                           style={{
                             height: "30px",
                             width: "30px",
-                            backgroundColor: "#000",
+                            backgroundColor: theme.palette.secondary.main,
                           }}
                         >
-                          <AttachFile fontSize="small" />
+                          <InsertDriveFile fontSize="small" />
                         </Avatar>
                       </div>
                     );
@@ -319,10 +321,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                           style={{
                             height: "30px",
                             width: "30px",
-                            backgroundColor: "#000",
+                            backgroundColor: theme.palette.secondary.main,
                           }}
                         >
-                          <Movie fontSize="small" />
+                          <Theaters fontSize="small" />
                         </Avatar>
                       </div>
                     );
@@ -334,7 +336,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                           style={{
                             height: "30px",
                             width: "30px",
-                            backgroundColor: "#000",
+                            backgroundColor: theme.palette.secondary.main,
                           }}
                         >
                           <Assignment fontSize="small" />
