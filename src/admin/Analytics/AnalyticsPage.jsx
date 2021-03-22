@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -65,6 +65,15 @@ const useStyles = makeStyles((theme) => ({
   tabPanel: {
     minHeight: "200px",
     paddingTop: "20px",
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
 }));
 
@@ -383,6 +392,7 @@ const AdminAnalyticsPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
@@ -465,9 +475,7 @@ const AdminAnalyticsPage = () => {
                             marginBottom: "20px",
                           }}
                         >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography variant="h6">Fundings</Typography>
                               <TooltipMui
@@ -500,9 +508,7 @@ const AdminAnalyticsPage = () => {
                             </Typography>
                           </div>
                           <Add style={{ fontSize: "50px" }} color="disabled" />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography variant="h6">
                                 Subscriptions
@@ -541,9 +547,7 @@ const AdminAnalyticsPage = () => {
                             style={{ fontSize: "50px" }}
                             color="disabled"
                           />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography variant="h6">Total Income</Typography>
                               <TooltipMui
@@ -579,9 +583,7 @@ const AdminAnalyticsPage = () => {
                             justifyContent: "space-around",
                           }}
                         >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography variant="h6">Expenses</Typography>
                               <TooltipMui
@@ -607,9 +609,7 @@ const AdminAnalyticsPage = () => {
                               )}
                             </Typography>
                           </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography variant="h6">Net Income</Typography>
                               <TooltipMui
@@ -665,9 +665,7 @@ const AdminAnalyticsPage = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography
                                 variant="h6"
@@ -703,9 +701,7 @@ const AdminAnalyticsPage = () => {
                                 ))}
                             </Typography>
                           </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography
                                 variant="h6"
@@ -741,9 +737,7 @@ const AdminAnalyticsPage = () => {
                                 ))}
                             </Typography>
                           </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography
                                 variant="h6"
@@ -779,9 +773,7 @@ const AdminAnalyticsPage = () => {
                                 ))}
                             </Typography>
                           </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <div className={classes.statsDiv}>
                             <div style={{ display: "flex" }}>
                               <Typography
                                 variant="h6"

@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#eeeeee",
     padding: theme.spacing(2),
     borderRadius: "5px",
-    marginRight: "30px",
+    // marginRight: "30px",
   },
 }));
 
