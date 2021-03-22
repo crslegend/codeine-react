@@ -61,7 +61,7 @@ const DashboardPage = () => {
   const [courses, setCourses] = useState([]);
   const [overallData, setOverallData] = useState();
   const [finalQuizPerformance, setFinalQuizPerformance] = useState();
-  const [numDays, setNumDays] = useState();
+  const [numDays, setNumDays] = useState(7);
 
   const getConversionRate = () => {
     if (numDays && numDays !== "") {

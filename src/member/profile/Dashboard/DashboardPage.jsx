@@ -63,7 +63,7 @@ const DashboardPage = () => {
   const classes = useStyles();
   //   const history = useHistory();
 
-  const [numDays, setNumDays] = useState();
+  const [numDays, setNumDays] = useState(7);
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
   const [timeSpentCategories, setTimeSpentCategories] = useState();
 
