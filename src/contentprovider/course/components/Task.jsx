@@ -382,7 +382,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                   {task.title}
                 </LinkMui>
 
-                {task.material_type === "QUIZ" && (
+                {/* {task.material_type === "QUIZ" && (
                   <IconButton
                     size="small"
                     style={{ marginLeft: "auto", order: 2 }}
@@ -393,7 +393,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                   >
                     <Add />
                   </IconButton>
-                )}
+                )} */}
               </div>
 
               {/* {task.material_type === "QUIZ" && (
@@ -711,7 +711,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     style={{ marginBottom: "15px" }}
                     type="number"
                   />
-                  <label htmlFor="marks">
+                  {/* <label htmlFor="marks">
                     <Typography variant="body2">Instructions</Typography>
                   </label>
                   <TextField
@@ -732,7 +732,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     rows={6}
                     placeholder="eg. Read the questions carefully"
                     style={{ marginBottom: "15px" }}
-                  />
+                  /> */}
                 </Fragment>
               );
             }

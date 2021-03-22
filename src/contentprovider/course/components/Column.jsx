@@ -339,9 +339,13 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 style={{
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
+                  margin: "8px 0 16px",
                 }}
               >
+                <Typography variant="body2">Add Material:</Typography>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     setMaterialType("file");
                     setCourseMaterialDialog(true);
@@ -351,6 +355,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   <AttachFile />
                 </IconButton>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     setMaterialType("video");
                     setCourseMaterialDialog(true);
@@ -360,6 +365,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   <Movie />
                 </IconButton>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     setMaterialType("quiz");
                     setCourseMaterialDialog(true);

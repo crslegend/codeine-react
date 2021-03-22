@@ -35,6 +35,7 @@ import validator from "validator";
 const useStyles = makeStyles((theme) => ({
   topSection: {
     display: "flex",
+    margin: theme.spacing(1),
     // justifyContent: "space-between",
     // alignItems: "center",
   },
@@ -285,8 +286,7 @@ const CourseCreation = () => {
     if (neverChooseOne) {
       setSbOpen(true);
       setSnackbar({
-        message:
-          "Please select at least 1 coding language/framework for your course",
+        message: "Please select at least 1 coding language/framework for your course",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -332,10 +332,7 @@ const CourseCreation = () => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append(
-      "learning_objectives",
-      JSON.stringify(data.learning_objectives)
-    );
+    formData.append("learning_objectives", JSON.stringify(data.learning_objectives));
     formData.append("requirements", JSON.stringify(data.requirements));
     formData.append("introduction_video_url", data.introduction_video_url);
 
@@ -546,17 +543,14 @@ const CourseCreation = () => {
                 ...data,
                 tasks: {
                   ...data.tasks,
-                  [res.data.assessment.questions[i].id]:
-                    res.data.assessment.questions[i],
+                  [res.data.assessment.questions[i].id]: res.data.assessment.questions[i],
                 },
               };
             }
 
             let arr = [];
             if (res.data.assessment.questions.length > 0) {
-              res.data.assessment.questions.forEach((question) =>
-                arr.push(question.id)
-              );
+              res.data.assessment.questions.forEach((question) => arr.push(question.id));
               data = {
                 ...data,
                 taskIds: arr,
@@ -654,10 +648,8 @@ const CourseCreation = () => {
 
       for (const material in allChapters.columns[column].course_materials) {
         if (
-          allChapters.columns[column].course_materials[material]
-            .material_type === "QUIZ" &&
-          allChapters.columns[column].course_materials[material].quiz.questions
-            .length === 0
+          allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
+          allChapters.columns[column].course_materials[material].quiz.questions.length === 0
         ) {
           setSbOpen(true);
           setSnackbar({
@@ -673,55 +665,29 @@ const CourseCreation = () => {
         }
 
         if (
-          allChapters.columns[column].course_materials[material]
-            .material_type === "QUIZ" &&
-          allChapters.columns[column].course_materials[material].quiz.questions
-            .length > 0
+          allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
+          allChapters.columns[column].course_materials[material].quiz.questions.length > 0
         ) {
-          let passingMarks =
-            allChapters.columns[column].course_materials[material].quiz
-              .passing_marks;
+          let passingMarks = allChapters.columns[column].course_materials[material].quiz.passing_marks;
           let totalMarks = 0;
-          for (
-            let j = 0;
-            j <
-            allChapters.columns[column].course_materials[material].quiz
-              .questions.length;
-            j++
-          ) {
-            if (
-              allChapters.columns[column].course_materials[material].quiz
-                .questions[j].mrq
-            ) {
-              totalMarks +=
-                allChapters.columns[column].course_materials[material].quiz
-                  .questions[j].mrq.marks;
+          for (let j = 0; j < allChapters.columns[column].course_materials[material].quiz.questions.length; j++) {
+            if (allChapters.columns[column].course_materials[material].quiz.questions[j].mrq) {
+              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mrq.marks;
             }
 
-            if (
-              allChapters.columns[column].course_materials[material].quiz
-                .questions[j].mcq
-            ) {
-              totalMarks +=
-                allChapters.columns[column].course_materials[material].quiz
-                  .questions[j].mcq.marks;
+            if (allChapters.columns[column].course_materials[material].quiz.questions[j].mcq) {
+              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mcq.marks;
             }
 
-            if (
-              allChapters.columns[column].course_materials[material].quiz
-                .questions[j].shortanswer
-            ) {
-              totalMarks +=
-                allChapters.columns[column].course_materials[material].quiz
-                  .questions[j].shortanswer.marks;
+            if (allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer) {
+              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer.marks;
             }
           }
 
           if (passingMarks > totalMarks) {
             setSbOpen(true);
             setSnackbar({
-              message:
-                "Quiz passing mark should be lower than or equal to the total marks of quiz",
+              message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
               severity: "error",
               anchorOrigin: {
                 vertical: "bottom",
@@ -765,8 +731,7 @@ const CourseCreation = () => {
         if (finalQuiz.passing_marks > totalMarks) {
           setSbOpen(true);
           setSnackbar({
-            message:
-              "Quiz passing mark should be lower than or equal to the total marks of quiz",
+            message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
             severity: "error",
             anchorOrigin: {
               vertical: "bottom",
@@ -876,15 +841,9 @@ const CourseCreation = () => {
                       >
                         <div style={{ marginRight: "25px" }}>
                           {coursePicAvatar ? (
-                            <Avatar
-                              className={classes.avatar}
-                              src={coursePicAvatar[0].data}
-                            />
+                            <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
                           ) : (
-                            <Avatar
-                              className={classes.avatar}
-                              style={{ padding: "10px" }}
-                            >
+                            <Avatar className={classes.avatar} style={{ padding: "10px" }}>
                               No Course Logo Yet
                             </Avatar>
                           )}
@@ -900,13 +859,8 @@ const CourseCreation = () => {
                           >
                             {` ${courseDetailsCard && courseDetailsCard.title}`}
                           </Typography>
-                          <Typography
-                            variant="body2"
-                            style={{ marginRight: "10px" }}
-                          >
-                            {` ${
-                              courseDetailsCard && courseDetailsCard.description
-                            }`}
+                          <Typography variant="body2" style={{ marginRight: "10px" }}>
+                            {` ${courseDetailsCard && courseDetailsCard.description}`}
                           </Typography>
                         </div>
                         <div>
@@ -919,7 +873,7 @@ const CourseCreation = () => {
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "50px" }}>
+                  <div style={{ marginRight: "50px", marginLeft: "8px" }}>
                     <PageTitle title="Chapters" />
                   </div>
 
@@ -965,15 +919,9 @@ const CourseCreation = () => {
                       >
                         <div style={{ marginRight: "25px" }}>
                           {coursePicAvatar ? (
-                            <Avatar
-                              className={classes.avatar}
-                              src={coursePicAvatar[0].data}
-                            />
+                            <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
                           ) : (
-                            <Avatar
-                              className={classes.avatar}
-                              style={{ padding: "10px" }}
-                            >
+                            <Avatar className={classes.avatar} style={{ padding: "10px" }}>
                               No Course Logo Yet
                             </Avatar>
                           )}
@@ -989,13 +937,8 @@ const CourseCreation = () => {
                           >
                             {` ${courseDetailsCard && courseDetailsCard.title}`}
                           </Typography>
-                          <Typography
-                            variant="body2"
-                            style={{ marginRight: "10px" }}
-                          >
-                            {` ${
-                              courseDetailsCard && courseDetailsCard.description
-                            }`}
+                          <Typography variant="body2" style={{ marginRight: "10px" }}>
+                            {` ${courseDetailsCard && courseDetailsCard.description}`}
                           </Typography>
                         </div>
                         <div>
@@ -1028,15 +971,8 @@ const CourseCreation = () => {
                   finalQuizQuestions={finalQuizQuestions}
                   setFinalQuizQuestions={setFinalQuizQuestions}
                 />
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setPageNum(1)}
-                    style={{ float: "right" }}
-                  >
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button variant="contained" color="primary" onClick={() => setPageNum(1)} style={{ float: "right" }}>
                     Back
                   </Button>
                   <Button
@@ -1126,9 +1062,7 @@ const CourseCreation = () => {
               <Fragment>
                 <PageTitle title="Visibility of Course" />
                 <label>
-                  <Typography style={{ marginBottom: "10px" }}>
-                    Select option below to publish course or not
-                  </Typography>
+                  <Typography style={{ marginBottom: "10px" }}>Select option below to publish course or not</Typography>
                 </label>
 
                 <RadioGroup
@@ -1147,15 +1081,8 @@ const CourseCreation = () => {
                     label="Save and publish on Codeine"
                   />
                 </RadioGroup>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setPageNum(2)}
-                    style={{ float: "right" }}
-                  >
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button variant="contained" color="primary" onClick={() => setPageNum(2)} style={{ float: "right" }}>
                     Back
                   </Button>
                   <Button
@@ -1265,12 +1192,7 @@ const CourseCreation = () => {
             >
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.dialogButtons}
-              type="submit"
-            >
+            <Button variant="contained" color="primary" className={classes.dialogButtons} type="submit">
               Save
             </Button>
           </DialogActions>
@@ -1287,10 +1209,7 @@ const CourseCreation = () => {
         }}
       >
         <DialogTitle>Contribute to Codeine's Cause!</DialogTitle>
-        <DialogContent>
-          Kindly make a contribution this month if you wish to publish new
-          courses.
-        </DialogContent>
+        <DialogContent>Kindly make a contribution this month if you wish to publish new courses.</DialogContent>
         <DialogActions>
           <Button
             className={classes.dialogButtons}
@@ -1300,10 +1219,7 @@ const CourseCreation = () => {
           >
             Cancel
           </Button>
-          <Button
-            color="primary"
-            onClick={() => history.push(`/partner/home/contributions`)}
-          >
+          <Button color="primary" onClick={() => history.push(`/partner/home/contributions`)}>
             Go To Contributions
           </Button>
         </DialogActions>

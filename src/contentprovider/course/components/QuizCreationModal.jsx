@@ -64,7 +64,7 @@ const QuizCreationModel = ({ quiz, setQuiz }) => {
         style={{ marginBottom: "15px" }}
         type="number"
       />
-      <label htmlFor="marks">
+      {/* <label htmlFor="marks">
         <Typography variant="body2">Instructions</Typography>
       </label>
       <TextField
@@ -82,7 +82,7 @@ const QuizCreationModel = ({ quiz, setQuiz }) => {
         required
         placeholder="eg. Read the questions carefully"
         style={{ marginBottom: "15px" }}
-      />
+      /> */}
     </Fragment>
   );
 };
