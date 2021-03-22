@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    minWidth: "70%",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     // marginBottom: "30px",
@@ -41,6 +41,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
     border: "1px solid #ddd",
     padding: theme.spacing(1),
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    marginRight: "30px",
   },
 }));
 
@@ -89,12 +98,7 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
           Final Quiz Perfomance for The Course
         </Typography>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Overall Average Score</Typography>
               <Tooltip
@@ -121,12 +125,7 @@ const FinalQuizAnalysis = ({ finalQuizPerformance, courseId }) => {
                 ))}
             </Typography>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Overall Passing Rate</Typography>
               <Tooltip

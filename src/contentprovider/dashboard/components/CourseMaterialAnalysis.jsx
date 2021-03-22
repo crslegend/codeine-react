@@ -120,7 +120,13 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
 
   return (
     <div className={classes.root}>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+        }}
+      >
         <div>
           <FormControl
             margin="dense"
@@ -148,7 +154,10 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             </Select>
           </FormControl>
         </div>
-        <div style={{ marginLeft: "10px" }}>
+      </div>
+
+      <Paper style={{ width: "100%", padding: "24px" }}>
+        <div style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}>
           <Paper className={classes.paper}>
             {selectedChapterId === "" ? (
               <Typography variant="body2">No Chapter Selected</Typography>
@@ -177,9 +186,6 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             )}
           </Paper>
         </div>
-      </div>
-
-      <Paper style={{ width: "100%", padding: "24px" }}>
         <ResponsiveContainer
           width="100%"
           height={400}

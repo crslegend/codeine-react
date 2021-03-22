@@ -20,9 +20,9 @@ import StudentDemographics from "./components/StudentDemographics";
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
-    marginLeft: "auto",
-    marginRight: "auto",
+    width: "100%",
+    // marginLeft: "auto",
+    // marginRight: "auto",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -41,10 +41,17 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   individualStats: {
-    display: "flex",
-    flexDirection: "column",
+    // display: "flex",
+    // flexDirection: "column",
     // alignItems: "center",
     // marginBottom: "5px",
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
   formControl: {
     marginTop: 0,
