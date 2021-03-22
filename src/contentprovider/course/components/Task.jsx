@@ -419,7 +419,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                 )}
               </div>
 
-              {task.material_type === "QUIZ" && (
+              {/* {task.material_type === "QUIZ" && (
                 <Droppable droppableId={task.id} type="subtask">
                   {(provided) => {
                     return (
@@ -445,7 +445,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     );
                   }}
                 </Droppable>
-              )}
+              )} */}
             </div>
           );
         }}

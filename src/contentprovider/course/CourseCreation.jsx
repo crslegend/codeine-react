@@ -1200,7 +1200,7 @@ const CourseCreation = () => {
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            minWidth: "600px",
           },
         }}
       >
@@ -1238,7 +1238,7 @@ const CourseCreation = () => {
                 fullWidth
                 margin="dense"
                 multiline
-                rows={5}
+                rows={8}
                 placeholder="Enter Chapter Overview"
                 value={chapterDetails && chapterDetails.overview}
                 onChange={(e) => {

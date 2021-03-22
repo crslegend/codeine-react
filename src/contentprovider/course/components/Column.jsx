@@ -2,13 +2,7 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import {
-  Assignment,
-  AttachFile,
-  Delete,
-  DragIndicator,
-  Movie,
-} from "@material-ui/icons";
+import { Assignment, AttachFile, Delete, DragIndicator, Movie } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -25,6 +19,7 @@ import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
+import QuizCreationModel from "./QuizCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -157,11 +152,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
   const handleCreateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        video.title === "" ||
-        video.description === "" ||
-        video.video_url === ""
-      ) {
+      if (video.title === "" || video.description === "" || video.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -213,11 +204,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         })
         .catch((err) => console.log(err));
     } else if (materialType === "file") {
-      if (
-        file.title === "" ||
-        file.description === "" ||
-        (file.google_drive_url === "" && !zipFile)
-      ) {
+      if (file.title === "" || file.description === "" || (file.google_drive_url === "" && !zipFile)) {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all required fields!",
@@ -282,11 +269,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         .catch((err) => console.log(err));
     } else {
       // add quiz as course material
-      if (
-        quiz.title === "" ||
-        quiz.description === "" ||
-        quiz.passing_marks === ""
-      ) {
+      if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -328,11 +311,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       <Draggable draggableId={column.id} index={index}>
         {(provided) => {
           return (
-            <div
-              className={classes.container}
-              {...provided.draggableProps}
-              ref={provided.innerRef}
-            >
+            <div className={classes.container} {...provided.draggableProps} ref={provided.innerRef}>
               <div className={classes.columnHeader}>
                 <div {...provided.dragHandleProps} className={classes.handle}>
                   <DragIndicator />
@@ -395,32 +374,13 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       style={{
-                        backgroundColor: snapshot.isDraggingOver
-                          ? "#e0e0e0"
-                          : "#fff",
+                        backgroundColor: snapshot.isDraggingOver ? "#e0e0e0" : "#fff",
                       }}
                     >
                       {tasks &&
-                        tasks.map((task, index) => {
-                          let subtasks = [];
-                          if (task.material_type === "QUIZ") {
-                            subtasks =
-                              task.subtaskIds &&
-                              task.subtaskIds.map(
-                                (subtaskId) => state.subtasks[subtaskId]
-                              );
-                          }
-
-                          return (
-                            <Task
-                              key={task.id}
-                              task={task}
-                              index={index}
-                              getCourse={getCourse}
-                              subtasks={subtasks}
-                            />
-                          );
-                        })}
+                        tasks.map((task, index) => (
+                          <Task key={task.id} task={task} index={index} getCourse={getCourse} />
+                        ))}
                       {provided.placeholder}
                     </div>
                   );
@@ -438,7 +398,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            minWidth: "600px",
           },
         }}
       >
@@ -477,7 +437,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                 });
               }}
               required
+              inputProps={{ style: { fontSize: "14px" } }}
               style={{ marginBottom: "20px" }}
+              size="small"
             />
             <label htmlFor="overview">
               <Typography variant="body2">Chapter Overview</Typography>
@@ -494,9 +456,10 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   overview: e.target.value,
                 });
               }}
+              inputProps={{ style: { fontSize: "14px" } }}
               required
               multiline
-              rows={5}
+              rows={8}
             />
           </DialogContent>
           <DialogActions>
@@ -510,12 +473,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
             >
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.dialogButtons}
-              type="submit"
-            >
+            <Button variant="contained" color="primary" className={classes.dialogButtons} type="submit">
               Save
             </Button>
           </DialogActions>
@@ -569,7 +527,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            minWidth: "600px",
           },
         }}
       >
@@ -596,13 +554,12 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         });
                       }}
                       required
+                      inputProps={{ style: { fontSize: "14px" } }}
                       placeholder="Enter Title"
                       style={{ marginBottom: "15px" }}
                     />
                     <label htmlFor="description">
-                      <Typography variant="body2">
-                        Description of File
-                      </Typography>
+                      <Typography variant="body2">Description of File</Typography>
                     </label>
                     <TextField
                       id="description"
@@ -616,6 +573,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                           description: e.target.value,
                         });
                       }}
+                      inputProps={{ style: { fontSize: "14px" } }}
                       required
                       placeholder="Enter Description"
                       style={{ marginBottom: "25px" }}
@@ -649,10 +607,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                         },
                       }}
                     />
-                    <Typography
-                      variant="h6"
-                      style={{ textAlign: "center", marginTop: "10px" }}
-                    >
+                    <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                       OR
                     </Typography>
                     <label htmlFor="url">
@@ -670,6 +625,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                           google_drive_url: e.target.value,
                         });
                       }}
+                      inputProps={{ style: { fontSize: "14px" } }}
                       required
                       placeholder="https://drive.google.com"
                       style={{ marginBottom: "15px" }}
@@ -694,14 +650,13 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                           title: e.target.value,
                         });
                       }}
+                      inputProps={{ style: { fontSize: "14px" } }}
                       required
                       placeholder="Enter Title"
                       style={{ marginBottom: "15px" }}
                     />
                     <label htmlFor="description">
-                      <Typography variant="body2">
-                        Description of Video
-                      </Typography>
+                      <Typography variant="body2">Description of Video</Typography>
                     </label>
                     <TextField
                       id="description"
@@ -715,6 +670,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                           description: e.target.value,
                         });
                       }}
+                      inputProps={{ style: { fontSize: "14px" } }}
                       required
                       placeholder="Enter Description"
                       style={{ marginBottom: "15px" }}
@@ -734,6 +690,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                           video_url: e.target.value,
                         });
                       }}
+                      inputProps={{ style: { fontSize: "14px" } }}
                       required
                       placeholder="https://www.google.com"
                       style={{ marginBottom: "15px" }}
@@ -741,95 +698,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   </Fragment>
                 );
               } else if (materialType === "quiz") {
-                return (
-                  <Fragment>
-                    <label htmlFor="title">
-                      <Typography variant="body2">
-                        Title of Quiz (Required)
-                      </Typography>
-                    </label>
-                    <TextField
-                      id="title"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={quiz && quiz.title}
-                      onChange={(e) => {
-                        setQuiz({
-                          ...quiz,
-                          title: e.target.value,
-                        });
-                      }}
-                      required
-                      placeholder="Enter Title"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="description">
-                      <Typography variant="body2">
-                        Description of Quiz (Required)
-                      </Typography>
-                    </label>
-                    <TextField
-                      id="description"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={quiz && quiz.description}
-                      onChange={(e) => {
-                        setQuiz({
-                          ...quiz,
-                          description: e.target.value,
-                        });
-                      }}
-                      required
-                      placeholder="Enter Description"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="marks">
-                      <Typography variant="body2">
-                        Passing Marks (Required)
-                      </Typography>
-                    </label>
-                    <TextField
-                      id="marks"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={quiz && quiz.passing_marks}
-                      onChange={(e) => {
-                        setQuiz({
-                          ...quiz,
-                          passing_marks: e.target.value,
-                        });
-                      }}
-                      InputProps={{
-                        inputProps: { min: 0 },
-                      }}
-                      required
-                      style={{ marginBottom: "15px" }}
-                      type="number"
-                    />
-                    <label htmlFor="marks">
-                      <Typography variant="body2">Instructions</Typography>
-                    </label>
-                    <TextField
-                      id="marks"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={quiz && quiz.instructions}
-                      onChange={(e) => {
-                        setQuiz({
-                          ...quiz,
-                          instructions: e.target.value,
-                        });
-                      }}
-                      required
-                      placeholder="eg. Read the questions carefully"
-                      style={{ marginBottom: "15px" }}
-                    />
-                  </Fragment>
-                );
+                return <QuizCreationModel quiz={quiz} setQuiz={setQuiz} />;
               }
             })()}
           </DialogContent>
