@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   FormControl,
   InputLabel,
@@ -219,19 +219,7 @@ const ViewAllCourses = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div className={classes.courses}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>

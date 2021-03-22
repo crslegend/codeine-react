@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   Accordion,
   AccordionDetails,
@@ -531,19 +531,8 @@ const EnrollCourse = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+
       <div className={classes.mainSection}>
         <div
           style={{

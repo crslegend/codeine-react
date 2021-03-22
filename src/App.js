@@ -4,10 +4,17 @@ import { Route, Switch } from "react-router-dom";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
+import ViewArticlePage from "./member/article/ArticleMain";
+import MemberArticlePage from "./member/article/MemberArticleList";
+import MemberCoursePage from "./member/profile/Courses/CoursesPage";
+import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
+import MemberProfilePage from "./member/profile/Profile/ProfilePage";
+import MemberPasswordPage from "./member/profile/Password/PasswordPage";
+import MemberEditArticlePage from "./member/article/EditArticle";
+import MemberPaymentPage from "./member/profile/Payment/PaymentPage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
-import MemberHome from "./member/profile/MemberRoutesPage";
 import PrivateRoute from "./components/Routes/PrivateRoute.jsx";
 import NotFound from "./components/NotFound";
 import ContentProviderHome from "./contentprovider/ContentProviderRoutes";
@@ -81,11 +88,6 @@ const App = () => {
         sensitive
         component={BookConsult}
       />
-      <PrivateRoute
-        path="/member/home"
-        render={() => <MemberHome />}
-        user="member"
-      />
       <LandingPageRoute
         exact
         path="/member/login"
@@ -96,6 +98,55 @@ const App = () => {
         exact
         path="/member/register"
         component={MemberRegisterPage}
+        user="member"
+      />
+      <Route
+        exact
+        path="/article/:id"
+        strict
+        sensitive
+        component={ViewArticlePage}
+      />
+      <PrivateRoute
+        exact
+        path="/member/articles"
+        component={MemberArticlePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/courses"
+        component={MemberCoursePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/consultations"
+        component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/profile"
+        component={MemberProfilePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/profile/changepassword"
+        component={MemberPasswordPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/payment"
+        component={MemberPaymentPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/article/edit/:id"
+        component={MemberEditArticlePage}
         user="member"
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}

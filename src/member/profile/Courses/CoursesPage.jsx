@@ -16,10 +16,17 @@ import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+<<<<<<< HEAD
 import { Pagination } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import Label from "../../landing/components/Label.jsx";
+=======
+import MemberNavBar from "../../MemberNavBar";
+import { Pagination, Rating } from "@material-ui/lab";
+import { Assignment } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
+>>>>>>> e75a94ebc35a08d8f9ce7b7f124ebca261f9d945
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -99,7 +106,15 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
-  // const history = useHistory();
+  const history = useHistory();
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
@@ -196,6 +211,7 @@ const CoursesPage = () => {
 
   useEffect(() => {
     getAllCourses();
+    checkIfLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -217,50 +233,56 @@ const CoursesPage = () => {
 
   return (
     <Fragment>
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Enrolled Courses
-        </Typography>
-      </Box>
-      <div className={classes.content}>
-        <div className={classes.searchSection}>
-          <div className={classes.searchBar}>
-            <SearchBar
-              placeholder="Search Courses"
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
-              onCancelSearch={handleCancelSearch}
-              onRequestSearch={handleRequestSearch}
-              // className={classes.searchBar}
-              classes={{
-                input: classes.input,
-              }}
-            />
-          </div>
-          <div>
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
-              <Select
-                label="Sort By"
-                value={sortMethod}
-                onChange={(event) => {
-                  onSortChange(event);
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      <div style={{ paddingTop: "65px" }}>
+        <Box className={classes.heading}>
+          <Typography
+            variant="h4"
+            style={{ marginLeft: "56px", color: "#fff" }}
+          >
+            My Enrolled Courses
+          </Typography>
+        </Box>
+        <div className={classes.content}>
+          <div className={classes.searchSection}>
+            <div className={classes.searchBar}>
+              <SearchBar
+                placeholder="Search Courses"
+                value={searchValue}
+                onChange={(newValue) => setSearchValue(newValue)}
+                onCancelSearch={handleCancelSearch}
+                onRequestSearch={handleRequestSearch}
+                // className={classes.searchBar}
+                classes={{
+                  input: classes.input,
                 }}
-                style={{ height: 47, backgroundColor: "#fff" }}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="-published_date">
-                  Published Date (Least Recent)
-                </MenuItem>
-                <MenuItem value="published_date">
-                  Published Date (Most Recent)
-                </MenuItem>
-                <MenuItem value="rating">Rating (Ascending)</MenuItem>
-                <MenuItem value="-rating">Rating (Descending)</MenuItem>
-              </Select>
-            </FormControl>
+              />
+            </div>
+            <div>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
+                <Select
+                  label="Sort By"
+                  value={sortMethod}
+                  onChange={(event) => {
+                    onSortChange(event);
+                  }}
+                  style={{ height: 47, backgroundColor: "#fff" }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="-published_date">
+                    Published Date (Least Recent)
+                  </MenuItem>
+                  <MenuItem value="published_date">
+                    Published Date (Most Recent)
+                  </MenuItem>
+                  <MenuItem value="rating">Rating (Ascending)</MenuItem>
+                  <MenuItem value="-rating">Rating (Descending)</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </div>
         </div>
         <div className={classes.courses}>

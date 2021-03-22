@@ -911,7 +911,7 @@ const AdminLearnersAchievementPage = () => {
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={() => {
               setAvatar(avatar && avatar);
               setNewBadge({

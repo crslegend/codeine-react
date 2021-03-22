@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import { useParams, useHistory } from "react-router-dom";
 import components from "./components/NavbarComponents";
 import {
@@ -160,6 +160,7 @@ const BookConsult = () => {
   const classes = styles();
   const history = useHistory();
   const { id } = useParams();
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const [currentViewName, setCurrentViewName] = useState("week");
   const [stripeDialog, setStripeDialog] = useState(false);
@@ -178,6 +179,12 @@ const BookConsult = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { consultations, loading } = state;
   const currentDate = new Date();
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const setConsultations = React.useCallback(
     (nextConsultations) =>
@@ -321,6 +328,7 @@ const BookConsult = () => {
   // handles retrieval of all consultations
   useEffect(() => {
     handleGetAllConsultations(id, setConsultations, setLoading);
+    checkIfLoggedIn();
     // eslint-disable-next-line
   }, []);
 
@@ -409,14 +417,7 @@ const BookConsult = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={components.loggedInNavbar(() => {
-          Service.removeCredentials();
-          history.push("/");
-        })}
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <Grid container className={classes.mainSection}>
         <Grid item xs={1}>
           <IconButton
