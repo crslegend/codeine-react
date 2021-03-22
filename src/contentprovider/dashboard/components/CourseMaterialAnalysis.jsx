@@ -158,9 +158,9 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
 
       <Paper style={{ width: "100%", padding: "24px" }}>
         <div style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}>
-          <Paper className={classes.paper}>
+          <div style={{ textAlign: "center" }}>
             {selectedChapterId === "" ? (
-              <Typography variant="body2">No Chapter Selected</Typography>
+              <Typography variant="h6">No Chapter Selected</Typography>
             ) : (
               <div>
                 {timeTakenCourseMaterial &&
@@ -170,7 +170,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                       return (
                         <Typography
                           key={index}
-                          variant="body2"
+                          variant="h6"
                           style={{ textAlign: "center" }}
                         >
                           <span style={{ fontWeight: 600 }}>
@@ -184,7 +184,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                   })}
               </div>
             )}
-          </Paper>
+          </div>
         </div>
         <ResponsiveContainer
           width="100%"
