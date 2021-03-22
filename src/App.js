@@ -1,6 +1,7 @@
 import React from "react";
 // import "./App.css";
 import { Route, Switch } from "react-router-dom";
+import MemberDashboardPage from "./member/profile/Dashboard/DashboardPage";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
@@ -106,6 +107,12 @@ const App = () => {
         strict
         sensitive
         component={ViewArticlePage}
+      />
+      <PrivateRoute
+        exact
+        path="/member/dashboard"
+        component={MemberDashboardPage}
+        user="member"
       />
       <PrivateRoute
         exact

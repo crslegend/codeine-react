@@ -284,128 +284,126 @@ const CoursesPage = () => {
                       className={classes.link}
                       style={{ height: "100%" }}
                     >
-                        <CardActionArea
-                          // onClick={() => {
-                          //   return <a href={`/courses/${course.id}`} />;
-                          // }}
-                          className={classes.cardActionArea}
-                          style={{ height: "100%" }}
-                        >
-                          <div style={{ height: "30%" }}>
-                            <CardMedia
-                              className={classes.media}
-                              image={course && course.thumbnail}
-                              title={course && course.title}
-                            />
-                          </div>
-                          <div style={{ height: "5%" }} />
-                          <div style={{ height: "65%" }}>
-                            <CardContent
+                      <CardActionArea
+                        // onClick={() => {
+                        //   return <a href={`/courses/${course.id}`} />;
+                        // }}
+                        className={classes.cardActionArea}
+                        style={{ height: "100%" }}
+                      >
+                        <div style={{ height: "30%" }}>
+                          <CardMedia
+                            className={classes.media}
+                            image={course && course.thumbnail}
+                            title={course && course.title}
+                          />
+                        </div>
+                        <div style={{ height: "5%" }} />
+                        <div style={{ height: "65%" }}>
+                          <CardContent
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              height: "100%",
+                            }}
+                          >
+                            <div
                               style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-between",
-                                height: "100%",
+                                width: "100%",
+                                marginBottom: "10px",
+                                marginTop: "10px",
                               }}
                             >
-                              <div
-                                style={{
-                                  width: "100%",
-                                  marginBottom: "10px",
-                                  marginTop: "10px",
-                                }}
-                              >
-                                <Box display="flex" alignItems="center">
-                                  <Box width="100%" mr={1}>
-                                    <LinearProgress
-                                      variant="determinate"
-                                      value={
-                                        progressArr &&
-                                        parseInt(getProgress(course))
-                                      }
-                                    />
-                                  </Box>
-                                  <Box minWidth={35}>
-                                    <Typography variant="body2">
-                                      {progressArr &&
-                                        parseInt(
-                                          getProgress(course)
-                                        ).toFixed() + "%"}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                                <Typography
-                                  variant="body1"
-                                  style={{
-                                    fontWeight: 600,
-                                    paddingTop: "10px",
-                                    paddingBottom: "10px",
-                                  }}
-                                >
-                                  {course && course.title}
-                                </Typography>
-                              </div>
-                              <div>
-                                <Typography
-                                  variant="body2"
-                                  style={{
-                                    opacity: 0.7,
-                                    paddingBottom: "10px",
-                                  }}
-                                >
-                                  {course.partner && course.partner.first_name}{" "}
-                                  {course.partner && course.partner.last_name}
-                                </Typography>
-                                {(() => {})()}
-                                <div>
-                                  <Rating
-                                    size="small"
-                                    readOnly
+                              <Box display="flex" alignItems="center">
+                                <Box width="100%" mr={1}>
+                                  <LinearProgress
+                                    variant="determinate"
                                     value={
-                                      course && course.rating
-                                        ? parseFloat(course.rating)
-                                        : 0
+                                      progressArr &&
+                                      parseInt(getProgress(course))
                                     }
                                   />
-                                </div>
+                                </Box>
+                                <Box minWidth={35}>
+                                  <Typography variant="body2">
+                                    {progressArr &&
+                                      parseInt(getProgress(course)).toFixed() +
+                                        "%"}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Typography
+                                variant="body1"
+                                style={{
+                                  fontWeight: 600,
+                                  paddingTop: "10px",
+                                  paddingBottom: "10px",
+                                }}
+                              >
+                                {course && course.title}
+                              </Typography>
+                            </div>
+                            <div>
+                              <Typography
+                                variant="body2"
+                                style={{
+                                  opacity: 0.7,
+                                  paddingBottom: "10px",
+                                }}
+                              >
+                                {course.partner && course.partner.first_name}{" "}
+                                {course.partner && course.partner.last_name}
+                              </Typography>
+                              {(() => {})()}
+                              <div>
+                                <Rating
+                                  size="small"
+                                  readOnly
+                                  value={
+                                    course && course.rating
+                                      ? parseFloat(course.rating)
+                                      : 0
+                                  }
+                                />
                               </div>
-                            </CardContent>
-                          </div>
-                        </CardActionArea>
-                      </a>
-                    </Card>
-                  );
-                })
-            ) : (
-              <div
-                style={{
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  textAlign: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <Assignment fontSize="large" />
-                <Typography variant="h5">No Courses Found</Typography>
-              </div>
-            )}
-          </div>
-          <div className={classes.paginationSection}>
-            {allCourses && allCourses.length > 0 && (
-              <Pagination
-                count={noOfPages}
-                page={page}
-                onChange={handlePageChange}
-                defaultPage={1}
-                color="primary"
-                size="medium"
-                showFirstButton
-                showLastButton
-                className={classes.pagination}
-              />
-            )}
-          </div>
+                            </div>
+                          </CardContent>
+                        </div>
+                      </CardActionArea>
+                    </a>
+                  </Card>
+                );
+              })
+          ) : (
+            <div
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <Assignment fontSize="large" />
+              <Typography variant="h5">No Courses Found</Typography>
+            </div>
+          )}
+        </div>
+        <div className={classes.paginationSection}>
+          {allCourses && allCourses.length > 0 && (
+            <Pagination
+              count={noOfPages}
+              page={page}
+              onChange={handlePageChange}
+              defaultPage={1}
+              color="primary"
+              size="medium"
+              showFirstButton
+              showLastButton
+              className={classes.pagination}
+            />
+          )}
         </div>
       </div>
     </Fragment>
