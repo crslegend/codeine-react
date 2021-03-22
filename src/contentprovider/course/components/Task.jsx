@@ -1,11 +1,10 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
 import {
   Avatar,
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,7 +19,7 @@ import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import SubTask from "./SubTask";
+// import SubTask from "./SubTask";
 import QuestionDialog from "./QuestionDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     width: 100,
   },
   dropzoneContainer: {
-    minHeight: "190px",
+    minHeight: "150px",
     "@global": {
       ".MuiDropzoneArea-root": {
         minHeight: "150px",
@@ -71,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
     flexGrow: 1,
     minHeight: "70px",
+  },
+  dropzoneText: {
+    fontSize: "14px",
   },
 }));
 
@@ -528,6 +530,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     )}
                     <DropzoneAreaBase
                       dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                      dropzoneParagraphClass={classes.dropzoneText}
                       dropzoneClass={classes.dropzoneContainer}
                       // dropzoneProps={{ disabled: true }}
                       filesLimit={1}

@@ -67,12 +67,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fff",
   },
   dropzoneContainer: {
-    minHeight: "190px",
+    marginTop: "5px",
+    minHeight: "110px",
     "@global": {
       ".MuiDropzoneArea-root": {
-        minHeight: "190px",
+        minHeight: "110px",
       },
     },
+  },
+  dropzoneText: {
+    fontSize: "14px",
   },
 }));
 
@@ -590,6 +594,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                     </label>
                     <DropzoneAreaBase
                       dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                      dropzoneParagraphClass={classes.dropzoneText}
                       dropzoneClass={classes.dropzoneContainer}
                       filesLimit={1}
                       maxFileSize={5000000000}

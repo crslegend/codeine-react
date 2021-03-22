@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   insideDrawer: {
     display: "flex",
     flexDirection: "column",
-    padding: theme.spacing(5)
+    padding: theme.spacing(5),
   },
   avatar: {
     width: theme.spacing(15),
