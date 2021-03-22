@@ -4,6 +4,8 @@ import TooltipMui from "@material-ui/core/Tooltip";
 import PageTitle from "../../../components/PageTitle";
 import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
+import Cookies from "js-cookie";
+import MemberNavBar from "../../MemberNavBar";
 // import { useHistory } from "react-router";
 import {
   FormControl,
@@ -63,9 +65,17 @@ const DashboardPage = () => {
   const classes = useStyles();
   //   const history = useHistory();
 
-  const [numDays, setNumDays] = useState();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const [numDays, setNumDays] = useState(7);
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
   const [timeSpentCategories, setTimeSpentCategories] = useState();
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const formatDataIntoArr = (data) => {
     // console.log(data);
@@ -155,7 +165,10 @@ const DashboardPage = () => {
 
     if (numDays && numDays !== "") {
       Service.client
-        .get(`/analytics/time-spent-breakdown`, { params: { days: numDays } })
+        .get(`/analytics/time-spent-breakdown`, {
+          params: { days: numDays },
+          timeout: 20000,
+        })
         .then((res) => {
           //   console.log(res);
           setTimeSpentOnPlatform(res.data.total_time_spent);
@@ -164,7 +177,7 @@ const DashboardPage = () => {
         .catch((err) => console.log(err));
     } else {
       Service.client
-        .get(`/analytics/time-spent-breakdown`)
+        .get(`/analytics/time-spent-breakdown`, { timeout: 20000 })
         .then((res) => {
           //   console.log(res);
           setTimeSpentOnPlatform(res.data.total_time_spent);
@@ -176,6 +189,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     getAnalytics();
+    checkIfLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -186,6 +200,7 @@ const DashboardPage = () => {
 
   return (
     <div>
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <PageTitle title="Dashboard" />
       <div
         style={{
@@ -248,7 +263,7 @@ const DashboardPage = () => {
               <TooltipMui
                 title={
                   <Typography variant="body2">
-                    The total time you spent on this platform so far (in hours)
+                    Total number of hours you have spent on Codeine
                   </Typography>
                 }
               >

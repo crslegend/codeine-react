@@ -214,8 +214,8 @@ const MemberNavBar = (props) => {
             <Typography
               className={classes.typography}
               onClick={() => {
-                //history.push("/member/dashboard");
-                alert("Clicked on Dashboard");
+                history.push("/member/dashboard");
+                // alert("Clicked on Dashboard");
               }}
             >
               Dashboard

@@ -39,18 +39,18 @@ const styles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
     display: "flex",
   },
+  cardActionArea: {
+    flexGrow: 1,
+    flexDirection: "column",
+    alignItems: "stretch",
+    height: "90%",
+  },
   cardroot: {
     width: "300px",
     padding: "10px 10px 0px",
     marginRight: "50px",
     border: "1px solid",
     borderRadius: 0,
-  },
-  cardlink: {
-    height: "90%",
-    "&:hover $focusHighlight": {
-      opacity: 0,
-    },
   },
   pro: {
     backgroundColor: theme.palette.primary.main,
@@ -87,6 +87,7 @@ const styles = makeStyles((theme) => ({
   paginationSection: {
     float: "right",
     marginTop: theme.spacing(2),
+    marginRight: theme.spacing(3),
     paddingBottom: theme.spacing(5),
   },
   pagination: {
@@ -294,89 +295,95 @@ const CoursesPage = () => {
               .map((course, index) => {
                 return (
                   <Card key={index} elevation={0} className={classes.cardroot}>
-                    <Link
-                      className={classes.cardlink}
-                      to={`/courses/${course && course.id}`}
-                      component={CardActionArea}
+                    <a
+                      href={`/courses/enroll/${course.id}`}
+                      className={classes.link}
                     >
-                      <CardContent
-                        style={{
-                          height: "inherit",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          padding: "10px 10px",
-                        }}
+                      <CardActionArea
+                        // onClick={() => {
+                        //   return <a href={`/courses/${course.id}`} />;
+                        // }}
+                        className={classes.cardActionArea}
                       >
-                        <div>
-                          {course && course.pro === true ? (
-                            <div style={{ height: "25px" }}>
-                              <Typography
-                                variant="subtitle1"
-                                className={classes.pro}
-                              >
-                                PRO
-                              </Typography>
-                            </div>
-                          ) : (
-                            <div style={{ height: "25px" }}>
-                              <Typography
-                                variant="subtitle1"
-                                className={classes.free}
-                              >
-                                FREE
-                              </Typography>
-                            </div>
-                          )}
+                        <CardContent
+                          style={{
+                            height: "inherit",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "10px 10px",
+                          }}
+                        >
+                          <div>
+                            {course && course.pro === true ? (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.pro}
+                                >
+                                  PRO
+                                </Typography>
+                              </div>
+                            ) : (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.free}
+                                >
+                                  FREE
+                                </Typography>
+                              </div>
+                            )}
 
-                          <Typography
-                            style={{
-                              fontWeight: 600,
-                            }}
-                            variant="h6"
-                          >
-                            {course && course.title}
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            style={{
-                              paddingBottom: "30px",
-                              fontFamily: "Roboto Mono",
-                            }}
-                          >
-                            {course &&
-                              course.partner.first_name +
-                                " " +
-                                course.partner.last_name}
-                          </Typography>
-                        </div>
-                        <div>
-                          <Typography
-                            variant="body1"
-                            style={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            duration: {course && course.duration}h
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            style={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            exp points: {course && course.exp_points}p
-                          </Typography>
-                          <div style={{ display: "flex", margin: "10px 0" }}>
-                            {course &&
-                              course.categories.map((category) => (
-                                <Label label={category} />
-                              ))}
+                            <Typography
+                              style={{
+                                fontWeight: 600,
+                              }}
+                              variant="h6"
+                            >
+                              {course && course.title}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                paddingBottom: "30px",
+                                fontFamily: "Roboto Mono",
+                              }}
+                            >
+                              {course &&
+                                course.partner.first_name +
+                                  " " +
+                                  course.partner.last_name}
+                            </Typography>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Link>
-                    <Box>
+                          <div>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              duration: {course && course.duration}h
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              exp points: {course && course.exp_points}p
+                            </Typography>
+                            <div style={{ display: "flex", margin: "10px 0" }}>
+                              {course &&
+                                course.categories.map((category) => (
+                                  <Label label={category} />
+                                ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </CardActionArea>
+                    </a>
+                    <Box style={{ height: "10%" }}>
                       <LinearProgress
                         variant="determinate"
                         style={{ height: "10px" }}

@@ -790,7 +790,7 @@ const ViewCodeReviewDetails = () => {
           >
             <Typography variant="h1">{code && code.title}</Typography>
             <div style={{ marginLeft: "auto", display: "flex" }}>
-              {loggedIn && code && checkIfOwnerOfComment(code.member.id) && (
+              {loggedIn && code && checkIfOwnerOfComment(code.user.id) && (
                 <div>
                   <IconButton onClick={() => loadDataForEditSnippet()}>
                     <Edit />
@@ -803,11 +803,11 @@ const ViewCodeReviewDetails = () => {
               <div>
                 <IconButton
                   onClick={() => {
-                    handleLikeUnlikeSnippet(code && code.current_member_liked);
+                    handleLikeUnlikeSnippet(code && code.current_user_liked);
                   }}
                   disabled={!loggedIn}
                 >
-                  {code && code.current_member_liked ? (
+                  {code && code.current_user_liked ? (
                     <Favorite color="primary" />
                   ) : (
                     <FavoriteBorder />
@@ -822,9 +822,7 @@ const ViewCodeReviewDetails = () => {
         <div style={{ marginBottom: "20px" }}>
           <Typography variant="body1" style={{ opacity: 0.8 }}>
             <LinkMui className={classes.linkMui}>
-              {`${code && code.member.first_name} ${
-                code && code.member.last_name
-              }`}
+              {`${code && code.user.first_name} ${code && code.user.last_name}`}
             </LinkMui>
             {` asked ${code && calculateDateInterval(code.timestamp)}`}
           </Typography>
