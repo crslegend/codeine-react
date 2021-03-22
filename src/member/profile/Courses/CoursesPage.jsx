@@ -12,6 +12,11 @@ import {
   Select,
   Typography,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
@@ -19,10 +24,10 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import { Pagination } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
-import { Link } from "react-router-dom";
+import { Rating } from "@material-ui/lab";
 import Label from "../../landing/components/Label.jsx";
+import Toast from "../../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -86,7 +91,7 @@ const styles = makeStyles((theme) => ({
   },
   paginationSection: {
     float: "right",
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(7),
     marginRight: theme.spacing(3),
     paddingBottom: theme.spacing(5),
   },
@@ -109,7 +114,6 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
-  const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -119,18 +123,83 @@ const CoursesPage = () => {
     }
   };
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
 
   const [allCourses, setAllCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
 
   const [progressArr, setProgressArr] = useState([]);
+  const [doneReview] = useState([]);
 
   const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
   );
+
+  const [reviewDialog, setReviewDialog] = useState(false);
+  const [review, setReview] = useState({
+    rating: 0,
+    description: "",
+  });
+
+  const handleSubmitReview = (courseId) => {
+    if (review.rating === 0 || review.description === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a rating and description for the review!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    Service.client
+      .post(`/courses/${courseId}/reviews`, review)
+      .then((res) => {
+        console.log(res);
+        getAllCourses();
+        setReviewDialog(false);
+        setReview();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Course review submitted successfully!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getReview = (course) => {
+    for (let i = 0; i < doneReview.length; i++) {
+      if (course === doneReview[i].course) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const getAllCourses = (sort) => {
     let decoded;
@@ -186,11 +255,25 @@ const CoursesPage = () => {
     Service.client
       .get(`enrollments`)
       .then((res) => {
-        // console.log(res);
+        //console.log(res.data);
         let arr = res.data;
         arr = arr.filter((course) => course.course !== null);
-        // console.log(arr);
         setProgressArr(arr);
+        arr.map((item) => {
+          return Service.client
+            .get(`/courses/${item.course.id}/reviews`)
+            .then((res) => {
+              if (res.data.length > 0) {
+                for (let i = 0; i < res.data.length; i++) {
+                  if (res.data[i].member.id === decoded.user_id) {
+                    doneReview.push(res.data[i]);
+                  }
+                }
+              }
+              console.log(doneReview);
+            })
+            .catch((err) => console.log(err));
+        });
       })
       .catch((err) => console.log(err));
   };
@@ -234,8 +317,14 @@ const CoursesPage = () => {
     }
   };
 
+  const handleReviewDialog = (course) => {
+    setSelectedCourse(course);
+    setReviewDialog(true);
+  };
+
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ paddingTop: "65px" }}>
         <Box className={classes.heading}>
@@ -398,16 +487,22 @@ const CoursesPage = () => {
                         <Typography variant="body2">
                           {getProgress(course)}% complete
                         </Typography>
-                        <Button
-                          color="primary"
-                          style={{
-                            fontSize: "12px",
-                            textTransform: "none",
-                            padding: 0,
-                          }}
-                        >
-                          Leave a rating
-                        </Button>
+                        {getProgress(course) === "100.00" ? (
+                          <Button
+                            color="primary"
+                            disabled={getReview(course.id)}
+                            style={{
+                              fontSize: "12px",
+                              textTransform: "none",
+                              padding: 0,
+                            }}
+                            onClick={() => handleReviewDialog(course)}
+                          >
+                            Leave a rating
+                          </Button>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </Box>
                   </Card>
@@ -443,6 +538,76 @@ const CoursesPage = () => {
             />
           )}
         </div>
+        <Dialog
+          open={reviewDialog}
+          onClose={() => setReviewDialog(false)}
+          PaperProps={{
+            style: {
+              width: "500px",
+            },
+          }}
+        >
+          <DialogTitle>
+            You have completed the course! Give a review.
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              Give Rating
+            </Typography>
+
+            <Rating
+              value={review && review.rating}
+              onChange={(event, newValue) => {
+                setReview({
+                  ...review,
+                  rating: newValue,
+                });
+              }}
+              style={{ marginBottom: "20px" }}
+            />
+            <label htmlFor="description">
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                Give Review Description
+              </Typography>
+            </label>
+            <TextField
+              id="description"
+              variant="outlined"
+              margin="dense"
+              value={review && review.description}
+              onChange={(e) =>
+                setReview({
+                  ...review,
+                  description: e.target.value,
+                })
+              }
+              fullWidth
+              placeholder="Enter review description"
+              multiline
+              rows={3}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              className={classes.dialogButtons}
+              onClick={() => {
+                setReviewDialog(false);
+              }}
+            >
+              Later
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                handleSubmitReview(selectedCourse.id);
+              }}
+            >
+              Give Review
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </Fragment>
   );
