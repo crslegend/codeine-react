@@ -14,8 +14,10 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
+import MemberNavBar from "../../MemberNavBar";
 import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +68,19 @@ const Consultation = () => {
     },
     autoHideDuration: 3000,
   });
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const [sortMethod, setSortMethod] = useState("");
 
@@ -315,6 +330,8 @@ const Consultation = () => {
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      <div style={{ paddingTop: "65px" }}></div>
       <Box className={classes.heading}>
         <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
           My Consultations
