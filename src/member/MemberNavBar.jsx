@@ -143,6 +143,15 @@ const MemberNavBar = (props) => {
   const loggedInNavBar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          style={{ textTransform: "none" }}
+        >
+          Upgrade
+        </Button>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
         <Avatar
           onClick={handleClick}
           src={user && user.profile_photo}

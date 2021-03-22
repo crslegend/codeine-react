@@ -11,22 +11,18 @@ import {
   MenuItem,
   Select,
   Typography,
+  Button,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-<<<<<<< HEAD
 import { Pagination } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
+import MemberNavBar from "../../MemberNavBar";
 import { Link } from "react-router-dom";
 import Label from "../../landing/components/Label.jsx";
-=======
-import MemberNavBar from "../../MemberNavBar";
-import { Pagination, Rating } from "@material-ui/lab";
-import { Assignment } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
->>>>>>> e75a94ebc35a08d8f9ce7b7f124ebca261f9d945
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -40,25 +36,23 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(5),
   },
   courses: {
+    paddingLeft: theme.spacing(5),
     display: "flex",
-    marginTop: "30px",
   },
   cardroot: {
     width: "300px",
-    padding: "10px 0px",
-    marginTop: "30px",
+    padding: "10px 10px 0px",
     marginRight: "50px",
     border: "1px solid",
     borderRadius: 0,
   },
   cardlink: {
-    height: "100%",
+    height: "90%",
     "&:hover $focusHighlight": {
       opacity: 0,
     },
   },
   pro: {
-    fontFamily: "Roboto Mono",
     backgroundColor: theme.palette.primary.main,
     color: "#FFFFFF",
     padding: "0px 3px",
@@ -66,12 +60,20 @@ const styles = makeStyles((theme) => ({
     borderRadius: "9px",
     width: "30px",
   },
+  free: {
+    backgroundColor: "#F7DF1E",
+    color: "#000000",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
+  },
   searchSection: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     width: "100%",
   },
   formControl: {
@@ -317,24 +319,29 @@ const CoursesPage = () => {
                               </Typography>
                             </div>
                           ) : (
-                            <div style={{ marginTop: "25px" }}></div>
+                            <div style={{ height: "25px" }}>
+                              <Typography
+                                variant="subtitle1"
+                                className={classes.free}
+                              >
+                                FREE
+                              </Typography>
+                            </div>
                           )}
 
                           <Typography
                             style={{
-                              fontFamily: "Roboto Mono",
                               fontWeight: 600,
                             }}
-                            variant="h5"
+                            variant="h6"
                           >
                             {course && course.title}
                           </Typography>
                           <Typography
-                            variant="h6"
+                            variant="body1"
                             style={{
                               paddingBottom: "30px",
                               fontFamily: "Roboto Mono",
-                              fontWeight: 600,
                             }}
                           >
                             {course &&
@@ -347,7 +354,6 @@ const CoursesPage = () => {
                           <Typography
                             variant="body1"
                             style={{
-                              fontFamily: "Roboto Mono",
                               fontWeight: 600,
                             }}
                           >
@@ -356,7 +362,6 @@ const CoursesPage = () => {
                           <Typography
                             variant="body1"
                             style={{
-                              fontFamily: "Roboto Mono",
                               fontWeight: 600,
                             }}
                           >
@@ -371,20 +376,32 @@ const CoursesPage = () => {
                         </div>
                       </CardContent>
                     </Link>
-                    <Box
-                      display="flex"
-                      style={{
-                        height: "16px",
-                      }}
-                    >
-                      <Box width="300px">
-                        <LinearProgress
-                          variant="determinate"
-                          style={{ height: "10px" }}
-                          thickness={10}
-                          value={progressArr && parseInt(getProgress(course))}
-                        />
-                      </Box>
+                    <Box>
+                      <LinearProgress
+                        variant="determinate"
+                        style={{ height: "10px" }}
+                        value={progressArr && parseInt(getProgress(course))}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {getProgress(course)}% complete
+                        </Typography>
+                        <Button
+                          color="primary"
+                          style={{
+                            fontSize: "12px",
+                            textTransform: "none",
+                            padding: 0,
+                          }}
+                        >
+                          Leave a rating
+                        </Button>
+                      </div>
                     </Box>
                   </Card>
                 );

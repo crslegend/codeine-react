@@ -15,6 +15,7 @@ import {
   Avatar,
   MenuItem,
   Tooltip,
+  Divider,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import Pagination from "@material-ui/lab/Pagination";
@@ -55,21 +56,23 @@ const useStyles = makeStyles((theme) => ({
     color: "#FFFFFF",
   },
   cardmedia: {
-    height: "150px",
-    width: "150px",
+    height: "120px",
+    width: "120px",
     borderRadius: "50%",
     margin: "28px",
   },
   description: {
     borderRadius: 0,
-    backgroundColor: "none",
+    backgroundColor: "transparent",
+    color: "#FFFFFF",
     padding: "15px 10px",
   },
+  tooltip: { backgroundColor: "#164D8F" },
   paginationSection: {
     marginLeft: "auto",
     marginRight: "30px",
     marginTop: theme.spacing(2),
-    paddingBottom: theme.spacing(5),
+    marginBottom: theme.spacing(4),
   },
   pagination: {
     "& > * + *": {
@@ -168,7 +171,7 @@ const AdminLearnersAchievementPage = () => {
   const [avatar, setAvatar] = useState();
   const [temporarystat, setTemporarystat] = useState([...stats]);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 15;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(badges.length / itemsPerPage)
@@ -423,9 +426,9 @@ const AdminLearnersAchievementPage = () => {
   }, []);
 
   return (
-    <div style={{ height: "calc(100vh - 115px)" }}>
+    <div style={{ height: "700px" }}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Grid container style={{ marginBottom: "20px" }}>
+      <Grid container>
         <Grid item xs={12}>
           <Typography variant="h3" style={{ fontWeight: 700 }}>
             Learners Achievement
@@ -455,7 +458,7 @@ const AdminLearnersAchievementPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "650px",
+            height: "600px",
           }}
         >
           <div
@@ -472,15 +475,16 @@ const AdminLearnersAchievementPage = () => {
                 .map((badge, index) => (
                   <Tooltip
                     key={index}
+                    classes={{ tooltip: classes.tooltip, arrow: classes.arrow }}
                     title={
-                      <Card className={classes.description}>
+                      <Card elevation={0} className={classes.description}>
                         <Typography
                           variant="h6"
                           style={{
                             textAlign: "center",
                             fontWeight: 700,
                             marginBottom: badge.is_deleted ? "0px" : "5px",
-                            color: "#164D8F",
+                            color: "#FFFFFF",
                           }}
                         >
                           {badge.title}
@@ -502,25 +506,39 @@ const AdminLearnersAchievementPage = () => {
                         <Typography variant="body2">
                           Date created: {formatDate(badge.timestamp)}
                         </Typography>
+                        <Divider
+                          style={{
+                            backgroundColor: "#FFFFFF",
+                            marginTop: "10px",
+                          }}
+                        />
+
                         <Typography
                           variant="body1"
                           style={{
                             fontWeight: 700,
-                            margin: "10px 0px 3px",
+                            margin: "10px 0px 10px 0px",
                           }}
                         >
                           Requirements
                         </Typography>
-                        <Typography variant="body2">
-                          Experience points:{" "}
-                          {badge.achievement_requirements[0] &&
-                            badge.achievement_requirements[0].experience_point}
-                          <br />
-                          {/*badge &&
-                          badge.achievement_requirements[0].stat.map(
-                            (label) => <Label label={label} />
-                          )*/}
-                        </Typography>
+
+                        {badge &&
+                          badge.achievement_requirements.map((requirement) => (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <Typography variant="body2">
+                                Stats: {requirement.stat}
+                              </Typography>
+                              <Typography variant="body2">
+                                Points: {requirement.experience_point}
+                              </Typography>
+                            </div>
+                          ))}
                       </Card>
                     }
                   >

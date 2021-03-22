@@ -220,11 +220,7 @@ const TopPicks = () => {
           </TabPanel>
           {/* Articles Tab */}
           <TabPanel value={value} index={2}>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
+            <div>
               {articles &&
                 articles.map((article, index) => (
                   <ArticleCard
