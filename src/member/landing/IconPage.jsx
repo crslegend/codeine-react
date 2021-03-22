@@ -15,7 +15,7 @@ import css from "../../assets/icons/css_icon.png";
 const styles = makeStyles((theme) => ({
   root: {
     backgroundColor: "#1E1E1E",
-    height: "100vh",
+    height: "770px",
   },
   heading1: {
     marginTop: "13vh",

@@ -71,10 +71,8 @@ const CodeReviewCard = (props) => {
                 fontFamily: "Roboto Mono",
               }}
             >
-              {codeReview &&
-                codeReview.member.first_name +
-                  " " +
-                  codeReview.member.last_name}
+              {codeReview.user &&
+                codeReview.user.first_name + " " + codeReview.user.last_name}
             </Typography>
           </div>
           <div style={{ display: "flex", margin: "10px 0" }}>
