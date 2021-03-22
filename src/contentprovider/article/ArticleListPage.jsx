@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import MemberNavBar from "../MemberNavBar";
+import MemberNavBar from "../../member/MemberNavBar";
 import {
   Button,
   Container,
@@ -95,7 +95,7 @@ function a11yProps(index) {
   };
 }
 
-const MemberArticleList = () => {
+const PartnerArticlesList = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -471,4 +471,4 @@ const MemberArticleList = () => {
   );
 };
 
-export default MemberArticleList;
+export default PartnerArticlesList;

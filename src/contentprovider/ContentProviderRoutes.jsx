@@ -30,6 +30,7 @@ import CourseCreation from "./course/CourseCreation";
 import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
 import Password from "./password/PasswordPage";
 import Profile from "./profile/ProfilePage";
+import Article from "./article/ArticleListPage";
 import Helpdesk from "./helpdesk/HelpdeskPage";
 import Wallet from "./wallet/WalletPage";
 import Student from "./student/StudentPage";
@@ -226,6 +227,16 @@ const ContentProviderHome = () => {
       >
         <Timeline className={classes.listIcon} />
         <Typography variant="body1">Consultation</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/article"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <Timeline className={classes.listIcon} />
+        <Typography variant="body1">My Articles</Typography>
       </ListItem>
       <ListItem
         component={NavLink}

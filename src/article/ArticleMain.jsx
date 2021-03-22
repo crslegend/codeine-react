@@ -2,13 +2,13 @@ import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, ListItem, Typography } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-import Service from "../../AxiosService";
+import Service from "../AxiosService";
 import CommentDrawer from "./ArticleComments";
 import ViewArticle from "./ViewArticle";
 import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
-import MemberNavBar from "../MemberNavBar";
-import Toast from "../../components/Toast.js";
+import MemberNavBar from "../member/MemberNavBar";
+import Toast from "../components/Toast.js";
 import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({

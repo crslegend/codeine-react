@@ -11,10 +11,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import Service from "../../AxiosService";
-import Toast from "../../components/Toast.js";
+import Service from "../AxiosService";
+import Toast from "../components/Toast.js";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
-import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({

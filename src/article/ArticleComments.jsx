@@ -20,7 +20,7 @@ import Chat from "@material-ui/icons/ChatBubbleOutline";
 import Menu from "@material-ui/icons/MoreHoriz";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
-import Service from "../../AxiosService";
+import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 

@@ -16,13 +16,13 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import logo from "../../assets/CodeineLogos/Member.svg";
-import Service from "../../AxiosService";
+import Navbar from "../components/Navbar";
+import logo from "../assets/CodeineLogos/Member.svg";
+import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
 import { ToggleButton } from "@material-ui/lab";
-import Toast from "../../components/Toast.js";
+import Toast from "../components/Toast.js";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
   languageButtons: {
     minWidth: 80,
     marginRight: "15px",
+    marginBottom: "10px",
     height: 30,
   },
   categoryButtons: {
@@ -78,6 +79,22 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
+  greenButton: {
+    backgroundColor: theme.palette.green.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkgreen.main,
+    },
+  },
 }));
 
 const EditArticle = () => {
@@ -104,7 +121,7 @@ const EditArticle = () => {
     }
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -185,7 +202,7 @@ const EditArticle = () => {
     }
   }, []);
 
-  const [debouncedText] = useDebounce(articleDetails, 2500);
+  const [debouncedText] = useDebounce(articleDetails, 2000);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
@@ -202,6 +219,7 @@ const EditArticle = () => {
           });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedText]);
 
   const [languages, setLanguages] = useState({
@@ -378,14 +396,17 @@ const EditArticle = () => {
 
   const publishArticle = () => {
     if (!validateArticle()) {
-      Service.client
-        .patch(`/articles/${id}/publish`)
-        .then((res) => {
-          history.push(`/article/${res.data.id}`);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      var millisecondsToWait = 2000;
+      setTimeout(function () {
+        Service.client
+          .patch(`/articles/${id}/publish`)
+          .then((res) => {
+            history.push(`/article/${res.data.id}`);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, millisecondsToWait);
     }
   };
 
@@ -904,10 +925,7 @@ const EditArticle = () => {
             <>
               <Button
                 variant="contained"
-                color="primary"
-                style={{
-                  textTransform: "capitalize",
-                }}
+                className={classes.greenButton}
                 onClick={(e) => saveAndPublishArticle(e)}
               >
                 Save and publish
@@ -938,9 +956,8 @@ const EditArticle = () => {
           {articleDetails && !articleDetails.is_published && (
             <Button
               variant="contained"
-              color="primary"
+              className={classes.greenButton}
               style={{
-                textTransform: "capitalize",
                 marginRight: "15px",
               }}
               onClick={(e) => publishArticle(e)}
@@ -950,10 +967,7 @@ const EditArticle = () => {
           )}
           <Button
             variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
+            className={classes.redButton}
             onClick={handleClickOpen}
           >
             Delete Article

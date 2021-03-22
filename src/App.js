@@ -4,13 +4,15 @@ import { Route, Switch } from "react-router-dom";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
-import ViewArticlePage from "./member/article/ArticleMain";
+import ViewArticlePage from "./article/ArticleMain";
+import EditArticlePage from "./article/EditArticle";
 import MemberArticlePage from "./member/article/MemberArticleList";
+//import PartnerArticlePage from "./partner/article/PartnerArticleList";
+//import AdminArticlePage from "./admin/article/AdminArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
 import MemberProfilePage from "./member/profile/Profile/ProfilePage";
 import MemberPasswordPage from "./member/profile/Password/PasswordPage";
-import MemberEditArticlePage from "./member/article/EditArticle";
 import MemberPaymentPage from "./member/profile/Payment/PaymentPage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
@@ -115,6 +117,18 @@ const App = () => {
       />
       <PrivateRoute
         exact
+        path="/partner/articles"
+        component={MemberArticlePage}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/admin/articles"
+        component={MemberArticlePage}
+        user="admin"
+      />
+      <PrivateRoute
+        exact
         path="/member/courses"
         component={MemberCoursePage}
         user="member"
@@ -145,9 +159,8 @@ const App = () => {
       />
       <PrivateRoute
         exact
-        path="/member/article/edit/:id"
-        component={MemberEditArticlePage}
-        user="member"
+        path="/article/edit/:id"
+        component={EditArticlePage}
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />
