@@ -2,31 +2,16 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
-  Button,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Tab,
   Tabs,
   Typography,
 } from "@material-ui/core";
-import TooltipMui from "@material-ui/core/Tooltip";
-import { Add, DragHandle, Info } from "@material-ui/icons";
 import Service from "../../AxiosService";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from "recharts";
 import { useHistory } from "react-router";
 import EarningsReport from "./components/EarningsReport";
 import HealthReport from "./components/HealthReport";

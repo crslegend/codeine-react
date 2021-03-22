@@ -10,16 +10,16 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from "recharts";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ResponsiveContainer,
+//   Label,
+// } from "recharts";
 import { LooksOne, LooksTwo, Looks3 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -202,10 +202,10 @@ const CourseSearchRanking = () => {
                 </div>
                 <div>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Keywords: {data[1].keyword ? data[1].keyword : "-"}
+                    Keywords: {data[1] ? data[1].keyword : "-"}
                   </Typography>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Occurence: {data[1].Occurences ? data[1].Occurences : "-"}
+                    Occurence: {data[1] ? data[1].Occurences : "-"}
                   </Typography>
                 </div>
               </div>
@@ -220,10 +220,10 @@ const CourseSearchRanking = () => {
                 </div>
                 <div>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Keywords: {data[0].keyword && data[0].keyword}
+                    Keywords: {data[0] ? data[0].keyword : "-"}
                   </Typography>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Occurence: {data[0].Occurences && data[0].Occurences}
+                    Occurence: {data[0] ? data[0].Occurences : "-"}
                   </Typography>
                 </div>
               </div>
@@ -238,10 +238,10 @@ const CourseSearchRanking = () => {
                 </div>
                 <div>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Keywords: {data[2].keyword ? data[2].keyword : "-"}
+                    Keywords: {data[2] ? data[2].keyword : "-"}
                   </Typography>
                   <Typography variant="h6" style={{ textAlign: "center" }}>
-                    Occurence: {data[2].Occurences ? data[2].Occurences : "-"}
+                    Occurence: {data[2] ? data[2].Occurences : "-"}
                   </Typography>
                 </div>
               </div>
