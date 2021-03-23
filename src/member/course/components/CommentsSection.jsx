@@ -36,6 +36,7 @@ const styles = makeStyles((theme) => ({
     border: "2px solid lightgrey",
     borderRadius: "6px",
     padding: "20px",
+    backgroundColor: "#fff",
   },
   childComment: {
     display: "flex",
@@ -45,6 +46,7 @@ const styles = makeStyles((theme) => ({
     padding: "20px",
     width: "90%",
     marginLeft: "auto",
+    backgroundColor: "#fff",
   },
   nestedChildComment: {
     display: "flex",
@@ -54,6 +56,7 @@ const styles = makeStyles((theme) => ({
     padding: "20px",
     width: "80%",
     marginLeft: "auto",
+    backgroundColor: "#fff",
   },
 }));
 
@@ -395,7 +398,7 @@ const CommentsSection = ({ materialId, user }) => {
     </div>
   );
 
-  const deletedChildCommentWithButton = (id) => {
+  const deletedChildCommentWithButton = (reply) => {
     return (
       <div style={{ display: "flex" }}>
         <div
@@ -422,21 +425,25 @@ const CommentsSection = ({ materialId, user }) => {
         >
           <Block style={{ marginRight: "10px" }} />
           <Typography variant="body2">This comment has been deleted</Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              order: 2,
-              marginLeft: "auto",
-            }}
-            onClick={() => {
-              setReferencedCommentId(id);
-              getNestedComments(id);
-            }}
-            disabled={checkIfCommentInNestedCommentsArr(id)}
-          >
-            <Typography variant="body2">View Replies</Typography>
-          </Button>
+          {reply.reply_count > 0 && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                order: 2,
+                marginLeft: "auto",
+              }}
+              onClick={() => {
+                setReferencedCommentId(reply.id);
+                getNestedComments(reply.id);
+              }}
+              disabled={checkIfCommentInNestedCommentsArr(reply.id)}
+            >
+              <Typography variant="body2">
+                Replies {reply.reply_count}
+              </Typography>
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -569,18 +576,22 @@ const CommentsSection = ({ materialId, user }) => {
                   marginLeft: "auto",
                 }}
               >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setReferencedCommentId(reply.id);
-                    getNestedComments(reply.id);
-                    // setPageNum(2);
-                  }}
-                  disabled={checkIfCommentInNestedCommentsArr(reply.id)}
-                >
-                  <Typography variant="body2">View Replies</Typography>
-                </Button>
+                {reply.reply_count > 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      setReferencedCommentId(reply.id);
+                      getNestedComments(reply.id);
+                      // setPageNum(2);
+                    }}
+                    disabled={checkIfCommentInNestedCommentsArr(reply.id)}
+                  >
+                    <Typography variant="body2">
+                      Replies: {reply.reply_count}
+                    </Typography>
+                  </Button>
+                )}
                 <Button
                   variant="contained"
                   color="primary"
@@ -966,7 +977,7 @@ const CommentsSection = ({ materialId, user }) => {
                             } else {
                               return (
                                 <Fragment>
-                                  {deletedChildCommentWithButton(reply.id)}
+                                  {deletedChildCommentWithButton(reply)}
                                   {nestedComments &&
                                     nestedComments.length > 0 &&
                                     nestedComments.map((nestedComment) => {
@@ -1035,7 +1046,7 @@ const CommentsSection = ({ materialId, user }) => {
                             } else {
                               return (
                                 <Fragment>
-                                  {deletedChildCommentWithButton(reply.id)}
+                                  {deletedChildCommentWithButton(reply)}
                                   {nestedComments &&
                                     nestedComments.length > 0 &&
                                     nestedComments.map((nestedComment) => {

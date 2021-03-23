@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    width: "100%",
+    minWidth: "100%",
     display: "flex",
     flexDirection: "column",
     // marginBottom: "30px",

@@ -5,22 +5,29 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  CardMedia,
   FormControl,
   InputLabel,
   LinearProgress,
   MenuItem,
   Select,
   Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import MemberNavBar from "../../MemberNavBar";
-import { Pagination, Rating } from "@material-ui/lab";
+import { Pagination } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
+import MemberNavBar from "../../MemberNavBar";
+import { Rating } from "@material-ui/lab";
+import Label from "../../landing/components/Label.jsx";
+import Toast from "../../../components/Toast.js";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -34,31 +41,44 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(5),
   },
   courses: {
+    paddingLeft: theme.spacing(5),
     display: "flex",
-    marginTop: "30px",
-  },
-  card: {
-    width: 200,
-    minHeight: 250,
-    marginRight: "30px",
-    display: "flex",
-    flexDirection: "column",
   },
   cardActionArea: {
     flexGrow: 1,
     flexDirection: "column",
     alignItems: "stretch",
+    height: "90%",
   },
-  media: {
-    height: 0,
-    paddingTop: "56.25%",
+  cardroot: {
+    width: "300px",
+    padding: "10px 10px 0px",
+    marginRight: "50px",
+    border: "1px solid",
+    borderRadius: 0,
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
+  free: {
+    backgroundColor: "#F7DF1E",
+    color: "#000000",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
   },
   searchSection: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     width: "100%",
   },
   formControl: {
@@ -71,7 +91,8 @@ const styles = makeStyles((theme) => ({
   },
   paginationSection: {
     float: "right",
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(7),
+    marginRight: theme.spacing(3),
     paddingBottom: theme.spacing(5),
   },
   pagination: {
@@ -93,7 +114,6 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
-  const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -103,18 +123,83 @@ const CoursesPage = () => {
     }
   };
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
 
   const [allCourses, setAllCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
 
   const [progressArr, setProgressArr] = useState([]);
+  const [doneReview] = useState([]);
 
   const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
   );
+
+  const [reviewDialog, setReviewDialog] = useState(false);
+  const [review, setReview] = useState({
+    rating: 0,
+    description: "",
+  });
+
+  const handleSubmitReview = (courseId) => {
+    if (review.rating === 0 || review.description === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a rating and description for the review!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    Service.client
+      .post(`/courses/${courseId}/reviews`, review)
+      .then((res) => {
+        console.log(res);
+        getAllCourses();
+        setReviewDialog(false);
+        setReview();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Course review submitted successfully!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getReview = (course) => {
+    for (let i = 0; i < doneReview.length; i++) {
+      if (course === doneReview[i].course) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const getAllCourses = (sort) => {
     let decoded;
@@ -170,11 +255,25 @@ const CoursesPage = () => {
     Service.client
       .get(`enrollments`)
       .then((res) => {
-        // console.log(res);
+        //console.log(res.data);
         let arr = res.data;
         arr = arr.filter((course) => course.course !== null);
-        // console.log(arr);
         setProgressArr(arr);
+        arr.map((item) => {
+          return Service.client
+            .get(`/courses/${item.course.id}/reviews`)
+            .then((res) => {
+              if (res.data.length > 0) {
+                for (let i = 0; i < res.data.length; i++) {
+                  if (res.data[i].member.id === decoded.user_id) {
+                    doneReview.push(res.data[i]);
+                  }
+                }
+              }
+              console.log(doneReview);
+            })
+            .catch((err) => console.log(err));
+        });
       })
       .catch((err) => console.log(err));
   };
@@ -218,8 +317,14 @@ const CoursesPage = () => {
     }
   };
 
+  const handleReviewDialog = (course) => {
+    setSelectedCourse(course);
+    setReviewDialog(true);
+  };
+
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ paddingTop: "65px" }}>
         <Box className={classes.heading}>
@@ -271,141 +376,238 @@ const CoursesPage = () => {
               </FormControl>
             </div>
           </div>
-          <div className={classes.courses}>
-            {allCourses && allCourses.length > 0 ? (
-              allCourses
-                .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                .map((course, index) => {
-                  return (
-                    <Card key={index} className={classes.card}>
-                      <a
-                        href={`/courses/${course.id}`}
-                        className={classes.link}
-                        style={{ height: "100%" }}
+        </div>
+        <div className={classes.courses}>
+          {allCourses && allCourses.length > 0 ? (
+            allCourses
+              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+              .map((course, index) => {
+                return (
+                  <Card key={index} elevation={0} className={classes.cardroot}>
+                    <a
+                      href={`/courses/enroll/${course.id}`}
+                      className={classes.link}
+                    >
+                      <CardActionArea
+                        // onClick={() => {
+                        //   return <a href={`/courses/${course.id}`} />;
+                        // }}
+                        className={classes.cardActionArea}
                       >
-                        <CardActionArea
-                          // onClick={() => {
-                          //   return <a href={`/courses/${course.id}`} />;
-                          // }}
-                          className={classes.cardActionArea}
-                          style={{ height: "100%" }}
+                        <CardContent
+                          style={{
+                            height: "inherit",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "10px 10px",
+                          }}
                         >
-                          <div style={{ height: "30%" }}>
-                            <CardMedia
-                              className={classes.media}
-                              image={course && course.thumbnail}
-                              title={course && course.title}
-                            />
-                          </div>
-                          <div style={{ height: "5%" }} />
-                          <div style={{ height: "65%" }}>
-                            <CardContent
+                          <div>
+                            {course && course.pro === true ? (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.pro}
+                                >
+                                  PRO
+                                </Typography>
+                              </div>
+                            ) : (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.free}
+                                >
+                                  FREE
+                                </Typography>
+                              </div>
+                            )}
+
+                            <Typography
                               style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-between",
-                                height: "100%",
+                                fontWeight: 600,
+                              }}
+                              variant="h6"
+                            >
+                              {course && course.title}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                paddingBottom: "30px",
+                                fontFamily: "Roboto Mono",
                               }}
                             >
-                              <div
-                                style={{
-                                  width: "100%",
-                                  marginBottom: "10px",
-                                  marginTop: "10px",
-                                }}
-                              >
-                                <Box display="flex" alignItems="center">
-                                  <Box width="100%" mr={1}>
-                                    <LinearProgress
-                                      variant="determinate"
-                                      value={
-                                        progressArr &&
-                                        parseInt(getProgress(course))
-                                      }
-                                    />
-                                  </Box>
-                                  <Box minWidth={35}>
-                                    <Typography variant="body2">
-                                      {progressArr &&
-                                        parseInt(
-                                          getProgress(course)
-                                        ).toFixed() + "%"}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                                <Typography
-                                  variant="body1"
-                                  style={{
-                                    fontWeight: 600,
-                                    paddingTop: "10px",
-                                    paddingBottom: "10px",
-                                  }}
-                                >
-                                  {course && course.title}
-                                </Typography>
-                              </div>
-                              <div>
-                                <Typography
-                                  variant="body2"
-                                  style={{
-                                    opacity: 0.7,
-                                    paddingBottom: "10px",
-                                  }}
-                                >
-                                  {course.partner && course.partner.first_name}{" "}
-                                  {course.partner && course.partner.last_name}
-                                </Typography>
-                                {(() => {})()}
-                                <div>
-                                  <Rating
-                                    size="small"
-                                    readOnly
-                                    value={
-                                      course && course.rating
-                                        ? parseFloat(course.rating)
-                                        : 0
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </CardContent>
+                              {course &&
+                                course.partner.first_name +
+                                  " " +
+                                  course.partner.last_name}
+                            </Typography>
                           </div>
-                        </CardActionArea>
-                      </a>
-                    </Card>
-                  );
-                })
-            ) : (
-              <div
-                style={{
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  textAlign: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <Assignment fontSize="large" />
-                <Typography variant="h5">No Courses Found</Typography>
-              </div>
-            )}
-          </div>
-          <div className={classes.paginationSection}>
-            {allCourses && allCourses.length > 0 && (
-              <Pagination
-                count={noOfPages}
-                page={page}
-                onChange={handlePageChange}
-                defaultPage={1}
-                color="primary"
-                size="medium"
-                showFirstButton
-                showLastButton
-                className={classes.pagination}
-              />
-            )}
-          </div>
+                          <div>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              duration: {course && course.duration}h
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              exp points: {course && course.exp_points}p
+                            </Typography>
+                            <div style={{ display: "flex", margin: "10px 0" }}>
+                              {course &&
+                                course.categories.map((category) => (
+                                  <Label label={category} />
+                                ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </CardActionArea>
+                    </a>
+                    <Box style={{ height: "10%" }}>
+                      <LinearProgress
+                        variant="determinate"
+                        style={{ height: "10px" }}
+                        value={progressArr && parseInt(getProgress(course))}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {getProgress(course)}% complete
+                        </Typography>
+                        {getProgress(course) === "100.00" ? (
+                          <Button
+                            color="primary"
+                            disabled={getReview(course.id)}
+                            style={{
+                              fontSize: "12px",
+                              textTransform: "none",
+                              padding: 0,
+                            }}
+                            onClick={() => handleReviewDialog(course)}
+                          >
+                            Leave a rating
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </Box>
+                  </Card>
+                );
+              })
+          ) : (
+            <div
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <Assignment fontSize="large" />
+              <Typography variant="h5">No Courses Found</Typography>
+            </div>
+          )}
         </div>
+        <div className={classes.paginationSection}>
+          {allCourses && allCourses.length > 0 && (
+            <Pagination
+              count={noOfPages}
+              page={page}
+              onChange={handlePageChange}
+              defaultPage={1}
+              color="primary"
+              size="medium"
+              showFirstButton
+              showLastButton
+              className={classes.pagination}
+            />
+          )}
+        </div>
+        <Dialog
+          open={reviewDialog}
+          onClose={() => setReviewDialog(false)}
+          PaperProps={{
+            style: {
+              width: "500px",
+            },
+          }}
+        >
+          <DialogTitle>
+            You have completed the course! Give a review.
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+              Give Rating
+            </Typography>
+
+            <Rating
+              value={review && review.rating}
+              onChange={(event, newValue) => {
+                setReview({
+                  ...review,
+                  rating: newValue,
+                });
+              }}
+              style={{ marginBottom: "20px" }}
+            />
+            <label htmlFor="description">
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                Give Review Description
+              </Typography>
+            </label>
+            <TextField
+              id="description"
+              variant="outlined"
+              margin="dense"
+              value={review && review.description}
+              onChange={(e) =>
+                setReview({
+                  ...review,
+                  description: e.target.value,
+                })
+              }
+              fullWidth
+              placeholder="Enter review description"
+              multiline
+              rows={3}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              className={classes.dialogButtons}
+              onClick={() => {
+                setReviewDialog(false);
+              }}
+            >
+              Later
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                handleSubmitReview(selectedCourse.id);
+              }}
+            >
+              Give Review
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </Fragment>
   );

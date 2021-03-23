@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Typography,
@@ -7,6 +7,7 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
@@ -26,6 +27,14 @@ const styles = makeStyles((theme) => ({
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
+  },
+  free: {
+    backgroundColor: "#F7DF1E",
+    color: "#000000",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
   },
 }));
 
@@ -56,7 +65,11 @@ const CourseCard = (props) => {
                 </Typography>
               </div>
             ) : (
-              <div style={{ marginTop: "25px" }}></div>
+              <div style={{ height: "25px" }}>
+                <Typography variant="subtitle1" className={classes.free}>
+                  FREE
+                </Typography>
+              </div>
             )}
 
             <Typography

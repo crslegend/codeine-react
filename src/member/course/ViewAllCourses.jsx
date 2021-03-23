@@ -97,7 +97,7 @@ const ViewAllCourses = () => {
   const [sortMethod, setSortMethod] = useState("");
 
   const [allCourses, setAllCourses] = useState([]);
-  const itemsPerPage = 3;
+  const itemsPerPage = 4;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)

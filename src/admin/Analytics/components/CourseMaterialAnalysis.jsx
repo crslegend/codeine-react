@@ -18,7 +18,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-// import DefaultTooltipContent from "recharts/lib/component/DefaultTooltipContent";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   const classes = useStyles();
-  // console.log(timeTakenCourseMaterial);
 
   const handleSelectChapter = (e) => {
     setSelectedChapterId(e.target.value);
@@ -76,7 +74,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             .toUpperCase() +
           courseMaterials[i].material_type.toLowerCase().slice(1),
         Time: parseFloat(
-          (courseMaterials[i].average_time_taken / 60).toFixed(1)
+          (courseMaterials[i].average_time_taken / 60).toFixed(6)
         ),
       };
       loadedData.push(obj);
@@ -121,11 +119,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   return (
     <div className={classes.root}>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          width: "100%",
-        }}
+        style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
       >
         <div>
           <FormControl

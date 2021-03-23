@@ -208,7 +208,7 @@ const CourseCreation = () => {
     }
 
     // check if github repo is a valid URL
-    if (courseDetails.github_repo || courseDetails.github_repo !== "") {
+    if (courseDetails.github_repo && courseDetails.github_repo !== "") {
       if (
         !validator.isURL(courseDetails.github_repo, {
           protocols: ["http", "https"],
@@ -425,7 +425,10 @@ const CourseCreation = () => {
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
             pro: res.data.pro,
-            github_repo: res.data.github_repo,
+            github_repo:
+              res.data.github_repo !== "undefined" || !res.data.github_repo
+                ? res.data.github_repo
+                : "",
             duration: res.data.duration,
           });
           setCourseDetailsCard({
@@ -918,7 +921,13 @@ const CourseCreation = () => {
                     </Paper>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <div style={{ marginRight: "50px" }}>
                     <PageTitle title="Chapters" />
                   </div>

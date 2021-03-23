@@ -86,8 +86,8 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
   },
   unenrollButton: {
-    margin: "auto",
-    marginBottom: "20px",
+    // margin: "auto",
+    // marginBottom: "20px",
     backgroundColor: theme.palette.red.main,
     color: "#fff",
     "&:hover": {
@@ -704,21 +704,23 @@ const ViewCourseDetails = () => {
                 </Button>
               ) : (
                 <Fragment>
-                  <Typography variant="h6">Your Progress</Typography>
-                  <div style={{ width: "100%", marginBottom: "20px" }}>
-                    <Box display="flex" alignItems="center">
-                      <Box width="100%" mr={1}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={parseInt(progress)}
-                        />
+                  <div>
+                    <Typography variant="h6">Your Progress</Typography>
+                    <div style={{ width: "100%", marginBottom: "20px" }}>
+                      <Box display="flex" alignItems="center">
+                        <Box width="100%" mr={1}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={parseInt(progress)}
+                          />
+                        </Box>
+                        <Box minWidth={35}>
+                          <Typography variant="body2">
+                            {progress && parseInt(progress).toFixed() + "%"}
+                          </Typography>
+                        </Box>
                       </Box>
-                      <Box minWidth={35}>
-                        <Typography variant="body2">
-                          {progress && parseInt(progress).toFixed() + "%"}
-                        </Typography>
-                      </Box>
-                    </Box>
+                    </div>
                   </div>
                   <div
                     style={{
@@ -728,10 +730,6 @@ const ViewCourseDetails = () => {
                   >
                     <Button
                       variant="contained"
-                      style={{
-                        margin: "auto",
-                        marginBottom: "20px",
-                      }}
                       color="primary"
                       component={Link}
                       to={`/courses/enroll/${id}`}

@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Service from "../../AxiosService";
-import { useParams } from "react-router";
-import PageTitle from "../../components/PageTitle";
+import { useHistory, useParams } from "react-router";
 import {
   Avatar,
   Box,
   Divider,
+  IconButton,
   Paper,
   Tab,
   Tabs,
   Typography,
 } from "@material-ui/core";
+import { ArrowBack } from "@material-ui/icons";
 import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 import StudentAnalysis from "./components/StudentAnalysis";
 import StudentDemographics from "./components/StudentDemographics";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    minHeight: "100%",
+    display: "flex",
+    flexDirection: "column",
+    fontDisplay: "swap",
+  },
   paper: {
     padding: theme.spacing(4),
     width: "100%",
-    // marginLeft: "auto",
-    // marginRight: "auto",
+    marginLeft: "auto",
+    marginRight: "auto",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -73,10 +80,12 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(10),
   },
   tab: {
-    textTransform: "capitalize",
-    fontSize: 18,
-    fontWeight: 600,
-    color: "#000000",
+    // textTransform: "capitalize",
+    // fontSize: 18,
+    // fontWeight: 600,
+    // color: "#000000",
+    backgroundColor: "#00000000",
+    fontWeight: "800",
   },
   tabPanel: {
     minHeight: "200px",
@@ -105,6 +114,7 @@ function TabPanel(props) {
 
 const CourseDetailAnalytics = () => {
   const classes = useStyles();
+  const history = useHistory();
   const { id } = useParams();
 
   const [value, setValue] = useState(0);
@@ -123,7 +133,7 @@ const CourseDetailAnalytics = () => {
   const [inactiveMembers, setInactiveMembers] = useState();
   const [falseStarters, setFalseStarters] = useState();
   const [memberDemographics, setMemberDemographics] = useState();
-  const [numDaysForStudents, setNumDaysForStudents] = useState(7);
+  const [numDaysForStudents, setNumDaysForStudents] = useState();
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
@@ -227,9 +237,18 @@ const CourseDetailAnalytics = () => {
   }, []);
 
   return (
-    <div>
-      <PageTitle title="Course Analysis" />
-
+    <div className={classes.root}>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+      >
+        <IconButton
+          onClick={() => history.push(`/admin/analytics/courses`)}
+          style={{ marginRight: "20px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h2">Course Analysis</Typography>
+      </div>
       <Paper className={classes.paper}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar} src={coursePic && coursePic} />
@@ -299,8 +318,8 @@ const CourseDetailAnalytics = () => {
       <div>
         <Tabs
           value={value}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           variant="scrollable"
           scrollButtons="auto"
           onChange={handleChange}

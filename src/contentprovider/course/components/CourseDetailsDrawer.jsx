@@ -73,6 +73,8 @@ const CourseDetailsDrawer = ({
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
 
+  console.log(courseDetails);
+
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
