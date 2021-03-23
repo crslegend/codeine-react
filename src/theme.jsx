@@ -9,7 +9,7 @@ const theme = createMuiTheme({
       main: "#164D8F",
     },
     yellow: {
-      main: "#E8C547",
+      main: "#f0ae24",
     },
     orange: {
       main: "#E55812",

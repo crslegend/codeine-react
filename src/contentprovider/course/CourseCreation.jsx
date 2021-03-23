@@ -24,6 +24,7 @@ import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 import { useHistory, useParams } from "react-router-dom";
 import QuizKanbanBoard from "./components/QuizKanbanBoard";
+import QuestionBankModal from "./components/QuestionBankModal";
 import validator from "validator";
 
 // import jwt_decode from "jwt-decode";
@@ -151,6 +152,8 @@ const CourseCreation = () => {
 
   const [paymentDialog, setPaymentDialog] = useState(false);
   // const [paymentAmount, setPaymentAmount] = useState();
+
+  const [questionBankModalOpen, setQuestionBankModalOpen] = useState(false);
 
   const handleSaveCourseDetails = () => {
     // console.log(coursePicAvatar);
@@ -891,10 +894,10 @@ const CourseCreation = () => {
                       variant="contained"
                       size="small"
                       startIcon={<PlaylistAddCheck />}
-                      onClick={() => setChapterDialog(true)}
+                      onClick={() => setQuestionBankModalOpen(true)}
                       style={{ margin: "8px" }}
                     >
-                      Manage Questions
+                      Question Bank
                     </Button>
                   </div>
                 </div>
@@ -1235,6 +1238,18 @@ const CourseCreation = () => {
             Go To Contributions
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        open={questionBankModalOpen}
+        onClose={() => setQuestionBankModalOpen(false)}
+        PaperProps={{
+          style: {
+            minWidth: "600px",
+            maxWidth: "none",
+          },
+        }}
+      >
+        <QuestionBankModal />
       </Dialog>
     </Fragment>
   );

@@ -281,7 +281,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
     if (task.material_type === "VIDEO") {
       return theme.palette.secondary.main;
     } else if (task.material_type === "FILE") {
-      return theme.palette.orange.main;
+      return theme.palette.yellow.main;
     } else {
       return theme.palette.red.main;
     }
