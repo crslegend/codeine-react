@@ -535,7 +535,6 @@ const EnrollCourse = () => {
             setOpenIDE={setOpenIDE}
             chosenCourseMaterial={chosenCourseMaterial}
             setChosenCourseMaterial={setChosenCourseMaterial}
-            ref={ref}
             id={id}
             handleDuration={handleDuration}
             handleVideoProgress={handleVideoProgress}

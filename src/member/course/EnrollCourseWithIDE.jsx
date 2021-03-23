@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Accordion,
@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
   IconButton,
+  CircularProgress,
 } from "@material-ui/core";
 import {
   Announcement,
@@ -19,6 +20,7 @@ import {
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
+import Service from "../../AxiosService";
 import ReactPlayer from "react-player";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import TakeQuiz from "./components/TakeQuiz";
@@ -40,8 +42,16 @@ const styles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   rightCol: {
-    padding: theme.spacing(2),
+    // padding: theme.spacing(2),
     overflow: "auto",
+    height: "100%",
+  },
+  loader: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
@@ -49,7 +59,6 @@ const EnrollCourseWithIDE = ({
   setOpenIDE,
   chosenCourseMaterial,
   setChosenCourseMaterial,
-  ref,
   id,
   handleDuration,
   handleVideoProgress,
@@ -69,6 +78,47 @@ const EnrollCourseWithIDE = ({
   handleCheckMaterial,
 }) => {
   const classes = styles();
+  const ref = React.createRef();
+
+  const [portNum, setPortNum] = useState();
+  const [loadingIDE, setLoadingIDE] = useState(true);
+
+  const startIDE = () => {
+    // console.log(course);
+    if (course && course.github_repo) {
+      Service.client
+        .get(`ide`, {
+          params: {
+            git_url: "https://github.com/ptm108/Graspfood2",
+            course_name: course.title,
+          },
+        })
+        .then((res) => {
+          //   console.log(res);
+          setPortNum(res.data.port);
+          setLoadingIDE(false);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .get(`ide`, {
+          params: {
+            git_url: "https://github.com/ptm108/Graspfood2",
+            course_name: course.title,
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          setPortNum(res.data.port);
+          setLoadingIDE(false);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  useEffect(() => {
+    startIDE();
+  }, []);
 
   return (
     <div className={classes.courseSection}>
@@ -656,7 +706,22 @@ const EnrollCourseWithIDE = ({
               </Accordion>
             </div>
           </div>
-          <div className={classes.rightCol}>IDE</div>
+          <div className={classes.rightCol}>
+            {!loadingIDE && portNum ? (
+              <iframe
+                width="100%"
+                height="100%"
+                src={`http://localhost:${portNum}`}
+              />
+            ) : (
+              <div className={classes.loader}>
+                <CircularProgress />
+                <Typography variant="h6" style={{ paddingTop: "10px" }}>
+                  Fetching your IDE...
+                </Typography>
+              </div>
+            )}
+          </div>
         </Splitter>
       </div>
     </div>
