@@ -62,12 +62,13 @@ const useStyles = makeStyles((theme) => ({
     margin: "28px",
   },
   description: {
+    width: "100%",
     borderRadius: 0,
     backgroundColor: "transparent",
     color: "#FFFFFF",
     padding: "15px 10px",
   },
-  tooltip: { backgroundColor: "#164D8F" },
+  tooltip: { backgroundColor: "#164D8F", maxWidth: "100%" },
   paginationSection: {
     marginLeft: "auto",
     marginRight: "30px",
@@ -86,60 +87,46 @@ const useStyles = makeStyles((theme) => ({
 
 const stats = [
   {
-    value: "ML",
-    label: "Machine Learning",
+    value: "Machine Learning",
   },
   {
-    value: "DB",
-    label: "Database Administration",
+    value: "Database Administration",
   },
   {
-    value: "SEC",
-    label: "Security",
+    value: "Security",
   },
   {
-    value: "UI",
-    label: "UI/UX",
+    value: "UI/UX",
   },
   {
-    value: "FE",
-    label: "Frontend",
+    value: "Frontend",
   },
   {
-    value: "BE",
-    label: "Backend",
+    value: "Backend",
   },
   {
-    value: "PY",
-    label: "Python",
+    value: "Python",
   },
   {
-    value: "JAVA",
-    label: "Java",
+    value: "Java",
   },
   {
-    value: "JS",
-    label: "Javascript",
+    value: "Javascript",
   },
   {
-    value: "CPP",
-    label: "C++",
+    value: "C++",
   },
   {
-    value: "CS",
-    label: "C#",
+    value: "C#",
   },
   {
     value: "HTML",
-    label: "HTML",
   },
   {
     value: "CSS",
-    label: "CSS",
   },
   {
-    value: "RUBY",
-    label: "Ruby",
+    value: "Ruby",
   },
 ];
 
@@ -773,10 +760,14 @@ const AdminLearnersAchievementPage = () => {
                                 key={index}
                                 style={{
                                   display: "flex",
+                                  width: "100%",
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <Typography variant="body2">
+                                <Typography
+                                  variant="body2"
+                                  style={{ marginRight: "15px" }}
+                                >
                                   Stats: {requirement.stat}
                                 </Typography>
                                 <Typography variant="body2">
@@ -1020,7 +1011,7 @@ const AdminLearnersAchievementPage = () => {
                           key={index}
                           value={options.stat}
                         >
-                          {options.label}
+                          {options.stat}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -1101,7 +1092,7 @@ const AdminLearnersAchievementPage = () => {
                       key={option.value}
                       value={option.value}
                     >
-                      {option.label}
+                      {option.value}
                     </MenuItem>
                   ))}
                 </TextField>
