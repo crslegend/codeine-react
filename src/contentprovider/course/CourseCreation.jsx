@@ -468,14 +468,14 @@ const CourseCreation = () => {
                 [courseMaterial.id]: courseMaterial,
               };
 
-              courseMaterial.quiz &&
-                courseMaterial.quiz.questions.forEach((question) => {
-                  subtaskIdsArr.push(question.id);
-                  subtasksObj = {
-                    ...subtasksObj,
-                    [question.id]: question,
-                  };
-                });
+              // courseMaterial.quiz &&
+              //   courseMaterial.quiz.questions.forEach((question) => {
+              //     subtaskIdsArr.push(question.id);
+              //     subtasksObj = {
+              //       ...subtasksObj,
+              //       [question.id]: question,
+              //     };
+              //   });
 
               tasksObj = {
                 ...tasksObj,
