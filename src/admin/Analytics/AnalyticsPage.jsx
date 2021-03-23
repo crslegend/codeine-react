@@ -5,9 +5,6 @@ import { Typography } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    fontDisplay: "swap",
   },
 }));
 

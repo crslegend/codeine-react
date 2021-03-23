@@ -22,6 +22,7 @@ import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import SubjectIcon from "@material-ui/icons/Subject";
 import AdminHumanResourcePage from "./HumanResource/HumanResourcePage";
 import ContentQualityPage from "./ContentQuality/ContentQualityPage";
 import HelpdeskPage from "./Helpdesk/HelpdeskPage";
@@ -29,6 +30,7 @@ import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPa
 import AnalyticsPage from "./Analytics/AnalyticsPage";
 import ProfilePage from "./Profile/ProfilePage";
 import PasswordPage from "./Password/PasswordPage";
+import Article from "./Article/AdminArticleList";
 import ViewCourseDetail from "./ContentQuality/course/ViewCourseDetails";
 import ViewCourseContent from "./ContentQuality/course/EnrollCourse";
 import Service from "../AxiosService";
@@ -144,13 +146,10 @@ const AdminRoutesPage = () => {
             Service.removeCredentials();
             history.push("/admin/login");
           }}
+          variant="contained"
+          color="primary"
         >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log Out
-          </Typography>
+          Log Out
         </Button>
       </ListItem>
     </Fragment>
@@ -247,7 +246,16 @@ const AdminRoutesPage = () => {
         <BrokenImageOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Analytics</Typography>
       </ListItem>
-      {/* <Divider /> */}
+      <ListItem
+        component={NavLink}
+        to="/admin/article"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <SubjectIcon className={classes.listIcon} />
+        <Typography variant="body1">Articles</Typography>
+      </ListItem>
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">
@@ -330,6 +338,18 @@ const AdminRoutesPage = () => {
             path="/admin/profile"
             render={() => (
               <ProfilePage profile={profile} setProfile={setProfile} />
+            )}
+          />
+          <Route
+            exact
+            path="/admin/article"
+            render={() => (
+              <Article
+                history={history}
+                snackbar={snackbar}
+                setSbOpen={setSbOpen}
+                setSnackbar={setSnackbar}
+              />
             )}
           />
           <Route

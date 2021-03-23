@@ -14,8 +14,6 @@ import {
 } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import CloseIcon from "@material-ui/icons/Close";
-import Edit from "@material-ui/icons/Edit";
-import Delete from "@material-ui/icons/DeleteOutline";
 import Chat from "@material-ui/icons/ChatBubbleOutline";
 import Menu from "@material-ui/icons/MoreHoriz";
 import UseAnimations from "react-useanimations";
@@ -106,7 +104,6 @@ const ArticleComment = (props) => {
     setOpenIDE,
     setSbOpen,
     setSnackbar,
-    window,
   } = props;
 
   //const [anchorEl, setAnchorEl] = useState(null);

@@ -30,7 +30,8 @@ import CourseCreation from "./course/CourseCreation";
 import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
 import Password from "./password/PasswordPage";
 import Profile from "./profile/ProfilePage";
-import Article from "./article/ArticleListPage";
+import Article from "./article/ContentProviderArticleList";
+import SubjectIcon from "@material-ui/icons/Subject";
 import Helpdesk from "./helpdesk/HelpdeskPage";
 import Wallet from "./wallet/WalletPage";
 import Student from "./student/StudentPage";
@@ -235,7 +236,7 @@ const ContentProviderHome = () => {
         className={classes.listItem}
         button
       >
-        <Timeline className={classes.listIcon} />
+        <SubjectIcon className={classes.listIcon} />
         <Typography variant="body1">My Articles</Typography>
       </ListItem>
       <ListItem
@@ -381,6 +382,19 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/content"
               render={() => <ViewAllCourses />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/article"
+              render={() => (
+                <Article
+                  history={history}
+                  snackbar={snackbar}
+                  setSbOpen={setSbOpen}
+                  setSnackbar={setSnackbar}
+                />
+              )}
               user="partner"
             />
             <PrivateRoute

@@ -15,9 +15,11 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import logo from "../assets/CodeineLogos/Member.svg";
+import memberLogo from "../assets/CodeineLogos/Member.svg";
+import partnerLogo from "../assets/CodeineLogos/Partner.svg";
+import adminLogo from "../assets/CodeineLogos/Admin.svg";
 import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
@@ -97,10 +99,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EditArticle = () => {
+const EditArticle = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const { id } = useParams();
+  const location = useLocation();
+  const userType = location.pathname.split("/", 4)[3];
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -202,7 +206,7 @@ const EditArticle = () => {
     }
   }, []);
 
-  const [debouncedText] = useDebounce(articleDetails, 2000);
+  const [debouncedText] = useDebounce(articleDetails, 1500);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
@@ -396,7 +400,7 @@ const EditArticle = () => {
 
   const publishArticle = () => {
     if (!validateArticle()) {
-      var millisecondsToWait = 2000;
+      var millisecondsToWait = 1500;
       setTimeout(function () {
         Service.client
           .patch(`/articles/${id}/publish`)
@@ -488,7 +492,15 @@ const EditArticle = () => {
             width: 100,
           }}
         >
-          <img src={logo} width="120%" alt="codeine logo" />
+          {userType === "member" && (
+            <img src={memberLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "partner" && (
+            <img src={partnerLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "admin" && (
+            <img src={adminLogo} width="120%" alt="codeine logo" />
+          )}
         </Link>
         {user && articleDetails && !articleDetails.is_published && (
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -512,138 +524,162 @@ const EditArticle = () => {
 
   const loggedInNavbar = (
     <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Avatar
-          onClick={handleClick}
-          src={user && user.profile_photo}
-          alt=""
-          style={{ width: "34px", height: "34px", cursor: "pointer" }}
-        />
-        <Popover
-          id={popoverid}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <div className={classes.popover}>
-            <div className={classes.toprow}>
-              <Avatar
-                src={user && user.profile_photo}
-                alt=""
-                style={{ width: "55px", height: "55px", marginRight: "15px" }}
-              />
-              <div
-                style={{
-                  flexDirection: "column",
-                  width: "100%",
-                }}
+      {userType === "member" && (
+        <ListItem style={{ whiteSpace: "nowrap" }}>
+          <Avatar
+            onClick={handleClick}
+            src={user && user.profile_photo}
+            alt=""
+            style={{ width: "34px", height: "34px", cursor: "pointer" }}
+          />
+          <Popover
+            id={popoverid}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div className={classes.popover}>
+              <div className={classes.toprow}>
+                <Avatar
+                  src={user && user.profile_photo}
+                  alt=""
+                  style={{ width: "55px", height: "55px", marginRight: "15px" }}
+                />
+                <div
+                  style={{
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                  onClick={() => {
+                    history.push("/member/profile");
+                  }}
+                >
+                  <Typography
+                    style={{
+                      fontWeight: "600",
+                      paddingTop: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {user && user.first_name + " " + user.last_name}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "14px",
+                      color: "#757575",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Manage your profile
+                  </Typography>
+                </div>
+              </div>
+
+              <Divider style={{ marginBottom: "5px" }} />
+
+              <Typography
+                className={classes.typography}
                 onClick={() => {
-                  history.push("/member/profile");
+                  //history.push("/member/dashboard");
+                  alert("Clicked on Dashboard");
                 }}
               >
-                <Typography
-                  style={{
-                    fontWeight: "600",
-                    paddingTop: "5px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {user && user.first_name + " " + user.last_name}
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: "14px",
-                    color: "#757575",
-                    cursor: "pointer",
-                  }}
-                >
-                  Manage your profile
-                </Typography>
-              </div>
+                Dashboard
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/courses");
+                }}
+              >
+                Courses
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/consultations");
+                }}
+              >
+                Consultations
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/articles");
+                }}
+              >
+                Articles
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Industry projects");
+                }}
+              >
+                Industry Projects
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Helpdesk");
+                }}
+              >
+                Helpdesk
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/payment");
+                }}
+              >
+                My Payments
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  Service.removeCredentials();
+                  setLoggedIn(false);
+                  history.push("/");
+                }}
+              >
+                Log out
+              </Typography>
             </div>
-
-            <Divider style={{ marginBottom: "5px" }} />
-
+          </Popover>
+        </ListItem>
+      )}
+      {(userType === "partner" || userType === "admin") && (
+        <ListItem style={{ whiteSpace: "nowrap" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              textTransform: "capitalize",
+            }}
+            onClick={() => {
+              Service.removeCredentials();
+              history.push("/partner");
+            }}
+          >
             <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/member/dashboard");
-                alert("Clicked on Dashboard");
-              }}
+              variant="h6"
+              style={{ fontSize: "15px", color: "#fff" }}
             >
-              Dashboard
+              Logout
             </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/courses");
-              }}
-            >
-              Courses
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/consultations");
-              }}
-            >
-              Consultations
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/articles");
-              }}
-            >
-              Articles
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
-              }}
-            >
-              Industry Projects
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Helpdesk");
-              }}
-            >
-              Helpdesk
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/payment");
-              }}
-            >
-              My Payments
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }}
-            >
-              Log out
-            </Typography>
-          </div>
-        </Popover>
-      </ListItem>
+          </Button>
+        </ListItem>
+      )}
     </Fragment>
   );
 

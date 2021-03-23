@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  CircularProgress,
-  Paper,
-  TextField,
-  Fragment,
-  ListItem,
-  Avatar,
-  Typography,
-} from "@material-ui/core";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import Service from "../AxiosService";
-import Toast from "../components/Toast.js";
+import { Button, Avatar, Typography } from "@material-ui/core";
+// import { Link, useHistory, useLocation } from "react-router-dom";
+// import Service from "../AxiosService";
+// import Toast from "../components/Toast.js";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import parse, { attributesToProps } from "html-react-parser";
 
@@ -38,11 +29,7 @@ const MemberArticleIDE = (props) => {
 
   const {
     articleDetails,
-    setArticleDetails,
-    drawerOpen,
     setDrawerOpen,
-    openEditor,
-    setOpenEditor,
     openIDE,
     setOpenIDE,
     setSbOpen,

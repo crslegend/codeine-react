@@ -19,10 +19,9 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
-import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
   root: { paddingTop: "65px" },
@@ -95,9 +94,10 @@ function a11yProps(index) {
   };
 }
 
-const MemberArticleList = () => {
+const MemberArticleList = (props) => {
   const classes = useStyles();
   const history = useHistory();
+  const { userType } = props;
 
   // Tabs variable
   const [value, setValue] = useState(0);
@@ -170,8 +170,13 @@ const MemberArticleList = () => {
     Service.client
       .patch(`/articles/${articleid}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article unpublished successfully!",
+          severity: "success",
+        });
+        getArticles();
       })
       .catch((err) => {
         console.log(err);
@@ -182,8 +187,13 @@ const MemberArticleList = () => {
     Service.client
       .delete(`/articles/${articleid}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article deleted successfully!",
+          severity: "success",
+        });
+        getArticles();
       })
       .catch((err) => {
         console.log(err);
@@ -239,13 +249,7 @@ const MemberArticleList = () => {
     Service.client
       .post(`/articles`, emptyArticle)
       .then((res) => {
-        if (res.data.user.member !== null) {
-          history.push("/member/article/edit/" + res.data.id);
-        } else if (res.data.user.partner !== null) {
-          history.push("/partner/article/edit/" + res.data.id);
-        } else if (res.data.is_admin) {
-          history.push("/admin/article/edit/" + res.data.id);
-        }
+        history.push("/article/edit/member/" + res.data.id);
       })
       .catch((err) => {
         console.log(err);
@@ -291,7 +295,6 @@ const MemberArticleList = () => {
           >
             <Tab label="Drafts" {...a11yProps(0)} />
             <Tab label="Published" {...a11yProps(1)} />
-            {/* <Tab label="Admin" {...a11yProps(2)} /> */}
           </Tabs>
         </AppBar>
 
@@ -304,7 +307,7 @@ const MemberArticleList = () => {
                     <Typography
                       style={{ fontWeight: "700", cursor: "pointer" }}
                       onClick={() => {
-                        history.push(`/member/article/edit/${article.id}`);
+                        history.push(`/article/edit/member/${article.id}`);
                       }}
                     >
                       {article.title.length === 0
@@ -340,9 +343,11 @@ const MemberArticleList = () => {
                           <Typography
                             variant="body2"
                             className={classes.typography}
-                            onClick={() =>
-                              history.push(`/member/article/edit/${article.id}`)
-                            }
+                            onClick={() => {
+                              history.push(
+                                `/article/edit/member/${article.id}`
+                              );
+                            }}
                           >
                             Edit Draft
                           </Typography>
@@ -409,7 +414,7 @@ const MemberArticleList = () => {
                             variant="body2"
                             className={classes.typography}
                             onClick={() =>
-                              history.push(`/member/article/edit/${article.id}`)
+                              history.push(`/article/edit/member/${article.id}`)
                             }
                           >
                             Edit article

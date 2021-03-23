@@ -7,8 +7,6 @@ import MemberLoginPage from "./member/auth/MemberLoginPage";
 import ViewArticlePage from "./article/ArticleMain";
 import EditArticlePage from "./article/EditArticle";
 import MemberArticlePage from "./member/article/MemberArticleList";
-//import PartnerArticlePage from "./partner/article/PartnerArticleList";
-//import AdminArticlePage from "./admin/article/AdminArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
 import MemberProfilePage from "./member/profile/Profile/ProfilePage";
@@ -159,8 +157,21 @@ const App = () => {
       />
       <PrivateRoute
         exact
-        path="/article/edit/:id"
+        path="/article/edit/member/:id"
         component={EditArticlePage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/article/edit/partner/:id"
+        component={EditArticlePage}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/article/edit/admin/:id"
+        component={EditArticlePage}
+        user="admin"
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />
