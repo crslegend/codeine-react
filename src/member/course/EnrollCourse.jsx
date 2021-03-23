@@ -104,12 +104,6 @@ const styles = makeStyles((theme) => ({
     backgroundColor: "#F4F4F4",
     height: "10vh",
   },
-  consultationButton: {
-    marginRight: "25px",
-    // marginTop: "45px",
-    // float: "right",
-    // textTransform: "none",
-  },
 }));
 
 const EnrollCourse = () => {
@@ -129,6 +123,8 @@ const EnrollCourse = () => {
   });
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [proMember, setProMember] = useState(false);
+
   const [course, setCourse] = useState();
   // const [givenCourseReview, setGivenCourseReview] = useState(false);
   const [canBookConsult, setCanBookConsult] = useState(true);
@@ -165,6 +161,19 @@ const EnrollCourse = () => {
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res.data);
+          if (res.data.member.membership_tier !== "FREE") {
+            setProMember(true);
+          }
+        })
+        .catch((err) => {
+          // setAuth(false);
+        });
     }
   };
 
@@ -595,7 +604,6 @@ const EnrollCourse = () => {
               </Breadcrumbs>
               <div>
                 <Button
-                  className={classes.consultationButton}
                   color="primary"
                   variant="outlined"
                   component={Link}
@@ -606,13 +614,16 @@ const EnrollCourse = () => {
                 >
                   Book consultation
                 </Button>
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => setOpenIDE(true)}
-                >
-                  Code Along
-                </Button>
+                {proMember && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => setOpenIDE(true)}
+                    style={{ marginLeft: "25px" }}
+                  >
+                    Code Along
+                  </Button>
+                )}
               </div>
             </div>
             <div className={classes.courseSection}>
