@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import EarningsReport from "./components/EarningsReport";
 import HealthReport from "./components/HealthReport";
 import CourseReport from "./components/CourseReport";
@@ -89,6 +89,7 @@ function TabPanel(props) {
 const AdminAnalyticsPage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const location = useLocation();
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1, 2, 3];
@@ -105,10 +106,6 @@ const AdminAnalyticsPage = () => {
 
   const [popularSkill, setPopularSkill] = useState();
   const [projectSearches, setProjectSearches] = useState();
-  const [
-    projectApplicantConversion,
-    setProjectApplicantConversion,
-  ] = useState();
 
   const getAnalytics = async () => {
     if (numDays && numDays !== "") {
@@ -214,13 +211,6 @@ const AdminAnalyticsPage = () => {
           setProjectSearches(arr);
         })
         .catch((err) => console.log(err));
-
-      Service.client
-        .get(`/analytics/ip-application-rate`, { params: { days: numDays } })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log(err));
     } else {
       Service.client
         .get(`/analytics/first-enrollment-count`)
@@ -312,13 +302,6 @@ const AdminAnalyticsPage = () => {
           // console.log(res);
         })
         .catch((err) => console.log(err));
-
-      Service.client
-        .get(`/analytics/ip-application-rate`)
-        .then((res) => {
-          // console.log(res);
-        })
-        .catch((err) => console.log(err));
     }
 
     Service.client
@@ -362,6 +345,9 @@ const AdminAnalyticsPage = () => {
   };
 
   useEffect(() => {
+    if (location && location.state && location.state.tab) {
+      setValue(location.state.tab);
+    }
     getAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

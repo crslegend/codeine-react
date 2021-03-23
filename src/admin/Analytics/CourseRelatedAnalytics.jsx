@@ -141,7 +141,9 @@ const CourseRelatedAnalytics = () => {
         style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
       >
         <IconButton
-          onClick={() => history.push(`/admin/analytics`)}
+          onClick={() =>
+            history.push({ pathname: `/admin/analytics`, state: { tab: 2 } })
+          }
           style={{ marginRight: "20px" }}
         >
           <ArrowBack />
@@ -329,7 +331,12 @@ const CourseRelatedAnalytics = () => {
           </div>
         </div>
       </Paper>
-
+      <Typography
+        variant="h6"
+        style={{ fontWeight: 600, paddingBottom: "20px" }}
+      >
+        Courses
+      </Typography>
       <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
           courses.length > 0 &&

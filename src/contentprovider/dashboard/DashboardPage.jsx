@@ -321,6 +321,12 @@ const DashboardPage = () => {
           courses.
         </Typography>
       </Paper>
+      <Typography
+        variant="h6"
+        style={{ fontWeight: 600, paddingBottom: "20px" }}
+      >
+        Courses
+      </Typography>
       <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
           courses.length > 0 &&

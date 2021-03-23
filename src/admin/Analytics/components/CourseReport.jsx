@@ -259,7 +259,7 @@ const CourseReport = ({
                   coursesRanking.map((course, index) => {
                     if (index === 0) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -279,7 +279,7 @@ const CourseReport = ({
                       );
                     } else if (index === 1) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -299,7 +299,7 @@ const CourseReport = ({
                       );
                     } else if (index === 2) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -319,7 +319,7 @@ const CourseReport = ({
                       );
                     } else {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -447,7 +447,7 @@ const CourseReport = ({
                   courseSearches.map((result, index) => {
                     if (index === 0) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -469,7 +469,7 @@ const CourseReport = ({
                       );
                     } else if (index === 1) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -490,7 +490,7 @@ const CourseReport = ({
                       );
                     } else if (index === 2) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{ color: "#cd7f32", fontWeight: 600 }}
@@ -507,7 +507,7 @@ const CourseReport = ({
                       );
                     } else {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography variant="h3" style={{ fontWeight: 600 }}>
                             #{index + 1}
                           </Typography>

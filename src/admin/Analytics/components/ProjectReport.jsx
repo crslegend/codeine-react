@@ -256,7 +256,7 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                   projectSearches.map((result, index) => {
                     if (index === 0) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -278,7 +278,7 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                       );
                     } else if (index === 1) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{
@@ -299,7 +299,7 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                       );
                     } else if (index === 2) {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography
                             variant="h3"
                             style={{ color: "#cd7f32", fontWeight: 600 }}
@@ -316,7 +316,7 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                       );
                     } else {
                       return (
-                        <div className={classes.result}>
+                        <div key={index} className={classes.result}>
                           <Typography variant="h3" style={{ fontWeight: 600 }}>
                             #{index + 1}
                           </Typography>
