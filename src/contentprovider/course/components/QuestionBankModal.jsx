@@ -161,7 +161,9 @@ const ShortAnswer = ({ question, index, classes }) => {
       <Typography variant="body2" style={{ opacity: 0.7 }}>
         Marks for this question: {question.shortanswer.marks}
       </Typography>
-      <Typography>Keywords: {question && question.shortanswer.keywords.join(", ")}</Typography>
+      <Typography style={{ margin: "8px 0", fontSize: "12px", color: "rgba(0, 0, 0, 0.38)" }}>
+        Keywords: {question && question.shortanswer.keywords.join(", ")}
+      </Typography>
     </Fragment>
   );
 };
@@ -249,7 +251,6 @@ const QuestionBankDetails = ({ selectedQuestionBank, setSelectedQuestionBank }) 
             </div>
           );
         })}
-        
     </div>
   );
 };
