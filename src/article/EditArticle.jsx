@@ -212,7 +212,6 @@ const EditArticle = (props) => {
   useEffect(() => {
     if (debouncedText) {
       if (!articleDetails.is_published && articleDetails.title !== "") {
-        console.log("useeffect 1 debounce");
         Service.client
           .put(`/articles/${id}`, articleDetails)
           .then((res) => {

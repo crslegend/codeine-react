@@ -116,6 +116,7 @@ const ViewArticle = (props) => {
 
   useEffect(() => {
     getNumOfLikes();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [numOfLikes, setNumOfLikes] = useState(0);
@@ -247,6 +248,16 @@ const ViewArticle = (props) => {
       });
   };
 
+  const clickEditArticle = () => {
+    if (user.member !== null) {
+      history.push(`/article/edit/member/${id}`);
+    } else if (user.partner !== null) {
+      history.push(`/article/edit/partner/${id}`);
+    } else if (user.is_admin) {
+      history.push(`/article/edit/admin/${id}`);
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Container maxWidth="md">
@@ -297,7 +308,7 @@ const ViewArticle = (props) => {
                     }}
                     onClick={() => openingIDE()}
                   >
-                    Open IDE
+                    Code along
                   </Button>
                 )}
               </div>
@@ -389,7 +400,7 @@ const ViewArticle = (props) => {
                 <Typography
                   variant="body2"
                   className={classes.typography}
-                  onClick={() => history.push(`/member/article/edit/${id}`)}
+                  onClick={() => clickEditArticle()}
                 >
                   Edit article
                 </Typography>

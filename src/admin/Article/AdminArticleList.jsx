@@ -247,7 +247,7 @@ const AdminArticleList = (props) => {
     <div className={classes.root}>
       <div style={{ display: "flex", marginTop: "30px", marginBottom: "30px" }}>
         <Typography variant="h1" style={{ fontWeight: "700" }}>
-          Your articles
+          Your Articles
         </Typography>
         <Button
           variant="contained"
@@ -276,7 +276,7 @@ const AdminArticleList = (props) => {
           }}
         >
           <Tab label="Drafts" {...a11yProps(0)} />
-          <Tab label="Published" {...a11yProps(1)} />
+          <Tab label="Published Articles" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
 

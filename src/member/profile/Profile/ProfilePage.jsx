@@ -283,6 +283,8 @@ const Profile = (props) => {
           <div style={{ display: "flex", marginTop: "65px" }}>
             <Typography variant="h5">Profile Details</Typography>
             <Button
+              variant="contained"
+              color="primary"
               style={{ marginLeft: "auto" }}
               onClick={() => {
                 history.push("/member/profile/changepassword");

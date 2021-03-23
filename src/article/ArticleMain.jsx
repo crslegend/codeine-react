@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, ListItem, Typography } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Service from "../AxiosService";
 import CommentDrawer from "./ArticleComments";
 import ViewArticle from "./ViewArticle";
@@ -97,10 +96,6 @@ const ArticleMain = () => {
     top_level_comments: [],
   });
 
-  const editorBubble = {
-    toolbar: [],
-  };
-
   useEffect(() => {
     checkIfLoggedIn();
     Service.client
@@ -114,11 +109,8 @@ const ArticleMain = () => {
       });
   }, []);
 
-  const [loading, setLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
-
-  const [saveState, setSaveState] = useState(true);
 
   return (
     <div className={classes.root}>

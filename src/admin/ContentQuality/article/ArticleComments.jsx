@@ -18,7 +18,7 @@ import Chat from "@material-ui/icons/ChatBubbleOutline";
 import Menu from "@material-ui/icons/MoreHoriz";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
-import Service from "../AxiosService";
+import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
@@ -93,7 +93,6 @@ const ArticleComment = (props) => {
   const { id } = useParams();
 
   const {
-    user,
     articleDetails,
     setArticleDetails,
     drawerOpen,
@@ -746,64 +745,6 @@ const ArticleComment = (props) => {
       >
         Responses ({articleDetails.top_level_comments.length})
       </Typography>
-
-      {user && (
-        <Card className={classes.commentcard}>
-          <CardContent>
-            <div>
-              <div className={classes.cardheadername}>
-                <Avatar
-                  src={user && user.profile_photo}
-                  alt=""
-                  style={{ marginRight: "15px" }}
-                />
-                <Typography style={{ marginTop: "8px" }}>
-                  {user.first_name} {user.last_name}
-                </Typography>
-              </div>
-              <TextField
-                margin="normal"
-                id="comment"
-                name="comment"
-                fullWidth
-                value={comment.comment}
-                multiline
-                rows={4}
-                rowsMax={7}
-                placeholder="What are your thoughts..."
-                //error={firstNameError}
-                onChange={(event) =>
-                  setComment({
-                    comment: event.target.value,
-                  })
-                }
-              />
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  order: 2,
-                  marginLeft: "auto",
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={comment.comment === "" ? true : false}
-                  onClick={() => handleAddComment()}
-                  style={{
-                    order: 2,
-                    marginLeft: "auto",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  Respond
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Fragment>

@@ -25,6 +25,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SubjectIcon from "@material-ui/icons/Subject";
 import AdminHumanResourcePage from "./HumanResource/HumanResourcePage";
 import ContentQualityPage from "./ContentQuality/ContentQualityPage";
+import ContentQualityArticlePage from "./ContentQuality/article/ViewArticle";
 import HelpdeskPage from "./Helpdesk/HelpdeskPage";
 import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPage";
 import AnalyticsPage from "./Analytics/AnalyticsPage";
@@ -307,6 +308,13 @@ const AdminRoutesPage = () => {
             exact
             path="/admin/contentquality"
             render={() => <ContentQualityPage />}
+          />
+          <Route
+            exact
+            strict
+            sensitive
+            path="/admin/contentquality/article/:id"
+            render={() => <ContentQualityArticlePage />}
           />
           <Route
             exact
