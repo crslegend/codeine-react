@@ -355,17 +355,28 @@ const PartnerArticlesList = (props) => {
             <Fragment>
               {article.is_published && (
                 <div key={article.id} className={classes.articlelists}>
-                  <Typography
-                    style={{
-                      fontWeight: "700",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      history.push(`/article/${article.id}`);
-                    }}
-                  >
-                    {article.title}
-                  </Typography>
+                  <div style={{ display: "flex" }}>
+                    <div>
+                      <Typography
+                        style={{
+                          fontWeight: "700",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          history.push(`/article/${article.id}`);
+                        }}
+                      >
+                        {article.title}
+                      </Typography>
+                    </div>
+                    <div style={{ marginLeft: "auto" }}>
+                      {!article.is_activated && (
+                        <Typography style={{ fontWeight: "700", color: "red" }}>
+                          Deactivated
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
                   <div style={{ display: "flex" }}>
                     <Typography style={{ fontSize: "14px", color: "#757575" }}>
                       Published {calculateDateInterval(article.date_edited)}

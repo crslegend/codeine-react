@@ -101,13 +101,7 @@ const App = () => {
         component={MemberRegisterPage}
         user="member"
       />
-      <Route
-        exact
-        path="/article/:id"
-        strict
-        sensitive
-        component={ViewArticlePage}
-      />
+      <Route path="/article/:id" component={ViewArticlePage} />
       <PrivateRoute
         exact
         path="/member/dashboard"

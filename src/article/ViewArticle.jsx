@@ -114,82 +114,42 @@ const ViewArticle = (props) => {
     return false;
   };
 
-  useEffect(() => {
-    getNumOfLikes();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [numOfLikes, setNumOfLikes] = useState(0);
-
-  const getNumOfLikes = () => {
-    let likes = 0;
+  const getArticleDetails = () => {
     Service.client
-      .get(`/articles/${id}/engagement`)
+      .get(`/articles/${id}`)
       .then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          likes = likes + res.data[i].like;
-        }
-        setNumOfLikes(likes);
+        setArticleDetails(res.data);
       })
-      .catch((err1) => {
-        console.log(err1);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
   const handleLikeArticle = (e) => {
     if (user) {
-      setArticleDetails({
-        ...articleDetails,
-        current_user_liked: setArticleDetails.current_user_liked,
-      });
-      let queryParams = {
-        is_user: true,
-      };
-      Service.client
-        .get(`/articles/${articleDetails.id}/engagement`, {
-          params: { ...queryParams },
-        })
-        .then((res) => {
-          if (res.data.length === 0) {
-            Service.client
-              .post(`/articles/${articleDetails.id}/engagement`, {
-                like: 1,
-              })
-              .then((res1) => {
-                getNumOfLikes();
-              })
-              .catch((err1) => {
-                console.log(err1);
-              });
-          } else {
-            if (res.data[0].like === 0) {
-              Service.client
-                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
-                  like: 1,
-                })
-                .then((res1) => {
-                  getNumOfLikes();
-                })
-                .catch((err1) => {
-                  console.log(err1);
-                });
-            } else {
-              Service.client
-                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
-                  like: 0,
-                })
-                .then((res1) => {
-                  getNumOfLikes();
-                })
-                .catch((err1) => {
-                  console.log(err1);
-                });
-            }
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // setArticleDetails({
+      //   ...articleDetails,
+      //   current_user_liked: setArticleDetails.current_user_liked,
+      // });
+      if (articleDetails.current_user_liked) {
+        Service.client
+          .delete(`/articles/${articleDetails.id}/engagements`)
+          .then((res) => {
+            setArticleDetails(res.data);
+          })
+          .catch((err1) => {
+            console.log(err1);
+          });
+      } else {
+        Service.client
+          .post(`/articles/${articleDetails.id}/engagements`)
+          .then((res) => {
+            getArticleDetails();
+          })
+          .catch((err1) => {
+            console.log(err1);
+          });
+      }
     } else {
       alert(
         "please login! - to discuss the flow, should we redirect to member login page? but not all viewers of article are members..."
@@ -367,13 +327,17 @@ const ViewArticle = (props) => {
               size={30}
               reverse={articleDetails.current_user_liked}
               onClick={(e) => handleLikeArticle(e)}
+              style={{ cursor: "pointer" }}
             />
             <Typography style={{ marginRight: "15px" }}>
-              {numOfLikes} likes
+              {articleDetails.engagements.length}
             </Typography>
-            <CommentIcon onClick={() => setDrawerOpen(true)} />
+            <CommentIcon
+              style={{ cursor: "pointer" }}
+              onClick={() => setDrawerOpen(true)}
+            />
             <Typography style={{ display: "inline-flex" }}>
-              {articleDetails.top_level_comments.length} responses
+              {articleDetails.top_level_comments.length}
             </Typography>
             {user && checkIfOwnerOfComment(user.id) && (
               <Menu

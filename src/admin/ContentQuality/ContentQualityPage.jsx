@@ -85,7 +85,7 @@ const AdminContentQualityPage = () => {
   const classes = styles();
   const history = useHistory();
 
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -298,17 +298,8 @@ const AdminContentQualityPage = () => {
     }
 
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      // Service.client
-      //   .get(`/articles`, { params: { ...queryParams } })
-      //   .then((res) => {
-      //     setAllArticleList(res.data.results);
-      //     articleRows = allArticleList;
-      //   })
-      //   .catch((err) => {
-      //     //setProfile(null);
-      //   });
       Service.client
-        .get(`/articles`)
+        .get(`/articles`, { params: { ...queryParams } })
         .then((res) => {
           setAllArticleList(res.data);
           articleRows = allArticleList;
@@ -412,7 +403,9 @@ const AdminContentQualityPage = () => {
               pageSize={10}
               //checkboxSelection
               disableSelectionOnClick
-              onRowClick={(e) => history.push(`/admin/contentquality/article/${e.row.id}`)}
+              onRowClick={(e) =>
+                history.push(`/admin/contentquality/article/${e.row.id}`)
+              }
             />
           </Grid>
         </Grid>

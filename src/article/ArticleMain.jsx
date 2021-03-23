@@ -98,16 +98,19 @@ const ArticleMain = () => {
 
   useEffect(() => {
     checkIfLoggedIn();
+    getArticleDetails();
+  }, []);
+
+  const getArticleDetails = () => {
     Service.client
       .get(`/articles/${id}`)
       .then((res) => {
-        console.log(res.data);
         setArticleDetails(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  };
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);

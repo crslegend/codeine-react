@@ -16,6 +16,7 @@ import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import CommentDrawer from "./ArticleComments";
+import Toast from "../../../components/Toast.js";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -56,12 +57,39 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
   },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
+  greenButton: {
+    backgroundColor: theme.palette.green.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkgreen.main,
+    },
+  },
 }));
 
 const ViewArticle = (props) => {
   const classes = useStyles();
   const { id } = useParams();
   const history = useHistory();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const formatDate = (date) => {
     const options = {
@@ -83,37 +111,54 @@ const ViewArticle = (props) => {
     title: "",
     content: "",
     top_level_comments: [],
+    engagements: [],
   });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    getNumOfLikes();
     getArticleDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const [numOfLikes, setNumOfLikes] = useState(0);
-
-  const getNumOfLikes = () => {
-    let likes = 0;
-    Service.client
-      .get(`/articles/${id}/engagement`)
-      .then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          likes = likes + res.data[i].like;
-        }
-        setNumOfLikes(likes);
-      })
-      .catch((err1) => {
-        console.log(err1);
-      });
-  };
 
   const getArticleDetails = () => {
     Service.client
       .get(`/articles/${id}`)
       .then((res) => {
+        setArticleDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeactivate = () => {
+    Service.client
+      .patch(`/articles/${id}/deactivate`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article is deactivated",
+          severity: "success",
+        });
+        setArticleDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleActivate = () => {
+    Service.client
+      .patch(`/articles/${id}/activate`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article is activated",
+          severity: "success",
+        });
         setArticleDetails(res.data);
       })
       .catch((err) => {
@@ -132,12 +177,9 @@ const ViewArticle = (props) => {
 
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Breadcrumbs
-          style={{ margin: "20px 0px" }}
-          separator=">"
-          aria-label="breadcrumb"
-        >
+        <Breadcrumbs separator=">" aria-label="breadcrumb">
           <Link
             color="primary"
             onClick={() => {
@@ -150,10 +192,23 @@ const ViewArticle = (props) => {
             Article
           </Typography>
         </Breadcrumbs>
-
-        <Button color="primary" variant="contained">
-          Activate
-        </Button>
+        <div>
+          {articleDetails.is_activated ? (
+            <Button
+              className={classes.redButton}
+              onClick={() => handleDeactivate()}
+            >
+              Deactivate
+            </Button>
+          ) : (
+            <Button
+              className={classes.greenButton}
+              onClick={() => handleActivate()}
+            >
+              Activate
+            </Button>
+          )}
+        </div>
       </div>
 
       <Typography
@@ -238,7 +293,7 @@ const ViewArticle = (props) => {
             //onClick={(e) => handleLikeArticle(e)}
           />
           <Typography style={{ marginRight: "15px" }}>
-            {numOfLikes} likes
+            {articleDetails.engagements.length} likes
           </Typography>
           <CommentIcon onClick={() => setDrawerOpen(true)} />
           <Typography style={{ display: "inline-flex" }}>
