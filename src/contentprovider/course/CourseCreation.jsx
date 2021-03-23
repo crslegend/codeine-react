@@ -649,59 +649,59 @@ const CourseCreation = () => {
         return;
       }
 
-      for (const material in allChapters.columns[column].course_materials) {
-        if (
-          allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
-          allChapters.columns[column].course_materials[material].quiz.questions.length === 0
-        ) {
-          setSbOpen(true);
-          setSnackbar({
-            message: "Every quiz should have at least 1 question",
-            severity: "error",
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "center",
-            },
-            autoHideDuration: 3000,
-          });
-          return;
-        }
+      // for (const material in allChapters.columns[column].course_materials) {
+      //   if (
+      //     allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
+      //     allChapters.columns[column].course_materials[material].quiz.questions.length === 0
+      //   ) {
+      //     setSbOpen(true);
+      //     setSnackbar({
+      //       message: "Every quiz should have at least 1 question",
+      //       severity: "error",
+      //       anchorOrigin: {
+      //         vertical: "bottom",
+      //         horizontal: "center",
+      //       },
+      //       autoHideDuration: 3000,
+      //     });
+      //     return;
+      //   }
 
-        if (
-          allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
-          allChapters.columns[column].course_materials[material].quiz.questions.length > 0
-        ) {
-          let passingMarks = allChapters.columns[column].course_materials[material].quiz.passing_marks;
-          let totalMarks = 0;
-          for (let j = 0; j < allChapters.columns[column].course_materials[material].quiz.questions.length; j++) {
-            if (allChapters.columns[column].course_materials[material].quiz.questions[j].mrq) {
-              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mrq.marks;
-            }
+      //   if (
+      //     allChapters.columns[column].course_materials[material].material_type === "QUIZ" &&
+      //     allChapters.columns[column].course_materials[material].quiz.questions.length > 0
+      //   ) {
+      //     let passingMarks = allChapters.columns[column].course_materials[material].quiz.passing_marks;
+      //     let totalMarks = 0;
+      //     for (let j = 0; j < allChapters.columns[column].course_materials[material].quiz.questions.length; j++) {
+      //       if (allChapters.columns[column].course_materials[material].quiz.questions[j].mrq) {
+      //         totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mrq.marks;
+      //       }
 
-            if (allChapters.columns[column].course_materials[material].quiz.questions[j].mcq) {
-              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mcq.marks;
-            }
+      //       if (allChapters.columns[column].course_materials[material].quiz.questions[j].mcq) {
+      //         totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].mcq.marks;
+      //       }
 
-            if (allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer) {
-              totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer.marks;
-            }
-          }
+      //       if (allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer) {
+      //         totalMarks += allChapters.columns[column].course_materials[material].quiz.questions[j].shortanswer.marks;
+      //       }
+      //     }
 
-          if (passingMarks > totalMarks) {
-            setSbOpen(true);
-            setSnackbar({
-              message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
-              severity: "error",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-              autoHideDuration: 3000,
-            });
-            return;
-          }
-        }
-      }
+      //     if (passingMarks > totalMarks) {
+      //       setSbOpen(true);
+      //       setSnackbar({
+      //         message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
+      //         severity: "error",
+      //         anchorOrigin: {
+      //           vertical: "bottom",
+      //           horizontal: "center",
+      //         },
+      //         autoHideDuration: 3000,
+      //       });
+      //       return;
+      //     }
+      //   }
+      // }
 
       if (pageNum === 2 && finalQuizQuestions.taskIds.length === 0) {
         setSbOpen(true);

@@ -44,10 +44,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   dropzoneContainer: {
-    minHeight: "190px",
+    minHeight: "120px",
     "@global": {
       ".MuiDropzoneArea-root": {
-        minHeight: "190px",
+        minHeight: "120px",
       },
     },
   },
@@ -60,8 +60,6 @@ const QuestionDialog = ({
   setEditQuestionDialog,
   addQuestionDialog,
   setAddQuestionDialog,
-  quizId,
-  setQuizId,
   question,
   setQuestion,
   questionType,
@@ -76,6 +74,7 @@ const QuestionDialog = ({
   snackbar,
   setSnackbar,
   questionNum,
+  selectedQuestionBank,
 }) => {
   const classes = useStyles();
   // console.log(question);
@@ -85,29 +84,13 @@ const QuestionDialog = ({
       [{ font: [] }],
       [{ size: [] }],
       ["bold", "italic", "underline", "strike", "code-block"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
+      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
       ["link"],
       ["clean"],
     ],
   };
 
-  const format = [
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-  ];
+  const format = ["font", "size", "bold", "italic", "underline", "strike", "list", "bullet", "indent", "link"];
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -204,13 +187,12 @@ const QuestionDialog = ({
 
   const handleDeleteQuestion = () => {
     Service.client
-      .delete(`/quiz/${quizId}/questions/${question.id}`)
+      .delete(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`)
       .then((res) => {
         // console.log(res);
         setEditMode(false);
         setDeleteQuestionDialog(false);
         setEditQuestionDialog(false);
-        setQuizId();
         setQuestion();
         setQuestionType();
         setOptions();
@@ -377,7 +359,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "mcq" },
         })
         .then((res) => {
@@ -386,7 +368,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -422,7 +403,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "mrq" },
         })
         .then((res) => {
@@ -431,7 +412,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -469,7 +449,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
@@ -478,7 +458,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -546,7 +525,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "mcq" },
         })
         .then((res) => {
@@ -554,7 +533,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -587,7 +565,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "mrq" },
         })
         .then((res) => {
@@ -595,7 +573,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -631,7 +608,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
@@ -639,7 +616,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -666,7 +642,6 @@ const QuestionDialog = ({
           }
 
           setTimeout(() => {
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -686,10 +661,7 @@ const QuestionDialog = ({
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
               </IconButton> */}
-              <IconButton
-                size="small"
-                onClick={() => setDeleteQuestionDialog(true)}
-              >
+              <IconButton size="small" onClick={() => setDeleteQuestionDialog(true)}>
                 <Delete />
               </IconButton>
             </div>
@@ -756,10 +728,7 @@ const QuestionDialog = ({
 
           {question && question.image && (
             <div style={{ display: "flex", marginTop: "5px" }}>
-              <Typography
-                variant="body2"
-                style={{ marginTop: "5px", marginRight: "10px" }}
-              >
+              <Typography variant="body2" style={{ marginTop: "5px", marginRight: "10px" }}>
                 <LinkMui
                   href={question.image ? question.image.replace("#", "") : "#"}
                   rel="noopener noreferrer"
@@ -805,9 +774,7 @@ const QuestionDialog = ({
                     } else if (question.mrq) {
                       return question.mrq.marks ? question.mrq.marks : "";
                     } else if (question.shortanswer) {
-                      return question.shortanswer.marks
-                        ? question.shortanswer.marks
-                        : "";
+                      return question.shortanswer.marks ? question.shortanswer.marks : "";
                     }
                   }
                 })()}
@@ -820,16 +787,11 @@ const QuestionDialog = ({
             </Fragment>
           )}
 
-          {questionType &&
-            questionType !== "shortanswer" &&
-            (editMode || addQuestionDialog) && (
-              <Typography
-                variant="body1"
-                style={{ paddingTop: "10px", paddingBottom: "5px" }}
-              >
-                Enter option(s) below in the field
-              </Typography>
-            )}
+          {questionType && questionType !== "shortanswer" && (editMode || addQuestionDialog) && (
+            <Typography variant="body1" style={{ paddingTop: "10px", paddingBottom: "5px" }}>
+              Enter option(s) below in the field
+            </Typography>
+          )}
 
           {options &&
             options.map((option, index) => {
@@ -881,11 +843,7 @@ const QuestionDialog = ({
             })}
 
           {options && correctAnswer && questionType === "mcq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 value={correctAnswer}
@@ -904,11 +862,7 @@ const QuestionDialog = ({
           )}
 
           {options && correctAnswer && questionType === "mrq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 multiple
@@ -923,9 +877,7 @@ const QuestionDialog = ({
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
-                    <Checkbox
-                      checked={correctAnswer.includes(option) && option !== ""}
-                    />
+                    <Checkbox checked={correctAnswer.includes(option) && option !== ""} />
                     <ListItemText primary={option} />
                   </MenuItem>
                 ))}
@@ -941,10 +893,7 @@ const QuestionDialog = ({
                 </label>
                 <Tooltip
                   title={
-                    <Typography variant="body2">
-                      Separate the keywords with commas (eg. keyword 1,keyword
-                      2)
-                    </Typography>
+                    <Typography variant="body2">Separate the keywords with commas (eg. keyword 1,keyword 2)</Typography>
                   }
                 >
                   <IconButton disableRipple size="small">
@@ -981,7 +930,6 @@ const QuestionDialog = ({
                 setAddQuestionDialog(false);
               }
               setTimeout(() => {
-                setQuizId();
                 setQuestion();
                 setQuestionType();
                 setOptions();
