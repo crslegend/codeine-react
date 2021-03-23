@@ -1,25 +1,15 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Breadcrumbs,
-  LinearProgress,
   Paper,
-  TextField,
   Typography,
   IconButton,
 } from "@material-ui/core";
-import Service from "../../AxiosService";
-import Cookies from "js-cookie";
 import {
   Announcement,
   ArrowBack,
@@ -30,8 +20,6 @@ import {
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import ReactPlayer from "react-player";
-import Toast from "../../components/Toast.js";
-import jwt_decode from "jwt-decode";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import TakeQuiz from "./components/TakeQuiz";
 
@@ -85,7 +73,7 @@ const EnrollCourseWithIDE = ({
   return (
     <div className={classes.courseSection}>
       <div style={{ height: "100vh" }}>
-        <Splitter direction={SplitDirection.Horizontal} initialSizes={[40, 60]}>
+        <Splitter direction={SplitDirection.Horizontal} initialSizes={[55, 65]}>
           <div className={classes.leftCol}>
             <div>
               <IconButton onClick={() => setOpenIDE(false)}>
