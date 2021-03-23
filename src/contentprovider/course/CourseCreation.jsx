@@ -425,10 +425,7 @@ const CourseCreation = () => {
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
             pro: res.data.pro,
-            github_repo:
-              res.data.github_repo !== "undefined" || !res.data.github_repo
-                ? res.data.github_repo
-                : "",
+            github_repo: res.data.github_repo !== "undefined" || !res.data.github_repo ? res.data.github_repo : "",
             duration: res.data.duration,
           });
           setCourseDetailsCard({
@@ -1252,7 +1249,7 @@ const CourseCreation = () => {
           },
         }}
       >
-        <QuestionBankModal />
+        <QuestionBankModal courseId={courseId} />
       </Dialog>
     </Fragment>
   );
