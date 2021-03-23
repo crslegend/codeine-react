@@ -435,32 +435,41 @@ const AdminLearnersAchievementPage = () => {
       Service.client
         .patch(`/achievements/${badge.id}`, formData)
         .then((res) => {
-          requirementList &&
-            requirementList.forEach((list, index) => {
-              Service.client
-                .post(`/achievements/${badge.id}/requirements`, list)
-                .then((res) => {
-                  if (index === requirementList.length - 1) {
-                    setOpenAchievementDialog(false);
-                    handleResetFields();
-                    getBadgesData();
-                    setSbOpen(true);
-                    setSnackbar({
-                      message: "Badge successfully updated!",
-                      severity: "success",
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "center",
-                      },
-                      autoHideDuration: 3000,
+          Service.client
+            .delete(`/achievements/${badge.id}/requirements`)
+            .then((res) => {
+              requirementList &&
+                requirementList.forEach((list, index) => {
+                  Service.client
+                    .post(`/achievements/${badge.id}/requirements`, list)
+                    .then((res) => {
+                      if (index === requirementList.length - 1) {
+                        setOpenAchievementDialog(false);
+                        handleResetFields();
+                        getBadgesData();
+                        setSbOpen(true);
+                        setSnackbar({
+                          message: "Badge successfully updated!",
+                          severity: "success",
+                          anchorOrigin: {
+                            vertical: "bottom",
+                            horizontal: "center",
+                          },
+                          autoHideDuration: 3000,
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      setOpenAchievementDialog(false);
+                      handleResetFields();
                     });
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
-                  setOpenAchievementDialog(false);
-                  handleResetFields();
                 });
+            })
+            .catch((err) => {
+              console.log(err);
+              setOpenAchievementDialog(false);
+              handleResetFields();
             });
         })
         .catch((err) => {
