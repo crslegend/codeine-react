@@ -106,21 +106,33 @@ const MemberNavBar = (props) => {
   const loggedOutNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
+        <Button
+          variant="outlined"
+          component={Link}
+          to="/partner"
+          style={{ textTransform: "capitalize" }}
+        >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Teach on Codeine
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
+        <Button
+          to="/member/login"
+          variant="outlined"
+          component={Link}
+          to="/partner/login"
+          style={{ textTransform: "capitalize" }}
+          color="primary"
+        >
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
           >
             Log In
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button

@@ -25,11 +25,16 @@ const ContentProviderLanding = () => {
   const contentProviderNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Button
+          variant="outlined"
+          component={Link}
+          to="/"
+          style={{ textTransform: "capitalize" }}
+        >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Learn On Codeine
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
       {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <Link to="/industry" style={{ textDecoration: "none" }}>
@@ -39,14 +44,20 @@ const ContentProviderLanding = () => {
         </Link>
       </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner/login" style={{ textDecoration: "none" }}>
+        <Button
+          variant="outlined"
+          component={Link}
+          to="/partner/login"
+          style={{ textTransform: "capitalize" }}
+          color="primary"
+        >
           <Typography
             variant="h6"
             style={{ fontSize: "15px", color: "#437FC7" }}
           >
             Log In
           </Typography>
-        </Link>
+        </Button>
       </ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
