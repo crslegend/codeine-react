@@ -5,21 +5,24 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  CardMedia,
   FormControl,
   InputLabel,
   LinearProgress,
   MenuItem,
   Select,
   Typography,
+  Button,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import { Pagination, Rating } from "@material-ui/lab";
+import { Pagination } from "@material-ui/lab";
 import { Assignment } from "@material-ui/icons";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import MemberNavBar from "../../MemberNavBar";
+import { Link } from "react-router-dom";
+import Label from "../../landing/components/Label.jsx";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -33,31 +36,44 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(5),
   },
   courses: {
+    paddingLeft: theme.spacing(5),
     display: "flex",
-    marginTop: "30px",
-  },
-  card: {
-    width: 200,
-    minHeight: 250,
-    marginRight: "30px",
-    display: "flex",
-    flexDirection: "column",
   },
   cardActionArea: {
     flexGrow: 1,
     flexDirection: "column",
     alignItems: "stretch",
+    height: "90%",
   },
-  media: {
-    height: 0,
-    paddingTop: "56.25%",
+  cardroot: {
+    width: "300px",
+    padding: "10px 10px 0px",
+    marginRight: "50px",
+    border: "1px solid",
+    borderRadius: 0,
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
+  free: {
+    backgroundColor: "#F7DF1E",
+    color: "#000000",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
   },
   searchSection: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     width: "100%",
   },
   formControl: {
@@ -71,6 +87,7 @@ const styles = makeStyles((theme) => ({
   paginationSection: {
     float: "right",
     marginTop: theme.spacing(2),
+    marginRight: theme.spacing(3),
     paddingBottom: theme.spacing(5),
   },
   pagination: {
@@ -92,7 +109,15 @@ const styles = makeStyles((theme) => ({
 
 const CoursesPage = () => {
   const classes = styles();
-  // const history = useHistory();
+  const history = useHistory();
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
@@ -189,6 +214,7 @@ const CoursesPage = () => {
 
   useEffect(() => {
     getAllCourses();
+    checkIfLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -210,50 +236,56 @@ const CoursesPage = () => {
 
   return (
     <Fragment>
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Enrolled Courses
-        </Typography>
-      </Box>
-      <div className={classes.content}>
-        <div className={classes.searchSection}>
-          <div className={classes.searchBar}>
-            <SearchBar
-              placeholder="Search Courses"
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
-              onCancelSearch={handleCancelSearch}
-              onRequestSearch={handleRequestSearch}
-              // className={classes.searchBar}
-              classes={{
-                input: classes.input,
-              }}
-            />
-          </div>
-          <div>
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
-              <Select
-                label="Sort By"
-                value={sortMethod}
-                onChange={(event) => {
-                  onSortChange(event);
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      <div style={{ paddingTop: "65px" }}>
+        <Box className={classes.heading}>
+          <Typography
+            variant="h4"
+            style={{ marginLeft: "56px", color: "#fff" }}
+          >
+            My Enrolled Courses
+          </Typography>
+        </Box>
+        <div className={classes.content}>
+          <div className={classes.searchSection}>
+            <div className={classes.searchBar}>
+              <SearchBar
+                placeholder="Search Courses"
+                value={searchValue}
+                onChange={(newValue) => setSearchValue(newValue)}
+                onCancelSearch={handleCancelSearch}
+                onRequestSearch={handleRequestSearch}
+                // className={classes.searchBar}
+                classes={{
+                  input: classes.input,
                 }}
-                style={{ height: 47, backgroundColor: "#fff" }}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="-published_date">
-                  Published Date (Least Recent)
-                </MenuItem>
-                <MenuItem value="published_date">
-                  Published Date (Most Recent)
-                </MenuItem>
-                <MenuItem value="rating">Rating (Ascending)</MenuItem>
-                <MenuItem value="-rating">Rating (Descending)</MenuItem>
-              </Select>
-            </FormControl>
+              />
+            </div>
+            <div>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
+                <Select
+                  label="Sort By"
+                  value={sortMethod}
+                  onChange={(event) => {
+                    onSortChange(event);
+                  }}
+                  style={{ height: 47, backgroundColor: "#fff" }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="-published_date">
+                    Published Date (Least Recent)
+                  </MenuItem>
+                  <MenuItem value="published_date">
+                    Published Date (Most Recent)
+                  </MenuItem>
+                  <MenuItem value="rating">Rating (Ascending)</MenuItem>
+                  <MenuItem value="-rating">Rating (Descending)</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </div>
         </div>
         <div className={classes.courses}>
@@ -262,97 +294,122 @@ const CoursesPage = () => {
               .slice((page - 1) * itemsPerPage, page * itemsPerPage)
               .map((course, index) => {
                 return (
-                  <Card key={index} className={classes.card}>
+                  <Card key={index} elevation={0} className={classes.cardroot}>
                     <a
-                      href={`/courses/${course.id}`}
+                      href={`/courses/enroll/${course.id}`}
                       className={classes.link}
-                      style={{ height: "100%" }}
                     >
                       <CardActionArea
                         // onClick={() => {
                         //   return <a href={`/courses/${course.id}`} />;
                         // }}
                         className={classes.cardActionArea}
-                        style={{ height: "100%" }}
                       >
-                        <div style={{ height: "30%" }}>
-                          <CardMedia
-                            className={classes.media}
-                            image={course && course.thumbnail}
-                            title={course && course.title}
-                          />
-                        </div>
-                        <div style={{ height: "5%" }} />
-                        <div style={{ height: "65%" }}>
-                          <CardContent
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "space-between",
-                              height: "100%",
-                            }}
-                          >
-                            <div
+                        <CardContent
+                          style={{
+                            height: "inherit",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "10px 10px",
+                          }}
+                        >
+                          <div>
+                            {course && course.pro === true ? (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.pro}
+                                >
+                                  PRO
+                                </Typography>
+                              </div>
+                            ) : (
+                              <div style={{ height: "25px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.free}
+                                >
+                                  FREE
+                                </Typography>
+                              </div>
+                            )}
+
+                            <Typography
                               style={{
-                                width: "100%",
-                                marginBottom: "10px",
-                                marginTop: "10px",
+                                fontWeight: 600,
+                              }}
+                              variant="h6"
+                            >
+                              {course && course.title}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                paddingBottom: "30px",
+                                fontFamily: "Roboto Mono",
                               }}
                             >
-                              <Box display="flex" alignItems="center">
-                                <Box width="100%" mr={1}>
-                                  <LinearProgress
-                                    variant="determinate"
-                                    value={
-                                      progressArr &&
-                                      parseInt(getProgress(course))
-                                    }
-                                  />
-                                </Box>
-                                <Box minWidth={35}>
-                                  <Typography variant="body2">
-                                    {progressArr &&
-                                      parseInt(getProgress(course)).toFixed() +
-                                        "%"}
-                                  </Typography>
-                                </Box>
-                              </Box>
-                              <Typography
-                                variant="body1"
-                                style={{
-                                  fontWeight: 600,
-                                  paddingTop: "10px",
-                                  paddingBottom: "10px",
-                                }}
-                              >
-                                {course && course.title}
-                              </Typography>
+                              {course &&
+                                course.partner.first_name +
+                                  " " +
+                                  course.partner.last_name}
+                            </Typography>
+                          </div>
+                          <div>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              duration: {course && course.duration}h
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              exp points: {course && course.exp_points}p
+                            </Typography>
+                            <div style={{ display: "flex", margin: "10px 0" }}>
+                              {course &&
+                                course.categories.map((category) => (
+                                  <Label label={category} />
+                                ))}
                             </div>
-                            <div>
-                              <Typography
-                                variant="body2"
-                                style={{ opacity: 0.7, paddingBottom: "10px" }}
-                              >
-                                {course.partner && course.partner.first_name}{" "}
-                                {course.partner && course.partner.last_name}
-                              </Typography>
-                              {(() => {})()}
-                              <div>
-                                <Rating
-                                  size="small"
-                                  readOnly
-                                  value={
-                                    course && course.rating
-                                      ? parseFloat(course.rating)
-                                      : 0
-                                  }
-                                />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </div>
+                          </div>
+                        </CardContent>
                       </CardActionArea>
                     </a>
+                    <Box style={{ height: "10%" }}>
+                      <LinearProgress
+                        variant="determinate"
+                        style={{ height: "10px" }}
+                        value={progressArr && parseInt(getProgress(course))}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {getProgress(course)}% complete
+                        </Typography>
+                        <Button
+                          color="primary"
+                          style={{
+                            fontSize: "12px",
+                            textTransform: "none",
+                            padding: 0,
+                          }}
+                        >
+                          Leave a rating
+                        </Button>
+                      </div>
+                    </Box>
                   </Card>
                 );
               })

@@ -27,6 +27,14 @@ const styles = makeStyles((theme) => ({
     borderRadius: "9px",
     width: "30px",
   },
+  free: {
+    backgroundColor: "#F7DF1E",
+    color: "#000000",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
+  },
 }));
 
 const CourseCard = (props) => {
@@ -56,7 +64,11 @@ const CourseCard = (props) => {
                 </Typography>
               </div>
             ) : (
-              <div style={{ marginTop: "25px" }}></div>
+              <div style={{ height: "25px" }}>
+                <Typography variant="subtitle1" className={classes.free}>
+                  FREE
+                </Typography>
+              </div>
             )}
 
             <Typography

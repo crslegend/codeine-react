@@ -203,6 +203,10 @@ const ViewAllCourses = () => {
       .delete(`/courses/${courseId}`)
       .then((res) => {
         // console.log(res);
+        if (localStorage.getItem("courseId") === courseId) {
+          localStorage.removeItem("courseId");
+        }
+
         setDeleteCourseDialog(false);
         setDeleteCourseId();
         getAllCourses();

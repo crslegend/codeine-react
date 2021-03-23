@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   Accordion,
   AccordionDetails,
@@ -107,7 +107,6 @@ const styles = makeStyles((theme) => ({
     marginRight: "25px",
     // marginTop: "45px",
     // float: "right",
-    color: "#FFFFFF",
     // textTransform: "none",
   },
 }));
@@ -130,7 +129,7 @@ const EnrollCourse = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [course, setCourse] = useState();
-  const [givenCourseReview, setGivenCourseReview] = useState(false);
+  // const [givenCourseReview, setGivenCourseReview] = useState(false);
   const [canBookConsult, setCanBookConsult] = useState(true);
 
   const [chosenCourseMaterial, setChosenCourseMaterial] = useState();
@@ -139,7 +138,7 @@ const EnrollCourse = () => {
 
   const [expanded, setExpanded] = useState("overview");
 
-  const [unenrollDialog, setUnenrollDialog] = useState(false);
+  // const [unenrollDialog, setUnenrollDialog] = useState(false);
   const [reviewDialog, setReviewDialog] = useState(false);
 
   const [review, setReview] = useState({
@@ -323,6 +322,9 @@ const EnrollCourse = () => {
             .then((res) => {
               // console.log(res);
               setProgress(res.data[0].progress);
+              if (parseInt(res.data[0].progress) === 100) {
+                getCourseReviews();
+              }
               if (!res.data[0].materials_done) {
                 setProgressArr([]);
               } else {
@@ -341,13 +343,18 @@ const EnrollCourse = () => {
       .get(`/courses/${id}/reviews`)
       .then((res) => {
         // console.log(res);
+        let givenCourseReview = false;
         if (res.data.length > 0) {
           for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].member.id === decoded.user_id) {
-              setGivenCourseReview(true);
+              // setGivenCourseReview(true);
+              givenCourseReview = true;
               break;
             }
           }
+        }
+        if (!givenCourseReview) {
+          setReviewDialog(true);
         }
       })
       .catch((err) => console.log(err));
@@ -370,7 +377,7 @@ const EnrollCourse = () => {
             break;
           }
         }
-        console.log(canBookConsult);
+        // console.log(canBookConsult);
       })
       .catch((error) => {
         console.log(error);
@@ -381,7 +388,6 @@ const EnrollCourse = () => {
     checkIfLoggedIn();
     handleLogContinueCourse();
     getCourse();
-    getCourseReviews();
     checkIfCanBookConsultations();
 
     return () => {
@@ -517,33 +523,11 @@ const EnrollCourse = () => {
       .catch((err) => console.log(err));
   };
 
-  const handleUnenrollment = () => {
-    Service.client
-      .delete(`/courses/${id}/enrollments`)
-      .then((res) => {
-        console.log(res);
-        // setProgress(res.data.progress);
-        history.push(`/courses/${id}`);
-      })
-      .catch((err) => console.log(err));
-  };
-
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+
       <div className={classes.mainSection}>
         <div
           style={{
@@ -583,33 +567,15 @@ const EnrollCourse = () => {
             <Button
               className={classes.consultationButton}
               color="primary"
-              variant="contained"
+              variant="outlined"
               component={Link}
               disabled={canBookConsult ? false : true}
               to={`/courses/enroll/consultation/${course && course.partner.id}`}
             >
               Book consultation
             </Button>
-            {givenCourseReview && givenCourseReview ? (
-              <Button variant="contained" color="primary" disabled>
-                Course Review Given
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setReviewDialog(true)}
-              >
-                Give Course Review
-              </Button>
-            )}
-
-            <Button
-              variant="contained"
-              className={classes.unenrollButton}
-              onClick={() => setUnenrollDialog(true)}
-            >
-              Unenroll
+            <Button color="primary" variant="outlined">
+              Code Along
             </Button>
           </div>
         </div>
@@ -632,6 +598,72 @@ const EnrollCourse = () => {
                       Choose a course material on the right to start
                     </Typography>
                   </Paper>
+                );
+              } else if (chosenCourseMaterial.material_type === "FILE") {
+                return (
+                  <div>
+                    <Paper
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        style={{ fontWeight: 600, paddingBottom: "10px" }}
+                      >
+                        {chosenCourseMaterial.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        style={{ paddingBottom: "30px" }}
+                      >
+                        {chosenCourseMaterial.description}
+                      </Typography>
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        {chosenCourseMaterial.course_file.zip_file &&
+                          chosenCourseMaterial.course_file.zip_file && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                textTransform: "capitalize",
+                                height: 25,
+                              }}
+                              href={chosenCourseMaterial.course_file.zip_file}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download File
+                            </Button>
+                          )}
+                        {chosenCourseMaterial.course_file.google_drive_url &&
+                          chosenCourseMaterial.course_file.google_drive_url && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                textTransform: "capitalize",
+                                height: 25,
+                                marginLeft: "10px",
+                              }}
+                              href={
+                                chosenCourseMaterial.course_file
+                                  .google_drive_url
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              File URL
+                            </Button>
+                          )}
+                      </div>
+                    </Paper>
+                  </div>
                 );
               } else if (chosenCourseMaterial.material_type === "VIDEO") {
                 return (
@@ -871,45 +903,47 @@ const EnrollCourse = () => {
                                     >
                                       {material.title}
                                     </LinkMui>
-                                    <div
-                                      style={{ marginLeft: "auto", order: 2 }}
-                                    >
-                                      {material.course_file.zip_file &&
-                                        material.course_file.zip_file && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                            }}
-                                            href={material.course_file.zip_file}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            Download File
-                                          </Button>
-                                        )}
-                                      {material.course_file.google_drive_url &&
-                                        material.course_file
-                                          .google_drive_url && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                              marginLeft: "10px",
-                                            }}
-                                            href={
-                                              material.course_file
-                                                .google_drive_url
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            File URL
-                                          </Button>
-                                        )}
-                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                      marginBottom: "10px",
+                                    }}
+                                  >
+                                    {material.course_file.zip_file &&
+                                      material.course_file.zip_file && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                          }}
+                                          href={material.course_file.zip_file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          Download File
+                                        </Button>
+                                      )}
+                                    {material.course_file.google_drive_url &&
+                                      material.course_file.google_drive_url && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                            marginLeft: "10px",
+                                          }}
+                                          href={
+                                            material.course_file
+                                              .google_drive_url
+                                          }
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          File URL
+                                        </Button>
+                                      )}
                                   </div>
                                   <Typography
                                     style={{
@@ -1151,52 +1185,15 @@ const EnrollCourse = () => {
       <Footer />
 
       <Dialog
-        open={unenrollDialog}
-        onClose={() => setUnenrollDialog(false)}
-        PaperProps={{
-          style: {
-            width: "400px",
-          },
-        }}
-      >
-        <DialogTitle>Unenroll from this course?</DialogTitle>
-        <DialogContent>
-          You will not be able to access the course contents after unenrollment.
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            className={classes.dialogButtons}
-            onClick={() => {
-              setUnenrollDialog(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.dialogButtons}
-            onClick={() => {
-              // to call unenroll endpoint
-              handleUnenrollment();
-            }}
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
         open={reviewDialog}
         onClose={() => setReviewDialog(false)}
         PaperProps={{
           style: {
-            width: "400px",
+            width: "500px",
           },
         }}
       >
-        <DialogTitle>Course Review</DialogTitle>
+        <DialogTitle>You have completed the course! Give a review.</DialogTitle>
         <DialogContent>
           <Typography variant="body1" style={{ paddingBottom: "5px" }}>
             Give Rating
@@ -1242,7 +1239,7 @@ const EnrollCourse = () => {
               setReviewDialog(false);
             }}
           >
-            Cancel
+            Later
           </Button>
           <Button
             variant="contained"

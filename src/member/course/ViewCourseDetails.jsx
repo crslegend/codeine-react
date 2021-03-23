@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   Accordion,
   AccordionDetails,
@@ -86,8 +86,8 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
   },
   unenrollButton: {
-    margin: "auto",
-    marginBottom: "20px",
+    // margin: "auto",
+    // marginBottom: "20px",
     backgroundColor: theme.palette.red.main,
     color: "#fff",
     "&:hover": {
@@ -304,19 +304,7 @@ const ViewCourseDetails = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
       <div className={classes.mainSection}>
         <Breadcrumbs
@@ -716,21 +704,23 @@ const ViewCourseDetails = () => {
                 </Button>
               ) : (
                 <Fragment>
-                  <Typography variant="h6">Your Progress</Typography>
-                  <div style={{ width: "100%", marginBottom: "20px" }}>
-                    <Box display="flex" alignItems="center">
-                      <Box width="100%" mr={1}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={parseInt(progress)}
-                        />
+                  <div>
+                    <Typography variant="h6">Your Progress</Typography>
+                    <div style={{ width: "100%", marginBottom: "20px" }}>
+                      <Box display="flex" alignItems="center">
+                        <Box width="100%" mr={1}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={parseInt(progress)}
+                          />
+                        </Box>
+                        <Box minWidth={35}>
+                          <Typography variant="body2">
+                            {progress && parseInt(progress).toFixed() + "%"}
+                          </Typography>
+                        </Box>
                       </Box>
-                      <Box minWidth={35}>
-                        <Typography variant="body2">
-                          {progress && parseInt(progress).toFixed() + "%"}
-                        </Typography>
-                      </Box>
-                    </Box>
+                    </div>
                   </div>
                   <div
                     style={{
@@ -740,10 +730,6 @@ const ViewCourseDetails = () => {
                   >
                     <Button
                       variant="contained"
-                      style={{
-                        margin: "auto",
-                        marginBottom: "20px",
-                      }}
                       color="primary"
                       component={Link}
                       to={`/courses/enroll/${id}`}

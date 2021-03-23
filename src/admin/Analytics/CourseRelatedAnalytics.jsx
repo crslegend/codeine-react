@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import {
   Card,
@@ -16,11 +15,17 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Info } from "@material-ui/icons";
+import { ArrowBack, Info } from "@material-ui/icons";
 import { useHistory } from "react-router";
-import LinkMui from "@material-ui/core/Link";
+// import LinkMui from "@material-ui/core/Link";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    minHeight: "100%",
+    display: "flex",
+    flexDirection: "column",
+    fontDisplay: "swap",
+  },
   paper: {
     padding: theme.spacing(4),
     width: "70%",
@@ -54,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DashboardPage = () => {
+const CourseRelatedAnalytics = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -83,7 +88,7 @@ const DashboardPage = () => {
       Service.client
         .get(`/analytics/course-conversion-rate`)
         .then((res) => {
-          console.log(res);
+          //   console.log(res);
           // let arr = res.data.breakdown;
           setCourses(res.data.breakdown);
           setOverallData({
@@ -122,8 +127,19 @@ const DashboardPage = () => {
   }, [numDays]);
 
   return (
-    <div>
-      <PageTitle title="Dashboard" />
+    <div className={classes.root}>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+      >
+        <IconButton
+          onClick={() => history.push(`/admin/analytics`)}
+          style={{ marginRight: "20px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h2">Course-Related Analytics</Typography>
+      </div>
+
       <div
         style={{
           display: "flex",
@@ -176,7 +192,7 @@ const DashboardPage = () => {
               <Tooltip
                 title={
                   <Typography variant="body2">
-                    The total number of views across all of your courses
+                    The total number of views across all courses on Codeine
                   </Typography>
                 }
               >
@@ -222,7 +238,8 @@ const DashboardPage = () => {
               <Tooltip
                 title={
                   <Typography variant="body2">
-                    The total number of enrollments across all of your courses
+                    The total number of enrollments across all courses on
+                    Codeine
                   </Typography>
                 }
               >
@@ -252,7 +269,7 @@ const DashboardPage = () => {
                 title={
                   <Typography variant="body2">
                     Overall average score in % of final quizzes attempted by
-                    your students across all of your courses
+                    members across all courses on Codeine
                   </Typography>
                 }
               >
@@ -282,8 +299,8 @@ const DashboardPage = () => {
               <Tooltip
                 title={
                   <Typography variant="body2">
-                    Overall passing rate of final quizzes across all of your
-                    courses
+                    Overall passing rate of final quizzes across all courses on
+                    Codeine
                   </Typography>
                 }
               >
@@ -305,17 +322,8 @@ const DashboardPage = () => {
             </Typography>
           </div>
         </div>
-        <Typography variant="body2" style={{ paddingTop: "20px" }}>
-          <LinkMui
-            style={{ cursor: "pointer" }}
-            onClick={() => history.push(`/partner/home/dashboard/search`)}
-          >
-            Click here
-          </LinkMui>{" "}
-          to know what keywords our students are using when searching for
-          courses.
-        </Typography>
       </Paper>
+
       <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
           courses.length > 0 &&
@@ -335,7 +343,7 @@ const DashboardPage = () => {
                     style={{ height: "100%" }}
                     onClick={() =>
                       history.push(
-                        `/partner/home/dashboard/${course.course_id}`
+                        `/admin/analytics/courses/${course.course_id}`
                       )
                     }
                   >
@@ -408,4 +416,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default CourseRelatedAnalytics;

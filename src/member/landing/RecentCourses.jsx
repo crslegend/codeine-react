@@ -28,7 +28,9 @@ const RecentCourses = () => {
     Service.client
       .get(`/enrollments`)
       .then((res) => {
-        res.data = res.data.filter(course => course.course !== null).slice(0, 3);
+        res.data = res.data
+          .filter((course) => course.course !== null)
+          .slice(0, 4);
         setCourses(res.data);
       })
       .catch((err) => console.log(err));
@@ -49,7 +51,6 @@ const RecentCourses = () => {
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
             }}
           >
             {courses && courses.length > 0 ? (
