@@ -156,7 +156,9 @@ const CourseReport = ({
               <Bar dataKey="Enrollment" fill="#164D8F" />
             </BarChart>
           </ResponsiveContainer>
-          <Divider style={{ marginTop: "20px", marginBottom: "10px" }} />
+          <Divider
+            style={{ marginTop: "20px", marginBottom: "10px", height: 2 }}
+          />
           <div
             style={{
               display: "flex",
@@ -339,7 +341,9 @@ const CourseReport = ({
               </div>
             </div>
           )}
-          <Divider style={{ marginTop: "20px", marginBottom: "10px" }} />
+          <Divider
+            style={{ marginTop: "20px", marginBottom: "10px", height: 2 }}
+          />
           <div
             style={{
               display: "flex",
@@ -352,8 +356,8 @@ const CourseReport = ({
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Keywords entered by the students and the respective occurences
-                  when searching for courses on Codeine
+                  Keywords entered by the students when searching for courses on
+                  Codeine and the respective occurences
                 </Typography>
               }
             >
