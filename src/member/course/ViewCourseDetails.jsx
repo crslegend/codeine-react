@@ -14,7 +14,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   Breadcrumbs,
   LinearProgress,
   Typography,
@@ -98,6 +97,13 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     marginBottom: "30px",
+  },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
   },
   cardOnRight: {
     width: 400,
@@ -601,23 +607,37 @@ const ViewCourseDetails = () => {
                         key={index}
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
-                        {review.member.profile_photo &&
-                        review.member.profile_photo ? (
-                          <Avatar
-                            style={{ marginRight: "15px" }}
-                            src={review.member.profile_photo}
-                          />
-                        ) : (
-                          <Avatar style={{ marginRight: "15px" }}>
-                            {review.member.first_name.charAt(0)}
-                          </Avatar>
-                        )}
+                        <Link
+                          to={`/member/profile/${review.member.id}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {review.member.profile_photo &&
+                          review.member.profile_photo ? (
+                            <Avatar
+                              style={{ marginRight: "15px" }}
+                              src={review.member.profile_photo}
+                            />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {review.member.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                        </Link>
 
                         <div style={{ flexDirection: "column" }}>
-                          <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            {review.member && review.member.first_name}{" "}
-                            {review.member && review.member.last_name}
-                          </Typography>
+                          <Link
+                            to={`/member/profile/${review.member.id}`}
+                            className={classes.profileLink}
+                          >
+                            <Typography
+                              variant="h6"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {review.member && review.member.first_name}{" "}
+                              {review.member && review.member.last_name}
+                            </Typography>
+                          </Link>
+
                           <div
                             style={{ display: "flex", marginBottom: "10px" }}
                           >
