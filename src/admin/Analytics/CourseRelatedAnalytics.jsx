@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(4),
-    width: "70%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -56,6 +56,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "15px",
     marginBottom: "10px",
     width: "200px",
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    marginRight: "30px",
   },
 }));
 
@@ -132,7 +141,9 @@ const CourseRelatedAnalytics = () => {
         style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
       >
         <IconButton
-          onClick={() => history.push(`/admin/analytics`)}
+          onClick={() =>
+            history.push({ pathname: `/admin/analytics`, state: { tab: 2 } })
+          }
           style={{ marginRight: "20px" }}
         >
           <ArrowBack />
@@ -145,6 +156,7 @@ const CourseRelatedAnalytics = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
@@ -183,8 +195,8 @@ const CourseRelatedAnalytics = () => {
         >
           Enrollment and Conversion Statistics
         </Typography>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex" }}>
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6" style={{ paddingRight: "5px" }}>
                 Overall Views
@@ -205,7 +217,7 @@ const CourseRelatedAnalytics = () => {
               {overallData && overallData.overall_view}
             </Typography>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Overall Conversion Rate</Typography>
               <Tooltip
@@ -232,7 +244,7 @@ const CourseRelatedAnalytics = () => {
                 ))}
             </Typography>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Total Enrollments</Typography>
               <Tooltip
@@ -260,9 +272,7 @@ const CourseRelatedAnalytics = () => {
           Final Quizzes Performance
         </Typography>
         <div style={{ display: "flex" }}>
-          <div
-            style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Overall Average Score</Typography>
               <Tooltip
@@ -291,9 +301,7 @@ const CourseRelatedAnalytics = () => {
                 ))}
             </Typography>
           </div>
-          <div
-            style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Overall Passing Rate</Typography>
               <Tooltip
@@ -323,7 +331,12 @@ const CourseRelatedAnalytics = () => {
           </div>
         </div>
       </Paper>
-
+      <Typography
+        variant="h6"
+        style={{ fontWeight: 600, paddingBottom: "20px" }}
+      >
+        Courses
+      </Typography>
       <Grid container style={{ marginBottom: "25px" }}>
         {courses &&
           courses.length > 0 &&

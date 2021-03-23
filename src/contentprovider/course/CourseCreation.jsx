@@ -921,7 +921,13 @@ const CourseCreation = () => {
                     </Paper>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <div style={{ marginRight: "50px" }}>
                     <PageTitle title="Chapters" />
                   </div>
