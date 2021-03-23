@@ -182,6 +182,7 @@ const AdminLearnersAchievementPage = () => {
   );
 
   const [openAchievementDialog, setOpenAchievementDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const [openBadgePicDialog, setOpenBadgePicDialog] = useState(false);
 
@@ -290,6 +291,31 @@ const AdminLearnersAchievementPage = () => {
     setTemporarystat([...stats]);
   };
 
+  const handleDeleteAchievement = (badgeId) => {
+    setOpenDeleteDialog(false);
+    Service.client
+      .delete(`/achievements/${badgeId}`)
+      .then((res) => {
+        setOpenAchievementDialog(false);
+        handleResetFields();
+        getBadgesData();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Badge successfully deleted!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setOpenAchievementDialog(false);
+        handleResetFields();
+      });
+  };
   const submitUpdateAchievement = (badge) => {
     console.log(newBadge);
     console.log(newBadgeRequirement);
@@ -606,8 +632,8 @@ const AdminLearnersAchievementPage = () => {
       .get(`/achievements`, { params: { title: searchValue } })
       .then((res) => {
         res.data
-          .sort((a, b) => a.is_deleted - b.is_deleted)
-          .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+          .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+          .sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
@@ -619,8 +645,8 @@ const AdminLearnersAchievementPage = () => {
       .get(`/achievements`, { params: { title: "" } })
       .then((res) => {
         setTotalBadge(res.data.length);
-        res.data.filter((item) => !item.is_deleted);
-        setAvailableBadge(res.data.length);
+        let arr = [...res.data.filter((item) => !item.is_deleted)];
+        setAvailableBadge(arr.length);
       })
       .catch((err) => {
         console.log(err);
@@ -710,7 +736,7 @@ const AdminLearnersAchievementPage = () => {
                           <Typography
                             variant="body2"
                             style={{
-                              color: "#CC0000",
+                              color: "#FF4D00",
                               textAlign: "center",
                               marginBottom: "5px",
                             }}
@@ -741,26 +767,34 @@ const AdminLearnersAchievementPage = () => {
                         </Typography>
 
                         {badge &&
-                          badge.achievement_requirements.map((requirement) => (
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <Typography variant="body2">
-                                Stats: {requirement.stat}
-                              </Typography>
-                              <Typography variant="body2">
-                                Points: {requirement.experience_point}
-                              </Typography>
-                            </div>
-                          ))}
+                          badge.achievement_requirements.map(
+                            (requirement, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <Typography variant="body2">
+                                  Stats: {requirement.stat}
+                                </Typography>
+                                <Typography variant="body2">
+                                  Points: {requirement.experience_point}
+                                </Typography>
+                              </div>
+                            )
+                          )}
                       </Card>
                     }
                   >
                     <CardMedia
-                      onClick={() => handleOpenEditDialog(badge)}
+                      disabled={badge.is_deleted}
+                      onClick={
+                        !badge.is_deleted
+                          ? () => handleOpenEditDialog(badge)
+                          : undefined
+                      }
                       className={classes.cardmedia}
                       image={badge.badge}
                       style={{
@@ -967,23 +1001,23 @@ const AdminLearnersAchievementPage = () => {
           {requirementList &&
             requirementList.map((option, index) => {
               return (
-                <Grid container>
+                <Grid container key={index}>
                   <Grid item xs={6}>
                     <label htmlFor="stat">
                       <Typography variant="body2">Statistics</Typography>
                     </label>
                     <TextField
-                      id={option && option.stat}
+                      id={index}
                       fullWidth
                       disabled
                       variant="outlined"
                       margin="dense"
                       value={option && option.stat}
                     >
-                      {temporarystat.map((options) => (
+                      {temporarystat.map((options, index) => (
                         <MenuItem
                           style={{ height: "35px", fontSize: "14px" }}
-                          key={options.value}
+                          key={index}
                           value={options.stat}
                         >
                           {options.label}
@@ -1130,7 +1164,7 @@ const AdminLearnersAchievementPage = () => {
                   color: "#E12424",
                 }}
                 variant="outlined"
-                onClick={() => submitNewAchievement()}
+                onClick={() => setOpenDeleteDialog(true)}
               >
                 Delete
               </Button>
@@ -1144,6 +1178,32 @@ const AdminLearnersAchievementPage = () => {
               </Button>
             </div>
           )}
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        maxWidth="xs"
+        fullWidth={true}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>This action cannot be undone.</DialogContent>
+        <DialogActions style={{ margin: 8 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setOpenDeleteDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={(e) => handleDeleteAchievement(selectedBadge.id)}
+          >
+            Confirm
+          </Button>
         </DialogActions>
       </Dialog>
 
