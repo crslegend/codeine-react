@@ -167,7 +167,7 @@ const AdminLearnersAchievementPage = () => {
   });
   const [requirementList, setRequirementList] = useState([]);
   const [newBadgeRequirement, setNewBadgeRequirement] = useState({
-    experience_point: "0",
+    experience_point: "",
     stat: "",
   });
   const [totalBadge, setTotalBadge] = useState("0");
@@ -207,10 +207,17 @@ const AdminLearnersAchievementPage = () => {
   const handleOpenEditDialog = (badge) => {
     setOpenAchievementDialog(true);
     setSelectedBadge(badge);
+    setNewBadge({
+      ...newBadge,
+      title: badge.title,
+      badge: badge.badge,
+    });
     setRequirementList(badge.achievement_requirements);
     for (var i = temporarystat.length; i--; ) {
-      if (temporarystat[i].value === badge.achievement_requirements.stat) {
-        temporarystat.splice(i, 1);
+      for (var j = badge.achievement_requirements.length; j--; ) {
+        if (temporarystat[i].value === badge.achievement_requirements[j].stat) {
+          temporarystat.splice(i, 1);
+        }
       }
     }
   };
@@ -281,6 +288,186 @@ const AdminLearnersAchievementPage = () => {
     setRequirementList([]);
     setNewBadgeRequirement({ experience_point: "0", stat: "" });
     setTemporarystat([...stats]);
+  };
+
+  const submitUpdateAchievement = (badge) => {
+    console.log(newBadge);
+    console.log(newBadgeRequirement);
+    console.log(requirementList);
+    console.log(avatar && avatar[0].file);
+    if (
+      selectedBadge.title === newBadge.title &&
+      avatar === undefined &&
+      requirementList === badge.achievement_requirements
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "There are no updates",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (newBadge.title === "" || newBadge.title === undefined) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter a badge title",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (newBadge.badge === undefined || newBadge.badge === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Attach a logo to the badge",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (requirementList.length === 0 && newBadgeRequirement.stat === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "State statistics requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      requirementList.length === 0 &&
+      newBadgeRequirement.experience_point === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter experience points requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      requirementList.length !== 0 &&
+      newBadgeRequirement.stat !== "" &&
+      newBadgeRequirement.experience_point !== ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", newBadge.title);
+
+    if (avatar !== undefined) {
+      formData.append("badge", avatar[0].file);
+    }
+
+    // to update badge
+    if (requirementList === badge.achievement_requirements) {
+      Service.client
+        .patch(`/achievements/${badge.id}`, formData)
+        .then((res) => {
+          setOpenAchievementDialog(false);
+          handleResetFields();
+          getBadgesData();
+          setSbOpen(true);
+          setSnackbar({
+            message: "Badge successfully updated!",
+            severity: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          setOpenAchievementDialog(false);
+          handleResetFields();
+        });
+    } else if (requirementList.length !== 0) {
+      // to update badge and requirement
+      Service.client
+        .patch(`/achievements/${badge.id}`, formData)
+        .then((res) => {
+          requirementList &&
+            requirementList.forEach((list, index) => {
+              Service.client
+                .post(`/achievements/${badge.id}/requirements`, list)
+                .then((res) => {
+                  if (index === requirementList.length - 1) {
+                    setOpenAchievementDialog(false);
+                    handleResetFields();
+                    getBadgesData();
+                    setSbOpen(true);
+                    setSnackbar({
+                      message: "Badge successfully updated!",
+                      severity: "success",
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "center",
+                      },
+                      autoHideDuration: 3000,
+                    });
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                  setOpenAchievementDialog(false);
+                  handleResetFields();
+                });
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          setOpenAchievementDialog(false);
+          handleResetFields();
+        });
+    } else if (requirementList.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
   };
 
   const submitNewAchievement = () => {
@@ -363,7 +550,7 @@ const AdminLearnersAchievementPage = () => {
     const formData = new FormData();
     formData.append("title", newBadge.title);
     formData.append("badge", avatar[0].file);
-
+    console.log(formData);
     if (requirementList.length !== 0) {
       Service.client
         .post(`/achievements`, formData)
@@ -739,11 +926,7 @@ const AdminLearnersAchievementPage = () => {
                   }}
                   variant="outlined"
                   margin="dense"
-                  value={
-                    selectedBadge !== undefined
-                      ? selectedBadge.title
-                      : newBadge && newBadge.title
-                  }
+                  value={newBadge && newBadge.title}
                   onChange={(e) =>
                     setNewBadge({
                       ...newBadge,
@@ -790,7 +973,7 @@ const AdminLearnersAchievementPage = () => {
                       <Typography variant="body2">Statistics</Typography>
                     </label>
                     <TextField
-                      id="stat"
+                      id={option && option.stat}
                       fullWidth
                       disabled
                       variant="outlined"
@@ -929,14 +1112,38 @@ const AdminLearnersAchievementPage = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button
-            style={{ margin: "10px 15px" }}
-            variant="contained"
-            onClick={() => submitNewAchievement()}
-            color="secondary"
-          >
-            Create
-          </Button>
+          {selectedBadge === undefined ? (
+            <Button
+              style={{ margin: "10px 15px" }}
+              variant="contained"
+              onClick={() => submitNewAchievement()}
+              color="secondary"
+            >
+              Create
+            </Button>
+          ) : (
+            <div>
+              <Button
+                style={{
+                  margin: "10px 15px",
+                  borderColor: "#E12424",
+                  color: "#E12424",
+                }}
+                variant="outlined"
+                onClick={() => submitNewAchievement()}
+              >
+                Delete
+              </Button>
+              <Button
+                style={{ margin: "10px 15px" }}
+                variant="contained"
+                onClick={() => submitUpdateAchievement(selectedBadge)}
+                color="secondary"
+              >
+                Update
+              </Button>
+            </div>
+          )}
         </DialogActions>
       </Dialog>
 
