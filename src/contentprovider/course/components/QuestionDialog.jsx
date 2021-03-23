@@ -77,7 +77,7 @@ const QuestionDialog = ({
   selectedQuestionBank,
 }) => {
   const classes = useStyles();
-  // console.log(question);
+  console.log(options);
 
   const editor = {
     toolbar: [

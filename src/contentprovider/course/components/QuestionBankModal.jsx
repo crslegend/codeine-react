@@ -114,7 +114,6 @@ const MCQ = ({
   setCorrectAnswer,
   setQuestionNum,
   setQuestion,
-  setQuizId,
   setEditQuestionDialog,
 }) => {
   return (
@@ -159,21 +158,28 @@ const MCQ = ({
             setCorrectAnswer(question.mcq.correct_answer);
             setQuestionNum(index + 1);
             setQuestion(question);
-            setQuizId(questionBank.id);
             setEditQuestionDialog(true);
           }}
         >
           <Edit />
-        </IconButton>
-        <IconButton size="small" className={classes.deleteIcon}>
-          <RemoveCircle />
         </IconButton>
       </div>
     </Fragment>
   );
 };
 
-const MRQ = ({ question, index, classes }) => {
+const MRQ = ({
+  questionBank,
+  question,
+  index,
+  classes,
+  setQuestionType,
+  setOptions,
+  setCorrectAnswer,
+  setQuestionNum,
+  setQuestion,
+  setEditQuestionDialog,
+}) => {
   return (
     <Fragment>
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -207,18 +213,37 @@ const MRQ = ({ question, index, classes }) => {
           })}
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <IconButton size="small" color="primary">
+        <IconButton
+          size="small"
+          color="primary"
+          onClick={() => {
+            setQuestionType("mrq");
+            setOptions(question.mrq.options);
+            setCorrectAnswer(question.mrq.correct_answer);
+            setQuestionNum(index + 1);
+            setQuestion(question);
+            setEditQuestionDialog(true);
+          }}
+        >
           <Edit />
-        </IconButton>
-        <IconButton size="small" className={classes.deleteIcon}>
-          <RemoveCircle />
         </IconButton>
       </div>
     </Fragment>
   );
 };
 
-const ShortAnswer = ({ question, index, classes }) => {
+const ShortAnswer = ({
+  questionBank,
+  question,
+  index,
+  classes,
+  setQuestionType,
+  setOptions,
+  setCorrectAnswer,
+  setQuestionNum,
+  setQuestion,
+  setEditQuestionDialog,
+}) => {
   return (
     <Fragment>
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -234,11 +259,18 @@ const ShortAnswer = ({ question, index, classes }) => {
         </Typography>
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <IconButton size="small" color="primary">
+        <IconButton
+          size="small"
+          color="primary"
+          onClick={() => {
+            setQuestionType("shortanswer");
+            setCorrectAnswer(question.shortanswer.keywords.join(","));
+            setQuestionNum(index + 1);
+            setQuestion(question);
+            setEditQuestionDialog(true);
+          }}
+        >
           <Edit />
-        </IconButton>
-        <IconButton size="small" className={classes.deleteIcon}>
-          <RemoveCircle />
         </IconButton>
       </div>
     </Fragment>
@@ -333,7 +365,7 @@ const QuestionBankDetails = ({
           Update
         </Button>
       </div>
-      <div className={classes.questionDetailsHeader} style={{ marginTop: 32 }}>
+      <div className={classes.questionDetailsHeader} style={{ marginTop: 32, marginBottom: 5 }}>
         <Typography variant="body2" style={{ fontWeight: 700 }}>
           Questions:
         </Typography>
@@ -371,9 +403,37 @@ const QuestionBankDetails = ({
                     />
                   );
                 } else if (question.mrq) {
-                  return <MRQ question={question} index={index} classes={classes} />;
+                  return (
+                    <MRQ
+                      questionBank={selectedQuestionBank}
+                      question={question}
+                      index={index}
+                      classes={classes}
+                      setQuestionType={setQuestionType}
+                      setOptions={setOptions}
+                      setCorrectAnswer={setCorrectAnswer}
+                      setQuestionNum={setQuestionNum}
+                      setQuestion={setQuestion}
+                      setQuizId={setQuizId}
+                      setEditQuestionDialog={setEditQuestionDialog}
+                    />
+                  );
                 } else if (question.shortanswer) {
-                  return <ShortAnswer question={question} index={index} classes={classes} />;
+                  return (
+                    <ShortAnswer
+                      questionBank={selectedQuestionBank}
+                      question={question}
+                      index={index}
+                      classes={classes}
+                      setQuestionType={setQuestionType}
+                      setOptions={setOptions}
+                      setCorrectAnswer={setCorrectAnswer}
+                      setQuestionNum={setQuestionNum}
+                      setQuestion={setQuestion}
+                      setQuizId={setQuizId}
+                      setEditQuestionDialog={setEditQuestionDialog}
+                    />
+                  );
                 } else {
                   return null;
                 }
@@ -412,8 +472,6 @@ const QuestionBankModal = ({ courseId }) => {
   const [question, setQuestion] = useState();
   const [options, setOptions] = useState([]);
   const [correctAnswer, setCorrectAnswer] = useState();
-
-  const [quizId, setQuizId] = useState();
 
   const [questionNum, setQuestionNum] = useState();
 
@@ -539,7 +597,6 @@ const QuestionBankModal = ({ courseId }) => {
                 setCorrectAnswer={setCorrectAnswer}
                 setQuestionNum={setQuestionNum}
                 setQuestion={setQuestion}
-                setQuizId={setQuizId}
                 setEditQuestionDialog={setEditQuestionDialog}
                 setAddQuestionDialog={setAddQuestionDialog}
               />
@@ -557,8 +614,7 @@ const QuestionBankModal = ({ courseId }) => {
         setAddQuestionDialog={setAddQuestionDialog}
         editQuestionDialog={editQuestionDialog}
         setEditQuestionDialog={setEditQuestionDialog}
-        quizId={quizId}
-        setQuizId={setQuizId}
+        selectedQuestionBank={selectedQuestionBank}
         question={question}
         setQuestion={setQuestion}
         questionType={questionType}
