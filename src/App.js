@@ -7,7 +7,7 @@ import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
 import ViewArticlePage from "./article/ArticleMain";
 import EditArticlePage from "./article/EditArticle";
-import MemberArticlePage from "./member/article/MemberArticleList";
+import MemberArticlePage from "./member/profile/article/MemberArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
 import MemberProfilePage from "./member/profile/Profile/ProfilePage";
@@ -41,6 +41,35 @@ import ViewAllCodeReviews from "./codereview/ViewAllCodeReviews";
 const App = () => {
   return (
     <Switch>
+      <Route
+        strict
+        sensitive
+        path="/article/guest/:id"
+        component={ViewArticlePage}
+      />
+
+      <PrivateRoute
+        strict
+        sensitive
+        path="/article/member/:id"
+        component={ViewArticlePage}
+        user="member"
+      />
+      <PrivateRoute
+        strict
+        sensitive
+        path="/article/partner/:id"
+        component={ViewArticlePage}
+        user="partner"
+      />
+      <PrivateRoute
+        strict
+        sensitive
+        path="/article/admin/:id"
+        component={ViewArticlePage}
+        user="admin"
+      />
+
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
       <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
       <PartnerAndPublicRoute
@@ -101,7 +130,7 @@ const App = () => {
         component={MemberRegisterPage}
         user="member"
       />
-      <Route path="/article/:id" component={ViewArticlePage} />
+
       <PrivateRoute
         exact
         path="/member/dashboard"

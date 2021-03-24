@@ -89,6 +89,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  redButtonPadded: {
+    backgroundColor: theme.palette.red.main,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
   greenButton: {
     backgroundColor: theme.palette.green.main,
     color: "white",
@@ -135,6 +145,9 @@ const EditArticle = (props) => {
     setAnchorEl(null);
   };
 
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
+
   const [dialogopen, setDialogOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -145,8 +158,15 @@ const EditArticle = (props) => {
     setDialogOpen(false);
   };
 
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
+  const [dialog2open, setDialog2Open] = useState(false);
+
+  const handleDialog2Open = () => {
+    setDialog2Open(true);
+  };
+
+  const handleDialog2Close = () => {
+    setDialog2Open(false);
+  };
 
   const editor = {
     toolbar: [
@@ -404,7 +424,13 @@ const EditArticle = (props) => {
         Service.client
           .patch(`/articles/${id}/publish`)
           .then((res) => {
-            history.push(`/article/${res.data.id}`);
+            if (userType === "member") {
+              history.push(`/article/member/${res.data.id}`);
+            } else if (userType === "partner") {
+              history.push(`/article/partner/${res.data.id}`);
+            } else if (userType === "admin") {
+              history.push(`/article/admin/${res.data.id}`);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -417,8 +443,13 @@ const EditArticle = (props) => {
     Service.client
       .patch(`/articles/${id}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -429,8 +460,13 @@ const EditArticle = (props) => {
     Service.client
       .delete(`/articles/${id}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -470,11 +506,27 @@ const EditArticle = (props) => {
         .then((res) => {
           console.log(data);
           setSaveState(true);
-          history.push(`/article/${id}`);
+          if (userType === "member") {
+            history.push(`/article/member/${id}`);
+          } else if (userType === "partner") {
+            history.push(`/article/partner/${id}`);
+          } else if (userType === "admin") {
+            history.push(`/article/admin/${id}`);
+          }
         })
         .catch((err) => {
           console.log(err);
         });
+    }
+  };
+
+  const backToArticle = () => {
+    if (userType === "member") {
+      history.push(`/article/member/${id}`);
+    } else if (userType === "partner") {
+      history.push(`/article/partner/${id}`);
+    } else if (userType === "admin") {
+      history.push(`/article/admin/${id}`);
     }
   };
 
@@ -961,6 +1013,7 @@ const EditArticle = (props) => {
               <Button
                 variant="contained"
                 className={classes.greenButton}
+                style={{ marginBottom: "10px" }}
                 onClick={(e) => saveAndPublishArticle(e)}
               >
                 Save and publish
@@ -971,8 +1024,11 @@ const EditArticle = (props) => {
                   textTransform: "capitalize",
                   marginLeft: "15px",
                   marginRight: "15px",
+                  marginBottom: "10px",
                 }}
-                onClick={() => history.push(`/article/${id}`)}
+                onClick={() => {
+                  setDialog2Open(true);
+                }}
               >
                 Back to Article
               </Button>
@@ -981,6 +1037,7 @@ const EditArticle = (props) => {
                 color="primary"
                 style={{
                   textTransform: "capitalize",
+                  marginBottom: "10px",
                 }}
                 onClick={(e) => unpublishArticle()}
               >
@@ -1015,7 +1072,7 @@ const EditArticle = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Article?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this article?
@@ -1027,10 +1084,35 @@ const EditArticle = (props) => {
           </Button>
           <Button
             onClick={() => deleteArticle()}
-            variant="contained"
-            color="primary"
+            className={classes.redButtonPadded}
           >
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={dialog2open}
+        onClose={handleDialog2Close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Back to Article</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Please take note that any changes will not be saved. PLease click
+            "Save And Publish" to save your changes.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialog2Close} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => backToArticle()}
+            className={classes.redButtonPadded}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

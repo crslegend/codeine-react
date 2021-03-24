@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Button,
   Chip,
   Avatar,
   Typography,
-  Divider,
   CircularProgress,
   IconButton,
 } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import Service from "../AxiosService";
 // import Toast from "../components/Toast.js";
-import { ArrowBack, Language } from "@material-ui/icons";
+import { ArrowBack } from "@material-ui/icons";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import parse, { attributesToProps } from "html-react-parser";
-import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -307,6 +304,60 @@ const MemberArticleIDE = (props) => {
                       );
                     }
                   })}
+                {articleDetails &&
+                  articleDetails.categories &&
+                  articleDetails.categories.length > 0 &&
+                  articleDetails.categories.map((category, index) => {
+                    if (category === "FE") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Frontend"
+                          className={classes.chip}
+                        />
+                      );
+                    } else if (category === "BE") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Backend"
+                          className={classes.chip}
+                        />
+                      );
+                    } else if (category === "UI") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="UI/UX"
+                          className={classes.chip}
+                        />
+                      );
+                    } else if (category === "DB") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Database Administration"
+                          className={classes.chip}
+                        />
+                      );
+                    } else if (category === "ML") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Machine Learning"
+                          className={classes.chip}
+                        />
+                      );
+                    } else {
+                      return (
+                        <Chip
+                          key={index}
+                          label="Security"
+                          className={classes.chip}
+                        />
+                      );
+                    }
+                  })}
 
                 <div
                   style={{
@@ -328,10 +379,10 @@ const MemberArticleIDE = (props) => {
                     {articleDetails.top_level_comments.length} responses
                   </Typography>
                 </div>
-                <Divider style={{ marginTop: "20px" }} />
+                {/* <Divider style={{ marginTop: "20px" }} /> */}
               </div>
 
-              <div style={{ display: "flex" }}>
+              {/* <div style={{ display: "flex" }}>
                 <div style={{ display: "flex" }}>
                   <Avatar
                     src={
@@ -358,97 +409,18 @@ const MemberArticleIDE = (props) => {
                     {articleDetails.user && articleDetails.user.bio}
                   </Typography>
                 </div>
-              </div>
-
-              <div style={{ display: "flex" }}>
-                <Language style={{ marginRight: "10px" }} />
-                {articleDetails &&
-                  articleDetails.languages &&
-                  articleDetails.languages.length > 0 &&
-                  articleDetails.languages.map((language, index) => {
-                    if (index + 1 !== articleDetails.languages.length) {
-                      if (language === "ENG") {
-                        return <Typography key={index}>English, </Typography>;
-                      } else if (language === "MAN") {
-                        return <Typography key={index}>中文, </Typography>;
-                      } else {
-                        return <Typography key={index}>Français, </Typography>;
-                      }
-                    } else {
-                      if (language === "ENG") {
-                        return <Typography key={index}>English</Typography>;
-                      } else if (language === "MAN") {
-                        return <Typography key={index}>中文</Typography>;
-                      } else {
-                        return <Typography key={index}>Français</Typography>;
-                      }
-                    }
-                  })}
-              </div>
-              <Typography
+              </div> */}
+              {/* <Typography
                 variant="body1"
                 style={{ fontWeight: 600, marginBottom: "10px" }}
               >
                 Categories this article falls under:
-              </Typography>
-              {articleDetails &&
-                articleDetails.categories &&
-                articleDetails.categories.length > 0 &&
-                articleDetails.categories.map((category, index) => {
-                  if (category === "FE") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Frontend"
-                        className={classes.chip}
-                      />
-                    );
-                  } else if (category === "BE") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Backend"
-                        className={classes.chip}
-                      />
-                    );
-                  } else if (category === "UI") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="UI/UX"
-                        className={classes.chip}
-                      />
-                    );
-                  } else if (category === "DB") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Database Administration"
-                        className={classes.chip}
-                      />
-                    );
-                  } else if (category === "ML") {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Machine Learning"
-                        className={classes.chip}
-                      />
-                    );
-                  } else {
-                    return (
-                      <Chip
-                        key={index}
-                        label="Security"
-                        className={classes.chip}
-                      />
-                    );
-                  }
-                })}
+              </Typography> */}
             </div>
           </div>
           <div style={{ height: "100%", overflow: "auto" }}>
             {!loadingIDE && portNum ? (
+              // eslint-disable-next-line jsx-a11y/iframe-has-title
               <iframe
                 width="100%"
                 height="100%"

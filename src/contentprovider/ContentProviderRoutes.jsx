@@ -8,6 +8,7 @@ import {
   Redirect,
   Switch,
   useHistory,
+  Route,
 } from "react-router-dom";
 import PrivateRoute from "../components/Routes/PrivateRoute";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
@@ -28,6 +29,7 @@ import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
 import ViewCourseDetailsPage from "./course/ViewCourseDetailsPage";
+import ViewArticlePage from "./article/ContentProviderArticleList";
 import Password from "./password/PasswordPage";
 import Profile from "./profile/ProfilePage";
 import Article from "./article/ContentProviderArticleList";

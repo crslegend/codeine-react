@@ -60,7 +60,7 @@ const MemberNavBar = (props) => {
           // console.log(res);
 
           if (!res.data.member) {
-            history.push("/404");
+            //history.push("/404");
           } else {
             setUser(res.data);
           }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -12,9 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
 } from "@material-ui/core";
-import { Language } from "@material-ui/icons";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../AxiosService";
 import UseAnimations from "react-useanimations";
@@ -62,6 +60,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
   },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -76,9 +84,7 @@ const ViewArticle = (props) => {
     setDrawerOpen,
     openIDE,
     setOpenIDE,
-    setSbOpen,
-    setSnackbar,
-    displayIDEButton,
+    userType,
   } = props;
 
   const formatDate = (date) => {
@@ -189,8 +195,13 @@ const ViewArticle = (props) => {
     Service.client
       .delete(`/articles/${id}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -201,8 +212,13 @@ const ViewArticle = (props) => {
     Service.client
       .patch(`/articles/${id}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -210,11 +226,11 @@ const ViewArticle = (props) => {
   };
 
   const clickEditArticle = () => {
-    if (user.member !== null) {
+    if (userType === "member") {
       history.push(`/article/edit/member/${id}`);
-    } else if (user.partner !== null) {
+    } else if (userType === "partner") {
       history.push(`/article/edit/partner/${id}`);
-    } else if (user.is_admin) {
+    } else if (userType === "admin") {
       history.push(`/article/edit/admin/${id}`);
     }
   };
@@ -258,22 +274,25 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {displayIDEButton && (
-              <div style={{ marginLeft: "auto" }}>
-                {!openIDE && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => openingIDE()}
-                  >
-                    Code along
-                  </Button>
-                )}
-              </div>
-            )}
+            {(userType === "member" &&
+              user.member &&
+              user.member.membership_tier !== "FREE") ||
+              ((userType === "partner" || userType === "admin") && (
+                <div style={{ marginLeft: "auto" }}>
+                  {!openIDE && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        textTransform: "capitalize",
+                      }}
+                      onClick={() => openingIDE()}
+                    >
+                      Code along
+                    </Button>
+                  )}
+                </div>
+              ))}
           </div>
         )}
 
@@ -313,6 +332,45 @@ const ViewArticle = (props) => {
               } else {
                 return (
                   <Chip key={index} label={language} className={classes.chip} />
+                );
+              }
+            })}
+
+          {articleDetails &&
+            articleDetails.categories &&
+            articleDetails.categories.length > 0 &&
+            articleDetails.categories.map((category, index) => {
+              if (category === "FE") {
+                return (
+                  <Chip key={index} label="Frontend" className={classes.chip} />
+                );
+              } else if (category === "BE") {
+                return (
+                  <Chip key={index} label="Backend" className={classes.chip} />
+                );
+              } else if (category === "UI") {
+                return (
+                  <Chip key={index} label="UI/UX" className={classes.chip} />
+                );
+              } else if (category === "DB") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Database Administration"
+                    className={classes.chip}
+                  />
+                );
+              } else if (category === "ML") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Machine Learning"
+                    className={classes.chip}
+                  />
+                );
+              } else {
+                return (
+                  <Chip key={index} label="Security" className={classes.chip} />
                 );
               }
             })}
@@ -386,10 +444,10 @@ const ViewArticle = (props) => {
               </div>
             </Popover>
           </div>
-          <Divider style={{ marginTop: "20px" }} />
+          {/* <Divider style={{ marginTop: "20px" }} /> */}
         </div>
 
-        <div style={{ display: "flex" }}>
+        {/* <div style={{ display: "flex" }}>
           <div style={{ display: "flex" }}>
             <Avatar
               src={articleDetails.user && articleDetails.user.profile_photo}
@@ -410,9 +468,9 @@ const ViewArticle = (props) => {
               {articleDetails.user && articleDetails.user.bio}
             </Typography>
           </div>
-        </div>
+        </div> */}
 
-        <div style={{ display: "flex" }}>
+        {/* <div style={{ display: "flex" }}>
           <Language style={{ marginRight: "10px" }} />
           {articleDetails &&
             articleDetails.languages &&
@@ -436,51 +494,13 @@ const ViewArticle = (props) => {
                 }
               }
             })}
-        </div>
-        <Typography
+        </div> */}
+        {/* <Typography
           variant="body1"
           style={{ fontWeight: 600, marginBottom: "10px" }}
         >
           Categories this article falls under:
-        </Typography>
-        {articleDetails &&
-          articleDetails.categories &&
-          articleDetails.categories.length > 0 &&
-          articleDetails.categories.map((category, index) => {
-            if (category === "FE") {
-              return (
-                <Chip key={index} label="Frontend" className={classes.chip} />
-              );
-            } else if (category === "BE") {
-              return (
-                <Chip key={index} label="Backend" className={classes.chip} />
-              );
-            } else if (category === "UI") {
-              return (
-                <Chip key={index} label="UI/UX" className={classes.chip} />
-              );
-            } else if (category === "DB") {
-              return (
-                <Chip
-                  key={index}
-                  label="Database Administration"
-                  className={classes.chip}
-                />
-              );
-            } else if (category === "ML") {
-              return (
-                <Chip
-                  key={index}
-                  label="Machine Learning"
-                  className={classes.chip}
-                />
-              );
-            } else {
-              return (
-                <Chip key={index} label="Security" className={classes.chip} />
-              );
-            }
-          })}
+        </Typography> */}
 
         {/* <ReactQuill
           value={articleDetails.content}
@@ -504,11 +524,7 @@ const ViewArticle = (props) => {
           <Button onClick={handleDialogClose} variant="outlined">
             Cancel
           </Button>
-          <Button
-            onClick={() => deleteArticle()}
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={() => deleteArticle()} className={classes.redButton}>
             Delete
           </Button>
         </DialogActions>
