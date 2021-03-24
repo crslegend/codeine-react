@@ -78,6 +78,7 @@ const ViewArticle = (props) => {
     setOpenIDE,
     setSbOpen,
     setSnackbar,
+    displayIDEButton,
   } = props;
 
   const formatDate = (date) => {
@@ -257,7 +258,7 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {user && checkIfOwnerOfComment(user.id) && (
+            {displayIDEButton && (
               <div style={{ marginLeft: "auto" }}>
                 {!openIDE && (
                   <Button

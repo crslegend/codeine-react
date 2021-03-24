@@ -9,6 +9,7 @@ import Footer from "./Footer";
 import MemberNavBar from "../member/MemberNavBar";
 import Toast from "../components/Toast.js";
 import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,14 +70,24 @@ const ArticleMain = () => {
 
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [displayIDEButton, setDisplayIDEButton] = useState(false);
 
   const checkIfLoggedIn = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const memberid = jwt_decode(Service.getJWT()).user_id;
+    if (Cookies.get("t1")) {
+      const memberid = jwt_decode(Cookies.get("t1")).user_id;
       Service.client
         .get(`/auth/members/${memberid}`)
         .then((res) => {
+          // console.log(res.data);
           setUser(res.data);
+
+          if (res.data.member) {
+            if (res.data.member.membership_tier !== "FREE") {
+              setDisplayIDEButton(true);
+            }
+          } else {
+            setDisplayIDEButton(true);
+          }
           setLoggedIn(true);
         })
         .catch((err) => {
@@ -159,6 +170,7 @@ const ArticleMain = () => {
             setDrawerOpen={setDrawerOpen}
             setSnackbar={setSnackbar}
             setSbOpen={setSbOpen}
+            displayIDEButton={displayIDEButton}
           />
           <Footer />
         </>
