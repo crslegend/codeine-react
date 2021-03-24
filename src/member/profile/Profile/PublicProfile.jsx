@@ -38,6 +38,11 @@ const useStyles = makeStyles((theme) => ({
       padding: "55px 0px 30px",
     },
   },
+  rightContainer: {
+    marginTop: "50px",
+    marginLeft: "30px",
+    paddingRight: theme.spacing(7),
+  },
   avatar: {
     marginRight: "40px",
     marginTop: "30px",
@@ -87,6 +92,8 @@ const PublicProfile = (props) => {
 
   const [dataList, setDataList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
+
+  const [courses, setCourses] = useState([]);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -215,9 +222,21 @@ const PublicProfile = (props) => {
       .catch((err) => console.log(err));
   };
 
+  const getMemberCompletedCourses = () => {
+    Service.client
+      .get(`/enrollments`)
+      .then((res) => {
+        console.log(res.data);
+        res.data = res.data.filter((course) => course.course !== null);
+        setCourses(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
     getMemberData();
+    getMemberCompletedCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -362,7 +381,7 @@ const PublicProfile = (props) => {
           </Card>
         </Grid>
         <Grid item xs={9}>
-          <Grid container style={{ marginTop: "50px", marginLeft: "30px" }}>
+          <Grid container className={classes.rightContainer}>
             {languageList && languageList.length > 0 ? (
               <Grid item xs={12} style={{ marginBottom: "40px" }}>
                 <Typography
@@ -441,6 +460,42 @@ const PublicProfile = (props) => {
               >
                 Courses
               </Typography>
+              <Grid
+                container
+                style={{
+                  backgroundColor: "#C4C4C4",
+                  border: "1px solid #474747",
+                  paddingLeft: "20px",
+                }}
+              >
+                <Grid item xs={7}>
+                  <Typography variant="body2">title</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body2">category</Typography>
+                </Grid>
+                <Grid item xs={1}>
+                  <Typography variant="body2">result</Typography>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                style={{
+                  backgroundColor: "transparent",
+                  border: "1px solid #474747",
+                  paddingLeft: "20px",
+                }}
+              >
+                <Grid item xs={7}>
+                  <Typography variant="body2">title</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body2">category</Typography>
+                </Grid>
+                <Grid item xs={1}>
+                  <Typography variant="body2">result</Typography>
+                </Grid>
+              </Grid>
             </Grid>
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
               <Typography

@@ -498,7 +498,9 @@ const CoursesPage = () => {
                             }}
                             onClick={() => handleReviewDialog(course)}
                           >
-                            Leave a rating
+                            {getReview(course.id)
+                              ? "Rating received"
+                              : "Leave a rating"}
                           </Button>
                         ) : (
                           ""
