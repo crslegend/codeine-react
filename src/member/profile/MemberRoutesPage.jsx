@@ -10,11 +10,8 @@ import {
 } from "react-router-dom";
 import {
   Avatar,
-  Button,
   ListItem,
   Typography,
-  Popover,
-  IconButton,
 } from "@material-ui/core";
 import PrivateRoute from "../../components/Routes/PrivateRoute.jsx";
 import Sidebar from "../../components/Sidebar";

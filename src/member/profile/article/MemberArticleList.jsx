@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import MemberNavBar from "../MemberNavBar";
+import MemberNavBar from "../../MemberNavBar";
 import {
   Button,
   Container,
@@ -20,7 +20,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useHistory, useLocation } from "react-router-dom";
-import Service from "../../AxiosService";
+import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
@@ -105,29 +105,36 @@ const MemberArticleList = (props) => {
     setValue(newValue);
   };
 
-  //popover variable
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [popover, setPopover] = useState({
+    popoverId: null,
+    anchorEl: null,
+  });
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (event, articleId) => {
+    setPopover({
+      popoverId: articleId,
+      anchorEl: event.currentTarget,
+    });
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setPopover({
+      popoverId: null,
+      anchorEl: null,
+    });
   };
 
-  const [dialogopen, setDialogOpen] = useState(false);
+  const [dialogStatus, setDialogStatus] = useState({
+    dialogId: null,
+  });
 
   const handleDialogOpen = () => {
-    setDialogOpen(true);
+    setDialogStatus(true);
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false);
+    setDialogStatus(false);
   };
-
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -324,11 +331,12 @@ const MemberArticleList = (props) => {
                           article.content.length +
                           " words so far"}
                       </Typography>
-                      <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                      <ExpandMoreIcon
+                        onClick={(e) => handlePopoverOpen(e, article.id)}
+                      />
                       <Popover
-                        id={popoverid}
-                        open={open}
-                        anchorEl={anchorEl}
+                        open={popover.popoverId === article.id}
+                        anchorEl={popover.anchorEl}
                         onClose={handlePopoverClose}
                         anchorOrigin={{
                           vertical: "bottom",
@@ -367,6 +375,35 @@ const MemberArticleList = (props) => {
                     </div>
                   </div>
                 )}
+                <Dialog
+                  open={dialogopen}
+                  onClose={handleDialogClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Delete Article?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to delete this article?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleDialogClose} variant="outlined">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        deleteArticle(article.id);
+                      }}
+                      variant="contained"
+                      className={classes.redButton}
+                    >
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </Fragment>
             );
           })}
@@ -385,7 +422,7 @@ const MemberArticleList = (props) => {
                             cursor: "pointer",
                           }}
                           onClick={() => {
-                            history.push(`/article/${article.id}`);
+                            history.push(`/article/member/${article.id}`);
                           }}
                         >
                           {article.title}
@@ -408,11 +445,12 @@ const MemberArticleList = (props) => {
                       >
                         Published {calculateDateInterval(article.date_edited)}
                       </Typography>
-                      <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                      <ExpandMoreIcon
+                        onClick={(e) => handlePopoverOpen(e, article.id)}
+                      />
                       <Popover
-                        id={popoverid}
-                        open={open}
-                        anchorEl={anchorEl}
+                        open={popover.popoverId === article.id}
+                        anchorEl={popover.anchorEl}
                         onClose={handlePopoverClose}
                         anchorOrigin={{
                           vertical: "bottom",
@@ -456,36 +494,40 @@ const MemberArticleList = (props) => {
                     </div>
                   </div>
                 )}
+                <Dialog
+                  open={dialogopen}
+                  onClose={handleDialogClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Delete Article?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to delete this article?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleDialogClose} variant="outlined">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        deleteArticle(article.id);
+                      }}
+                      variant="contained"
+                      className={classes.redButton}
+                    >
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </Fragment>
             );
           })}
         </TabPanel>
       </div>
-      <Dialog
-        open={dialogopen}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this article?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} variant="outlined">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => deleteArticle()}
-            variant="contained"
-            className={classes.redButton}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Container>
   );
 };

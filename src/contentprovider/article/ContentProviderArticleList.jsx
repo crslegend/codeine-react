@@ -363,7 +363,7 @@ const PartnerArticlesList = (props) => {
                           cursor: "pointer",
                         }}
                         onClick={() => {
-                          history.push(`/article/${article.id}`);
+                          history.push(`/article/partner/${article.id}`);
                         }}
                       >
                         {article.title}

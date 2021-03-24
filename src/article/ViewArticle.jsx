@@ -78,6 +78,7 @@ const ViewArticle = (props) => {
     setOpenIDE,
     setSbOpen,
     setSnackbar,
+    userType,
   } = props;
 
   const formatDate = (date) => {
@@ -188,8 +189,13 @@ const ViewArticle = (props) => {
     Service.client
       .delete(`/articles/${id}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -200,8 +206,13 @@ const ViewArticle = (props) => {
     Service.client
       .patch(`/articles/${id}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -209,11 +220,11 @@ const ViewArticle = (props) => {
   };
 
   const clickEditArticle = () => {
-    if (user.member !== null) {
+    if (userType === "member") {
       history.push(`/article/edit/member/${id}`);
-    } else if (user.partner !== null) {
+    } else if (userType === "partner") {
       history.push(`/article/edit/partner/${id}`);
-    } else if (user.is_admin) {
+    } else if (userType === "admin") {
       history.push(`/article/edit/admin/${id}`);
     }
   };

@@ -103,15 +103,23 @@ const AdminArticleList = (props) => {
     setValue(newValue);
   };
 
-  //popover variable
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [popover, setPopover] = useState({
+    popoverId: null,
+    anchorEl: null,
+  });
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (event, articleId) => {
+    setPopover({
+      popoverId: articleId,
+      anchorEl: event.currentTarget,
+    });
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setPopover({
+      popoverId: null,
+      anchorEl: null,
+    });
   };
 
   const [dialogopen, setDialogOpen] = useState(false);
@@ -123,9 +131,6 @@ const AdminArticleList = (props) => {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
-
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -304,11 +309,12 @@ const AdminArticleList = (props) => {
                         article.content.length +
                         " words so far"}
                     </Typography>
-                    <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                    <ExpandMoreIcon
+                      onClick={(e) => handlePopoverOpen(e, article.id)}
+                    />
                     <Popover
-                      id={popoverid}
-                      open={open}
-                      anchorEl={anchorEl}
+                      open={popover.popoverId === article.id}
+                      anchorEl={popover.anchorEl}
                       onClose={handlePopoverClose}
                       anchorOrigin={{
                         vertical: "bottom",
@@ -363,7 +369,7 @@ const AdminArticleList = (props) => {
                           cursor: "pointer",
                         }}
                         onClick={() => {
-                          history.push(`/article/${article.id}`);
+                          history.push(`/article/admin/${article.id}`);
                         }}
                       >
                         {article.title}
@@ -381,11 +387,12 @@ const AdminArticleList = (props) => {
                     <Typography style={{ fontSize: "14px", color: "#757575" }}>
                       Published {calculateDateInterval(article.date_edited)}
                     </Typography>
-                    <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                    <ExpandMoreIcon
+                      onClick={(e) => handlePopoverOpen(e, article.id)}
+                    />
                     <Popover
-                      id={popoverid}
-                      open={open}
-                      anchorEl={anchorEl}
+                      open={popover.popoverId === article.id}
+                      anchorEl={popover.anchorEl}
                       onClose={handlePopoverClose}
                       anchorOrigin={{
                         vertical: "bottom",

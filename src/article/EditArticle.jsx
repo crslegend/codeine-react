@@ -404,7 +404,13 @@ const EditArticle = (props) => {
         Service.client
           .patch(`/articles/${id}/publish`)
           .then((res) => {
-            history.push(`/article/${res.data.id}`);
+            if (userType === "member") {
+              history.push(`/article/member/${res.data.id}`);
+            } else if (userType === "partner") {
+              history.push(`/article/partner/${res.data.id}`);
+            } else if (userType === "admin") {
+              history.push(`/article/admin/${res.data.id}`);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -470,7 +476,13 @@ const EditArticle = (props) => {
         .then((res) => {
           console.log(data);
           setSaveState(true);
-          history.push(`/article/${id}`);
+          if (userType === "member") {
+            history.push(`/article/member/${id}`);
+          } else if (userType === "partner") {
+            history.push(`/article/partner/${id}`);
+          } else if (userType === "admin") {
+            history.push(`/article/admin/${id}`);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -972,7 +984,15 @@ const EditArticle = (props) => {
                   marginLeft: "15px",
                   marginRight: "15px",
                 }}
-                onClick={() => history.push(`/article/${id}`)}
+                onClick={() => {
+                  if (userType === "member") {
+                    history.push(`/article/member/${id}`);
+                  } else if (userType === "partner") {
+                    history.push(`/article/partner/${id}`);
+                  } else if (userType === "admin") {
+                    history.push(`/article/admin/${id}`);
+                  }
+                }}
               >
                 Back to Article
               </Button>
