@@ -48,23 +48,26 @@ const App = () => {
         component={ViewArticlePage}
       />
 
-      <Route
+      <PrivateRoute
         strict
         sensitive
         path="/article/member/:id"
         component={ViewArticlePage}
+        user="member"
       />
-      <Route
+      <PrivateRoute
         strict
         sensitive
         path="/article/partner/:id"
         component={ViewArticlePage}
+        user="partner"
       />
-      <Route
+      <PrivateRoute
         strict
         sensitive
         path="/article/admin/:id"
         component={ViewArticlePage}
+        user="admin"
       />
 
       <Route exact path="/codereview" component={ViewAllCodeReviews} />

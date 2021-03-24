@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Chip, Avatar, Typography, Divider } from "@material-ui/core";
+import {
+  Chip,
+  Avatar,
+  Typography,
+  CircularProgress,
+  IconButton,
+} from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import Service from "../AxiosService";
 // import Toast from "../components/Toast.js";
-import { Language } from "@material-ui/icons";
+import { ArrowBack } from "@material-ui/icons";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import parse, { attributesToProps } from "html-react-parser";
-import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +38,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
   },
+  loader: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 }));
 
 const MemberArticleIDE = (props) => {
@@ -54,8 +66,28 @@ const MemberArticleIDE = (props) => {
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const [portNum, setPortNum] = useState();
+  const [loadingIDE, setLoadingIDE] = useState(true);
+
+  const startIDE = () => {
+    Service.client
+      .get(`ide`, {
+        params: {
+          git_url: "https://github.com/ptm108/Graspfood2",
+          course_name: "",
+        },
+      })
+      .then((res) => {
+        //   console.log(res);
+        setPortNum(res.data.port);
+        setLoadingIDE(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getNumOfLikes();
+    startIDE();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -165,25 +197,19 @@ const MemberArticleIDE = (props) => {
   return (
     <div className={classes.root}>
       <div className={classes.split}>
-        <Splitter direction={SplitDirection.Horizontal} initialSizes={[30, 70]}>
+        <Splitter direction={SplitDirection.Horizontal} initialSizes={[55, 65]}>
           <div className={classes.tile}>
             <div style={{ height: "100%" }}>
+              <IconButton onClick={() => setOpenIDE(false)}>
+                <ArrowBack />
+              </IconButton>
               <Typography
                 variant="h1"
                 style={{ fontWeight: "600", marginBottom: "10px" }}
               >
                 {articleDetails.title}
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{
-                  textTransform: "capitalize",
-                }}
-                onClick={() => setOpenIDE(false)}
-              >
-                Close IDE
-              </Button>
+
               {articleDetails.user && (
                 <div
                   style={{
@@ -392,8 +418,22 @@ const MemberArticleIDE = (props) => {
               </Typography> */}
             </div>
           </div>
-          <div>
-            <div className={classes.tile}>VS CODE IDE</div>
+          <div style={{ height: "100%", overflow: "auto" }}>
+            {!loadingIDE && portNum ? (
+              // eslint-disable-next-line jsx-a11y/iframe-has-title
+              <iframe
+                width="100%"
+                height="100%"
+                src={`http://localhost:${portNum}`}
+              />
+            ) : (
+              <div className={classes.loader}>
+                <CircularProgress />
+                <Typography variant="h6" style={{ paddingTop: "10px" }}>
+                  Fetching your IDE...
+                </Typography>
+              </div>
+            )}
           </div>
         </Splitter>
       </div>

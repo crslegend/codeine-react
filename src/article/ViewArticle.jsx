@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -12,9 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
 } from "@material-ui/core";
-import { Language } from "@material-ui/icons";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../AxiosService";
 import UseAnimations from "react-useanimations";
@@ -86,8 +84,6 @@ const ViewArticle = (props) => {
     setDrawerOpen,
     openIDE,
     setOpenIDE,
-    setSbOpen,
-    setSnackbar,
     userType,
   } = props;
 
@@ -278,22 +274,25 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {user && (
-              <div style={{ marginLeft: "auto" }}>
-                {!openIDE && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => openingIDE()}
-                  >
-                    Code along
-                  </Button>
-                )}
-              </div>
-            )}
+            {(userType === "member" &&
+              user.member &&
+              user.member.membership_tier !== "FREE") ||
+              ((userType === "partner" || userType === "admin") && (
+                <div style={{ marginLeft: "auto" }}>
+                  {!openIDE && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        textTransform: "capitalize",
+                      }}
+                      onClick={() => openingIDE()}
+                    >
+                      Code along
+                    </Button>
+                  )}
+                </div>
+              ))}
           </div>
         )}
 
