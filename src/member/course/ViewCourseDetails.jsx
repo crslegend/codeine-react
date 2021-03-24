@@ -126,6 +126,7 @@ const ViewCourseDetails = () => {
   const { id } = useParams();
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [decoded, setDecoded] = useState("");
   const [course, setCourse] = useState();
   const [courseReviews, setCourseReviews] = useState([]);
   const [progress, setProgress] = useState();
@@ -155,6 +156,7 @@ const ViewCourseDetails = () => {
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+      setDecoded(jwt_decode(Cookies.get("t1")));
     }
   };
 
@@ -238,7 +240,6 @@ const ViewCourseDetails = () => {
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
       if (course.pro) {
-        const decoded = jwt_decode(Cookies.get("t1"));
         Service.client
           .get(`/auth/members/${decoded.user_id}`)
           .then((res) => {
@@ -608,9 +609,16 @@ const ViewCourseDetails = () => {
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
                         <Link
-                          to={`/member/profile/${review.member.id}`}
+                          to={
+                            review.member.id === (decoded && decoded.user_id)
+                              ? "/member/profile"
+                              : `/member/profile/${review.member.id}`
+                          }
                           style={{ textDecoration: "none" }}
                         >
+                          {console.log(
+                            decoded.user_id + " = " + review.member.id
+                          )}
                           {review.member.profile_photo &&
                           review.member.profile_photo ? (
                             <Avatar
@@ -626,7 +634,11 @@ const ViewCourseDetails = () => {
 
                         <div style={{ flexDirection: "column" }}>
                           <Link
-                            to={`/member/profile/${review.member.id}`}
+                            to={
+                              review.member.id === (decoded && decoded.user_id)
+                                ? "/member/profile"
+                                : `/member/profile/${review.member.id}`
+                            }
                             className={classes.profileLink}
                           >
                             <Typography

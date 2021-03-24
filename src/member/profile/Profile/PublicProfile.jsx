@@ -340,26 +340,24 @@ const PublicProfile = (props) => {
               >
                 Skills
               </Typography>
-              <div style={{ marginLeft: "-20px" }}>
-                <RadarChart
-                  width={290}
-                  height={300}
-                  outerRadius={105}
-                  data={dataList && dataList}
-                >
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="display" />
-                  <PolarRadiusAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Radar
-                    name="Category"
-                    dataKey="points"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
-                  />
-                </RadarChart>
-              </div>
+              <RadarChart
+                width={290}
+                style={{ margin: "0px auto" }}
+                height={300}
+                data={dataList && dataList}
+              >
+                <PolarGrid />
+                <PolarAngleAxis dataKey="display" />
+                <PolarRadiusAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Radar
+                  name="Category"
+                  dataKey="points"
+                  stroke="#8884d8"
+                  fill="#8884d8"
+                  fillOpacity={0.6}
+                />
+              </RadarChart>
             </CardContent>
           </Card>
         </Grid>
@@ -385,7 +383,6 @@ const PublicProfile = (props) => {
                             marginRight: "40px",
                             width: "250px",
                             height: "150px",
-                            borderRadius: 0,
                           }}
                           key={index}
                           elevation={0}
