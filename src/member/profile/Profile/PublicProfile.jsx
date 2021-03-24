@@ -7,9 +7,8 @@ import {
   Button,
   Typography,
   Avatar,
-  Badge,
 } from "@material-ui/core";
-import { LocationOn, Email, CasinoSharp } from "@material-ui/icons";
+import { LocationOn, Email } from "@material-ui/icons";
 import {
   Radar,
   RadarChart,
@@ -17,12 +16,11 @@ import {
   PolarRadiusAxis,
   PolarGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import MemberNavBar from "../../MemberNavBar";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,8 +29,9 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "65px",
   },
   cardroot: {
-    marginRight: "40px",
+    marginRight: "20px",
     marginTop: "-45px",
+    height: "680px",
     padding: "55px 15px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
@@ -82,15 +81,12 @@ const CustomTooltip = ({ payload, label, active, category }) => {
 const PublicProfile = (props) => {
   const classes = useStyles();
   const { id } = useParams();
-  const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [member, setMember] = useState("");
-  const [data, setData] = useState({
-    category: "",
-    points: "",
-  });
+
   const [dataList, setDataList] = useState([]);
+  const [languageList, setLanguageList] = useState([]);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -100,6 +96,11 @@ const PublicProfile = (props) => {
 
   const handleSetRadarData = (statsData) => {
     let list = [];
+    list.push({
+      category: "UI/UX",
+      display: "UI/UX",
+      points: statsData.UI,
+    });
     list.push({
       category: "Frontend",
       display: "FE",
@@ -120,17 +121,83 @@ const PublicProfile = (props) => {
       display: "DB",
       points: statsData.DB,
     });
-    list.push({
-      category: "UI/UX",
-      display: "UI/UX",
-      points: statsData.UI,
-    });
+
     list.push({
       category: "Machine Learning",
       display: "ML",
       points: statsData.ML,
     });
     setDataList(list);
+  };
+
+  const handleTopLanguages = (statsData) => {
+    let list = [];
+    if (statsData.JAVA > 0) {
+      list.push({
+        language: "Java",
+        background: "#E57001",
+        font: "#FFFFFF",
+        points: statsData.JAVA,
+      });
+    }
+    if (statsData.CPP > 0) {
+      list.push({
+        language: "C++",
+        background: "#004482",
+        font: "#FFFFFF",
+        points: statsData.CPP,
+      });
+    }
+    if (statsData.CS > 0) {
+      list.push({
+        language: "C#",
+        background: "#6A1577",
+        font: "#FFFFFF",
+        points: statsData.CS,
+      });
+    }
+    if (statsData.CSS > 0) {
+      list.push({
+        language: "CSS",
+        background: "#264DE4",
+        font: "#FFFFFF",
+        points: statsData.CSS,
+      });
+    }
+    if (statsData.HTML > 0) {
+      list.push({
+        language: "HTML",
+        background: "#E44D26",
+        font: "#000000",
+        points: statsData.HTML,
+      });
+    }
+    if (statsData.JS > 0) {
+      list.push({
+        language: "Javascript",
+        background: "#F7DF1E",
+        font: "#000000",
+        points: statsData.JS,
+      });
+    }
+    if (statsData.PY > 0) {
+      list.push({
+        language: "Python",
+        background: "#3675A9",
+        font: "#FED74A",
+        points: statsData.PY,
+      });
+    }
+    if (statsData.RUBY > 0) {
+      list.push({
+        language: "Ruby",
+        background: "#CC0000",
+        font: "#FFFFFF",
+        points: statsData.RUBY,
+      });
+    }
+
+    setLanguageList(list.sort((a, b) => b.points - a.points).slice(0, 3));
   };
 
   const getMemberData = () => {
@@ -140,6 +207,9 @@ const PublicProfile = (props) => {
         setMember(res.data);
         if (dataList.length === 0) {
           handleSetRadarData(res.data.member.stats);
+        }
+        if (languageList.length === 0) {
+          handleTopLanguages(res.data.member.stats);
         }
       })
       .catch((err) => console.log(err));
@@ -151,7 +221,7 @@ const PublicProfile = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(dataList);
+  console.log(languageList);
 
   const formatDate = (date) => {
     const options = {
@@ -207,25 +277,27 @@ const PublicProfile = (props) => {
               <Typography variant="subtitle1">
                 joined on {member && formatDate(member.date_joined)}
               </Typography>
-              <div style={{ display: "flex", marginTop: "15px" }}>
-                <Email />
-                <Typography variant="body2" style={{ marginLeft: "5px" }}>
-                  {member && member.email}
-                </Typography>
-              </div>
-              {member && member.location ? (
-                <div style={{ display: "flex", marginTop: "5px" }}>
-                  <LocationOn />
+              <div style={{ marginBottom: "25px" }}>
+                <div style={{ display: "flex", marginTop: "15px" }}>
+                  <Email />
                   <Typography
                     variant="body2"
-                    style={{ marginLeft: "5px", marginBottom: "25px" }}
+                    style={{ marginLeft: member.location ? "5px" : "0px" }}
                   >
-                    From {member && member.location}
+                    {member && member.email}
                   </Typography>
                 </div>
-              ) : (
-                ""
-              )}
+                {member && member.location ? (
+                  <div style={{ display: "flex", marginTop: "5px" }}>
+                    <LocationOn />
+                    <Typography variant="body2" style={{ marginLeft: "5px" }}>
+                      From {member && member.location}
+                    </Typography>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
               <Typography
                 variant="body2"
                 style={{ fontWeight: 600, marginBottom: "15px" }}
@@ -268,13 +340,11 @@ const PublicProfile = (props) => {
               >
                 Skills
               </Typography>
-              <ResponsiveContainer width={300} height={300}>
+              <div style={{ marginLeft: "-20px" }}>
                 <RadarChart
-                  width={300}
+                  width={290}
                   height={300}
-                  outerRadius={110}
-                  cx={150}
-                  cy={150}
+                  outerRadius={105}
                   data={dataList && dataList}
                 >
                   <PolarGrid />
@@ -289,12 +359,101 @@ const PublicProfile = (props) => {
                     fillOpacity={0.6}
                   />
                 </RadarChart>
-              </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={9}>
-          main
+          <Grid container style={{ marginTop: "50px", marginLeft: "30px" }}>
+            {languageList && languageList.length > 0 ? (
+              <Grid item xs={12} style={{ marginBottom: "40px" }}>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                >
+                  Top languages
+                </Typography>
+                <div style={{ display: "flex" }}>
+                  {languageList &&
+                    languageList.map((language, index) => {
+                      return (
+                        <Card
+                          style={{
+                            color: `${language.font}`,
+                            backgroundColor: `${language.background}`,
+                            padding: "10px 30px",
+                            marginRight: "40px",
+                            width: "250px",
+                            height: "150px",
+                            borderRadius: 0,
+                          }}
+                          key={index}
+                          elevation={0}
+                        >
+                          <CardContent
+                            style={{
+                              height: "inherit",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <div>
+                              <Typography
+                                style={{
+                                  fontWeight: 600,
+                                }}
+                                variant="h2"
+                              >
+                                {language.language}
+                              </Typography>
+                            </div>
+                            <div>
+                              <Typography
+                                style={{
+                                  fontWeight: 600,
+                                  marginBottom: "10px",
+                                }}
+                                variant="h6"
+                              >
+                                {language.points} points
+                              </Typography>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                </div>
+              </Grid>
+            ) : (
+              ""
+            )}
+
+            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, marginBottom: "15px" }}
+              >
+                Badges
+              </Typography>
+            </Grid>
+            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, marginBottom: "15px" }}
+              >
+                Courses
+              </Typography>
+            </Grid>
+            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, marginBottom: "15px" }}
+              >
+                Experiences
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>
