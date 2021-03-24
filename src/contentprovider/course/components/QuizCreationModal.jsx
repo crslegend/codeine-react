@@ -91,7 +91,7 @@ const QuestionGroupCard = ({ questionGroup, classes }) => {
     <Card className={classes.cardRoot}>
       <Typography style={{ fontSize: "14px" }}>Question Bank: {questionGroup.question_bank.label}</Typography>
       <Typography style={{ color: "#676767", fontSize: "12px" }}>
-        Pick {questionGroup.count} out of {questionGroup.question_bank.questions.length} questions
+        Pick {questionGroup.count} out of {questionGroup.question_bank.questions.length} question(s)
       </Typography>
       <Typography style={{ color: "#1e1e1e", fontSize: "12px", margin: "8px 0" }}>
         Total marks: {getTotalMarks()}
@@ -102,7 +102,7 @@ const QuestionGroupCard = ({ questionGroup, classes }) => {
 
 const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestionGroups }) => {
   const classes = useStyles();
-  // console.log(quiz);
+  console.log(quiz);
 
   // question group/bank state
   const [questionBanks, setQuestionBanks] = useState();
@@ -111,11 +111,7 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
     question_bank: "",
     randomSubset: false,
   });
-  // const [selectedQuestionBank, setSelectedQuestionBank] = useState("");
-  // const [randomSubset, setRandomSubset] = useState(false);
-  // const [subsetSize, setSubsetSize] = useState();
   const [questionBankModalOpen, setQuestionBankModalOpen] = useState(false);
-  // console.log(selectedQuestionBank);
 
   // fetch course question groups
   useEffect(() => {
@@ -128,6 +124,21 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
     });
     // setQuestionGroups([1, 2]);
   }, [courseId]);
+
+  const refetchQuiz = () => {
+    Service.client.get(`/materials/${quiz.cm_id}`).then((res) => {
+      let task = res.data;
+      setQuiz({
+        cm_id: task.id,
+        quiz_id: task.quiz.id,
+        title: task.title,
+        description: task.description,
+        passing_marks: task.quiz.passing_marks,
+        instructions: task.quiz.instructions,
+        is_randomized: task.quiz.is_randomized,
+      });
+    });
+  };
 
   return (
     <Fragment>
@@ -198,6 +209,25 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
             style={{ marginBottom: "15px" }}
             type="number"
           />
+          <FormControlLabel
+            classes={{
+              root: classes.toggleRoot,
+              label: classes.toggleLabel,
+            }}
+            control={
+              <Switch
+                size="small"
+                checked={quiz && quiz.is_randomized}
+                onChange={() =>
+                  setQuiz({
+                    ...quiz,
+                    is_randomized: !quiz.is_randomized,
+                  })
+                }
+              />
+            }
+            label="Shuffle Questions"
+          />
         </div>
         <Divider orientation="vertical" flexItem />
         <div className={classes.rightContainer}>
@@ -256,6 +286,7 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
                   ...selectedQuestionGroup,
                   question_bank: e.target.value,
                   count: e.target.value !== "" ? e.target.value.questions.length : 0,
+                  qb_id: e.target.value.id,
                 });
               }}
             >
@@ -264,7 +295,7 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
               </MenuItem>
               {questionBanks &&
                 questionBanks.map((bank) => (
-                  <MenuItem classes={{ root: classes.resizeFont }} value={bank}>
+                  <MenuItem key={bank.id} classes={{ root: classes.resizeFont }} value={bank}>
                     {bank.label}
                   </MenuItem>
                 ))}
@@ -331,7 +362,14 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
           )}
         </DialogContent>
         <DialogActions>
-          <Button className={classes.button} color="primary">
+          <Button
+            className={classes.button}
+            color="primary"
+            onClick={() => {
+              refetchQuiz();
+              console.log(selectedQuestionGroup);
+            }}
+          >
             Add Questions
           </Button>
         </DialogActions>

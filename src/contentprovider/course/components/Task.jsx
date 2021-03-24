@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const classes = useStyles();
   const theme = useTheme();
-  console.log(task);
+  // console.log(task);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -344,6 +344,8 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                         setCourseMaterialId(task.id);
                       } else {
                         setEditQuiz({
+                          cm_id: task.id,
+                          quiz_id: task.quiz.id,
                           title: task.title,
                           description: task.description,
                           passing_marks: task.quiz.passing_marks,
