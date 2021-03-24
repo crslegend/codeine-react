@@ -100,7 +100,7 @@ const ArticleMain = () => {
           });
       } else if (userType === "admin") {
         Service.client
-          .get(`/auth/admin/${userid}`)
+          .get(`/auth/admins/${userid}`)
           .then((res) => {
             setUser(res.data);
             setLoggedIn(true);

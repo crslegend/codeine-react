@@ -145,6 +145,9 @@ const EditArticle = (props) => {
     setAnchorEl(null);
   };
 
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
+
   const [dialogopen, setDialogOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -155,8 +158,15 @@ const EditArticle = (props) => {
     setDialogOpen(false);
   };
 
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
+  const [dialog2open, setDialog2Open] = useState(false);
+
+  const handleDialog2Open = () => {
+    setDialog2Open(true);
+  };
+
+  const handleDialog2Close = () => {
+    setDialog2Open(false);
+  };
 
   const editor = {
     toolbar: [
@@ -507,6 +517,16 @@ const EditArticle = (props) => {
         .catch((err) => {
           console.log(err);
         });
+    }
+  };
+
+  const backToArticle = () => {
+    if (userType === "member") {
+      history.push(`/article/member/${id}`);
+    } else if (userType === "partner") {
+      history.push(`/article/partner/${id}`);
+    } else if (userType === "admin") {
+      history.push(`/article/admin/${id}`);
     }
   };
 
@@ -1007,13 +1027,7 @@ const EditArticle = (props) => {
                   marginBottom: "10px",
                 }}
                 onClick={() => {
-                  if (userType === "member") {
-                    history.push(`/article/member/${id}`);
-                  } else if (userType === "partner") {
-                    history.push(`/article/partner/${id}`);
-                  } else if (userType === "admin") {
-                    history.push(`/article/admin/${id}`);
-                  }
+                  setDialog2Open(true);
                 }}
               >
                 Back to Article
@@ -1058,7 +1072,7 @@ const EditArticle = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Article?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this article?
@@ -1073,6 +1087,32 @@ const EditArticle = (props) => {
             className={classes.redButtonPadded}
           >
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={dialog2open}
+        onClose={handleDialog2Close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Back to Article</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Please take note that any changes will not be saved. PLease click
+            "Save And Publish" to save your changes.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialog2Close} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => backToArticle()}
+            className={classes.redButtonPadded}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

@@ -278,7 +278,7 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {user && checkIfOwnerOfComment(user.id) && (
+            {user && (
               <div style={{ marginLeft: "auto" }}>
                 {!openIDE && (
                   <Button
@@ -333,6 +333,45 @@ const ViewArticle = (props) => {
               } else {
                 return (
                   <Chip key={index} label={language} className={classes.chip} />
+                );
+              }
+            })}
+
+          {articleDetails &&
+            articleDetails.categories &&
+            articleDetails.categories.length > 0 &&
+            articleDetails.categories.map((category, index) => {
+              if (category === "FE") {
+                return (
+                  <Chip key={index} label="Frontend" className={classes.chip} />
+                );
+              } else if (category === "BE") {
+                return (
+                  <Chip key={index} label="Backend" className={classes.chip} />
+                );
+              } else if (category === "UI") {
+                return (
+                  <Chip key={index} label="UI/UX" className={classes.chip} />
+                );
+              } else if (category === "DB") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Database Administration"
+                    className={classes.chip}
+                  />
+                );
+              } else if (category === "ML") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Machine Learning"
+                    className={classes.chip}
+                  />
+                );
+              } else {
+                return (
+                  <Chip key={index} label="Security" className={classes.chip} />
                 );
               }
             })}
@@ -406,10 +445,10 @@ const ViewArticle = (props) => {
               </div>
             </Popover>
           </div>
-          <Divider style={{ marginTop: "20px" }} />
+          {/* <Divider style={{ marginTop: "20px" }} /> */}
         </div>
 
-        <div style={{ display: "flex" }}>
+        {/* <div style={{ display: "flex" }}>
           <div style={{ display: "flex" }}>
             <Avatar
               src={articleDetails.user && articleDetails.user.profile_photo}
@@ -430,9 +469,9 @@ const ViewArticle = (props) => {
               {articleDetails.user && articleDetails.user.bio}
             </Typography>
           </div>
-        </div>
+        </div> */}
 
-        <div style={{ display: "flex" }}>
+        {/* <div style={{ display: "flex" }}>
           <Language style={{ marginRight: "10px" }} />
           {articleDetails &&
             articleDetails.languages &&
@@ -456,51 +495,13 @@ const ViewArticle = (props) => {
                 }
               }
             })}
-        </div>
-        <Typography
+        </div> */}
+        {/* <Typography
           variant="body1"
           style={{ fontWeight: 600, marginBottom: "10px" }}
         >
           Categories this article falls under:
-        </Typography>
-        {articleDetails &&
-          articleDetails.categories &&
-          articleDetails.categories.length > 0 &&
-          articleDetails.categories.map((category, index) => {
-            if (category === "FE") {
-              return (
-                <Chip key={index} label="Frontend" className={classes.chip} />
-              );
-            } else if (category === "BE") {
-              return (
-                <Chip key={index} label="Backend" className={classes.chip} />
-              );
-            } else if (category === "UI") {
-              return (
-                <Chip key={index} label="UI/UX" className={classes.chip} />
-              );
-            } else if (category === "DB") {
-              return (
-                <Chip
-                  key={index}
-                  label="Database Administration"
-                  className={classes.chip}
-                />
-              );
-            } else if (category === "ML") {
-              return (
-                <Chip
-                  key={index}
-                  label="Machine Learning"
-                  className={classes.chip}
-                />
-              );
-            } else {
-              return (
-                <Chip key={index} label="Security" className={classes.chip} />
-              );
-            }
-          })}
+        </Typography> */}
 
         {/* <ReactQuill
           value={articleDetails.content}
