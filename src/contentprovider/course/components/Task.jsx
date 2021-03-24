@@ -490,6 +490,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     id="title"
                     variant="outlined"
                     fullWidth
+                    autoFocus
                     margin="dense"
                     value={editFile && editFile.title}
                     onChange={(e) => {
@@ -608,6 +609,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     id="title"
                     variant="outlined"
                     fullWidth
+                    autoFocus
                     margin="dense"
                     value={editVideo && editVideo.title}
                     onChange={(e) => {
@@ -669,10 +671,11 @@ const Task = ({ task, index, getCourse, subtasks }) => {
               return (
                 <Fragment>
                   <label htmlFor="title">
-                    <Typography variant="body2">Title of Quiz (Required)</Typography>
+                    <Typography variant="body2">Quiz Title (Required)</Typography>
                   </label>
                   <TextField
                     id="title"
+                    autoFocus
                     variant="outlined"
                     fullWidth
                     margin="dense"
@@ -689,7 +692,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="description">
-                    <Typography variant="body2">Description of Quiz (Required)</Typography>
+                    <Typography variant="body2">Quiz Description (Required)</Typography>
                   </label>
                   <TextField
                     id="description"
@@ -705,13 +708,13 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     }}
                     required
                     inputProps={{ style: { fontSize: "14px" } }}
-                    placeholder="Enter Description"
+                    placeholder="Enter some instructions or a description"
                     multiline
-                    rows={6}
+                    rows={4}
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="marks">
-                    <Typography variant="body2">Passing Marks (Required)</Typography>
+                    <Typography variant="body2">Marks to Pass (Required)</Typography>
                   </label>
                   <TextField
                     id="marks"

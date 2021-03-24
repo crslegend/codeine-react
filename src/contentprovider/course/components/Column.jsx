@@ -277,7 +277,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
       if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
-          message: "Please fill up all fields!",
+          message: "Missing fields!",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",

@@ -11,6 +11,7 @@ const QuizCreationModel = ({ quiz, setQuiz }) => {
         id="title"
         variant="outlined"
         fullWidth
+        autoFocus
         margin="dense"
         value={quiz && quiz.title}
         onChange={(e) => {
@@ -38,6 +39,8 @@ const QuizCreationModel = ({ quiz, setQuiz }) => {
             description: e.target.value,
           });
         }}
+        multiline
+        rows={4}
         required
         placeholder="Enter Description"
         style={{ marginBottom: "15px" }}
