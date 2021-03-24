@@ -12,7 +12,7 @@ import {
   Divider,
   IconButton,
 } from "@material-ui/core";
-import { Add, Edit, RemoveCircle } from "@material-ui/icons";
+import { Add, Close, Edit, RemoveCircle } from "@material-ui/icons";
 
 import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
@@ -80,10 +80,11 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "none",
   },
   addQuestionButton: {
-    width: "30%",
+    width: "fit-content",
     marginLeft: theme.spacing(2),
     textTransform: "none",
     textDecoration: "underline",
+    justifyContent: "flex-end",
   },
   question: {
     border: "2px solid lightgrey",
@@ -128,9 +129,10 @@ const MCQ = ({
         </Typography>
         {question.mcq.options &&
           question.mcq.options.length > 0 &&
-          question.mcq.options.map((option) => {
+          question.mcq.options.map((option, i) => {
             return (
               <FormControlLabel
+                key={`mcq-${i}`}
                 classes={{
                   label: classes.formControlLabel,
                 }}
@@ -192,9 +194,10 @@ const MRQ = ({
         </Typography>
         {question.mrq.options &&
           question.mrq.options.length > 0 &&
-          question.mrq.options.map((option) => {
+          question.mrq.options.map((option, i) => {
             return (
               <FormControlLabel
+                key={`mrq-${i}`}
                 classes={{
                   label: classes.formControlLabel,
                 }}
@@ -445,7 +448,7 @@ const QuestionBankDetails = ({
   );
 };
 
-const QuestionBankModal = ({ courseId }) => {
+const QuestionBankModal = ({ courseId, closeDialog }) => {
   const classes = useStyles();
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -504,7 +507,20 @@ const QuestionBankModal = ({ courseId }) => {
         setSelectedQuestionBank(res.data[res.data.length - 1]);
         setQuestionBanks(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.status === 409) {
+          setSnackbar({
+            ...snackbar,
+            message: "Question Bank already exists",
+          });
+        } else {
+          setSnackbar({
+            ...snackbar,
+            message: `${err.response.status}: Something went wrong`,
+          });
+        }
+        setSbOpen(true);
+      });
   };
 
   const updateQuestionBank = () => {
@@ -537,7 +553,12 @@ const QuestionBankModal = ({ courseId }) => {
     <div className={classes.root}>
       {!loading ? (
         <Fragment>
-          <Typography variant="h6">Question Bank</Typography>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <Typography variant="h5">Question Bank</Typography>
+            <IconButton onClick={closeDialog}>
+              <Close />
+            </IconButton>
+          </div>
           <div className={classes.mainContainer}>
             <div className={classes.leftContainer}>
               <Typography variant="body2" style={{ margin: "16px 0", fontWeight: 700 }}>

@@ -1249,7 +1249,7 @@ const CourseCreation = () => {
           },
         }}
       >
-        <QuestionBankModal courseId={courseId} />
+        <QuestionBankModal courseId={courseId} closeDialog={() => setQuestionBankModalOpen(false)} />
       </Dialog>
     </Fragment>
   );

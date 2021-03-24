@@ -51,6 +51,12 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  dropzoneText: {
+    fontSize: "14px",
+  },
+  resizeFont: {
+    fontSize: "14px",
+  },
 }));
 
 const QuestionDialog = ({
@@ -77,7 +83,7 @@ const QuestionDialog = ({
   selectedQuestionBank,
 }) => {
   const classes = useStyles();
-  console.log(options);
+  // console.log(options);
 
   const editor = {
     toolbar: [
@@ -651,12 +657,14 @@ const QuestionDialog = ({
         PaperProps={{
           style: {
             width: "600px",
+            maxHeight: "70vh",
           },
         }}
       >
         {questionNum && (
           <DialogTitle>
-            Question {questionNum && questionNum}
+            {addQuestionDialog && "Add Question"}
+            {editQuestionDialog && `Question ${questionNum && questionNum}`}
             <div style={{ float: "right" }}>
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
@@ -671,7 +679,7 @@ const QuestionDialog = ({
 
         <DialogContent>
           <FormControl fullWidth margin="dense" className={classes.formControl}>
-            <InputLabel>Question Type</InputLabel>
+            <InputLabel style={{ fontSize: "14px" }}>Question Type</InputLabel>
             <Select
               label="Question Type"
               variant="outlined"
@@ -681,18 +689,24 @@ const QuestionDialog = ({
               }}
               disabled={editQuestionDialog}
             >
-              <MenuItem value="">
+              <MenuItem classes={{ root: classes.resizeFont }} value="">
                 <em>Select a question type</em>
               </MenuItem>
-              <MenuItem value="mcq">MCQ</MenuItem>
-              <MenuItem value="mrq">MRQ</MenuItem>
-              <MenuItem value="shortanswer">Short Answer</MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="mcq">
+                MCQ
+              </MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="mrq">
+                MRQ
+              </MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="shortanswer">
+                Short Answer
+              </MenuItem>
             </Select>
           </FormControl>
+
           <label htmlFor="question">
             <Typography variant="body1">Question</Typography>
           </label>
-
           <ReactQuill
             value={question && question.title ? question.title : ""}
             onChange={handleQuestionInputChange}
@@ -701,11 +715,12 @@ const QuestionDialog = ({
           />
 
           <div>
-            <Typography variant="body1" style={{ marginTop: "10px" }}>
+            <Typography variant="body1" style={{ margin: "16px 0 8px" }}>
               Upload Image (Optional)
             </Typography>
             <DropzoneAreaBase
               dropzoneText="Drag and drop a image or click&nbsp;here"
+              dropzoneParagraphClass={classes.dropzoneText}
               dropzoneClass={classes.dropzoneContainer}
               // dropzoneProps={{ disabled: true }}
               filesLimit={1}
@@ -754,7 +769,7 @@ const QuestionDialog = ({
             }}
           /> */}
           {questionType && (
-            <Fragment>
+            <div style={{ margin: "8px 0" }}>
               <label htmlFor="marks">
                 <Typography variant="body1" style={{ marginTop: "10px" }}>
                   Marks
@@ -779,12 +794,11 @@ const QuestionDialog = ({
                   }
                 })()}
                 onChange={(e) => handleMarksChange(e)}
-                style={{ marginBottom: "10px" }}
                 InputProps={{
-                  inputProps: { min: 0 },
+                  inputProps: { min: 0, style: { fontSize: "14px" } },
                 }}
               />
-            </Fragment>
+            </div>
           )}
 
           {questionType && questionType !== "shortanswer" && (editMode || addQuestionDialog) && (
@@ -810,6 +824,7 @@ const QuestionDialog = ({
                         placeholder="Enter option"
                         style={{ marginBottom: "10px" }}
                         onChange={(e) => handleOptionInputChange(e, index)}
+                        inputProps={{ style: { fontSize: "14px" } }}
                       />
 
                       {options && options.length > 1 && (
@@ -907,6 +922,7 @@ const QuestionDialog = ({
                 type="text"
                 autoComplete="off"
                 variant="outlined"
+                inputProps={{ style: { fontSize: "14px" } }}
                 margin="dense"
                 fullWidth
                 value={correctAnswer && correctAnswer}
