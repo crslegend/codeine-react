@@ -8,6 +8,15 @@ const theme = createMuiTheme({
     secondary: {
       main: "#164D8F",
     },
+    yellow: {
+      main: "#f0ae24",
+    },
+    orange: {
+      main: "#E55812",
+    },
+    cyan: {
+      main: "#D7F9FF",
+    },
     red: {
       main: "#C74343",
     },

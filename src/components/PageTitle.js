@@ -19,7 +19,7 @@ const PageTitle = ({ title, style }) => {
   const classes = useStyles();
   return (
     <div className={classes.root} style={{ ...style }}>
-      <Typography variant="h1" className={classes.title}>
+      <Typography variant="h2" className={classes.title}>
         {title}
       </Typography>
     </div>

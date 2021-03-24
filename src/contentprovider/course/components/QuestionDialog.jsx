@@ -44,12 +44,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   dropzoneContainer: {
-    minHeight: "190px",
+    minHeight: "120px",
     "@global": {
       ".MuiDropzoneArea-root": {
-        minHeight: "190px",
+        minHeight: "120px",
       },
     },
+  },
+  dropzoneText: {
+    fontSize: "14px",
+  },
+  resizeFont: {
+    fontSize: "14px",
   },
 }));
 
@@ -60,8 +66,6 @@ const QuestionDialog = ({
   setEditQuestionDialog,
   addQuestionDialog,
   setAddQuestionDialog,
-  quizId,
-  setQuizId,
   question,
   setQuestion,
   questionType,
@@ -76,38 +80,23 @@ const QuestionDialog = ({
   snackbar,
   setSnackbar,
   questionNum,
+  selectedQuestionBank,
 }) => {
   const classes = useStyles();
-  // console.log(question);
+  // console.log(options);
 
   const editor = {
     toolbar: [
       [{ font: [] }],
       [{ size: [] }],
       ["bold", "italic", "underline", "strike", "code-block"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
+      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
       ["link"],
       ["clean"],
     ],
   };
 
-  const format = [
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-  ];
+  const format = ["font", "size", "bold", "italic", "underline", "strike", "list", "bullet", "indent", "link"];
 
   const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false);
 
@@ -204,13 +193,12 @@ const QuestionDialog = ({
 
   const handleDeleteQuestion = () => {
     Service.client
-      .delete(`/quiz/${quizId}/questions/${question.id}`)
+      .delete(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`)
       .then((res) => {
         // console.log(res);
         setEditMode(false);
         setDeleteQuestionDialog(false);
         setEditQuestionDialog(false);
-        setQuizId();
         setQuestion();
         setQuestionType();
         setOptions();
@@ -377,7 +365,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "mcq" },
         })
         .then((res) => {
@@ -386,7 +374,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -422,7 +409,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "mrq" },
         })
         .then((res) => {
@@ -431,7 +418,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -469,7 +455,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .put(`/quiz/${quizId}/questions/${question.id}`, formData, {
+        .put(`/question-banks/${selectedQuestionBank.id}/questions/${question.id}`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
@@ -478,7 +464,6 @@ const QuestionDialog = ({
           setEditQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -546,7 +531,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "mcq" },
         })
         .then((res) => {
@@ -554,7 +539,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -587,7 +571,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "mrq" },
         })
         .then((res) => {
@@ -595,7 +579,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -631,7 +614,7 @@ const QuestionDialog = ({
       }
 
       Service.client
-        .post(`/quiz/${quizId}/questions`, formData, {
+        .post(`/question-banks/${selectedQuestionBank.id}/questions`, formData, {
           params: { type: "shortanswer" },
         })
         .then((res) => {
@@ -639,7 +622,6 @@ const QuestionDialog = ({
           setAddQuestionDialog(false);
           setTimeout(() => {
             setQuestionImage();
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -666,7 +648,6 @@ const QuestionDialog = ({
           }
 
           setTimeout(() => {
-            setQuizId();
             setQuestion();
             setQuestionType();
             setOptions();
@@ -676,20 +657,19 @@ const QuestionDialog = ({
         PaperProps={{
           style: {
             width: "600px",
+            maxHeight: "70vh",
           },
         }}
       >
         {questionNum && (
           <DialogTitle>
-            Question {questionNum && questionNum}
+            {addQuestionDialog && "Add Question"}
+            {editQuestionDialog && `Question ${questionNum && questionNum}`}
             <div style={{ float: "right" }}>
               {/* <IconButton size="small" onClick={() => setEditMode(true)}>
                 <Edit />
               </IconButton> */}
-              <IconButton
-                size="small"
-                onClick={() => setDeleteQuestionDialog(true)}
-              >
+              <IconButton size="small" onClick={() => setDeleteQuestionDialog(true)}>
                 <Delete />
               </IconButton>
             </div>
@@ -699,7 +679,7 @@ const QuestionDialog = ({
 
         <DialogContent>
           <FormControl fullWidth margin="dense" className={classes.formControl}>
-            <InputLabel>Question Type</InputLabel>
+            <InputLabel style={{ fontSize: "14px" }}>Question Type</InputLabel>
             <Select
               label="Question Type"
               variant="outlined"
@@ -709,18 +689,24 @@ const QuestionDialog = ({
               }}
               disabled={editQuestionDialog}
             >
-              <MenuItem value="">
+              <MenuItem classes={{ root: classes.resizeFont }} value="">
                 <em>Select a question type</em>
               </MenuItem>
-              <MenuItem value="mcq">MCQ</MenuItem>
-              <MenuItem value="mrq">MRQ</MenuItem>
-              <MenuItem value="shortanswer">Short Answer</MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="mcq">
+                MCQ
+              </MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="mrq">
+                MRQ
+              </MenuItem>
+              <MenuItem classes={{ root: classes.resizeFont }} value="shortanswer">
+                Short Answer
+              </MenuItem>
             </Select>
           </FormControl>
+
           <label htmlFor="question">
             <Typography variant="body1">Question</Typography>
           </label>
-
           <ReactQuill
             value={question && question.title ? question.title : ""}
             onChange={handleQuestionInputChange}
@@ -729,11 +715,12 @@ const QuestionDialog = ({
           />
 
           <div>
-            <Typography variant="body1" style={{ marginTop: "10px" }}>
+            <Typography variant="body1" style={{ margin: "16px 0 8px" }}>
               Upload Image (Optional)
             </Typography>
             <DropzoneAreaBase
               dropzoneText="Drag and drop a image or click&nbsp;here"
+              dropzoneParagraphClass={classes.dropzoneText}
               dropzoneClass={classes.dropzoneContainer}
               // dropzoneProps={{ disabled: true }}
               filesLimit={1}
@@ -756,10 +743,7 @@ const QuestionDialog = ({
 
           {question && question.image && (
             <div style={{ display: "flex", marginTop: "5px" }}>
-              <Typography
-                variant="body2"
-                style={{ marginTop: "5px", marginRight: "10px" }}
-              >
+              <Typography variant="body2" style={{ marginTop: "5px", marginRight: "10px" }}>
                 <LinkMui
                   href={question.image ? question.image.replace("#", "") : "#"}
                   rel="noopener noreferrer"
@@ -785,7 +769,7 @@ const QuestionDialog = ({
             }}
           /> */}
           {questionType && (
-            <Fragment>
+            <div style={{ margin: "8px 0" }}>
               <label htmlFor="marks">
                 <Typography variant="body1" style={{ marginTop: "10px" }}>
                   Marks
@@ -805,31 +789,23 @@ const QuestionDialog = ({
                     } else if (question.mrq) {
                       return question.mrq.marks ? question.mrq.marks : "";
                     } else if (question.shortanswer) {
-                      return question.shortanswer.marks
-                        ? question.shortanswer.marks
-                        : "";
+                      return question.shortanswer.marks ? question.shortanswer.marks : "";
                     }
                   }
                 })()}
                 onChange={(e) => handleMarksChange(e)}
-                style={{ marginBottom: "10px" }}
                 InputProps={{
-                  inputProps: { min: 0 },
+                  inputProps: { min: 0, style: { fontSize: "14px" } },
                 }}
               />
-            </Fragment>
+            </div>
           )}
 
-          {questionType &&
-            questionType !== "shortanswer" &&
-            (editMode || addQuestionDialog) && (
-              <Typography
-                variant="body1"
-                style={{ paddingTop: "10px", paddingBottom: "5px" }}
-              >
-                Enter option(s) below in the field
-              </Typography>
-            )}
+          {questionType && questionType !== "shortanswer" && (editMode || addQuestionDialog) && (
+            <Typography variant="body1" style={{ paddingTop: "10px", paddingBottom: "5px" }}>
+              Enter option(s) below in the field
+            </Typography>
+          )}
 
           {options &&
             options.map((option, index) => {
@@ -848,6 +824,7 @@ const QuestionDialog = ({
                         placeholder="Enter option"
                         style={{ marginBottom: "10px" }}
                         onChange={(e) => handleOptionInputChange(e, index)}
+                        inputProps={{ style: { fontSize: "14px" } }}
                       />
 
                       {options && options.length > 1 && (
@@ -881,11 +858,7 @@ const QuestionDialog = ({
             })}
 
           {options && correctAnswer && questionType === "mcq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 value={correctAnswer}
@@ -904,11 +877,7 @@ const QuestionDialog = ({
           )}
 
           {options && correctAnswer && questionType === "mrq" && (
-            <FormControl
-              fullWidth
-              margin="dense"
-              className={classes.formControl}
-            >
+            <FormControl fullWidth margin="dense" className={classes.formControl}>
               <InputLabel>Select Correct Answer</InputLabel>
               <Select
                 multiple
@@ -923,9 +892,7 @@ const QuestionDialog = ({
               >
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option}>
-                    <Checkbox
-                      checked={correctAnswer.includes(option) && option !== ""}
-                    />
+                    <Checkbox checked={correctAnswer.includes(option) && option !== ""} />
                     <ListItemText primary={option} />
                   </MenuItem>
                 ))}
@@ -941,10 +908,7 @@ const QuestionDialog = ({
                 </label>
                 <Tooltip
                   title={
-                    <Typography variant="body2">
-                      Separate the keywords with commas (eg. keyword 1,keyword
-                      2)
-                    </Typography>
+                    <Typography variant="body2">Separate the keywords with commas (eg. keyword 1,keyword 2)</Typography>
                   }
                 >
                   <IconButton disableRipple size="small">
@@ -958,6 +922,7 @@ const QuestionDialog = ({
                 type="text"
                 autoComplete="off"
                 variant="outlined"
+                inputProps={{ style: { fontSize: "14px" } }}
                 margin="dense"
                 fullWidth
                 value={correctAnswer && correctAnswer}
@@ -981,7 +946,6 @@ const QuestionDialog = ({
                 setAddQuestionDialog(false);
               }
               setTimeout(() => {
-                setQuizId();
                 setQuestion();
                 setQuestionType();
                 setOptions();
