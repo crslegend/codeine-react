@@ -11,11 +11,17 @@ import {
   Tabs,
   Tab,
   Box,
+  Popover,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { useHistory, useLocation } from "react-router-dom";
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
-import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
   root: { paddingTop: "65px" },
@@ -36,6 +42,22 @@ const useStyles = makeStyles((theme) => ({
   },
   divider: {
     marginTop: theme.spacing(2),
+  },
+  typography: {
+    padding: theme.spacing(1),
+    color: "#5c5c5c",
+    cursor: "pointer",
+    "&:hover": {
+      color: "#000000",
+    },
+  },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
   },
 }));
 
@@ -72,15 +94,40 @@ function a11yProps(index) {
   };
 }
 
-const ViewAllArticles = () => {
+const MemberArticleList = (props) => {
   const classes = useStyles();
   const history = useHistory();
+  const { userType } = props;
 
   // Tabs variable
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  //popover variable
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [dialogopen, setDialogOpen] = useState(false);
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -117,6 +164,40 @@ const ViewAllArticles = () => {
       return `${days} day ago`;
     }
     return `${days} days ago`;
+  };
+
+  const unpublishArticle = (articleid) => {
+    Service.client
+      .patch(`/articles/${articleid}/unpublish`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article unpublished successfully!",
+          severity: "success",
+        });
+        getArticles();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteArticle = (articleid) => {
+    Service.client
+      .delete(`/articles/${articleid}`)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Article deleted successfully!",
+          severity: "success",
+        });
+        getArticles();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -168,13 +249,7 @@ const ViewAllArticles = () => {
     Service.client
       .post(`/articles`, emptyArticle)
       .then((res) => {
-        if (res.data.user.member !== null) {
-          history.push("/member/article/edit/" + res.data.id);
-        } else if (res.data.user.partner !== null) {
-          history.push("/partner/article/edit/" + res.data.id);
-        } else if (res.data.is_admin) {
-          history.push("/admin/article/edit/" + res.data.id);
-        }
+        history.push("/article/edit/member/" + res.data.id);
       })
       .catch((err) => {
         console.log(err);
@@ -220,7 +295,6 @@ const ViewAllArticles = () => {
           >
             <Tab label="Drafts" {...a11yProps(0)} />
             <Tab label="Published" {...a11yProps(1)} />
-            {/* <Tab label="Admin" {...a11yProps(2)} /> */}
           </Tabs>
         </AppBar>
 
@@ -229,27 +303,65 @@ const ViewAllArticles = () => {
             return (
               <Fragment>
                 {!article.is_published && (
-                  <div
-                    key={article.id}
-                    onClick={() => {
-                      history.push(`/member/article/edit/${article.id}`);
-                    }}
-                    className={classes.articlelists}
-                  >
+                  <div key={article.id} className={classes.articlelists}>
                     <Typography
                       style={{ fontWeight: "700", cursor: "pointer" }}
+                      onClick={() => {
+                        history.push(`/article/edit/member/${article.id}`);
+                      }}
                     >
                       {article.title.length === 0
                         ? "Untitled article"
                         : article.title}
                     </Typography>
-                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
-                      Last edited{" "}
-                      {calculateDateInterval(article.date_edited) +
-                        " ~ " +
-                        article.content.length +
-                        " words so far"}
-                    </Typography>
+                    <div style={{ display: "flex" }}>
+                      <Typography
+                        style={{ fontSize: "14px", color: "#757575" }}
+                      >
+                        Last edited{" "}
+                        {calculateDateInterval(article.date_edited) +
+                          " ~ " +
+                          article.content.length +
+                          " words so far"}
+                      </Typography>
+                      <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                      <Popover
+                        id={popoverid}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handlePopoverClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                      >
+                        <div style={{ padding: "5px" }}>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={() => {
+                              history.push(
+                                `/article/edit/member/${article.id}`
+                              );
+                            }}
+                          >
+                            Edit Draft
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={handleDialogOpen}
+                          >
+                            Delete Draft
+                          </Typography>
+                        </div>
+                      </Popover>
+                    </div>
+
                     <div className={classes.divider}>
                       <Divider />
                     </div>
@@ -264,24 +376,81 @@ const ViewAllArticles = () => {
             return (
               <Fragment>
                 {article.is_published && (
-                  <div
-                    key={article.id}
-                    onClick={() => {
-                      history.push(`/article/${article.id}`);
-                    }}
-                    className={classes.articlelists}
-                  >
-                    <Typography
-                      style={{
-                        fontWeight: "700",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {article.title}
-                    </Typography>
-                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
-                      Published {calculateDateInterval(article.date_edited)}
-                    </Typography>
+                  <div key={article.id} className={classes.articlelists}>
+                    <div style={{ display: "flex" }}>
+                      <div>
+                        <Typography
+                          style={{
+                            fontWeight: "700",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            history.push(`/article/${article.id}`);
+                          }}
+                        >
+                          {article.title}
+                        </Typography>
+                      </div>
+                      <div style={{ marginLeft: "auto" }}>
+                        {!article.is_activated && (
+                          <Typography
+                            style={{ fontWeight: "700", color: "red" }}
+                          >
+                            Deactivated
+                          </Typography>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex" }}>
+                      <Typography
+                        style={{ fontSize: "14px", color: "#757575" }}
+                      >
+                        Published {calculateDateInterval(article.date_edited)}
+                      </Typography>
+                      <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                      <Popover
+                        id={popoverid}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handlePopoverClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                      >
+                        <div style={{ padding: "5px" }}>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={() =>
+                              history.push(`/article/edit/member/${article.id}`)
+                            }
+                          >
+                            Edit article
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={() => unpublishArticle(article.id)}
+                          >
+                            Unpublish Article
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={handleDialogOpen}
+                          >
+                            Delete
+                          </Typography>
+                        </div>
+                      </Popover>
+                    </div>
+
                     <div className={classes.divider}>
                       <Divider />
                     </div>
@@ -292,8 +461,33 @@ const ViewAllArticles = () => {
           })}
         </TabPanel>
       </div>
+      <Dialog
+        open={dialogopen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this article?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => deleteArticle()}
+            variant="contained"
+            className={classes.redButton}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
 
-export default ViewAllArticles;
+export default MemberArticleList;

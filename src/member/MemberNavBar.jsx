@@ -122,7 +122,6 @@ const MemberNavBar = (props) => {
           to="/member/login"
           variant="outlined"
           component={Link}
-          to="/partner/login"
           style={{ textTransform: "capitalize" }}
           color="primary"
         >

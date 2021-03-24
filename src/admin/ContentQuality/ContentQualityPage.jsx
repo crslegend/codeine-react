@@ -85,7 +85,7 @@ const AdminContentQualityPage = () => {
   const classes = styles();
   const history = useHistory();
 
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -134,24 +134,29 @@ const AdminContentQualityPage = () => {
     }
   };
 
-  const [searchValue, setSearchValue] = useState("");
+  const [searchCourseValue, setSearchCourseValue] = useState("");
+  const [searchArticleValue, setSearchArticleValue] = useState("");
 
   useEffect(() => {
     getCourseData();
+    getArticleData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (searchValue === "") {
+    if (searchCourseValue === "") {
       getCourseData();
     }
+    if (searchArticleValue === "") {
+      getArticleData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  }, [searchCourseValue, searchArticleValue]);
 
-  // Member data
+  // Course data
   const [allCourseList, setAllCourseList] = useState([]);
 
-  const coruseColumns = [
+  const courseColumns = [
     {
       field: "thumbnail",
       headerName: "-",
@@ -218,9 +223,9 @@ const AdminContentQualityPage = () => {
   const getCourseData = () => {
     let queryParams;
 
-    if (searchValue !== "") {
+    if (searchCourseValue !== "") {
       queryParams = {
-        search: searchValue,
+        search: searchCourseValue,
       };
     }
 
@@ -230,6 +235,74 @@ const AdminContentQualityPage = () => {
         .then((res) => {
           setAllCourseList(res.data.results);
           courseRows = allCourseList;
+        })
+        .catch((err) => {
+          //setProfile(null);
+        });
+    }
+  };
+
+  const [allArticleList, setAllArticleList] = useState([]);
+
+  const articleColumns = [
+    { field: "title", headerName: "Title", width: 200 },
+    {
+      field: "date_created",
+      headerName: "Date Created",
+      valueFormatter: (params) => formatDate(params.value),
+      width: 170,
+    },
+    {
+      field: "is_published",
+      headerName: "Published Status",
+      renderCell: (params) => (
+        <div>
+          {!params.value ? (
+            <div style={{ color: "red" }}>{formatPubStatus(params.value)}</div>
+          ) : (
+            <div style={{ color: "green" }}>
+              {formatPubStatus(params.value)}
+            </div>
+          )}
+        </div>
+      ),
+      width: 170,
+    },
+    {
+      field: "is_activated",
+      headerName: "Activation Status",
+      renderCell: (params) => (
+        <div>
+          {params.value ? (
+            <div style={{ color: "green" }}>
+              {formatActStatus(params.value)}
+            </div>
+          ) : (
+            <div style={{ color: "red" }}>{formatActStatus(params.value)}</div>
+          )}
+        </div>
+      ),
+      width: 160,
+    },
+  ];
+
+  let articleRows = allArticleList;
+
+  const getArticleData = () => {
+    let queryParams;
+
+    if (searchArticleValue !== "") {
+      queryParams = {
+        search: searchArticleValue,
+      };
+    }
+
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      Service.client
+        .get(`/articles`, { params: { ...queryParams } })
+        .then((res) => {
+          setAllArticleList(res.data);
+          articleRows = allArticleList;
         })
         .catch((err) => {
           //setProfile(null);
@@ -269,10 +342,10 @@ const AdminContentQualityPage = () => {
                 elavation: "0px",
               }}
               placeholder="Search courses"
-              value={searchValue}
-              onChange={(newValue) => setSearchValue(newValue)}
+              value={searchCourseValue}
+              onChange={(newValue) => setSearchCourseValue(newValue)}
               onRequestSearch={getCourseData}
-              onCancelSearch={() => setSearchValue("")}
+              onCancelSearch={() => setSearchCourseValue("")}
             />
           </Grid>
 
@@ -284,7 +357,7 @@ const AdminContentQualityPage = () => {
             <DataGrid
               className={classes.dataGrid}
               rows={courseRows}
-              columns={coruseColumns.map((column) => ({
+              columns={courseColumns.map((column) => ({
                 ...column,
                 //disableClickEventBubbling: true,
               }))}
@@ -299,7 +372,43 @@ const AdminContentQualityPage = () => {
         </Grid>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Article
+        <Grid container>
+          <Grid item xs={9}>
+            <SearchBar
+              style={{
+                width: "70%",
+                marginBottom: "20px",
+                elavation: "0px",
+              }}
+              placeholder="Search article"
+              value={searchArticleValue}
+              onChange={(newValue) => setSearchArticleValue(newValue)}
+              onRequestSearch={getArticleData}
+              onCancelSearch={() => setSearchArticleValue("")}
+            />
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            style={{ height: "calc(100vh - 300px)", width: "100%" }}
+          >
+            <DataGrid
+              className={classes.dataGrid}
+              rows={articleRows}
+              columns={articleColumns.map((column) => ({
+                ...column,
+                //disableClickEventBubbling: true,
+              }))}
+              pageSize={10}
+              //checkboxSelection
+              disableSelectionOnClick
+              onRowClick={(e) =>
+                history.push(`/admin/contentquality/article/${e.row.id}`)
+              }
+            />
+          </Grid>
+        </Grid>
       </TabPanel>
     </div>
   );
