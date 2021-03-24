@@ -23,9 +23,10 @@ import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 import CourseKanbanBoard from "./components/CourseKanbanBoard";
 import { useHistory, useParams } from "react-router-dom";
-import QuizKanbanBoard from "./components/QuizKanbanBoard";
+// import QuizKanbanBoard from "./components/QuizKanbanBoard";
 import QuestionBankModal from "./components/QuestionBankModal";
 import validator from "validator";
+import AssessmentCreation from "./components/AssessmentCreation";
 
 // import jwt_decode from "jwt-decode";
 // import Cookies from "js-cookie";
@@ -58,6 +59,15 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(15),
     height: theme.spacing(15),
+  },
+  container: {
+    width: "100%",
+    margin: "auto",
+    marginBottom: "30px",
+    border: "1px solid lightgrey",
+    borderRadius: "2px",
+    backgroundColor: "#fff",
+    padding: theme.spacing(2),
   },
 }));
 
@@ -136,13 +146,11 @@ const CourseCreation = () => {
 
   const [courseId, setCourseId] = useState();
 
-  const [finalQuizDialog, setFinalQuizDialog] = useState(false);
   const [finalQuiz, setFinalQuiz] = useState({
     instructions: "",
     passing_marks: 0,
   });
-  const [finalQuizQuestions, setFinalQuizQuestions] = useState([]);
-  const [editMode, setEditMode] = useState(false);
+  const [finalQuizQuestionGroups, setFinalQuizQuestionGroups] = useState([]);
   // console.log(courseDetails);
 
   const [courseDetailsCard, setCourseDetailsCard] = useState({
@@ -416,7 +424,7 @@ const CourseCreation = () => {
       Service.client
         .get(`/private-courses/${chosenId}`)
         .then((res) => {
-          // console.log(res);
+          console.log(res.data);
           setCourseDetails({
             title: res.data.title,
             description: res.data.description,
@@ -532,38 +540,29 @@ const CourseCreation = () => {
           // setting final assessment details
           if (res.data.assessment) {
             setFinalQuiz({
-              id: res.data.assessment.id,
+              quiz_id: res.data.assessment.id,
               instructions: res.data.assessment.instructions,
               passing_marks: res.data.assessment.passing_marks,
+              is_randomized: res.data.assessment.is_randomized,
             });
-
-            let data = {
-              tasks: {},
-              taskIds: [],
-            };
-            for (let i = 0; i < res.data.assessment.questions.length; i++) {
-              data = {
-                ...data,
-                tasks: {
-                  ...data.tasks,
-                  [res.data.assessment.questions[i].id]: res.data.assessment.questions[i],
-                },
-              };
-            }
-
-            let arr = [];
-            if (res.data.assessment.questions.length > 0) {
-              res.data.assessment.questions.forEach((question) => arr.push(question.id));
-              data = {
-                ...data,
-                taskIds: arr,
-              };
-            }
             // console.log(data);
             // setFinalQuizQuestions(res.data.assessment.questions);
-            setFinalQuizQuestions(data);
+            setFinalQuizQuestionGroups(res.data.assessment.question_groups);
           } else {
-            setFinalQuizDialog(true);
+            Service.client
+              .post(`/courses/${chosenId}/assessments`, {
+                instructions: "",
+                passing_marks: 0,
+                is_randomized: false,
+              })
+              .then((res) => {
+                console.log(res.data);
+                setFinalQuiz({
+                  ...res.data,
+                  quiz_id: res.data.id,
+                });
+                setFinalQuizQuestionGroups(res.data.question_groups);
+              });
           }
         })
         .catch((err) => console.log(err));
@@ -603,13 +602,37 @@ const CourseCreation = () => {
       });
   };
 
+  const handleSaveFinalQuizDetails = () => {
+    if (finalQuiz.marks === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please fill up the required field",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    Service.client
+      .put(`/courses/${courseId}/assessments/${finalQuiz.quiz_id}`, finalQuiz)
+      .then((res) => {
+        // console.log(res);
+        getCourse();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const setToNextPage = () => {
     // handleSaveCourseDetails();
 
     if (!courseId) {
       setSbOpen(true);
       setSnackbar({
-        message: "Please fill in course details first!",
+        message: "Please fill in course details first",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -623,7 +646,7 @@ const CourseCreation = () => {
     if (allChapters.columnOrder.length === 0) {
       setSbOpen(true);
       setSnackbar({
-        message: "Every course should have at least 1 chapter",
+        message: "Your course should have at least a chapter",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -638,7 +661,7 @@ const CourseCreation = () => {
       if (allChapters.columns[column].course_materials.length === 0) {
         setSbOpen(true);
         setSnackbar({
-          message: "Every chapter should have a course material",
+          message: "You have chapters without materials",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",
@@ -703,10 +726,10 @@ const CourseCreation = () => {
       //   }
       // }
 
-      if (pageNum === 2 && finalQuizQuestions.taskIds.length === 0) {
+      if (pageNum === 2 && finalQuizQuestionGroups.length === 0) {
         setSbOpen(true);
         setSnackbar({
-          message: "Final quiz should have at least 1 question",
+          message: "Your assessments should have at least a question",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",
@@ -717,34 +740,38 @@ const CourseCreation = () => {
         return;
       }
 
-      if (pageNum === 2) {
-        let totalMarks = 0;
-        for (const obj in finalQuizQuestions.tasks) {
-          if (finalQuizQuestions.tasks[obj].mcq) {
-            totalMarks += finalQuizQuestions.tasks[obj].mcq.marks;
-          }
-          if (finalQuizQuestions.tasks[obj].mrq) {
-            totalMarks += finalQuizQuestions.tasks[obj].mrq.marks;
-          }
-          if (finalQuizQuestions.tasks[obj].shortanswer) {
-            totalMarks += finalQuizQuestions.tasks[obj].shortanswer.marks;
-          }
-        }
+      // if (pageNum === 2) {
+      //   let totalMarks = 0;
+      //   for (const obj in finalQuizQuestions.tasks) {
+      //     if (finalQuizQuestions.tasks[obj].mcq) {
+      //       totalMarks += finalQuizQuestions.tasks[obj].mcq.marks;
+      //     }
+      //     if (finalQuizQuestions.tasks[obj].mrq) {
+      //       totalMarks += finalQuizQuestions.tasks[obj].mrq.marks;
+      //     }
+      //     if (finalQuizQuestions.tasks[obj].shortanswer) {
+      //       totalMarks += finalQuizQuestions.tasks[obj].shortanswer.marks;
+      //     }
+      //   }
 
-        if (finalQuiz.passing_marks > totalMarks) {
-          setSbOpen(true);
-          setSnackbar({
-            message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
-            severity: "error",
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "center",
-            },
-            autoHideDuration: 3000,
-          });
-          return;
-        }
-      }
+      //   if (finalQuiz.passing_marks > totalMarks) {
+      //     setSbOpen(true);
+      //     setSnackbar({
+      //       message: "Quiz passing mark should be lower than or equal to the total marks of quiz",
+      //       severity: "error",
+      //       anchorOrigin: {
+      //         vertical: "bottom",
+      //         horizontal: "center",
+      //       },
+      //       autoHideDuration: 3000,
+      //     });
+      //     return;
+      //   }
+      // }
+    }
+
+    if (pageNum === 2) {
+      handleSaveFinalQuizDetails();
     }
 
     setPageNum(pageNum + 1);
@@ -765,56 +792,6 @@ const CourseCreation = () => {
         .then((res) => {
           localStorage.removeItem("courseId");
           history.push(`/partner/home/content`);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
-  const handleSaveFinalQuizDetails = () => {
-    if (finalQuiz.marks === "") {
-      setSbOpen(true);
-      setSnackbar({
-        message: "Please fill up the required field",
-        severity: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "center",
-        },
-        autoHideDuration: 3000,
-      });
-      return;
-    }
-
-    if (editMode) {
-      const data = {
-        instructions: finalQuiz.instructions,
-        passing_marks: finalQuiz.passing_marks,
-      };
-
-      Service.client
-        .put(`/courses/${courseId}/assessments/${finalQuiz.id}`, data)
-        .then((res) => {
-          // console.log(res);
-          setFinalQuizDialog(false);
-          setFinalQuiz({
-            instructions: "",
-            passing_marks: 0,
-          });
-          setEditMode(false);
-          getCourse();
-        })
-        .catch((err) => console.log(err));
-    } else {
-      Service.client
-        .post(`/courses/${courseId}/assessments`, finalQuiz)
-        .then((res) => {
-          // console.log(res);
-          setFinalQuizDialog(false);
-          setFinalQuiz({
-            instructions: "",
-            passing_marks: 0,
-          });
-          getCourse();
         })
         .catch((err) => console.log(err));
     }
@@ -967,27 +944,44 @@ const CourseCreation = () => {
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <PageTitle title="Final Quiz" />
-
-                  <Button
-                    variant="contained"
-                    startIcon={<Edit />}
-                    onClick={() => {
-                      setFinalQuizDialog(true);
-                      setEditMode(true);
-                    }}
-                    style={{ marginLeft: "30px", height: 30 }}
+                  <div
+                    style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", width: "100%" }}
                   >
-                    Edit Final Quiz Details
-                  </Button>
+                    <div style={{ margin: "8px" }}>
+                      <PageTitle title="Final Quiz" />
+                    </div>
+                    <div>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<PlaylistAddCheck />}
+                        onClick={() => setQuestionBankModalOpen(true)}
+                        style={{ margin: "8px" }}
+                      >
+                        Question Bank
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <QuizKanbanBoard
+                {/* <QuizKanbanBoard
                   finalQuiz={finalQuiz}
                   getCourse={getCourse}
                   finalQuizQuestions={finalQuizQuestions}
                   setFinalQuizQuestions={setFinalQuizQuestions}
-                />
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                /> */}
+                <div className={classes.container}>
+                  <AssessmentCreation
+                    courseId={courseId}
+                    quiz={finalQuiz}
+                    setQuiz={setFinalQuiz}
+                    questionGroups={finalQuizQuestionGroups}
+                    setQuestionGroups={setFinalQuizQuestionGroups}
+                    getCourse={getCourse}
+                    setQuestionBankModalOpen={setQuestionBankModalOpen}
+                  />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", margin: "8px 0 32px" }}>
                   <Button variant="contained" color="primary" onClick={() => setPageNum(1)} style={{ float: "right" }}>
                     Back
                   </Button>
@@ -1000,77 +994,6 @@ const CourseCreation = () => {
                     Next
                   </Button>
                 </div>
-
-                <Dialog
-                  open={finalQuizDialog}
-                  PaperProps={{
-                    style: {
-                      width: "500px",
-                    },
-                  }}
-                >
-                  <DialogTitle>Final Quiz</DialogTitle>
-                  <DialogContent>
-                    <label htmlFor="instructions">
-                      <Typography variant="body1">Instructions</Typography>
-                    </label>
-                    <TextField
-                      id="instructions"
-                      placeholder="Enter instructions"
-                      type="text"
-                      autoComplete="off"
-                      variant="outlined"
-                      margin="dense"
-                      fullWidth
-                      value={finalQuiz && finalQuiz.instructions}
-                      onChange={(e) => {
-                        setFinalQuiz({
-                          ...finalQuiz,
-                          instructions: e.target.value,
-                        });
-                      }}
-                      multiline
-                      rows={4}
-                    />
-                    <label htmlFor="marks">
-                      <Typography variant="body1" style={{ marginTop: "10px" }}>
-                        Passing Marks (Required)
-                      </Typography>
-                    </label>
-                    <TextField
-                      id="marks"
-                      type="number"
-                      autoComplete="off"
-                      variant="outlined"
-                      margin="dense"
-                      fullWidth
-                      value={finalQuiz && finalQuiz.passing_marks}
-                      onChange={(e) =>
-                        setFinalQuiz({
-                          ...finalQuiz,
-                          passing_marks: e.target.value,
-                        })
-                      }
-                      style={{ marginBottom: "10px" }}
-                      InputProps={{
-                        inputProps: { min: 0 },
-                      }}
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.dialogButtons}
-                      // disabled={!editMode && editQuestionDialog}
-                      onClick={() => {
-                        handleSaveFinalQuizDetails();
-                      }}
-                    >
-                      Save
-                    </Button>
-                  </DialogActions>
-                </Dialog>
               </Fragment>
             );
           } else if (pageNum === 3) {
