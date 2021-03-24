@@ -286,7 +286,7 @@ const QuestionBankCard = ({ questionBank, selectedQuestionBank, setSelectedQuest
   return (
     <Card
       className={`${classes.questionBankCardRoot} ${
-        selectedQuestionBank.id === questionBank.id && classes.selectedCard
+        selectedQuestionBank && selectedQuestionBank.id === questionBank.id && classes.selectedCard
       }`}
     >
       <ButtonBase
@@ -341,7 +341,7 @@ const QuestionBankDetails = ({
           className={classes.textField}
           label="Question Bank Name"
           autoFocus
-          value={selectedQuestionBank.label}
+          value={selectedQuestionBank && selectedQuestionBank.label}
           inputProps={{
             style: {
               fontSize: "14px",

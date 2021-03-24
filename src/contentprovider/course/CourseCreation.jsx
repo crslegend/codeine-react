@@ -907,6 +907,7 @@ const CourseCreation = () => {
                     state={allChapters}
                     setState={setAllChapters}
                     getCourse={getCourse}
+                    setQuestionBankModalOpen={setQuestionBankModalOpen}
                   />
                 </div>
 

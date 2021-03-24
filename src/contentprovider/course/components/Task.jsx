@@ -682,6 +682,15 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                   courseId={courseId}
                   questionGroups={editQuizQuestionGroups}
                   setQuestionGroups={setEditQuizQuestionGroups}
+                  closeDialog={() => {
+                    setCourseMaterialDialog(false);
+                    setEditFile();
+                    setEditVideo();
+                    setEditQuiz();
+                    setEditMode(false);
+                    setCourseMaterialId();
+                    setZipFile();
+                  }}
                 />
               );
             }

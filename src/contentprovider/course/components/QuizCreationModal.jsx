@@ -19,6 +19,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
+import Alert from "@material-ui/lab/Alert";
 
 import Service from "../../../AxiosService";
 
@@ -100,7 +101,15 @@ const QuestionGroupCard = ({ questionGroup, classes }) => {
   );
 };
 
-const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestionGroups }) => {
+const QuizCreationModel = ({
+  courseId,
+  quiz,
+  setQuiz,
+  questionGroups,
+  setQuestionGroups,
+  closeDialog,
+  setQuestionBankModalOpen,
+}) => {
   const classes = useStyles();
   console.log(quiz);
 
@@ -111,7 +120,7 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
     question_bank: "",
     randomSubset: false,
   });
-  const [questionBankModalOpen, setQuestionBankModalOpen] = useState(false);
+  const [addQuestionGroupModalOpen, setAddQuestionGroupModalOpen] = useState(false);
 
   // fetch course question groups
   useEffect(() => {
@@ -235,7 +244,7 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
             <Typography variant="body2" style={{ alignItems: "baseline" }}>
               Questions
             </Typography>
-            <IconButton style={{ marginLeft: 8 }} size="small" onClick={() => setQuestionBankModalOpen(true)}>
+            <IconButton style={{ marginLeft: 8 }} size="small" onClick={() => setAddQuestionGroupModalOpen(true)}>
               <Add fontSize="small" />
             </IconButton>
           </div>
@@ -245,20 +254,47 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
             ))
           ) : (
             <div
-              style={{ display: "flex", width: "100%", height: "90%", alignItems: "center", justifyContent: "center" }}
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "90%",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
             >
               <Typography variant="body2" style={{ margin: 8, color: "#676767" }}>
                 No questions added
               </Typography>
+              <Alert
+                style={{ maxWidth: "80%" }}
+                severity="warning"
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      closeDialog();
+                      setTimeout(() => setQuestionBankModalOpen(true), 200);
+                    }}
+                  >
+                    Manage
+                  </Button>
+                }
+              >
+                Seems like you haven't created any question banks yet.
+                <br />
+                Would you like to create one?
+              </Alert>
             </div>
           )}
         </div>
       </div>
 
       <Dialog
-        open={questionBankModalOpen}
+        open={addQuestionGroupModalOpen}
         onClose={() => {
-          setQuestionBankModalOpen(false);
+          setAddQuestionGroupModalOpen(false);
           setSelectedQuestionGroup({
             count: 0,
             question_bank: "",
@@ -367,8 +403,8 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
             color="primary"
             onClick={() => {
               refetchQuiz();
-              console.log(selectedQuestionGroup);
             }}
+            disabled={selectedQuestionGroup.question_bank === ""}
           >
             Add Questions
           </Button>

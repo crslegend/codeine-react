@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
+const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionBankModalOpen }) => {
   const classes = useStyles();
   // console.log(tasks);
 
@@ -721,7 +721,19 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   </Fragment>
                 );
               } else if (materialType === "quiz") {
-                return <QuizCreationModel quiz={quiz} setQuiz={setQuiz} courseId={courseId} />;
+                return (
+                  <QuizCreationModel
+                    quiz={quiz}
+                    setQuiz={setQuiz}
+                    courseId={courseId}
+                    closeDialog={() => {
+                      setCourseMaterialDialog(false);
+                      // setMaterialType();
+                      setChapterIdForCourseMaterial();
+                    }}
+                    setQuestionBankModalOpen={setQuestionBankModalOpen}
+                  />
+                );
               }
             })()}
           </DialogContent>
