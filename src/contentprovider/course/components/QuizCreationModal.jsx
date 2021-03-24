@@ -9,6 +9,14 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  DialogActions,
+  FormControlLabel,
+  Switch,
+  Button,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 
@@ -34,32 +42,91 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     backgroundColor: "#fcfcfc",
   },
+  resizeFont: {
+    fontSize: "14px",
+  },
+  formControl: {
+    marginTop: 0,
+    paddingTop: "15px",
+    paddingBottom: "10px",
+    "& label": {
+      paddingLeft: "7px",
+      paddingRight: "7px",
+      paddingTop: "7px",
+      marginLeft: "10px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: "0px",
+    },
+  },
+  toggleRoot: {
+    margin: "16px 0",
+  },
+  toggleLabel: {
+    fontSize: "14px",
+    margin: "0 8px",
+  },
+  button: {
+    textTransform: "none",
+  },
 }));
 
+const getQuestionMarks = (question) => {
+  if (question.mcq) {
+    return question.mcq.marks;
+  }
+  if (question.mrq) {
+    return question.mrq.marks;
+  }
+  return question.shortanswer.marks;
+};
+
 const QuestionGroupCard = ({ questionGroup, classes }) => {
+  // console.log(questionGroup);
+
+  const getTotalMarks = () => {
+    return questionGroup.count * getQuestionMarks(questionGroup.question_bank.questions[0]);
+  };
   return (
     <Card className={classes.cardRoot}>
-      <Typography style={{ fontSize: "14px" }}>Question Bank: </Typography>
-      <Typography style={{ color: "#676767", fontSize: "12px" }}>Pick 4 out of 5 questions</Typography>
-      <Typography style={{ color: "#1e1e1e", fontSize: "12px", margin: "8px 0" }}>Total marks: 4</Typography>
+      <Typography style={{ fontSize: "14px" }}>Question Bank: {questionGroup.question_bank.label}</Typography>
+      <Typography style={{ color: "#676767", fontSize: "12px" }}>
+        Pick {questionGroup.count} out of {questionGroup.question_bank.questions.length} questions
+      </Typography>
+      <Typography style={{ color: "#1e1e1e", fontSize: "12px", margin: "8px 0" }}>
+        Total marks: {getTotalMarks()}
+      </Typography>
     </Card>
   );
 };
 
 const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestionGroups }) => {
   const classes = useStyles();
-  console.log(quiz);
+  // console.log(quiz);
 
   // question group/bank state
   const [questionBanks, setQuestionBanks] = useState();
+  const [selectedQuestionGroup, setSelectedQuestionGroup] = useState({
+    count: 0,
+    question_bank: "",
+    randomSubset: false,
+  });
+  // const [selectedQuestionBank, setSelectedQuestionBank] = useState("");
+  // const [randomSubset, setRandomSubset] = useState(false);
+  // const [subsetSize, setSubsetSize] = useState();
   const [questionBankModalOpen, setQuestionBankModalOpen] = useState(false);
+  // console.log(selectedQuestionBank);
 
   // fetch course question groups
   useEffect(() => {
     Service.client.get(`/courses/${courseId}/question-banks`).then((res) => {
-      setQuestionBanks(res.data);
+      setQuestionBanks(
+        res.data.map((bank) => ({
+          ...bank,
+        }))
+      );
     });
-    setQuestionGroups([1, 2]);
+    // setQuestionGroups([1, 2]);
   }, [courseId]);
 
   return (
@@ -162,6 +229,11 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
         open={questionBankModalOpen}
         onClose={() => {
           setQuestionBankModalOpen(false);
+          setSelectedQuestionGroup({
+            count: 0,
+            question_bank: "",
+            randomSubset: false,
+          });
         }}
         PaperProps={{
           style: {
@@ -172,7 +244,97 @@ const QuizCreationModel = ({ courseId, quiz, setQuiz, questionGroups, setQuestio
         <DialogTitle>
           <Typography variant="h6">Add Question Bank</Typography>
         </DialogTitle>
-        <DialogContent></DialogContent>
+        <DialogContent>
+          <FormControl fullWidth margin="dense" className={classes.formControl}>
+            <InputLabel style={{ fontSize: "14px" }}>Question Bank</InputLabel>
+            <Select
+              label="Question Bank"
+              variant="outlined"
+              value={selectedQuestionGroup.question_bank}
+              onChange={(e) => {
+                setSelectedQuestionGroup({
+                  ...selectedQuestionGroup,
+                  question_bank: e.target.value,
+                  count: e.target.value !== "" ? e.target.value.questions.length : 0,
+                });
+              }}
+            >
+              <MenuItem classes={{ root: classes.resizeFont }} value="">
+                <em>Select a question bank</em>
+              </MenuItem>
+              {questionBanks &&
+                questionBanks.map((bank) => (
+                  <MenuItem classes={{ root: classes.resizeFont }} value={bank}>
+                    {bank.label}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          {selectedQuestionGroup.question_bank !== "" && (
+            <Fragment>
+              <div style={{ margin: "8px 0" }}>
+                <Typography variant="body2" style={{ color: "#676767" }}>
+                  Number of Questions: {selectedQuestionGroup.question_bank.questions.length}
+                </Typography>
+                <Typography variant="body2" style={{ color: "#676767" }}>
+                  Marks per Question: {getQuestionMarks(selectedQuestionGroup.question_bank.questions[0])}
+                </Typography>
+              </div>
+              <FormControlLabel
+                classes={{
+                  root: classes.toggleRoot,
+                  label: classes.toggleLabel,
+                }}
+                control={
+                  <Switch
+                    size="small"
+                    checked={selectedQuestionGroup.randomSubset}
+                    onChange={() =>
+                      setSelectedQuestionGroup({
+                        ...selectedQuestionGroup,
+                        randomSubset: !selectedQuestionGroup.randomSubset,
+                      })
+                    }
+                  />
+                }
+                label="Select a random subset"
+              />
+              {selectedQuestionGroup.randomSubset && (
+                <Fragment>
+                  <label htmlFor="count">
+                    <Typography variant="body2">Number of questions</Typography>
+                  </label>
+                  <TextField
+                    id="count"
+                    placeholder="Number of Questions"
+                    type="number"
+                    autoComplete="off"
+                    variant="outlined"
+                    inputProps={{
+                      min: 0,
+                      max: selectedQuestionGroup.question_bank.questions.length,
+                      style: { fontSize: "14px" },
+                    }}
+                    margin="dense"
+                    fullWidth
+                    value={selectedQuestionGroup.count && selectedQuestionGroup.count}
+                    onChange={(e) => {
+                      setSelectedQuestionGroup({
+                        ...selectedQuestionGroup,
+                        count: e.target.value,
+                      });
+                    }}
+                  />
+                </Fragment>
+              )}
+            </Fragment>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.button} color="primary">
+            Add Questions
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );
