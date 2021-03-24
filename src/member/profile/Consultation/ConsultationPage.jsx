@@ -19,6 +19,7 @@ import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
+import PageTitle from "../../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: "20px 0px",
-    marginRight: theme.spacing(9),
+    // marginRight: theme.spacing(9),
     width: "250px",
     maxHeight: 50,
   },
@@ -46,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   dataGrid: {
+    backgroundColor: "#fff",
     "@global": {
       ".MuiDataGrid-row": {
         cursor: "pointer",
@@ -331,84 +333,86 @@ const Consultation = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <div style={{ paddingTop: "65px" }}></div>
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          My Consultations
-        </Typography>
-        <div>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel
-              style={{ top: -6, textUnderline: "none" }}
-              className={classes.inputLabel}
+      <div style={{ paddingTop: "65px" }}>
+        <div style={{ width: "80%", margin: "auto" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <PageTitle title="My Consultations" />
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel style={{ top: -4, textUnderline: "none" }}>
+                Filter by
+              </InputLabel>
+              <Select
+                label="Filter by"
+                value={sortMethod}
+                onChange={(event) => {
+                  onSortChange(event);
+                }}
+                style={{
+                  height: 47,
+                  backgroundColor: "#fff",
+                }}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
+                <MenuItem value="past">Past Consultations</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div style={{ height: "500px", width: "100%" }}>
+            <DataGrid
+              className={classes.dataGrid}
+              rows={consultationRows}
+              columns={consultationColumns.map((column) => ({
+                ...column,
+              }))}
+              pageSize={10}
+              disableSelectionOnClick
+              /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
+            />
+            <Dialog
+              open={openCancelDialog}
+              onClose={handleCloseDialog}
+              maxWidth="xs"
+              fullWidth={true}
             >
-              Filter by
-            </InputLabel>
-            <Select
-              label="Filter by"
-              value={sortMethod}
-              onChange={(event) => {
-                onSortChange(event);
-              }}
-              style={{
-                height: 47,
-                backgroundColor: "#fff",
-                color: "#000000",
-              }}
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="upcoming">Upcoming Consultations</MenuItem>
-              <MenuItem value="past">Past Consultations</MenuItem>
-            </Select>
-          </FormControl>
+              <DialogTitle>
+                <Typography style={{ textAlign: "center", fontSize: "24px" }}>
+                  Remove your application?
+                </Typography>
+              </DialogTitle>
+              <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
+                Press confirm to proceed. Note that your action cannot be
+                undone. Refunds will be made to you within 3-5 working days.
+              </DialogContent>
+              <DialogActions
+                style={{ paddingBottom: "20px", marginRight: "5px" }}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={(e) => setOpenCancelDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  style={{ color: "#437FC7" }}
+                  onClick={(e) => handleCancel(application)}
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
         </div>
-      </Box>
-
-      <div style={{ height: "700px", width: "100%" }}>
-        <DataGrid
-          className={classes.dataGrid}
-          rows={consultationRows}
-          columns={consultationColumns.map((column) => ({
-            ...column,
-          }))}
-          pageSize={10}
-          disableSelectionOnClick
-          /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
-        />
-        <Dialog
-          open={openCancelDialog}
-          onClose={handleCloseDialog}
-          maxWidth="xs"
-          fullWidth={true}
-        >
-          <DialogTitle>
-            <Typography style={{ textAlign: "center", fontSize: "24px" }}>
-              Remove your application?
-            </Typography>
-          </DialogTitle>
-          <DialogContent style={{ textAlign: "center", fontSize: "18px" }}>
-            Press confirm to proceed. Note that your action cannot be undone.
-            Refunds will be made to you within 3-5 working days.
-          </DialogContent>
-          <DialogActions style={{ paddingBottom: "20px", marginRight: "5px" }}>
-            <Button
-              variant="outlined"
-              onClick={(e) => setOpenCancelDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              style={{ color: "#437FC7" }}
-              onClick={(e) => handleCancel(application)}
-            >
-              Confirm
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
     </Fragment>
   );

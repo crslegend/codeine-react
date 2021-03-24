@@ -28,6 +28,7 @@ import MemberNavBar from "../../MemberNavBar";
 import { Rating } from "@material-ui/lab";
 import Label from "../../landing/components/Label.jsx";
 import Toast from "../../../components/Toast.js";
+import PageTitle from "../../../components/PageTitle";
 
 const styles = makeStyles((theme) => ({
   heading: {
@@ -38,10 +39,10 @@ const styles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   content: {
-    padding: theme.spacing(5),
+    // padding: theme.spacing(5),
   },
   courses: {
-    paddingLeft: theme.spacing(5),
+    // paddingLeft: theme.spacing(5),
     display: "flex",
   },
   cardActionArea: {
@@ -77,8 +78,8 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    // paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(5),
     width: "100%",
   },
   formControl: {
@@ -326,16 +327,9 @@ const CoursesPage = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <div style={{ paddingTop: "65px" }}>
-        <Box className={classes.heading}>
-          <Typography
-            variant="h4"
-            style={{ marginLeft: "56px", color: "#fff" }}
-          >
-            My Enrolled Courses
-          </Typography>
-        </Box>
+      <div style={{ paddingTop: "65px", width: "80%", margin: "auto" }}>
         <div className={classes.content}>
+          <PageTitle title="My Enrolled Courses" />
           <div className={classes.searchSection}>
             <div className={classes.searchBar}>
               <SearchBar
