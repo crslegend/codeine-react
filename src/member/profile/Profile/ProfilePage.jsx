@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
-  Box,
   Button,
   CircularProgress,
   Paper,
@@ -14,6 +13,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
@@ -69,8 +72,6 @@ const Profile = (props) => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { setProfile } = props;
-
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -83,6 +84,7 @@ const Profile = (props) => {
   });
 
   const [dialogopen, setDialogOpen] = useState(false);
+  const [sortMethod, setSortMethod] = useState("");
 
   const handleClickOpen = () => {
     setDialogOpen(true);
@@ -90,6 +92,11 @@ const Profile = (props) => {
 
   const handleDialogClose = () => {
     setDialogOpen(false);
+  };
+
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    //getAllCourses(e.target.value);
   };
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -106,6 +113,9 @@ const Profile = (props) => {
     id: "",
     first_name: "",
     last_name: "",
+    age: "",
+    country: "",
+    gender: "",
     email: "",
     date_joined: "",
     profile_photo: "",
@@ -113,10 +123,17 @@ const Profile = (props) => {
 
   const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [countryList] = useState([
+    { name: "America" },
+    { name: "China" },
+    { name: "Singapore" },
+  ]);
 
   useEffect(() => {
     checkIfLoggedIn();
     getProfileDetails();
+    console.log(countryList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProfileDetails = () => {
@@ -198,7 +215,6 @@ const Profile = (props) => {
           severity: "success",
         });
         console.log(res.data);
-        setProfile(res.data);
         setProfileDetails(res.data);
         setLoading(false);
       })
@@ -230,7 +246,7 @@ const Profile = (props) => {
     );
 
     if (profilePhoto.length > 0) {
-      formData.append("profile_pic", profilePhoto[0].file);
+      formData.append("profile_photo", profilePhoto[0].file);
     }
 
     // submit form-data as per usual
@@ -246,7 +262,6 @@ const Profile = (props) => {
         Service.client
           .get(`/auth/members/${profileDetails.id}`)
           .then((res) => {
-            setProfile(res.data);
             setProfileDetails(res.data);
             if (profilePhoto) {
               setProfilePhoto([]);
@@ -268,6 +283,8 @@ const Profile = (props) => {
           <div style={{ display: "flex", marginTop: "65px" }}>
             <Typography variant="h5">Profile Details</Typography>
             <Button
+              variant="contained"
+              color="primary"
               style={{ marginLeft: "auto" }}
               onClick={() => {
                 history.push("/member/profile/changepassword");
@@ -330,27 +347,12 @@ const Profile = (props) => {
               </a>
             </div>
             <div style={{ width: "50%" }}>
-              {/* <div>
-                <TextField
-                  margin="normal"
-                  id="id"
-                  label="ID"
-                  name="id"
-                  autoComplete="id"
-                  fullWidth
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  value={profileDetails.id}
-                />
-              </div> */}
               <div>
                 <TextField
                   margin="normal"
                   id="first_name"
                   label="First Name"
                   name="first_name"
-                  autoComplete="first_name"
                   required
                   fullWidth
                   value={profileDetails.first_name}
@@ -369,7 +371,6 @@ const Profile = (props) => {
                   id="last_name"
                   label="Last Name"
                   name="last_name"
-                  autoComplete="last_name"
                   required
                   fullWidth
                   value={profileDetails.last_name}
@@ -382,6 +383,49 @@ const Profile = (props) => {
                   }
                 />
               </div>
+              <div>
+                <TextField
+                  margin="normal"
+                  id="age"
+                  label="Age"
+                  name="age"
+                  required
+                  fullWidth
+                  value={profileDetails.age}
+                  // error={lastNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      age: event.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              {/* <div>
+                <FormControl className={classes.formControl}>
+                  <InputLabel style={{ top: -4 }}>Country</InputLabel>
+                  <Select
+                    label="Sort By"
+                    value={sortMethod}
+                    onChange={(event) => {
+                      onSortChange(event);
+                    }}
+                    style={{ height: 47, backgroundColor: "#fff" }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+
+                    {countryList.map((country) => (
+                      <MenuItem key={country.name} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div> */}
+
               <div>
                 <TextField
                   margin="normal"

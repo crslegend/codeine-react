@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -12,18 +12,17 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
 } from "@material-ui/core";
 import { Language } from "@material-ui/icons";
-import { Link, useHistory, useParams } from "react-router-dom";
-import Service from "../../AxiosService";
-import Toast from "../../components/Toast.js";
+import { useHistory, useParams } from "react-router-dom";
+import Service from "../AxiosService";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
@@ -57,6 +56,12 @@ const useStyles = makeStyles((theme) => ({
       color: "#000000",
     },
   },
+  chip: {
+    marginRight: "10px",
+    marginBottom: "10px",
+    borderRadius: "3px",
+    backgroundColor: "#f2f2f2",
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -68,7 +73,6 @@ const ViewArticle = (props) => {
     user,
     articleDetails,
     setArticleDetails,
-    drawerOpen,
     setDrawerOpen,
     openIDE,
     setOpenIDE,
@@ -110,102 +114,42 @@ const ViewArticle = (props) => {
     return false;
   };
 
-  useEffect(() => {
-    getNumStatus();
-    getNumOfLikes();
-  }, []);
-
-  const [numOfLikes, setNumOfLikes] = useState(0);
-  const [articleLikedStatus, setArticleLikedStatus] = useState(false);
-
-  const getNumOfLikes = () => {
-    if (user) {
-      let likes = 0;
-      Service.client
-        .get(`/articles/${id}/engagement`)
-        .then((res) => {
-          for (let i = 0; i < res.data.length; i++) {
-            likes = likes + res.data[i].like;
-          }
-          setNumOfLikes(likes);
-        })
-        .catch((err1) => {
-          console.log(err1);
-        });
-    }
-  };
-
-  const getNumStatus = () => {
-    let queryParams = {
-      is_user: true,
-    };
-    if (user) {
-      Service.client
-        .get(`/articles/${id}/engagement`, {
-          params: { ...queryParams },
-        })
-        .then((res) => {
-          if (res.data[0].like === 0) {
-            setArticleLikedStatus(false);
-          } else {
-            setArticleLikedStatus(true);
-          }
-        })
-        .catch((err) => console.log(err));
-    }
+  const getArticleDetails = () => {
+    Service.client
+      .get(`/articles/${id}`)
+      .then((res) => {
+        setArticleDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleLikeArticle = (e) => {
     if (user) {
-      setArticleLikedStatus(!articleLikedStatus);
-      let queryParams = {
-        is_user: true,
-      };
-      Service.client
-        .get(`/articles/${articleDetails.id}/engagement`, {
-          params: { ...queryParams },
-        })
-        .then((res) => {
-          if (res.data.length === 0) {
-            Service.client
-              .post(`/articles/${articleDetails.id}/engagement`, {
-                like: 1,
-              })
-              .then((res1) => {
-                getNumOfLikes();
-              })
-              .catch((err1) => {
-                console.log(err1);
-              });
-          } else {
-            if (res.data[0].like === 0) {
-              Service.client
-                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
-                  like: 1,
-                })
-                .then((res1) => {
-                  getNumOfLikes();
-                })
-                .catch((err1) => {
-                  console.log(err1);
-                });
-            } else {
-              Service.client
-                .put(`/articles/${id}/engagement/${res.data[0].id}`, {
-                  like: 0,
-                })
-                .then((res1) => {
-                  getNumOfLikes();
-                })
-                .catch((err1) => {
-                  console.log(err1);
-                });
-            }
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // setArticleDetails({
+      //   ...articleDetails,
+      //   current_user_liked: setArticleDetails.current_user_liked,
+      // });
+      if (articleDetails.current_user_liked) {
+        Service.client
+          .delete(`/articles/${articleDetails.id}/engagements`)
+          .then((res) => {
+            setArticleDetails(res.data);
+          })
+          .catch((err1) => {
+            console.log(err1);
+          });
+      } else {
+        Service.client
+          .post(`/articles/${articleDetails.id}/engagements`)
+          .then((res) => {
+            getArticleDetails();
+          })
+          .catch((err1) => {
+            console.log(err1);
+          });
+      }
     } else {
       alert(
         "please login! - to discuss the flow, should we redirect to member login page? but not all viewers of article are members..."
@@ -226,7 +170,7 @@ const ViewArticle = (props) => {
     setOpenIDE(true);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -262,6 +206,16 @@ const ViewArticle = (props) => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const clickEditArticle = () => {
+    if (user.member !== null) {
+      history.push(`/article/edit/member/${id}`);
+    } else if (user.partner !== null) {
+      history.push(`/article/edit/partner/${id}`);
+    } else if (user.is_admin) {
+      history.push(`/article/edit/admin/${id}`);
+    }
   };
 
   return (
@@ -314,7 +268,7 @@ const ViewArticle = (props) => {
                     }}
                     onClick={() => openingIDE()}
                   >
-                    Open IDE
+                    Code along
                   </Button>
                 )}
               </div>
@@ -322,67 +276,139 @@ const ViewArticle = (props) => {
           </div>
         )}
 
-        <div style={{ fontSize: "20px", marginBottom: "50px" }}>
+        <div style={{ fontSize: "20px", marginBottom: "30px" }}>
           {parse(articleDetails.content, options)}
-        </div>
 
-        <div style={{ alignItems: "center", display: "flex" }}>
-          <UseAnimations
-            animation={heart}
-            size={30}
-            reverse={articleLikedStatus}
-            onClick={(e) => handleLikeArticle(e)}
-          />
-          <Typography style={{ marginRight: "15px" }}>{numOfLikes}</Typography>
-          <CommentIcon onClick={() => setDrawerOpen(true)} />
-          <Typography style={{ display: "inline-flex" }}>
-            {articleDetails.top_level_comments.length}
-          </Typography>
-          {user && checkIfOwnerOfComment(user.id) && (
-            <Menu
-              onClick={(e) => handleClick(e)}
-              style={{ marginLeft: "auto", cursor: "pointer" }}
-            />
-          )}
+          {articleDetails &&
+            articleDetails.coding_languages &&
+            articleDetails.coding_languages.length > 0 &&
+            articleDetails.coding_languages.map((language, index) => {
+              if (language === "PY") {
+                return (
+                  <Chip key={index} label="Python" className={classes.chip} />
+                );
+              } else if (language === "JAVA") {
+                return (
+                  <Chip key={index} label="Java" className={classes.chip} />
+                );
+              } else if (language === "JS") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Javascript"
+                    className={classes.chip}
+                  />
+                );
+              } else if (language === "CPP") {
+                return (
+                  <Chip key={index} label="C++" className={classes.chip} />
+                );
+              } else if (language === "CS") {
+                return <Chip key={index} label="C#" className={classes.chip} />;
+              } else if (language === "RUBY") {
+                return (
+                  <Chip key={index} label="Ruby" className={classes.chip} />
+                );
+              } else {
+                return (
+                  <Chip key={index} label={language} className={classes.chip} />
+                );
+              }
+            })}
 
-          <Popover
-            id={popoverid}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
+          <div
+            style={{
+              alignItems: "center",
+              display: "flex",
             }}
           >
-            <div style={{ padding: "5px" }}>
-              <Typography
-                variant="body2"
-                className={classes.typography}
-                onClick={() => history.push(`/member/article/edit/${id}`)}
-              >
-                Edit article
-              </Typography>
-              <Typography
-                variant="body2"
-                className={classes.typography}
-                onClick={() => unpublishArticle()}
-              >
-                Unpublish
-              </Typography>
-              <Typography
-                variant="body2"
-                className={classes.typography}
-                onClick={handleClickOpen}
-              >
-                Delete
-              </Typography>
-            </div>
-          </Popover>
+            <UseAnimations
+              animation={heart}
+              size={30}
+              reverse={articleDetails.current_user_liked}
+              onClick={(e) => handleLikeArticle(e)}
+              style={{ cursor: "pointer" }}
+            />
+            <Typography style={{ marginRight: "15px" }}>
+              {articleDetails.engagements.length}
+            </Typography>
+            <CommentIcon
+              style={{ cursor: "pointer" }}
+              onClick={() => setDrawerOpen(true)}
+            />
+            <Typography style={{ display: "inline-flex" }}>
+              {articleDetails.top_level_comments.length}
+            </Typography>
+            {user && checkIfOwnerOfComment(user.id) && (
+              <Menu
+                onClick={(e) => handleClick(e)}
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+            )}
+
+            <Popover
+              id={popoverid}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <div style={{ padding: "5px" }}>
+                <Typography
+                  variant="body2"
+                  className={classes.typography}
+                  onClick={() => clickEditArticle()}
+                >
+                  Edit article
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.typography}
+                  onClick={() => unpublishArticle()}
+                >
+                  Unpublish
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.typography}
+                  onClick={handleClickOpen}
+                >
+                  Delete
+                </Typography>
+              </div>
+            </Popover>
+          </div>
+          <Divider style={{ marginTop: "20px" }} />
+        </div>
+
+        <div style={{ display: "flex" }}>
+          <div style={{ display: "flex" }}>
+            <Avatar
+              src={articleDetails.user && articleDetails.user.profile_photo}
+              alt=""
+              style={{ width: "60px", height: "60px", marginRight: "15px" }}
+            ></Avatar>
+          </div>
+          <div style={{ flexDirection: "column" }}>
+            <Typography
+              style={{ display: "flex", fontWeight: "550" }}
+              variant="body2"
+            >
+              WRITTEN BY
+            </Typography>
+            <Typography variant="h6" style={{ fontWeight: "600" }}>
+              {articleDetails.user && articleDetails.user.first_name}{" "}
+              {articleDetails.user && articleDetails.user.last_name}
+              {articleDetails.user && articleDetails.user.bio}
+            </Typography>
+          </div>
         </div>
 
         <div style={{ display: "flex" }}>
@@ -422,34 +448,22 @@ const ViewArticle = (props) => {
           articleDetails.categories.map((category, index) => {
             if (category === "FE") {
               return (
-                <Chip
-                  key={index}
-                  label="Frontend"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
+                <Chip key={index} label="Frontend" className={classes.chip} />
               );
             } else if (category === "BE") {
               return (
-                <Chip
-                  key={index}
-                  label="Backend"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
+                <Chip key={index} label="Backend" className={classes.chip} />
               );
             } else if (category === "UI") {
               return (
-                <Chip
-                  key={index}
-                  label="UI/UX"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
+                <Chip key={index} label="UI/UX" className={classes.chip} />
               );
             } else if (category === "DB") {
               return (
                 <Chip
                   key={index}
                   label="Database Administration"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                  className={classes.chip}
                 />
               );
             } else if (category === "ML") {
@@ -457,88 +471,12 @@ const ViewArticle = (props) => {
                 <Chip
                   key={index}
                   label="Machine Learning"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                  className={classes.chip}
                 />
               );
             } else {
               return (
-                <Chip
-                  key={index}
-                  label="Security"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            }
-          })}
-        <Typography
-          variant="body1"
-          style={{
-            fontWeight: 600,
-            marginBottom: "10px",
-            marginTop: "20px",
-          }}
-        >
-          Coding Languages/Frameworks:
-        </Typography>
-        {articleDetails &&
-          articleDetails.coding_languages &&
-          articleDetails.coding_languages.length > 0 &&
-          articleDetails.coding_languages.map((language, index) => {
-            if (language === "PY") {
-              return (
-                <Chip
-                  key={index}
-                  label="Python"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else if (language === "JAVA") {
-              return (
-                <Chip
-                  key={index}
-                  label="Java"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else if (language === "JS") {
-              return (
-                <Chip
-                  key={index}
-                  label="Javascript"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else if (language === "CPP") {
-              return (
-                <Chip
-                  key={index}
-                  label="C++"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else if (language === "CS") {
-              return (
-                <Chip
-                  key={index}
-                  label="C#"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else if (language === "RUBY") {
-              return (
-                <Chip
-                  key={index}
-                  label="Ruby"
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
-              );
-            } else {
-              return (
-                <Chip
-                  key={index}
-                  label={language}
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                />
+                <Chip key={index} label="Security" className={classes.chip} />
               );
             }
           })}

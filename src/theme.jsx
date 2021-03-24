@@ -11,6 +11,20 @@ const theme = createMuiTheme({
     red: {
       main: "#C74343",
     },
+    darkred: {
+      main: "#a43030",
+    },
+    green: {
+      main: "#1A8917",
+    },
+    darkgreen: {
+      main: "#136b11",
+    },
+    contrastThreshold: 3,
+    // Used by the functions below to shift a color's luminance by approximately
+    // two indexes within its tonal palette.
+    // E.g., shift from Red 500 to Red 300 or Red 700.
+    tonalOffset: 0.2,
   },
   typography: {
     fontFamily: "Roboto mono",
