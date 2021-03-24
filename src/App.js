@@ -5,13 +5,13 @@ import MemberDashboardPage from "./member/profile/Dashboard/DashboardPage";
 import MemberLandingPage from "./member/landing/MemberLandingPage";
 import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
-import ViewArticlePage from "./member/article/ArticleMain";
+import ViewArticlePage from "./article/ArticleMain";
+import EditArticlePage from "./article/EditArticle";
 import MemberArticlePage from "./member/article/MemberArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
 import MemberProfilePage from "./member/profile/Profile/ProfilePage";
 import MemberPasswordPage from "./member/profile/Password/PasswordPage";
-import MemberEditArticlePage from "./member/article/EditArticle";
 import MemberPaymentPage from "./member/profile/Payment/PaymentPage";
 import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
@@ -101,13 +101,7 @@ const App = () => {
         component={MemberRegisterPage}
         user="member"
       />
-      <Route
-        exact
-        path="/article/:id"
-        strict
-        sensitive
-        component={ViewArticlePage}
-      />
+      <Route path="/article/:id" component={ViewArticlePage} />
       <PrivateRoute
         exact
         path="/member/dashboard"
@@ -119,6 +113,18 @@ const App = () => {
         path="/member/articles"
         component={MemberArticlePage}
         user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/partner/articles"
+        component={MemberArticlePage}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/admin/articles"
+        component={MemberArticlePage}
+        user="admin"
       />
       <PrivateRoute
         exact
@@ -152,9 +158,21 @@ const App = () => {
       />
       <PrivateRoute
         exact
-        path="/member/article/edit/:id"
-        component={MemberEditArticlePage}
+        path="/article/edit/member/:id"
+        component={EditArticlePage}
         user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/article/edit/partner/:id"
+        component={EditArticlePage}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/article/edit/admin/:id"
+        component={EditArticlePage}
+        user="admin"
       />
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />

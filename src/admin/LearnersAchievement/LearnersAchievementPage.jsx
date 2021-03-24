@@ -27,13 +27,13 @@ import Service from "../../AxiosService";
 const useStyles = makeStyles((theme) => ({
   cardroot: {
     backgroundColor: "#164D8F",
-    height: "300px",
+    height: "420px",
     borderRadius: 0,
   },
   cardnumber: {
     color: "#FFFFFF",
-    lineHeight: "40px",
-    margin: "30px 0px 20px 30px",
+    lineHeight: "35px",
+    margin: "30px 0px 15px 30px",
   },
   closeButton: {
     position: "absolute",
@@ -62,12 +62,13 @@ const useStyles = makeStyles((theme) => ({
     margin: "28px",
   },
   description: {
+    width: "100%",
     borderRadius: 0,
     backgroundColor: "transparent",
     color: "#FFFFFF",
     padding: "15px 10px",
   },
-  tooltip: { backgroundColor: "#164D8F" },
+  tooltip: { backgroundColor: "#164D8F", maxWidth: "100%" },
   paginationSection: {
     marginLeft: "auto",
     marginRight: "30px",
@@ -86,60 +87,46 @@ const useStyles = makeStyles((theme) => ({
 
 const stats = [
   {
-    value: "ML",
-    label: "Machine Learning",
+    value: "Machine Learning",
   },
   {
-    value: "DB",
-    label: "Database Administration",
+    value: "Database Administration",
   },
   {
-    value: "SEC",
-    label: "Security",
+    value: "Security",
   },
   {
-    value: "UI",
-    label: "UI/UX",
+    value: "UI/UX",
   },
   {
-    value: "FE",
-    label: "Frontend",
+    value: "Frontend",
   },
   {
-    value: "BE",
-    label: "Backend",
+    value: "Backend",
   },
   {
-    value: "PY",
-    label: "Python",
+    value: "Python",
   },
   {
-    value: "JAVA",
-    label: "Java",
+    value: "Java",
   },
   {
-    value: "JS",
-    label: "Javascript",
+    value: "Javascript",
   },
   {
-    value: "CPP",
-    label: "C++",
+    value: "C++",
   },
   {
-    value: "CS",
-    label: "C#",
+    value: "C#",
   },
   {
     value: "HTML",
-    label: "HTML",
   },
   {
     value: "CSS",
-    label: "CSS",
   },
   {
-    value: "RUBY",
-    label: "Ruby",
+    value: "Ruby",
   },
 ];
 
@@ -158,6 +145,8 @@ const AdminLearnersAchievementPage = () => {
   });
 
   const [badges, setBadges] = useState([]);
+  const [selectedBadge, setSelectedBadge] = useState();
+
   const [searchValue, setSearchValue] = useState("");
   const [newBadge, setNewBadge] = useState({
     badge: "",
@@ -165,9 +154,11 @@ const AdminLearnersAchievementPage = () => {
   });
   const [requirementList, setRequirementList] = useState([]);
   const [newBadgeRequirement, setNewBadgeRequirement] = useState({
-    experience_point: "0",
+    experience_point: "",
     stat: "",
   });
+  const [totalBadge, setTotalBadge] = useState("0");
+  const [availableBadge, setAvailableBadge] = useState("0");
   const [avatar, setAvatar] = useState();
   const [temporarystat, setTemporarystat] = useState([...stats]);
 
@@ -178,6 +169,7 @@ const AdminLearnersAchievementPage = () => {
   );
 
   const [openAchievementDialog, setOpenAchievementDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const [openBadgePicDialog, setOpenBadgePicDialog] = useState(false);
 
@@ -200,8 +192,28 @@ const AdminLearnersAchievementPage = () => {
     setOpenAchievementDialog(true);
   };
 
+  const handleOpenEditDialog = (badge) => {
+    setOpenAchievementDialog(true);
+    setSelectedBadge(badge);
+    setNewBadge({
+      ...newBadge,
+      title: badge.title,
+      badge: badge.badge,
+    });
+    setRequirementList(badge.achievement_requirements);
+    for (var i = temporarystat.length; i--; ) {
+      for (var j = badge.achievement_requirements.length; j--; ) {
+        if (temporarystat[i].value === badge.achievement_requirements[j].stat) {
+          temporarystat.splice(i, 1);
+        }
+      }
+    }
+  };
+
   const handleCloseAchievementDialog = () => {
     setOpenAchievementDialog(false);
+    setSelectedBadge();
+    handleResetFields();
   };
 
   const handlePageChange = (event, value) => {
@@ -264,6 +276,220 @@ const AdminLearnersAchievementPage = () => {
     setRequirementList([]);
     setNewBadgeRequirement({ experience_point: "0", stat: "" });
     setTemporarystat([...stats]);
+  };
+
+  const handleDeleteAchievement = (badgeId) => {
+    setOpenDeleteDialog(false);
+    Service.client
+      .delete(`/achievements/${badgeId}`)
+      .then((res) => {
+        setOpenAchievementDialog(false);
+        handleResetFields();
+        getBadgesData();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Badge successfully deleted!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setOpenAchievementDialog(false);
+        handleResetFields();
+      });
+  };
+  const submitUpdateAchievement = (badge) => {
+    console.log(newBadge);
+    console.log(newBadgeRequirement);
+    console.log(requirementList);
+    console.log(avatar && avatar[0].file);
+    if (
+      selectedBadge.title === newBadge.title &&
+      avatar === undefined &&
+      requirementList === badge.achievement_requirements
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "There are no updates",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (newBadge.title === "" || newBadge.title === undefined) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter a badge title",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (newBadge.badge === undefined || newBadge.badge === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Attach a logo to the badge",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (requirementList.length === 0 && newBadgeRequirement.stat === "") {
+      setSbOpen(true);
+      setSnackbar({
+        message: "State statistics requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      requirementList.length === 0 &&
+      newBadgeRequirement.experience_point === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Enter experience points requirements",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (
+      requirementList.length !== 0 &&
+      newBadgeRequirement.stat !== "" &&
+      newBadgeRequirement.experience_point !== ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", newBadge.title);
+
+    if (avatar !== undefined) {
+      formData.append("badge", avatar[0].file);
+    }
+
+    // to update badge
+    if (requirementList === badge.achievement_requirements) {
+      Service.client
+        .patch(`/achievements/${badge.id}`, formData)
+        .then((res) => {
+          setOpenAchievementDialog(false);
+          handleResetFields();
+          getBadgesData();
+          setSbOpen(true);
+          setSnackbar({
+            message: "Badge successfully updated!",
+            severity: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+            autoHideDuration: 3000,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          setOpenAchievementDialog(false);
+          handleResetFields();
+        });
+    } else if (requirementList.length !== 0) {
+      // to update badge and requirement
+      Service.client
+        .patch(`/achievements/${badge.id}`, formData)
+        .then((res) => {
+          Service.client
+            .delete(`/achievements/${badge.id}/requirements`)
+            .then((res) => {
+              requirementList &&
+                requirementList.forEach((list, index) => {
+                  Service.client
+                    .post(`/achievements/${badge.id}/requirements`, list)
+                    .then((res) => {
+                      if (index === requirementList.length - 1) {
+                        setOpenAchievementDialog(false);
+                        handleResetFields();
+                        getBadgesData();
+                        setSbOpen(true);
+                        setSnackbar({
+                          message: "Badge successfully updated!",
+                          severity: "success",
+                          anchorOrigin: {
+                            vertical: "bottom",
+                            horizontal: "center",
+                          },
+                          autoHideDuration: 3000,
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      setOpenAchievementDialog(false);
+                      handleResetFields();
+                    });
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+              setOpenAchievementDialog(false);
+              handleResetFields();
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          setOpenAchievementDialog(false);
+          handleResetFields();
+        });
+    } else if (requirementList.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Click on the tick icon to confirm requirement!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
   };
 
   const submitNewAchievement = () => {
@@ -346,7 +572,7 @@ const AdminLearnersAchievementPage = () => {
     const formData = new FormData();
     formData.append("title", newBadge.title);
     formData.append("badge", avatar[0].file);
-
+    console.log(formData);
     if (requirementList.length !== 0) {
       Service.client
         .post(`/achievements`, formData)
@@ -402,10 +628,21 @@ const AdminLearnersAchievementPage = () => {
       .get(`/achievements`, { params: { title: searchValue } })
       .then((res) => {
         res.data
-          .sort((a, b) => a.is_deleted - b.is_deleted)
-          .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+          .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+          .sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    Service.client
+      .get(`/achievements`, { params: { title: "" } })
+      .then((res) => {
+        setTotalBadge(res.data.length);
+        let arr = [...res.data.filter((item) => !item.is_deleted)];
+        setAvailableBadge(arr.length);
       })
       .catch((err) => {
         console.log(err);
@@ -421,12 +658,14 @@ const AdminLearnersAchievementPage = () => {
   };
 
   useEffect(() => {
-    getBadgesData();
+    if (searchValue === "") {
+      getBadgesData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchValue]);
 
   return (
-    <div style={{ height: "700px" }}>
+    <div style={{ height: "730px" }}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Grid container>
         <Grid item xs={12}>
@@ -493,7 +732,7 @@ const AdminLearnersAchievementPage = () => {
                           <Typography
                             variant="body2"
                             style={{
-                              color: "#CC0000",
+                              color: "#FF4D00",
                               textAlign: "center",
                               marginBottom: "5px",
                             }}
@@ -524,25 +763,38 @@ const AdminLearnersAchievementPage = () => {
                         </Typography>
 
                         {badge &&
-                          badge.achievement_requirements.map((requirement) => (
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <Typography variant="body2">
-                                Stats: {requirement.stat}
-                              </Typography>
-                              <Typography variant="body2">
-                                Points: {requirement.experience_point}
-                              </Typography>
-                            </div>
-                          ))}
+                          badge.achievement_requirements.map(
+                            (requirement, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  width: "100%",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  style={{ marginRight: "15px" }}
+                                >
+                                  Stats: {requirement.stat}
+                                </Typography>
+                                <Typography variant="body2">
+                                  Points: {requirement.experience_point}
+                                </Typography>
+                              </div>
+                            )
+                          )}
                       </Card>
                     }
                   >
                     <CardMedia
+                      disabled={badge.is_deleted}
+                      onClick={
+                        !badge.is_deleted
+                          ? () => handleOpenEditDialog(badge)
+                          : undefined
+                      }
                       className={classes.cardmedia}
                       image={badge.badge}
                       style={{
@@ -595,10 +847,9 @@ const AdminLearnersAchievementPage = () => {
         <Grid item xs={3}>
           <Card className={classes.cardroot}>
             <Typography variant="h4" className={classes.cardnumber}>
-              Total number of <br />
+              Active <br />
               badges:
             </Typography>
-
             <Typography
               style={{
                 color: "#FFFFFF",
@@ -607,7 +858,21 @@ const AdminLearnersAchievementPage = () => {
                 marginLeft: "30px",
               }}
             >
-              {badges && badges.length}
+              {availableBadge}
+            </Typography>
+            <Typography variant="h4" className={classes.cardnumber}>
+              Total no. of <br />
+              badges:
+            </Typography>
+            <Typography
+              style={{
+                color: "#FFFFFF",
+                fontSize: "54px",
+                fontWeight: 700,
+                marginLeft: "30px",
+              }}
+            >
+              {totalBadge}
             </Typography>
           </Card>
           <Button
@@ -628,13 +893,14 @@ const AdminLearnersAchievementPage = () => {
 
       <Dialog
         open={openAchievementDialog}
+        transitionDuration={{ exit: "0" }}
         onClose={handleCloseAchievementDialog}
         aria-labelledby="form-dialog-title"
         maxWidth="sm"
         fullWidth={true}
       >
         <DialogTitle id="form-dialog-title">
-          Create a New Badge
+          {selectedBadge !== undefined ? "Edit Badge" : "Create a New Badge"}
           <IconButton
             aria-label="close"
             className={classes.closeButton}
@@ -658,6 +924,11 @@ const AdminLearnersAchievementPage = () => {
                     <Avatar
                       className={classes.avatar}
                       src={avatar[0].data}
+                    ></Avatar>
+                  ) : selectedBadge !== undefined ? (
+                    <Avatar
+                      className={classes.avatar}
+                      src={selectedBadge.badge}
                     ></Avatar>
                   ) : (
                     <Avatar
@@ -730,26 +1001,26 @@ const AdminLearnersAchievementPage = () => {
           {requirementList &&
             requirementList.map((option, index) => {
               return (
-                <Grid container>
+                <Grid container key={index}>
                   <Grid item xs={6}>
                     <label htmlFor="stat">
                       <Typography variant="body2">Statistics</Typography>
                     </label>
                     <TextField
-                      id="stat"
+                      id={index}
                       fullWidth
                       disabled
                       variant="outlined"
                       margin="dense"
                       value={option && option.stat}
                     >
-                      {temporarystat.map((options) => (
+                      {temporarystat.map((options, index) => (
                         <MenuItem
                           style={{ height: "35px", fontSize: "14px" }}
-                          key={options.value}
+                          key={index}
                           value={options.stat}
                         >
-                          {options.label}
+                          {options.stat}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -830,7 +1101,7 @@ const AdminLearnersAchievementPage = () => {
                       key={option.value}
                       value={option.value}
                     >
-                      {option.label}
+                      {option.value}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -875,13 +1146,63 @@ const AdminLearnersAchievementPage = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
+          {selectedBadge === undefined ? (
+            <Button
+              style={{ margin: "10px 15px" }}
+              variant="contained"
+              onClick={() => submitNewAchievement()}
+              color="secondary"
+            >
+              Create
+            </Button>
+          ) : (
+            <div>
+              <Button
+                style={{
+                  margin: "10px 15px",
+                  borderColor: "#E12424",
+                  color: "#E12424",
+                }}
+                variant="outlined"
+                onClick={() => setOpenDeleteDialog(true)}
+              >
+                Delete
+              </Button>
+              <Button
+                style={{ margin: "10px 15px" }}
+                variant="contained"
+                onClick={() => submitUpdateAchievement(selectedBadge)}
+                color="secondary"
+              >
+                Update
+              </Button>
+            </div>
+          )}
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        maxWidth="xs"
+        fullWidth={true}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>This action cannot be undone.</DialogContent>
+        <DialogActions style={{ margin: 8 }}>
           <Button
-            style={{ margin: "10px 15px" }}
-            variant="contained"
-            onClick={() => submitNewAchievement()}
-            color="secondary"
+            variant="outlined"
+            color="primary"
+            onClick={() => setOpenDeleteDialog(false)}
           >
-            Create
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={(e) => handleDeleteAchievement(selectedBadge.id)}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

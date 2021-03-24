@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -48,10 +48,17 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   individualStats: {
-    display: "flex",
-    flexDirection: "column",
+    // display: "flex",
+    // flexDirection: "column",
     // alignItems: "center",
     // marginBottom: "5px",
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
   formControl: {
     marginTop: 0,
@@ -131,12 +138,10 @@ const CourseDetailAnalytics = () => {
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
 
-    if (newTime.toString().length >= 5) {
-      return newTime.toFixed(5);
-    } else if (newTime.toString.length <= 3) {
-      return newTime.toFixed(3);
+    if (newTime.toString().length >= 3) {
+      return newTime.toFixed(1);
     } else {
-      return newTime.toFixed(newTime.toString.length);
+      return newTime.toFixed(newTime.toString().length);
     }
   };
 

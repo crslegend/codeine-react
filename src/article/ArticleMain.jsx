@@ -1,15 +1,15 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, ListItem, Typography } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
-import Service from "../../AxiosService";
+import { useHistory, useParams } from "react-router-dom";
+import Service from "../AxiosService";
 import CommentDrawer from "./ArticleComments";
 import ViewArticle from "./ViewArticle";
 import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
-import MemberNavBar from "../MemberNavBar";
-import Toast from "../../components/Toast.js";
+import MemberNavBar from "../member/MemberNavBar";
+import Toast from "../components/Toast.js";
 import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,14 +70,24 @@ const ArticleMain = () => {
 
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [displayIDEButton, setDisplayIDEButton] = useState(false);
 
   const checkIfLoggedIn = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const memberid = jwt_decode(Service.getJWT()).user_id;
+    if (Cookies.get("t1")) {
+      const memberid = jwt_decode(Cookies.get("t1")).user_id;
       Service.client
         .get(`/auth/members/${memberid}`)
         .then((res) => {
+          // console.log(res.data);
           setUser(res.data);
+
+          if (res.data.member) {
+            if (res.data.member.membership_tier !== "FREE") {
+              setDisplayIDEButton(true);
+            }
+          } else {
+            setDisplayIDEButton(true);
+          }
           setLoggedIn(true);
         })
         .catch((err) => {
@@ -97,28 +107,24 @@ const ArticleMain = () => {
     top_level_comments: [],
   });
 
-  const editorBubble = {
-    toolbar: [],
-  };
-
   useEffect(() => {
     checkIfLoggedIn();
+    getArticleDetails();
+  }, []);
+
+  const getArticleDetails = () => {
     Service.client
       .get(`/articles/${id}`)
       .then((res) => {
-        console.log(res.data);
         setArticleDetails(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  };
 
-  const [loading, setLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
-
-  const [saveState, setSaveState] = useState(true);
 
   return (
     <div className={classes.root}>
@@ -164,6 +170,7 @@ const ArticleMain = () => {
             setDrawerOpen={setDrawerOpen}
             setSnackbar={setSnackbar}
             setSbOpen={setSbOpen}
+            displayIDEButton={displayIDEButton}
           />
           <Footer />
         </>

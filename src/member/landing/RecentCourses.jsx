@@ -7,7 +7,7 @@ import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "60px",
+    paddingTop: "30px",
     maxWidth: "100vw",
     paddingLeft: "30px",
     paddingBottom: "10px",

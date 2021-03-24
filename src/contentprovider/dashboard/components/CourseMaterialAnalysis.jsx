@@ -76,7 +76,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             .toUpperCase() +
           courseMaterials[i].material_type.toLowerCase().slice(1),
         Time: parseFloat(
-          (courseMaterials[i].average_time_taken / 3600).toFixed(6)
+          (courseMaterials[i].average_time_taken / 60).toFixed(1)
         ),
       };
       loadedData.push(obj);
@@ -111,7 +111,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           <br />
           <span
             style={{ color: "#437FC7" }}
-          >{`${payload[0].payload.Time} hrs`}</span>
+          >{`${payload[0].payload.Time} mins`}</span>
         </div>
       );
     }
@@ -120,7 +120,13 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
 
   return (
     <div className={classes.root}>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+        }}
+      >
         <div>
           <FormControl
             margin="dense"
@@ -148,10 +154,13 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             </Select>
           </FormControl>
         </div>
-        <div style={{ marginLeft: "10px" }}>
-          <Paper className={classes.paper}>
+      </div>
+
+      <Paper style={{ width: "100%", padding: "24px" }}>
+        <div style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}>
+          <div style={{ textAlign: "center" }}>
             {selectedChapterId === "" ? (
-              <Typography variant="body2">No Chapter Selected</Typography>
+              <Typography variant="h6">No Chapter Selected</Typography>
             ) : (
               <div>
                 {timeTakenCourseMaterial &&
@@ -161,7 +170,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                       return (
                         <Typography
                           key={index}
-                          variant="body2"
+                          variant="h6"
                           style={{ textAlign: "center" }}
                         >
                           <span style={{ fontWeight: 600 }}>
@@ -175,11 +184,8 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                   })}
               </div>
             )}
-          </Paper>
+          </div>
         </div>
-      </div>
-
-      <Paper style={{ width: "100%", padding: "24px" }}>
         <ResponsiveContainer
           width="100%"
           height={400}
