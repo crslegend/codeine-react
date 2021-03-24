@@ -9,6 +9,7 @@ import {
   MenuItem,
   Paper,
   Typography,
+  IconButton,
 } from "@material-ui/core";
 // import {
 //   BarChart,
@@ -20,7 +21,8 @@ import {
 //   ResponsiveContainer,
 //   Label,
 // } from "recharts";
-import { LooksOne, LooksTwo, Looks3 } from "@material-ui/icons";
+import { LooksOne, LooksTwo, Looks3, ArrowBack } from "@material-ui/icons";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CourseSearchRanking = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [numDays, setNumDays] = useState(7);
   const [data, setData] = useState();
@@ -127,7 +130,16 @@ const CourseSearchRanking = () => {
 
   return (
     <div className={classes.root}>
-      <PageTitle title="Course Search Ranking" />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          onClick={() => history.push(`/partner/home/dashboard`)}
+          style={{ marginRight: "30px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <PageTitle title="Course Search Ranking" />
+      </div>
+
       <div
         style={{
           display: "flex",
