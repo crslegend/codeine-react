@@ -21,6 +21,7 @@ import Service from "../../../AxiosService";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 // import SubTask from "./SubTask";
 import QuestionDialog from "./QuestionDialog";
+import QuizCreationModal from "./QuizCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Task = ({ task, index, getCourse, subtasks }) => {
+const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const classes = useStyles();
   const theme = useTheme();
   // console.log(task);
@@ -105,6 +106,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
 
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
+  const [editQuizQuestionGroups, setEditQuizQuestionGroups] = useState([]);
 
   const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(false);
 
@@ -346,6 +348,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                           description: task.description,
                           passing_marks: task.quiz.passing_marks,
                           instructions: task.quiz.instructions,
+                          is_randomized: task.quiz.is_randomized,
                         });
                         setMaterialType("quiz");
                         setCourseMaterialId(task.id);
@@ -464,6 +467,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         PaperProps={{
           style: {
             minWidth: "600px",
+            maxWidth: "none",
           },
         }}
       >
@@ -662,103 +666,20 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     }}
                     inputProps={{ style: { fontSize: "14px" } }}
                     required
-                    placeholder="https://www.google.com"
+                    placeholder="e.g. https://www.youtube.com"
                     style={{ marginBottom: "15px" }}
                   />
                 </Fragment>
               );
             } else if (materialType === "quiz") {
               return (
-                <Fragment>
-                  <label htmlFor="title">
-                    <Typography variant="body2">Quiz Title (Required)</Typography>
-                  </label>
-                  <TextField
-                    id="title"
-                    autoFocus
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.title}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        title: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="Enter Title"
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="description">
-                    <Typography variant="body2">Quiz Description (Required)</Typography>
-                  </label>
-                  <TextField
-                    id="description"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.description}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        description: e.target.value,
-                      });
-                    }}
-                    required
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    placeholder="Enter some instructions or a description"
-                    multiline
-                    rows={4}
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="marks">
-                    <Typography variant="body2">Marks to Pass (Required)</Typography>
-                  </label>
-                  <TextField
-                    id="marks"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.passing_marks}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        passing_marks: e.target.value,
-                      });
-                    }}
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    style={{ marginBottom: "15px" }}
-                    type="number"
-                  />
-                  {/* <label htmlFor="marks">
-                    <Typography variant="body2">Instructions</Typography>
-                  </label>
-                  <TextField
-                    id="marks"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.instructions}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        instructions: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    multiline
-                    rows={6}
-                    placeholder="eg. Read the questions carefully"
-                    style={{ marginBottom: "15px" }}
-                  /> */}
-                </Fragment>
+                <QuizCreationModal
+                  quiz={editQuiz}
+                  setQuiz={setEditQuiz}
+                  courseId={courseId}
+                  questionGroups={editQuizQuestionGroups}
+                  setQuestionGroups={setEditQuizQuestionGroups}
+                />
               );
             }
           })()}

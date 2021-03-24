@@ -385,7 +385,6 @@ const QuestionBankDetails = ({
       {selectedQuestionBank &&
         selectedQuestionBank.questions &&
         selectedQuestionBank.questions.map((question, index) => {
-          console.log(question);
           return (
             <div key={index} className={classes.question}>
               {(() => {

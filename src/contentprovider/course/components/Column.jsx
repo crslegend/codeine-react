@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
   const classes = useStyles();
-  // console.log(courseId);
+  // console.log(tasks);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -124,7 +124,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
     title: "",
     description: "",
     passing_marks: 0,
-    instructions: "",
+    is_randomized: false,
   });
   const [chapterIdForCouseMaterial, setChapterIdForCourseMaterial] = useState();
 
@@ -400,7 +400,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                     >
                       {tasks &&
                         tasks.map((task, index) => (
-                          <Task key={task.id} task={task} index={index} getCourse={getCourse} />
+                          <Task key={task.id} task={task} index={index} getCourse={getCourse} courseId={courseId} />
                         ))}
                       {provided.placeholder}
                     </div>
@@ -549,6 +549,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
         PaperProps={{
           style: {
             minWidth: "600px",
+            maxWidth: "none",
           },
         }}
       >
@@ -720,7 +721,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state }) => {
                   </Fragment>
                 );
               } else if (materialType === "quiz") {
-                return <QuizCreationModel quiz={quiz} setQuiz={setQuiz} />;
+                return <QuizCreationModel quiz={quiz} setQuiz={setQuiz} courseId={courseId} />;
               }
             })()}
           </DialogContent>
