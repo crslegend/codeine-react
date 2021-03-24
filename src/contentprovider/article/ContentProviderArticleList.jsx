@@ -104,28 +104,40 @@ const PartnerArticlesList = (props) => {
   };
 
   //popover variable
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [popover, setPopover] = useState({
+    popoverId: null,
+    anchorEl: null,
+  });
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (event, articleId) => {
+    setPopover({
+      popoverId: articleId,
+      anchorEl: event.currentTarget,
+    });
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setPopover({
+      popoverId: null,
+      anchorEl: null,
+    });
   };
 
-  const [dialogopen, setDialogOpen] = useState(false);
+  const [dialogStatus, setDialogStatus] = useState({
+    dialogId: null,
+  });
 
-  const handleDialogOpen = () => {
-    setDialogOpen(true);
+  const handleDialogOpen = (articleId) => {
+    setDialogStatus({
+      dialogId: articleId,
+    });
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false);
+    setDialogStatus({
+      dialogId: null,
+    });
   };
-
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -304,11 +316,10 @@ const PartnerArticlesList = (props) => {
                         article.content.length +
                         " words so far"}
                     </Typography>
-                    <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                    <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e, article.id)} />
                     <Popover
-                      id={popoverid}
-                      open={open}
-                      anchorEl={anchorEl}
+                      open={popover.popoverId === article.id}
+                      anchorEl={popover.anchorEl}
                       onClose={handlePopoverClose}
                       anchorOrigin={{
                         vertical: "bottom",
@@ -332,7 +343,10 @@ const PartnerArticlesList = (props) => {
                         <Typography
                           variant="body2"
                           className={classes.typography}
-                          onClick={handleDialogOpen}
+                          onClick={() => {
+                            handleDialogOpen(article.id);
+                            handlePopoverClose();
+                          }}
                         >
                           Delete Draft
                         </Typography>
@@ -345,6 +359,36 @@ const PartnerArticlesList = (props) => {
                   </div>
                 </div>
               )}
+              <Dialog
+                open={dialogStatus.dialogId === article.id}
+                onClose={handleDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Delete Article?"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete this article?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleDialogClose} variant="outlined">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      deleteArticle(article.id);
+                      handlePopoverClose();
+                    }}
+                    variant="contained"
+                    className={classes.redButton}
+                  >
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Fragment>
           );
         })}
@@ -381,11 +425,12 @@ const PartnerArticlesList = (props) => {
                     <Typography style={{ fontSize: "14px", color: "#757575" }}>
                       Published {calculateDateInterval(article.date_edited)}
                     </Typography>
-                    <ExpandMoreIcon onClick={(e) => handlePopoverOpen(e)} />
+                    <ExpandMoreIcon
+                      onClick={(e) => handlePopoverOpen(e, article.id)}
+                    />
                     <Popover
-                      id={popoverid}
-                      open={open}
-                      anchorEl={anchorEl}
+                      open={popover.popoverId === article.id}
+                      anchorEl={popover.anchorEl}
                       onClose={handlePopoverClose}
                       anchorOrigin={{
                         vertical: "bottom",
@@ -409,14 +454,20 @@ const PartnerArticlesList = (props) => {
                         <Typography
                           variant="body2"
                           className={classes.typography}
-                          onClick={() => unpublishArticle(article.id)}
+                          onClick={() => {
+                            unpublishArticle(article.id);
+                            handlePopoverClose();
+                          }}
                         >
                           Unpublish Article
                         </Typography>
                         <Typography
                           variant="body2"
                           className={classes.typography}
-                          onClick={handleDialogOpen}
+                          onClick={() => {
+                            handleDialogOpen(article.id);
+                            handlePopoverClose();
+                          }}
                         >
                           Delete
                         </Typography>
@@ -429,35 +480,40 @@ const PartnerArticlesList = (props) => {
                   </div>
                 </div>
               )}
+              <Dialog
+                open={dialogStatus.dialogId === article.id}
+                onClose={handleDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Delete Article?"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete this article?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleDialogClose} variant="outlined">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      deleteArticle(article.id);
+                      handlePopoverClose();
+                    }}
+                    variant="contained"
+                    className={classes.redButton}
+                  >
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Fragment>
           );
         })}
       </TabPanel>
-      <Dialog
-        open={dialogopen}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this article?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} variant="outlined">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => deleteArticle()}
-            variant="contained"
-            className={classes.redButton}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };

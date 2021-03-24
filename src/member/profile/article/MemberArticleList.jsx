@@ -19,7 +19,8 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useHistory, useLocation } from "react-router-dom";
+import Toast from "../../../components/Toast.js";
+import { useHistory } from "react-router-dom";
 import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
 
@@ -97,7 +98,7 @@ function a11yProps(index) {
 const MemberArticleList = (props) => {
   const classes = useStyles();
   const history = useHistory();
-  const { userType } = props;
+  // const { userType } = props;
 
   // Tabs variable
   const [value, setValue] = useState(0);
@@ -128,12 +129,16 @@ const MemberArticleList = (props) => {
     dialogId: null,
   });
 
-  const handleDialogOpen = () => {
-    setDialogStatus(true);
+  const handleDialogOpen = (articleId) => {
+    setDialogStatus({
+      dialogId: articleId,
+    });
   };
 
   const handleDialogClose = () => {
-    setDialogStatus(false);
+    setDialogStatus({
+      dialogId: null,
+    });
   };
 
   const calculateDateInterval = (timestamp) => {
@@ -266,8 +271,8 @@ const MemberArticleList = (props) => {
   return (
     <Container maxWidth="lg">
       <div className={classes.root}>
+        <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-
         <div
           style={{ display: "flex", marginTop: "50px", marginBottom: "30px" }}
         >
@@ -362,7 +367,10 @@ const MemberArticleList = (props) => {
                           <Typography
                             variant="body2"
                             className={classes.typography}
-                            onClick={handleDialogOpen}
+                            onClick={() => {
+                              handleDialogOpen(article.id);
+                              handlePopoverClose();
+                            }}
                           >
                             Delete Draft
                           </Typography>
@@ -376,7 +384,7 @@ const MemberArticleList = (props) => {
                   </div>
                 )}
                 <Dialog
-                  open={dialogopen}
+                  open={dialogStatus.dialogId === article.id}
                   onClose={handleDialogClose}
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
@@ -474,14 +482,20 @@ const MemberArticleList = (props) => {
                           <Typography
                             variant="body2"
                             className={classes.typography}
-                            onClick={() => unpublishArticle(article.id)}
+                            onClick={() => {
+                              unpublishArticle(article.id);
+                              handlePopoverClose();
+                            }}
                           >
                             Unpublish Article
                           </Typography>
                           <Typography
                             variant="body2"
                             className={classes.typography}
-                            onClick={handleDialogOpen}
+                            onClick={() => {
+                              handleDialogOpen(article.id);
+                              handlePopoverClose();
+                            }}
                           >
                             Delete
                           </Typography>
@@ -495,7 +509,7 @@ const MemberArticleList = (props) => {
                   </div>
                 )}
                 <Dialog
-                  open={dialogopen}
+                  open={dialogStatus.dialogId === article.id}
                   onClose={handleDialogClose}
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
@@ -515,6 +529,7 @@ const MemberArticleList = (props) => {
                     <Button
                       onClick={() => {
                         deleteArticle(article.id);
+                        handlePopoverClose();
                       }}
                       variant="contained"
                       className={classes.redButton}

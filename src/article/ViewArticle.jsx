@@ -62,6 +62,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
   },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -514,11 +524,7 @@ const ViewArticle = (props) => {
           <Button onClick={handleDialogClose} variant="outlined">
             Cancel
           </Button>
-          <Button
-            onClick={() => deleteArticle()}
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={() => deleteArticle()} className={classes.redButton}>
             Delete
           </Button>
         </DialogActions>

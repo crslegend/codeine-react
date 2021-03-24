@@ -89,6 +89,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  redButtonPadded: {
+    backgroundColor: theme.palette.red.main,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
   greenButton: {
     backgroundColor: theme.palette.green.main,
     color: "white",
@@ -423,8 +433,13 @@ const EditArticle = (props) => {
     Service.client
       .patch(`/articles/${id}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -435,8 +450,13 @@ const EditArticle = (props) => {
     Service.client
       .delete(`/articles/${id}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -973,6 +993,7 @@ const EditArticle = (props) => {
               <Button
                 variant="contained"
                 className={classes.greenButton}
+                style={{ marginBottom: "10px" }}
                 onClick={(e) => saveAndPublishArticle(e)}
               >
                 Save and publish
@@ -983,6 +1004,7 @@ const EditArticle = (props) => {
                   textTransform: "capitalize",
                   marginLeft: "15px",
                   marginRight: "15px",
+                  marginBottom: "10px",
                 }}
                 onClick={() => {
                   if (userType === "member") {
@@ -1001,6 +1023,7 @@ const EditArticle = (props) => {
                 color="primary"
                 style={{
                   textTransform: "capitalize",
+                  marginBottom: "10px",
                 }}
                 onClick={(e) => unpublishArticle()}
               >
@@ -1047,8 +1070,7 @@ const EditArticle = (props) => {
           </Button>
           <Button
             onClick={() => deleteArticle()}
-            variant="contained"
-            color="primary"
+            className={classes.redButtonPadded}
           >
             Delete
           </Button>
