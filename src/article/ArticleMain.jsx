@@ -177,7 +177,11 @@ const ArticleMain = () => {
           }}
           onClick={() => {
             Service.removeCredentials();
-            history.push("/partner");
+            if (userType === "partner") {
+              history.push("/partner");
+            } else if (userType === "admin") {
+              history.push("/admin");
+            }
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>

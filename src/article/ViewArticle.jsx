@@ -275,6 +275,7 @@ const ViewArticle = (props) => {
               </Typography>
             </div>
             {(userType === "member" &&
+              user &&
               user.member &&
               user.member.membership_tier !== "FREE") ||
               ((userType === "partner" || userType === "admin") && (

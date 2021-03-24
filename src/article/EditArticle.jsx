@@ -226,7 +226,7 @@ const EditArticle = (props) => {
     }
   }, []);
 
-  const [debouncedText] = useDebounce(articleDetails, 1500);
+  const [debouncedText] = useDebounce(articleDetails, 1000);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
