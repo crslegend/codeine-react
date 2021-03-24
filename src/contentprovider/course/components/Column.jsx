@@ -272,40 +272,41 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
           getCourse();
         })
         .catch((err) => console.log(err));
-    } else {
-      // add quiz as course material
-      if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
-        setSbOpen(true);
-        setSnackbar({
-          message: "Missing fields!",
-          severity: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-        return;
-      }
+    } 
+    // else {
+    //   // add quiz as course material
+    //   if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
+    //     setSbOpen(true);
+    //     setSnackbar({
+    //       message: "Missing fields!",
+    //       severity: "error",
+    //       anchorOrigin: {
+    //         vertical: "bottom",
+    //         horizontal: "center",
+    //       },
+    //       autoHideDuration: 3000,
+    //     });
+    //     return;
+    //   }
 
-      Service.client
-        .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
-        .then((res) => {
-          // console.log(res);
-          setCourseMaterialDialog(false);
-          setMaterialType();
-          setChapterIdForCourseMaterial();
-          setEditMode(false);
-          setQuiz({
-            title: "",
-            description: "",
-            passing_marks: 0,
-            instructions: "",
-          });
-          getCourse();
-        })
-        .catch((err) => console.log(err));
-    }
+    //   Service.client
+    //     .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
+    //     .then((res) => {
+    //       // console.log(res);
+    //       setCourseMaterialDialog(false);
+    //       setMaterialType();
+    //       setChapterIdForCourseMaterial();
+    //       setEditMode(false);
+    //       setQuiz({
+    //         title: "",
+    //         description: "",
+    //         passing_marks: 0,
+    //         instructions: "",
+    //       });
+    //       getCourse();
+    //     })
+    //     .catch((err) => console.log(err));
+    // }
   };
 
   // console.log(column);

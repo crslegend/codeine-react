@@ -18,7 +18,7 @@ import {
   Switch,
   Button,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Add, Edit, Remove } from "@material-ui/icons";
 import Alert from "@material-ui/lab/Alert";
 
 import Service from "../../../AxiosService";
@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
     margin: `${theme.spacing(1)}px 0`,
     padding: theme.spacing(1),
     backgroundColor: "#fcfcfc",
+    border: "0.5px solid #676767"
   },
   resizeFont: {
     fontSize: "14px",
@@ -70,6 +71,12 @@ const useStyles = makeStyles((theme) => ({
   button: {
     textTransform: "none",
   },
+  deleteIcon: {
+    color: theme.palette.red.main,
+    "&:hover": {
+      backgroundColor: "none",
+    },
+  },
 }));
 
 const getQuestionMarks = (question) => {
@@ -82,20 +89,32 @@ const getQuestionMarks = (question) => {
   return question.shortanswer.marks;
 };
 
-const QuestionGroupCard = ({ questionGroup, classes }) => {
-  // console.log(questionGroup);
+const getGroupTotalMarks = (questionGroup) => {
+  return questionGroup.count * getQuestionMarks(questionGroup.question_bank.questions[0]);
+};
 
-  const getTotalMarks = () => {
-    return questionGroup.count * getQuestionMarks(questionGroup.question_bank.questions[0]);
-  };
+const getTotalMarks = (questionGroups) => {
+  if (!questionGroups) {
+    return 0;
+  }
+  return questionGroups.reduce((prev, next) => prev + getGroupTotalMarks(next), 0);
+};
+
+const QuestionGroupCard = ({ questionGroup, classes, deleteQuestionGroup }) => {
+  // console.log(questionGroup);
   return (
     <Card className={classes.cardRoot}>
-      <Typography style={{ fontSize: "14px" }}>Question Bank: {questionGroup.question_bank.label}</Typography>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography style={{ fontSize: "14px" }}>Question Bank: {questionGroup.question_bank.label}</Typography>
+        <IconButton size="small" onClick={() => deleteQuestionGroup(questionGroup)}>
+          <Remove className={classes.deleteIcon} />
+        </IconButton>
+      </div>
       <Typography style={{ color: "#676767", fontSize: "12px" }}>
         Pick {questionGroup.count} out of {questionGroup.question_bank.questions.length} question(s)
       </Typography>
       <Typography style={{ color: "#1e1e1e", fontSize: "12px", margin: "8px 0" }}>
-        Total marks: {getTotalMarks()}
+        Total marks: {getGroupTotalMarks(questionGroup)}
       </Typography>
     </Card>
   );
@@ -111,7 +130,8 @@ const QuizCreationModel = ({
   setQuestionBankModalOpen,
 }) => {
   const classes = useStyles();
-  console.log(quiz);
+  const edit = quiz && quiz.cm_id !== undefined;
+  console.log(edit);
 
   // question group/bank state
   const [questionBanks, setQuestionBanks] = useState();
@@ -146,7 +166,29 @@ const QuizCreationModel = ({
         instructions: task.quiz.instructions,
         is_randomized: task.quiz.is_randomized,
       });
+      setQuestionGroups(task.quiz.question_groups);
     });
+  };
+
+  const addQuestionGroup = () => {
+    Service.client
+      .put(`/quiz/${quiz.quiz_id}/question-groups`, selectedQuestionGroup)
+      .then((res) => {
+        console.log(res);
+        refetchQuiz();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const deleteQuestionGroup = (group) => {
+    // console.log(group);
+    Service.client
+      .delete(`/quiz/${quiz.quiz_id}/question-groups`, { data: { qb_id: group.question_bank.id } })
+      .then((res) => {
+        console.log(res);
+        refetchQuiz();
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -196,8 +238,13 @@ const QuizCreationModel = ({
             style={{ marginBottom: "15px" }}
             inputProps={{ style: { fontSize: "14px" } }}
           />
+
+          <Typography variant="body2" style={{ color: "#676767", margin: "8px 0" }}>
+            Total Marks: {getTotalMarks(questionGroups)}
+          </Typography>
+
           <label htmlFor="marks">
-            <Typography variant="body2">Marks to Pass (Required)</Typography>
+            <Typography variant="body2">Marks to Pass</Typography>
           </label>
           <TextField
             id="marks"
@@ -215,6 +262,7 @@ const QuizCreationModel = ({
               inputProps: { min: 0, style: { fontSize: "14px" } },
             }}
             required
+            placeholder="0 if not required"
             style={{ marginBottom: "15px" }}
             type="number"
           />
@@ -245,12 +293,17 @@ const QuizCreationModel = ({
               Questions
             </Typography>
             <IconButton style={{ marginLeft: 8 }} size="small" onClick={() => setAddQuestionGroupModalOpen(true)}>
-              <Add fontSize="small" />
+              <Add fontSize="small" color="primary" />
             </IconButton>
           </div>
           {questionGroups && questionGroups.length > 0 ? (
             questionGroups.map((questionGroup, i) => (
-              <QuestionGroupCard key={i} questionGroup={questionGroup} classes={classes} />
+              <QuestionGroupCard
+                key={i}
+                questionGroup={questionGroup}
+                classes={classes}
+                deleteQuestionGroup={deleteQuestionGroup}
+              />
             ))
           ) : (
             <div
@@ -266,26 +319,28 @@ const QuizCreationModel = ({
               <Typography variant="body2" style={{ margin: 8, color: "#676767" }}>
                 No questions added
               </Typography>
-              <Alert
-                style={{ maxWidth: "80%" }}
-                severity="warning"
-                action={
-                  <Button
-                    color="inherit"
-                    size="small"
-                    onClick={() => {
-                      closeDialog();
-                      setTimeout(() => setQuestionBankModalOpen(true), 200);
-                    }}
-                  >
-                    Manage
-                  </Button>
-                }
-              >
-                Seems like you haven't created any question banks yet.
-                <br />
-                Would you like to create one?
-              </Alert>
+              {questionBanks && questionBanks.length < 1 && (
+                <Alert
+                  style={{ maxWidth: "80%" }}
+                  severity="warning"
+                  action={
+                    <Button
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        closeDialog();
+                        setTimeout(() => setQuestionBankModalOpen(true), 200);
+                      }}
+                    >
+                      Manage
+                    </Button>
+                  }
+                >
+                  Seems like you haven't created any question banks yet.
+                  <br />
+                  Would you like to create one?
+                </Alert>
+              )}
             </div>
           )}
         </div>
@@ -402,7 +457,13 @@ const QuizCreationModel = ({
             className={classes.button}
             color="primary"
             onClick={() => {
-              refetchQuiz();
+              addQuestionGroup();
+              setAddQuestionGroupModalOpen(false);
+              setSelectedQuestionGroup({
+                count: 0,
+                question_bank: "",
+                randomSubset: false,
+              });
             }}
             disabled={selectedQuestionGroup.question_bank === ""}
           >

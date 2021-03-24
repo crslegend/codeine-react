@@ -237,7 +237,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
       if (editQuiz.title === "" || editQuiz.description === "" || editQuiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
-          message: "Please fill up all required fields!",
+          message: "Check your fields",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",
