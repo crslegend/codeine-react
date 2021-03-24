@@ -342,7 +342,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                         });
                         setMaterialType("file");
                         setCourseMaterialId(task.id);
-                      } else {
+                      } else if (task.material_type === "QUIZ") {
                         setEditQuiz({
                           cm_id: task.id,
                           quiz_id: task.quiz.id,

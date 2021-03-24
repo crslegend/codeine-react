@@ -18,6 +18,7 @@ import {
 import validator from "validator";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast";
+import axios from "axios"
 
 import Service from "../../../AxiosService";
 import QuizCreationModel from "./QuizCreationModal";
@@ -125,7 +126,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
     description: "",
     passing_marks: 0,
     is_randomized: false,
+    instructions: "",
   });
+  const [questionGroups, setQuestionGroups] = useState([]);
   const [chapterIdForCouseMaterial, setChapterIdForCourseMaterial] = useState();
 
   const handleUpdateChapterDetails = (e) => {
@@ -272,41 +275,51 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
           getCourse();
         })
         .catch((err) => console.log(err));
-    } 
-    // else {
-    //   // add quiz as course material
-    //   if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
-    //     setSbOpen(true);
-    //     setSnackbar({
-    //       message: "Missing fields!",
-    //       severity: "error",
-    //       anchorOrigin: {
-    //         vertical: "bottom",
-    //         horizontal: "center",
-    //       },
-    //       autoHideDuration: 3000,
-    //     });
-    //     return;
-    //   }
+    } else {
+      // add quiz as course material
+      // console.log(questionGroups)
+      if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Missing fields!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
 
-    //   Service.client
-    //     .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
-    //     .then((res) => {
-    //       // console.log(res);
-    //       setCourseMaterialDialog(false);
-    //       setMaterialType();
-    //       setChapterIdForCourseMaterial();
-    //       setEditMode(false);
-    //       setQuiz({
-    //         title: "",
-    //         description: "",
-    //         passing_marks: 0,
-    //         instructions: "",
-    //       });
-    //       getCourse();
-    //     })
-    //     .catch((err) => console.log(err));
-    // }
+      Service.client
+        .post(`/chapters/${chapterIdForCouseMaterial}/quizzes`, quiz)
+        .then((res) => {
+          console.log(res);
+          let quizId = res.data.quiz.id;
+
+          axios.all(questionGroups.map((qg) => {
+            return Service.client.put(`/quiz/${quizId}/question-groups`, qg).then((res) => console.log(res));
+          })).then(res => {
+  
+            setCourseMaterialDialog(false);
+            setMaterialType();
+            setChapterIdForCourseMaterial();
+            setEditMode(false);
+            setQuiz({
+              title: "",
+              description: "",
+              passing_marks: 0,
+              is_randomized: false,
+              instructions: "",
+            });
+            setQuestionGroups([]);
+            getCourse();
+
+          })
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   // console.log(column);
@@ -733,6 +746,8 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                       setChapterIdForCourseMaterial();
                     }}
                     setQuestionBankModalOpen={setQuestionBankModalOpen}
+                    questionGroups={questionGroups}
+                    setQuestionGroups={setQuestionGroups}
                   />
                 );
               }

@@ -18,7 +18,7 @@ import {
   Switch,
   Button,
 } from "@material-ui/core";
-import { Add, Edit, Remove } from "@material-ui/icons";
+import { Add, Remove } from "@material-ui/icons";
 import Alert from "@material-ui/lab/Alert";
 
 import Service from "../../../AxiosService";
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     margin: `${theme.spacing(1)}px 0`,
     padding: theme.spacing(1),
     backgroundColor: "#fcfcfc",
-    border: "0.5px solid #676767"
+    border: "0.5px solid #676767",
   },
   resizeFont: {
     fontSize: "14px",
@@ -131,7 +131,7 @@ const QuizCreationModel = ({
 }) => {
   const classes = useStyles();
   const edit = quiz && quiz.cm_id !== undefined;
-  console.log(edit);
+  console.log(questionGroups);
 
   // question group/bank state
   const [questionBanks, setQuestionBanks] = useState();
@@ -171,24 +171,34 @@ const QuizCreationModel = ({
   };
 
   const addQuestionGroup = () => {
-    Service.client
-      .put(`/quiz/${quiz.quiz_id}/question-groups`, selectedQuestionGroup)
-      .then((res) => {
-        console.log(res);
-        refetchQuiz();
-      })
-      .catch((err) => console.log(err));
+    if (!edit) {
+      let newQuestionGroups = [...questionGroups];
+      newQuestionGroups.push(selectedQuestionGroup);
+      setQuestionGroups(newQuestionGroups);
+    } else {
+      Service.client
+        .put(`/quiz/${quiz.quiz_id}/question-groups`, selectedQuestionGroup)
+        .then((res) => {
+          console.log(res);
+          refetchQuiz();
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const deleteQuestionGroup = (group) => {
     // console.log(group);
-    Service.client
-      .delete(`/quiz/${quiz.quiz_id}/question-groups`, { data: { qb_id: group.question_bank.id } })
-      .then((res) => {
-        console.log(res);
-        refetchQuiz();
-      })
-      .catch((err) => console.log(err));
+    if (!edit) {
+      setQuestionGroups(questionGroups.filter(qg => qg.qb_id !== group.qb_id))
+    } else {
+      Service.client
+        .delete(`/quiz/${quiz.quiz_id}/question-groups`, { data: { qb_id: group.question_bank.id } })
+        .then((res) => {
+          console.log(res);
+          refetchQuiz();
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
