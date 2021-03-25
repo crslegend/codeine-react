@@ -16,6 +16,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Text,
   ResponsiveContainer,
 } from "recharts";
 // import DefaultTooltipContent from "recharts/lib/component/DefaultTooltipContent";
@@ -118,6 +119,16 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
     return null;
   };
 
+  const CustomizedAxisTick = (props) => {
+    const { x, y, payload } = props;
+
+    return (
+      <Text x={x} y={y} width={150} textAnchor="middle" verticalAnchor="start">
+        {payload.value}
+      </Text>
+    );
+  };
+
   const setInitialChapter = () => {
     if (timeTakenCourseMaterial && timeTakenCourseMaterial[0]) {
       setSelectedChapterId(timeTakenCourseMaterial[0].chapter_id);
@@ -213,7 +224,12 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name">
+            <XAxis
+              dataKey="name"
+              interval={0}
+              tick={<CustomizedAxisTick />}
+              height={90}
+            >
               <Label
                 value={`Course Materials in Chapter ${findIndexOfChapter()}`}
                 position="bottom"
@@ -226,7 +242,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                 value="Average Time Taken (Hours)"
                 position="left"
                 angle={-90}
-                offset={30}
+                offset={0}
                 style={{ textAnchor: "middle" }}
               />
             </YAxis>
