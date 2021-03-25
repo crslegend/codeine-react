@@ -1100,7 +1100,7 @@ const EditArticle = (props) => {
         <DialogTitle id="alert-dialog-title">Back to Article</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Please take note that any changes will not be saved. PLease click
+            Please take note that any changes will not be saved. Please click
             "Save And Publish" to save your changes.
           </DialogContentText>
         </DialogContent>

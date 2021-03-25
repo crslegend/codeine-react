@@ -601,7 +601,7 @@ const ArticleComment = (props) => {
                       openEditReplyTextField(commentid, reply.id, true);
                     }}
                   >
-                    Edit this reponse
+                    Edit this response
                   </Typography>
                   <Typography
                     variant="body2"
