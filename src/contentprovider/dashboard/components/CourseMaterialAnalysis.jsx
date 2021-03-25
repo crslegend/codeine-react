@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   FormControl,
@@ -9,9 +9,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import {
+  Bar,
+  BarChart,
   Label,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -52,12 +52,12 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   const classes = useStyles();
   // console.log(timeTakenCourseMaterial);
 
-  const handleSelectChapter = (e) => {
-    setSelectedChapterId(e.target.value);
+  const handleSelectChapter = (chapterId) => {
+    setSelectedChapterId(chapterId);
 
     let index;
     for (let i = 0; i < timeTakenCourseMaterial.length; i++) {
-      if (timeTakenCourseMaterial[i].chapter_id === e.target.value) {
+      if (timeTakenCourseMaterial[i].chapter_id === chapterId) {
         index = i;
         break;
       }
@@ -118,6 +118,18 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
     return null;
   };
 
+  const setInitialChapter = () => {
+    if (timeTakenCourseMaterial && timeTakenCourseMaterial[0]) {
+      setSelectedChapterId(timeTakenCourseMaterial[0].chapter_id);
+      handleSelectChapter(timeTakenCourseMaterial[0].chapter_id);
+    }
+  };
+
+  useEffect(() => {
+    setInitialChapter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeTakenCourseMaterial]);
+
   return (
     <div className={classes.root}>
       <div
@@ -138,7 +150,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
               label="Select Chapter"
               value={selectedChapterId ? selectedChapterId : ""}
               onChange={(e) => {
-                handleSelectChapter(e);
+                handleSelectChapter(e.target.value);
               }}
               style={{ backgroundColor: "#fff" }}
             >
@@ -191,15 +203,13 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           height={400}
           style={{ backgroundColor: "#fff" }}
         >
-          <LineChart
-            width={600}
-            height={400}
-            data={data}
+          <BarChart
+            data={data && data}
             margin={{
-              top: 25,
+              top: 10,
               right: 30,
-              left: 40,
-              bottom: 30,
+              left: 20,
+              bottom: 35,
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -221,14 +231,9 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
               />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="Time"
-              stroke="#437FC7"
-              strokeWidth={2}
-              activeDot={{ r: 7 }}
-            />
-          </LineChart>
+
+            <Bar dataKey="Time" fill="#164D8F" />
+          </BarChart>
         </ResponsiveContainer>
       </Paper>
     </div>
