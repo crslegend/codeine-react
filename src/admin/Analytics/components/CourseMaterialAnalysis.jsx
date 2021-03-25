@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   FormControl,
@@ -9,13 +9,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import {
+  Bar,
+  BarChart,
   Label,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Text,
   ResponsiveContainer,
 } from "recharts";
 
@@ -50,12 +51,12 @@ const useStyles = makeStyles((theme) => ({
 const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
   const classes = useStyles();
 
-  const handleSelectChapter = (e) => {
-    setSelectedChapterId(e.target.value);
+  const handleSelectChapter = (chapterId) => {
+    setSelectedChapterId(chapterId);
 
     let index;
     for (let i = 0; i < timeTakenCourseMaterial.length; i++) {
-      if (timeTakenCourseMaterial[i].chapter_id === e.target.value) {
+      if (timeTakenCourseMaterial[i].chapter_id === chapterId) {
         index = i;
         break;
       }
@@ -74,7 +75,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             .toUpperCase() +
           courseMaterials[i].material_type.toLowerCase().slice(1),
         Time: parseFloat(
-          (courseMaterials[i].average_time_taken / 3600).toFixed(6)
+          (courseMaterials[i].average_time_taken / 60).toFixed(6)
         ),
       };
       loadedData.push(obj);
@@ -109,16 +110,40 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
           <br />
           <span
             style={{ color: "#437FC7" }}
-          >{`${payload[0].payload.Time} hrs`}</span>
+          >{`${payload[0].payload.Time} mins`}</span>
         </div>
       );
     }
     return null;
   };
 
+  const CustomizedAxisTick = (props) => {
+    const { x, y, payload } = props;
+
+    return (
+      <Text x={x} y={y} width={150} textAnchor="middle" verticalAnchor="start">
+        {payload.value}
+      </Text>
+    );
+  };
+
+  const setInitialChapter = () => {
+    if (timeTakenCourseMaterial && timeTakenCourseMaterial[0]) {
+      setSelectedChapterId(timeTakenCourseMaterial[0].chapter_id);
+      handleSelectChapter(timeTakenCourseMaterial[0].chapter_id);
+    }
+  };
+
+  useEffect(() => {
+    setInitialChapter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeTakenCourseMaterial]);
+
   return (
     <div className={classes.root}>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
+      >
         <div>
           <FormControl
             margin="dense"
@@ -130,7 +155,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
               label="Select Chapter"
               value={selectedChapterId ? selectedChapterId : ""}
               onChange={(e) => {
-                handleSelectChapter(e);
+                handleSelectChapter(e.target.value);
               }}
               style={{ backgroundColor: "#fff" }}
             >
@@ -146,10 +171,13 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
             </Select>
           </FormControl>
         </div>
-        <div style={{ marginLeft: "10px" }}>
-          <Paper className={classes.paper}>
+      </div>
+
+      <Paper style={{ width: "100%", padding: "24px" }}>
+        <div style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}>
+          <div style={{ textAlign: "center" }}>
             {selectedChapterId === "" ? (
-              <Typography variant="body2">No Chapter Selected</Typography>
+              <Typography variant="h6">No Chapter Selected</Typography>
             ) : (
               <div>
                 {timeTakenCourseMaterial &&
@@ -159,7 +187,7 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                       return (
                         <Typography
                           key={index}
-                          variant="body2"
+                          variant="h6"
                           style={{ textAlign: "center" }}
                         >
                           <span style={{ fontWeight: 600 }}>
@@ -173,29 +201,29 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                   })}
               </div>
             )}
-          </Paper>
+          </div>
         </div>
-      </div>
-
-      <Paper style={{ width: "100%", padding: "24px" }}>
         <ResponsiveContainer
           width="100%"
           height={400}
           style={{ backgroundColor: "#fff" }}
         >
-          <LineChart
-            width={600}
-            height={400}
-            data={data}
+          <BarChart
+            data={data && data}
             margin={{
-              top: 25,
+              top: 10,
               right: 30,
-              left: 40,
-              bottom: 30,
+              left: 20,
+              bottom: 35,
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name">
+            <XAxis
+              dataKey="name"
+              interval={0}
+              tick={<CustomizedAxisTick />}
+              height={90}
+            >
               <Label
                 value={`Course Materials in Chapter ${findIndexOfChapter()}`}
                 position="bottom"
@@ -208,19 +236,14 @@ const CourseMaterialAnalysis = ({ timeTakenCourseMaterial }) => {
                 value="Average Time Taken (Hours)"
                 position="left"
                 angle={-90}
-                offset={30}
+                offset={0}
                 style={{ textAnchor: "middle" }}
               />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="Time"
-              stroke="#437FC7"
-              strokeWidth={2}
-              activeDot={{ r: 7 }}
-            />
-          </LineChart>
+
+            <Bar dataKey="Time" fill="#164D8F" />
+          </BarChart>
         </ResponsiveContainer>
       </Paper>
     </div>

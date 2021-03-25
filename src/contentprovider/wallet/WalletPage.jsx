@@ -58,13 +58,22 @@ const useStyles = makeStyles((theme) => ({
   },
   breakdownPaper: {
     padding: theme.spacing(4),
-    width: "70%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
     flexDirection: "column",
     // justifyContent: "space-between",
     marginBottom: "30px",
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
 }));
 
@@ -621,14 +630,7 @@ const WalletPage = () => {
           Earnings Breakdown for the Month
         </Typography>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "30%",
-              justifyContent: "space-between",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Earnings from Consultation
             </Typography>
@@ -639,14 +641,7 @@ const WalletPage = () => {
                   : `$0`)}
             </Typography>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "30%",
-              justifyContent: "space-between",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Pending Earnings from Consultation
             </Typography>
@@ -657,14 +652,7 @@ const WalletPage = () => {
                   : `$0`)}
             </Typography>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "30%",
-              justifyContent: "space-between",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Earnings from Profit Sharing
             </Typography>

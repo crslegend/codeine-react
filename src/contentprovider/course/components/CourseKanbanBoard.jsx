@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
+const CourseKanbanBoard = ({ courseId, state, setState, getCourse, setQuestionBankModalOpen }) => {
   const classes = useStyles();
   // console.log(state);
   // const [state, setState] = useState(data);
@@ -61,10 +61,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       return;
     }
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
       return;
     }
 
@@ -167,10 +164,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       .catch((err) => console.log(err));
   };
 
-  const handleUpdateCourseMaterialOrderingInSameChapter = (
-    chapterId,
-    newTaskIds
-  ) => {
+  const handleUpdateCourseMaterialOrderingInSameChapter = (chapterId, newTaskIds) => {
     Service.client
       .patch(`/chapters/${chapterId}/order-materials`, newTaskIds)
       .then((res) => {
@@ -197,18 +191,12 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
       <Droppable droppableId="all-columns" direction="horizontal" type="column">
         {(provided) => {
           return (
-            <div
-              className={classes.container}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
+            <div className={classes.container} {...provided.droppableProps} ref={provided.innerRef}>
               {state &&
                 state.columnOrder &&
                 state.columnOrder.map((columnId, index) => {
                   const column = state.columns[columnId];
-                  const tasks =
-                    column.taskIds &&
-                    column.taskIds.map((taskId) => state.tasks[taskId]);
+                  const tasks = column.taskIds && column.taskIds.map((taskId) => state.tasks[taskId]);
 
                   return (
                     <Column
@@ -219,6 +207,7 @@ const CourseKanbanBoard = ({ courseId, state, setState, getCourse }) => {
                       courseId={courseId}
                       getCourse={getCourse}
                       state={state}
+                      setQuestionBankModalOpen={setQuestionBankModalOpen}
                     />
                   );
                 })}

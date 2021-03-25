@@ -9,22 +9,29 @@ import {
   MenuItem,
   Paper,
   Typography,
+  IconButton,
 } from "@material-ui/core";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from "recharts";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ResponsiveContainer,
+//   Label,
+// } from "recharts";
+import { LooksOne, LooksTwo, Looks3, ArrowBack } from "@material-ui/icons";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+  },
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -37,12 +44,38 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "10px",
     width: "200px",
   },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    minWidth: "250px",
+    justifyContent: "space-between",
+  },
+  result: {
+    width: "70%",
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    border: "2px solid #e2e2e2",
+    borderRadius: "5px",
+    marginBottom: "20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
 }));
 
 const CourseSearchRanking = () => {
   const classes = useStyles();
+  const history = useHistory();
 
-  const [numDays, setNumDays] = useState();
+  const [numDays, setNumDays] = useState(7);
   const [data, setData] = useState();
 
   const getSearchRanking = () => {
@@ -50,7 +83,7 @@ const CourseSearchRanking = () => {
       Service.client
         .get(`/analytics/course-search-ranking`, { params: { days: numDays } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
 
           let arr = [];
           let obj = {};
@@ -68,7 +101,7 @@ const CourseSearchRanking = () => {
       Service.client
         .get(`/analytics/course-search-ranking`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
 
           let arr = [];
           let obj = {};
@@ -96,13 +129,23 @@ const CourseSearchRanking = () => {
   }, [numDays]);
 
   return (
-    <div>
-      <PageTitle title="Course Search Ranking" />
+    <div className={classes.root}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          onClick={() => history.push(`/partner/home/dashboard`)}
+          style={{ marginRight: "30px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <PageTitle title="Course Search Ranking" />
+      </div>
+
       <div
         style={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
@@ -142,10 +185,164 @@ const CourseSearchRanking = () => {
             color: "#437FC7",
           }}
         >
-          The bar chart below shows the keywords entered by the students and the
-          respective occurences when searching for courses on Codeine
+          Below shows the keywords entered by the students when searching for
+          courses on Codeine and the respective occurences and rankings
         </Typography>
-        <ResponsiveContainer width="100%" height={430}>
+        {data && data && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginTop: "10px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "flex-end",
+              }}
+            >
+              <div className={classes.statsDiv} style={{ minHeight: 130 }}>
+                <div style={{ textAlign: "center" }}>
+                  <LooksTwo
+                    style={{
+                      fontSize: 55,
+                      color: "#A9A9A9",
+                    }}
+                  />
+                </div>
+                <div>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Keywords: {data[1] ? data[1].keyword : "-"}
+                  </Typography>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Occurence: {data[1] ? data[1].Occurences : "-"}
+                  </Typography>
+                </div>
+              </div>
+              <div className={classes.statsDiv} style={{ minHeight: 150 }}>
+                <div style={{ textAlign: "center" }}>
+                  <LooksOne
+                    style={{
+                      fontSize: 70,
+                      color: "#d4af37",
+                    }}
+                  />
+                </div>
+                <div>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Keywords: {data[0] ? data[0].keyword : "-"}
+                  </Typography>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Occurence: {data[0] ? data[0].Occurences : "-"}
+                  </Typography>
+                </div>
+              </div>
+              <div className={classes.statsDiv} style={{ minHeight: 130 }}>
+                <div style={{ textAlign: "center" }}>
+                  <Looks3
+                    style={{
+                      fontSize: 55,
+                      color: "#cd7f32",
+                    }}
+                  />
+                </div>
+                <div>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Keywords: {data[2] ? data[2].keyword : "-"}
+                  </Typography>
+                  <Typography variant="h6" style={{ textAlign: "center" }}>
+                    Occurence: {data[2] ? data[2].Occurences : "-"}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "30px" }}>
+              {data.length > 0 &&
+                data.map((result, index) => {
+                  if (index === 0) {
+                    return (
+                      <div className={classes.result}>
+                        <Typography
+                          variant="h3"
+                          style={{
+                            color: "#d4af37",
+                            fontWeight: 600,
+                            textAlign: "center",
+                          }}
+                        >
+                          #1
+                        </Typography>
+
+                        <Typography variant="h6">
+                          Keywords: {result.keyword}
+                        </Typography>
+                        <Typography variant="h6">
+                          Occurence: {result.Occurences}
+                        </Typography>
+                      </div>
+                    );
+                  } else if (index === 1) {
+                    return (
+                      <div className={classes.result}>
+                        <Typography
+                          variant="h3"
+                          style={{
+                            color: "#A9A9A9",
+                            fontWeight: 600,
+                            textAlign: "center",
+                          }}
+                        >
+                          #2
+                        </Typography>
+                        <Typography variant="h6">
+                          Keywords: {result.keyword}
+                        </Typography>
+                        <Typography variant="h6">
+                          Occurence: {result.Occurences}
+                        </Typography>
+                      </div>
+                    );
+                  } else if (index === 2) {
+                    return (
+                      <div className={classes.result}>
+                        <Typography
+                          variant="h3"
+                          style={{ color: "#cd7f32", fontWeight: 600 }}
+                        >
+                          #3
+                        </Typography>
+                        <Typography variant="h6">
+                          Keywords: {result.keyword}
+                        </Typography>
+                        <Typography variant="h6">
+                          Occurence: {result.Occurences}
+                        </Typography>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className={classes.result}>
+                        <Typography variant="h3" style={{ fontWeight: 600 }}>
+                          #{index + 1}
+                        </Typography>
+                        <Typography variant="h6">
+                          Keywords: {result.keyword}
+                        </Typography>
+                        <Typography variant="h6">
+                          Occurence: {result.Occurences}
+                        </Typography>
+                      </div>
+                    );
+                  }
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* <ResponsiveContainer width="100%" height={430}>
           <BarChart
             data={data && data}
             margin={{
@@ -177,7 +374,7 @@ const CourseSearchRanking = () => {
 
             <Bar dataKey="Occurences" fill="#164D8F" />
           </BarChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> */}
       </Paper>
     </div>
   );

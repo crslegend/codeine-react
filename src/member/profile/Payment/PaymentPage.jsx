@@ -6,6 +6,7 @@ import { Box, Typography } from "@material-ui/core";
 import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
+import PageTitle from "../../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "65px",
   },
   dataGrid: {
+    backgroundColor: "#fff",
     "@global": {
       ".MuiDataGrid-row": {
         cursor: "pointer",
@@ -164,22 +166,22 @@ const Payment = () => {
   return (
     <Fragment>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          Past Transactions
-        </Typography>
-      </Box>
-      <div style={{ height: "700px", width: "100%" }}>
-        <DataGrid
-          className={classes.dataGrid}
-          rows={transactionRows}
-          columns={transactionColumns.map((column) => ({
-            ...column,
-          }))}
-          pageSize={10}
-          disableSelectionOnClick
-          /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
-        />
+      <div style={{ marginTop: "65px" }}>
+        <div style={{ width: "80%", margin: "auto" }}>
+          <PageTitle title="Past Transactions" />
+          <div style={{ height: "500px", width: "100%" }}>
+            <DataGrid
+              className={classes.dataGrid}
+              rows={transactionRows}
+              columns={transactionColumns.map((column) => ({
+                ...column,
+              }))}
+              pageSize={10}
+              disableSelectionOnClick
+              /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
+            />
+          </div>
+        </div>
       </div>
     </Fragment>
   );

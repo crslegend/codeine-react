@@ -1,11 +1,10 @@
 import React, { Fragment, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { Draggable } from "react-beautiful-dnd";
 import LinkMui from "@material-ui/core/Link";
 import {
   Avatar,
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,41 +13,39 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Assignment, AttachFile, Delete, Movie } from "@material-ui/icons";
+import { Assignment, Delete, InsertDriveFile, Theaters, DragHandle } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
 import Service from "../../../AxiosService";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import SubTask from "./SubTask";
+// import SubTask from "./SubTask";
 import QuestionDialog from "./QuestionDialog";
+import QuizCreationModal from "./QuizCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     border: "1px solid lightgrey",
-    borderRadius: "10px",
-    padding: 8,
+    borderRadius: "5px",
     marginBottom: "8px",
-    backgroundColor: "#fff",
+    backgroundColor: "#fcfcfc",
     display: "flex",
     flexDirection: "column",
-    boxShadow:
-      "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    // boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
+    boxShadow: "2px 3px 3px 0px rgba(0,0,0,0.16)",
     // alignItems: "center",
   },
   containerDragging: {
-    border: "2px solid blue",
-    borderRadius: "10px",
-    padding: 8,
+    border: "1px solid grey",
+    borderRadius: "5px",
     marginBottom: "8px",
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#fcfcfc",
     display: "flex",
-    boxShadow:
-      "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
-    alignItems: "center",
+    flexDirection: "column",
+    // boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.19)",
   },
   handle: {
-    marginRight: "10px",
+    color: "#6e6e6e",
   },
   title: {
     cursor: "pointer",
@@ -62,10 +59,10 @@ const useStyles = makeStyles((theme) => ({
     width: 100,
   },
   dropzoneContainer: {
-    minHeight: "190px",
+    minHeight: "150px",
     "@global": {
       ".MuiDropzoneArea-root": {
-        minHeight: "190px",
+        minHeight: "150px",
       },
     },
   },
@@ -74,10 +71,14 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     minHeight: "70px",
   },
+  dropzoneText: {
+    fontSize: "14px",
+  },
 }));
 
-const Task = ({ task, index, getCourse, subtasks }) => {
+const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const classes = useStyles();
+  const theme = useTheme();
   // console.log(task);
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -105,10 +106,9 @@ const Task = ({ task, index, getCourse, subtasks }) => {
 
   const [editVideo, setEditVideo] = useState();
   const [editQuiz, setEditQuiz] = useState();
+  const [editQuizQuestionGroups, setEditQuizQuestionGroups] = useState([]);
 
-  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
-    false
-  );
+  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(false);
 
   const [addQuestionDialog, setAddQuestionDialog] = useState(false);
 
@@ -122,11 +122,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        editVideo.title === "" ||
-        editVideo.description === "" ||
-        editVideo.video_url === ""
-      ) {
+      if (editVideo.title === "" || editVideo.description === "" || editVideo.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -238,14 +234,10 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         })
         .catch((err) => console.log(err));
     } else {
-      if (
-        editQuiz.title === "" ||
-        editQuiz.description === "" ||
-        editQuiz.passing_marks === ""
-      ) {
+      if (editQuiz.title === "" || editQuiz.description === "" || editQuiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
-          message: "Please fill up all required fields!",
+          message: "Check your fields",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",
@@ -287,6 +279,16 @@ const Task = ({ task, index, getCourse, subtasks }) => {
       .catch((err) => console.log(err));
   };
 
+  const getColor = () => {
+    if (task.material_type === "VIDEO") {
+      return theme.palette.secondary.main;
+    } else if (task.material_type === "FILE") {
+      return theme.palette.yellow.main;
+    } else {
+      return theme.palette.red.main;
+    }
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -294,11 +296,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         {(provided, snapshot) => {
           return (
             <div
-              className={
-                snapshot.isDragging
-                  ? classes.containerDragging
-                  : classes.container
-              }
+              className={snapshot.isDragging ? classes.containerDragging : classes.container}
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
@@ -306,120 +304,127 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  alignItems: "center",
+                  // justifyContent: "center",
+                  padding: theme.spacing(1),
+                  borderLeft: `5px solid ${getColor()}`,
+                  borderRadius: "5px",
                 }}
               >
-                {(() => {
-                  if (task.material_type === "FILE") {
-                    return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: "#000",
-                          }}
-                        >
-                          <AttachFile fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  } else if (task.material_type === "VIDEO") {
-                    return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: "#000",
-                          }}
-                        >
-                          <Movie fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  } else if (task.material_type === "QUIZ") {
-                    return (
-                      <div
-                        {...provided.dragHandleProps}
-                        className={classes.handle}
-                      >
-                        <Avatar
-                          variant="rounded"
-                          style={{
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: "#000",
-                          }}
-                        >
-                          <Assignment fontSize="small" />
-                        </Avatar>
-                      </div>
-                    );
-                  }
-                })()}
-
-                <LinkMui
-                  className={classes.title}
-                  style={{ textDecoration: "none" }}
-                  onClick={() => {
-                    setCourseMaterialDialog(true);
-
-                    if (task.material_type === "VIDEO") {
-                      setEditVideo({
-                        title: task.title,
-                        description: task.description,
-                        video_url: task.video.video_url,
-                      });
-                      setMaterialType("video");
-                      setCourseMaterialId(task.id);
-                    } else if (task.material_type === "FILE") {
-                      setEditFile({
-                        title: task.title,
-                        description: task.description,
-                        google_drive_url: task.course_file.google_drive_url,
-                        zip_file: task.course_file.zip_file,
-                      });
-                      setMaterialType("file");
-                      setCourseMaterialId(task.id);
-                    } else {
-                      setEditQuiz({
-                        title: task.title,
-                        description: task.description,
-                        passing_marks: task.quiz.passing_marks,
-                        instructions: task.quiz.instructions,
-                      });
-                      setMaterialType("quiz");
-                      setCourseMaterialId(task.id);
-                    }
+                <div
+                  style={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    marginRight: "3px",
                   }}
                 >
-                  {task.title}
-                </LinkMui>
-
-                {task.material_type === "QUIZ" && (
-                  <IconButton
-                    size="small"
-                    style={{ marginLeft: "auto", order: 2 }}
+                  <LinkMui
+                    className={classes.title}
+                    style={{ textDecoration: "none" }}
                     onClick={() => {
-                      setQuizId(task.quiz.id);
-                      setAddQuestionDialog(true);
+                      setCourseMaterialDialog(true);
+
+                      if (task.material_type === "VIDEO") {
+                        setEditVideo({
+                          title: task.title,
+                          description: task.description,
+                          video_url: task.video.video_url,
+                        });
+                        setMaterialType("video");
+                        setCourseMaterialId(task.id);
+                      } else if (task.material_type === "FILE") {
+                        setEditFile({
+                          title: task.title,
+                          description: task.description,
+                          google_drive_url: task.course_file.google_drive_url,
+                          zip_file: task.course_file.zip_file,
+                        });
+                        setMaterialType("file");
+                        setCourseMaterialId(task.id);
+                      } else if (task.material_type === "QUIZ") {
+                        setEditQuiz({
+                          cm_id: task.id,
+                          quiz_id: task.quiz.id,
+                          title: task.title,
+                          description: task.description,
+                          passing_marks: task.quiz.passing_marks,
+                          instructions: task.quiz.instructions,
+                          is_randomized: task.quiz.is_randomized,
+                        });
+                        setMaterialType("quiz");
+                        setCourseMaterialId(task.id);
+                        setEditQuizQuestionGroups(task.quiz.question_groups);
+                      }
                     }}
                   >
-                    <Add />
-                  </IconButton>
-                )}
-              </div>
+                    {task.title}
+                  </LinkMui>
 
-              {task.material_type === "QUIZ" && (
+                  {(() => {
+                    if (task.material_type === "FILE") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <InsertDriveFile
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    } else if (task.material_type === "VIDEO") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <Theaters
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    } else if (task.material_type === "QUIZ") {
+                      return (
+                        <Avatar
+                          style={{
+                            height: theme.spacing(3),
+                            width: theme.spacing(3),
+                            backgroundColor: getColor(),
+                            margin: "8px 0 0 3px",
+                          }}
+                        >
+                          <Assignment
+                            style={{
+                              height: theme.spacing(2),
+                              width: theme.spacing(2),
+                            }}
+                          />
+                        </Avatar>
+                      );
+                    }
+                  })()}
+                </div>
+
+                <div {...provided.dragHandleProps} className={classes.handle}>
+                  <DragHandle />
+                </div>
+              </div>
+              {/* {task.material_type === "QUIZ" && (
                 <Droppable droppableId={task.id} type="subtask">
                   {(provided) => {
                     return (
@@ -445,7 +450,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     );
                   }}
                 </Droppable>
-              )}
+              )} */}
             </div>
           );
         }}
@@ -464,21 +469,18 @@ const Task = ({ task, index, getCourse, subtasks }) => {
         }}
         PaperProps={{
           style: {
-            width: "400px",
+            minWidth: "600px",
+            maxWidth: "none",
           },
         }}
       >
         <DialogTitle>
-          Course Material{" "}
-          <span style={{ textTransform: "capitalize" }}>({materialType})</span>
+          Course Material <span style={{ textTransform: "capitalize" }}>({materialType})</span>
           <div style={{ float: "right" }}>
             {/* <IconButton size="small" onClick={() => setEditMode(true)}>
               <Edit />
             </IconButton> */}
-            <IconButton
-              size="small"
-              onClick={() => setDeleteCourseMaterialDialog(true)}
-            >
+            <IconButton size="small" onClick={() => setDeleteCourseMaterialDialog(true)}>
               <Delete />
             </IconButton>
           </div>
@@ -495,6 +497,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     id="title"
                     variant="outlined"
                     fullWidth
+                    autoFocus
                     margin="dense"
                     value={editFile && editFile.title}
                     onChange={(e) => {
@@ -503,6 +506,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         title: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
@@ -522,10 +526,11 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         description: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Description"
                     multiline
-                    rows={4}
+                    rows={6}
                     style={{ marginBottom: "25px" }}
                   />
                   <div
@@ -540,8 +545,22 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     <Typography variant="body2" style={{ marginTop: "10px" }}>
                       Upload File (to replace the current file)
                     </Typography>
+                    {editFile && editFile.zip_file && (
+                      <div style={{ display: "flex" }}>
+                        <Typography variant="body2" style={{ margin: "5px 0" }}>
+                          <LinkMui
+                            href={editFile.zip_file ? editFile.zip_file.replace("#", "") : "#"}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            &gt; Uploaded File
+                          </LinkMui>
+                        </Typography>
+                      </div>
+                    )}
                     <DropzoneAreaBase
                       dropzoneText="Drag and drop a zip file or click&nbsp;here"
+                      dropzoneParagraphClass={classes.dropzoneText}
                       dropzoneClass={classes.dropzoneContainer}
                       // dropzoneProps={{ disabled: true }}
                       filesLimit={1}
@@ -562,30 +581,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     />
                   </div>
 
-                  {editFile && editFile.zip_file && (
-                    <div style={{ display: "flex" }}>
-                      <Typography
-                        variant="body2"
-                        style={{ marginTop: "5px", marginRight: "10px" }}
-                      >
-                        <LinkMui
-                          href={
-                            editFile.zip_file
-                              ? editFile.zip_file.replace("#", "")
-                              : "#"
-                          }
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          Uploaded File
-                        </LinkMui>
-                      </Typography>
-                    </div>
-                  )}
-                  <Typography
-                    variant="h6"
-                    style={{ textAlign: "center", marginTop: "10px" }}
-                  >
+                  <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                     OR
                   </Typography>
                   <label htmlFor="url">
@@ -596,17 +592,14 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     variant="outlined"
                     fullWidth
                     margin="dense"
-                    value={
-                      editFile && editFile.google_drive_url !== null
-                        ? editFile.google_drive_url
-                        : ""
-                    }
+                    value={editFile && editFile.google_drive_url !== null ? editFile.google_drive_url : ""}
                     onChange={(e) => {
                       setEditFile({
                         ...editFile,
                         google_drive_url: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="https://drive.google.com"
                     style={{ marginBottom: "15px" }}
@@ -623,6 +616,7 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                     id="title"
                     variant="outlined"
                     fullWidth
+                    autoFocus
                     margin="dense"
                     value={editVideo && editVideo.title}
                     onChange={(e) => {
@@ -631,14 +625,13 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         title: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Title"
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Video
-                    </Typography>
+                    <Typography variant="body2">Description of Video</Typography>
                   </label>
                   <TextField
                     id="description"
@@ -652,10 +645,11 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         description: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
                     placeholder="Enter Description"
                     multiline
-                    rows={4}
+                    rows={6}
                     style={{ marginBottom: "15px" }}
                   />
                   <label htmlFor="url">
@@ -673,105 +667,31 @@ const Task = ({ task, index, getCourse, subtasks }) => {
                         video_url: e.target.value,
                       });
                     }}
+                    inputProps={{ style: { fontSize: "14px" } }}
                     required
-                    placeholder="https://www.google.com"
+                    placeholder="e.g. https://www.youtube.com"
                     style={{ marginBottom: "15px" }}
                   />
                 </Fragment>
               );
             } else if (materialType === "quiz") {
               return (
-                <Fragment>
-                  <label htmlFor="title">
-                    <Typography variant="body2">
-                      Title of Quiz (Required)
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="title"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.title}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        title: e.target.value,
-                      });
-                    }}
-                    required
-                    placeholder="Enter Title"
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Quiz (Required)
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="description"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.description}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        description: e.target.value,
-                      });
-                    }}
-                    required
-                    placeholder="Enter Description"
-                    multiline
-                    rows={4}
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="marks">
-                    <Typography variant="body2">
-                      Passing Marks (Required)
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="marks"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.passing_marks}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        passing_marks: e.target.value,
-                      });
-                    }}
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
-                    required
-                    style={{ marginBottom: "15px" }}
-                    type="number"
-                  />
-                  <label htmlFor="marks">
-                    <Typography variant="body2">Instructions</Typography>
-                  </label>
-                  <TextField
-                    id="marks"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editQuiz && editQuiz.instructions}
-                    onChange={(e) => {
-                      setEditQuiz({
-                        ...editQuiz,
-                        instructions: e.target.value,
-                      });
-                    }}
-                    required
-                    multiline
-                    rows={4}
-                    placeholder="eg. Read the questions carefully"
-                    style={{ marginBottom: "15px" }}
-                  />
-                </Fragment>
+                <QuizCreationModal
+                  quiz={editQuiz}
+                  setQuiz={setEditQuiz}
+                  courseId={courseId}
+                  questionGroups={editQuizQuestionGroups}
+                  setQuestionGroups={setEditQuizQuestionGroups}
+                  closeDialog={() => {
+                    setCourseMaterialDialog(false);
+                    setEditFile();
+                    setEditVideo();
+                    setEditQuiz();
+                    setEditMode(false);
+                    setCourseMaterialId();
+                    setZipFile();
+                  }}
+                />
               );
             }
           })()}

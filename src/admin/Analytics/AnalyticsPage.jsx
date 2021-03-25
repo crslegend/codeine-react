@@ -2,32 +2,21 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
-  Button,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Tab,
   Tabs,
   Typography,
 } from "@material-ui/core";
-import TooltipMui from "@material-ui/core/Tooltip";
-import { Add, DragHandle, Info } from "@material-ui/icons";
 import Service from "../../AxiosService";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from "recharts";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
+import EarningsReport from "./components/EarningsReport";
+import HealthReport from "./components/HealthReport";
+import CourseReport from "./components/CourseReport";
+import ProjectReport from "./components/ProjectReport";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -65,6 +54,15 @@ const useStyles = makeStyles((theme) => ({
   tabPanel: {
     minHeight: "200px",
     paddingTop: "20px",
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
 }));
 
@@ -91,6 +89,7 @@ function TabPanel(props) {
 const AdminAnalyticsPage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const location = useLocation();
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1, 2, 3];
@@ -107,10 +106,6 @@ const AdminAnalyticsPage = () => {
 
   const [popularSkill, setPopularSkill] = useState();
   const [projectSearches, setProjectSearches] = useState();
-  const [
-    projectApplicantConversion,
-    setProjectApplicantConversion,
-  ] = useState();
 
   const getAnalytics = async () => {
     if (numDays && numDays !== "") {
@@ -216,13 +211,6 @@ const AdminAnalyticsPage = () => {
           setProjectSearches(arr);
         })
         .catch((err) => console.log(err));
-
-      Service.client
-        .get(`/analytics/ip-application-rate`, { params: { days: numDays } })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log(err));
     } else {
       Service.client
         .get(`/analytics/first-enrollment-count`)
@@ -314,13 +302,6 @@ const AdminAnalyticsPage = () => {
           // console.log(res);
         })
         .catch((err) => console.log(err));
-
-      Service.client
-        .get(`/analytics/ip-application-rate`)
-        .then((res) => {
-          // console.log(res);
-        })
-        .catch((err) => console.log(err));
     }
 
     Service.client
@@ -364,6 +345,9 @@ const AdminAnalyticsPage = () => {
   };
 
   useEffect(() => {
+    if (location && location.state && location.state.tab) {
+      setValue(location.state.tab);
+    }
     getAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -383,6 +367,7 @@ const AdminAnalyticsPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
@@ -449,746 +434,23 @@ const AdminAnalyticsPage = () => {
               >
                 {(() => {
                   if (value === 0) {
-                    return (
-                      <Paper className={classes.paper}>
-                        <Typography
-                          variant="h6"
-                          style={{ fontWeight: 600, paddingBottom: "10px" }}
-                        >
-                          Earnings Report
-                        </Typography>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-around",
-                            alignItems: "center",
-                            marginBottom: "20px",
-                          }}
-                        >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="h6">Fundings</Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total amount of funding received from
-                                    organizations
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {earningsReport &&
-                                (earningsReport.total_contribution_income ===
-                                  0 ||
-                                !earningsReport.total_contribution_income ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {"$0"}
-                                  </span>
-                                ) : (
-                                  "$" + earningsReport.total_contribution_income
-                                ))}
-                            </Typography>
-                          </div>
-                          <Add style={{ fontSize: "50px" }} color="disabled" />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="h6">
-                                Subscriptions
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total amount of earnings from pro-tier
-                                    members
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {earningsReport &&
-                                (earningsReport.total_subscription_revenue ===
-                                  0 ||
-                                !earningsReport.total_subscription_revenue ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {"$0"}
-                                  </span>
-                                ) : (
-                                  "$" +
-                                  earningsReport.total_subscription_revenue
-                                ))}
-                            </Typography>
-                          </div>
-                          <DragHandle
-                            style={{ fontSize: "50px" }}
-                            color="disabled"
-                          />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="h6">Total Income</Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total income before accounting for expenses
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {earningsReport &&
-                                (earningsReport.total_income === 0 ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {"$0"}
-                                  </span>
-                                ) : (
-                                  "$" + earningsReport.total_income
-                                ))}
-                            </Typography>
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-around",
-                          }}
-                        >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="h6">Expenses</Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total expenses needed to run Codeine
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {earningsReport && (
-                                <span style={{ color: "#C74343" }}>
-                                  {`$${earningsReport.expenses}`}
-                                </span>
-                              )}
-                            </Typography>
-                          </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography variant="h6">Net Income</Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total net income after accounting for
-                                    expenses
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {earningsReport &&
-                                (earningsReport.total_income_less_expenses <
-                                0 ? (
-                                  <span style={{ color: "#C74343" }}>{`-$${
-                                    earningsReport.total_income_less_expenses *
-                                    -1
-                                  }`}</span>
-                                ) : earningsReport.total_income_less_expenses ===
-                                  0 ? (
-                                  <span
-                                    style={{ color: "#C74343" }}
-                                  >{`$0`}</span>
-                                ) : (
-                                  "$" +
-                                  earningsReport.total_income_less_expenses
-                                ))}
-                            </Typography>
-                          </div>
-                        </div>
-                      </Paper>
-                    );
+                    return <EarningsReport earningsReport={earningsReport} />;
                   } else if (value === 1) {
-                    return (
-                      <Paper className={classes.paper}>
-                        <Typography
-                          variant="h6"
-                          style={{ fontWeight: 600, paddingBottom: "10px" }}
-                        >
-                          Codeine's Health Report
-                        </Typography>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography
-                                variant="h6"
-                                style={{ paddingRight: "5px" }}
-                              >
-                                New Content
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total number of hours of new content
-                                    produced by the partners
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {platformReport &&
-                                platformReport.hours_of_content &&
-                                (platformReport.hours_of_content <= 1 ? (
-                                  <span
-                                    style={{ color: "#C74343" }}
-                                  >{`${platformReport.hours_of_content}hr`}</span>
-                                ) : (
-                                  platformReport.hours_of_content + "hrs"
-                                ))}
-                            </Typography>
-                          </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography
-                                variant="h6"
-                                style={{ paddingRight: "5px" }}
-                              >
-                                New Consultation
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total number of consultation slots newly
-                                    added by the partners
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {platformReport &&
-                                platformReport.new_consultation_slots &&
-                                (platformReport.new_consultation_slots === 0 ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {platformReport.new_consultation_slots}
-                                  </span>
-                                ) : (
-                                  platformReport.new_consultation_slots
-                                ))}
-                            </Typography>
-                          </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography
-                                variant="h6"
-                                style={{ paddingRight: "5px" }}
-                              >
-                                New Pro-Tier Members
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total number of members who upgraded to
-                                    pro-tier
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {platformReport &&
-                                platformReport.new_pro_members &&
-                                (platformReport.new_pro_members === 0 ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {platformReport.new_pro_members}
-                                  </span>
-                                ) : (
-                                  platformReport.new_pro_members
-                                ))}
-                            </Typography>
-                          </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <div style={{ display: "flex" }}>
-                              <Typography
-                                variant="h6"
-                                style={{ paddingRight: "5px" }}
-                              >
-                                New Projects
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Total number of project listings newly added
-                                    by organizations
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <Typography
-                              variant="h1"
-                              className={classes.numbers}
-                            >
-                              {platformReport &&
-                                platformReport.new_industry_projects &&
-                                (platformReport.new_industry_projects === 0 ? (
-                                  <span style={{ color: "#C74343" }}>
-                                    {platformReport.new_industry_projects}
-                                  </span>
-                                ) : (
-                                  platformReport.new_industry_projects
-                                ))}
-                            </Typography>
-                          </div>
-                        </div>
-                      </Paper>
-                    );
+                    return <HealthReport platformReport={platformReport} />;
                   } else if (value === 2) {
                     return (
-                      <Paper className={classes.paper}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            style={{ fontWeight: 600, paddingBottom: "10px" }}
-                          >
-                            Courses Report
-                          </Typography>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() =>
-                              history.push(`/admin/analytics/courses`)
-                            }
-                          >
-                            View More Course-Related Analysis
-                          </Button>
-                        </div>
-
-                        <div
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              width: "80%",
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: "20px",
-                                paddingTop: "20px",
-                              }}
-                            >
-                              <Typography variant="h6">
-                                Popularity Ranking
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Ranking of popularity of courses by number
-                                    of enrollments
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-
-                            <ResponsiveContainer width="100%" height={400}>
-                              <BarChart
-                                data={coursesRanking && coursesRanking}
-                                margin={{
-                                  top: 0,
-                                  right: 30,
-                                  left: 20,
-                                  bottom: 25,
-                                }}
-                              >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="title">
-                                  <Label
-                                    value={`Courses on Codeine`}
-                                    position="bottom"
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </XAxis>
-                                <YAxis>
-                                  <Label
-                                    value="Number of Enrollments"
-                                    position="left"
-                                    angle={-90}
-                                    offset={-10}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </YAxis>
-                                <Tooltip />
-
-                                <Bar dataKey="Enrollment" fill="#164D8F" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: "20px",
-                                paddingTop: "20px",
-                              }}
-                            >
-                              <Typography variant="h6">
-                                First-Enrollment Courses
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Number of users who registered and enrolled
-                                    in their respective first courses
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <ResponsiveContainer width="100%" height={400}>
-                              <BarChart
-                                data={
-                                  firstCoursesRanking && firstCoursesRanking
-                                }
-                                margin={{
-                                  top: 0,
-                                  right: 30,
-                                  left: 20,
-                                  bottom: 25,
-                                }}
-                              >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="title">
-                                  <Label
-                                    value={`First-Enrolled Courses on Codeine`}
-                                    position="bottom"
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </XAxis>
-                                <YAxis>
-                                  <Label
-                                    value="Number of Enrollments"
-                                    position="left"
-                                    angle={-90}
-                                    offset={-10}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </YAxis>
-                                <Tooltip />
-
-                                <Bar dataKey="Enrollment" fill="#164D8F" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: "20px",
-                                paddingTop: "20px",
-                              }}
-                            >
-                              <Typography variant="h6">
-                                Course Searches
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Keywords entered by the students and the
-                                    respective occurences when searching for
-                                    courses on Codeine
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <ResponsiveContainer width="100%" height={430}>
-                              <BarChart
-                                data={courseSearches && courseSearches}
-                                margin={{
-                                  top: 10,
-                                  right: 30,
-                                  left: 20,
-                                  bottom: 20,
-                                }}
-                              >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="keyword">
-                                  <Label
-                                    value={`Keywords Entered by Members`}
-                                    position="bottom"
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </XAxis>
-                                <YAxis>
-                                  <Label
-                                    value="Number of Occurences for that keyword"
-                                    position="left"
-                                    angle={-90}
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </YAxis>
-                                <Tooltip />
-
-                                <Bar dataKey="Occurences" fill="#164D8F" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-                      </Paper>
+                      <CourseReport
+                        firstCoursesRanking={firstCoursesRanking}
+                        coursesRanking={coursesRanking}
+                        courseSearches={courseSearches}
+                      />
                     );
                   } else if (value === 3) {
                     return (
-                      <Paper className={classes.paper}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            style={{ fontWeight: 600, paddingBottom: "10px" }}
-                          >
-                            Project Listings Report
-                          </Typography>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() =>
-                              history.push(`/admin/analytics/projects`)
-                            }
-                          >
-                            View More Project-Related Analysis
-                          </Button>
-                        </div>
-
-                        <div
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              width: "80%",
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: "20px",
-                                paddingTop: "20px",
-                              }}
-                            >
-                              <Typography variant="h6">
-                                Skills Breakdown
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Breakdown of skills required in project
-                                    listings
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <ResponsiveContainer width="100%" height={430}>
-                              <BarChart
-                                data={popularSkill && popularSkill}
-                                margin={{
-                                  top: 10,
-                                  right: 30,
-                                  left: 20,
-                                  bottom: 20,
-                                }}
-                              >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="skill">
-                                  <Label
-                                    value={`Skills Required in Listed Projects`}
-                                    position="bottom"
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </XAxis>
-                                <YAxis>
-                                  <Label
-                                    value="Number of Projects"
-                                    position="left"
-                                    angle={-90}
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </YAxis>
-                                <Tooltip />
-
-                                <Bar dataKey="Number" fill="#164D8F" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: "20px",
-                                paddingTop: "20px",
-                              }}
-                            >
-                              <Typography variant="h6">
-                                Project Searches
-                              </Typography>
-                              <TooltipMui
-                                title={
-                                  <Typography variant="body2">
-                                    Keywords entered by the students and the
-                                    respective occurences when searching for
-                                    projects on Codeine
-                                  </Typography>
-                                }
-                              >
-                                <IconButton disableRipple size="small">
-                                  <Info fontSize="small" color="primary" />
-                                </IconButton>
-                              </TooltipMui>
-                            </div>
-                            <ResponsiveContainer width="100%" height={430}>
-                              <BarChart
-                                data={projectSearches && projectSearches}
-                                margin={{
-                                  top: 10,
-                                  right: 30,
-                                  left: 20,
-                                  bottom: 20,
-                                }}
-                              >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="keyword">
-                                  <Label
-                                    value={`Keywords Entered by Members`}
-                                    position="bottom"
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </XAxis>
-                                <YAxis>
-                                  <Label
-                                    value="Number of Occurences for that keyword"
-                                    position="left"
-                                    angle={-90}
-                                    offset={5}
-                                    style={{ textAnchor: "middle" }}
-                                  />
-                                </YAxis>
-                                <Tooltip />
-
-                                <Bar dataKey="Occurences" fill="#164D8F" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-                      </Paper>
+                      <ProjectReport
+                        popularSkill={popularSkill}
+                        projectSearches={projectSearches}
+                      />
                     );
                   } else {
                     return null;

@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(3),
-    minWidth: "70%",
+    minWidth: "100%",
     display: "flex",
     flexDirection: "column",
     marginBottom: "30px",
@@ -36,6 +36,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "15px",
     marginBottom: "10px",
     width: "200px",
+  },
+  statsDiv: {
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
 }));
 
@@ -107,6 +116,7 @@ const StudentAnalysis = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h6" style={{ paddingRight: "15px" }}>
@@ -148,13 +158,8 @@ const StudentAnalysis = ({
         >
           Students' Engagement Level for The Course
         </Typography>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Active Rate</Typography>
               <Tooltip
@@ -174,12 +179,7 @@ const StudentAnalysis = ({
                 falseStarters.active_members_percentage * 100 + "%"}
             </Typography>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">False Starters Rate</Typography>
               <Tooltip
@@ -200,12 +200,7 @@ const StudentAnalysis = ({
                 falseStarters.false_starter_percentage * 100 + "%"}
             </Typography>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div className={classes.statsDiv}>
             <div style={{ display: "flex" }}>
               <Typography variant="h6">Inactive Members</Typography>
               <Tooltip

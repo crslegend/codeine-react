@@ -15,14 +15,16 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import { Link, useHistory, useParams } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import logo from "../../assets/CodeineLogos/Member.svg";
-import Service from "../../AxiosService";
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import memberLogo from "../assets/CodeineLogos/Member.svg";
+import partnerLogo from "../assets/CodeineLogos/Partner.svg";
+import adminLogo from "../assets/CodeineLogos/Admin.svg";
+import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
 import { ToggleButton } from "@material-ui/lab";
-import Toast from "../../components/Toast.js";
+import Toast from "../components/Toast.js";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
@@ -46,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
   languageButtons: {
     minWidth: 80,
     marginRight: "15px",
+    marginBottom: "10px",
     height: 30,
   },
   categoryButtons: {
@@ -78,12 +81,40 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
+  redButtonPadded: {
+    backgroundColor: theme.palette.red.main,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  },
+  greenButton: {
+    backgroundColor: theme.palette.green.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkgreen.main,
+    },
+  },
 }));
 
-const EditArticle = () => {
+const EditArticle = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const { id } = useParams();
+  const location = useLocation();
+  const userType = location.pathname.split("/", 4)[3];
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -104,7 +135,7 @@ const EditArticle = () => {
     }
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -113,6 +144,9 @@ const EditArticle = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const open = Boolean(anchorEl);
+  const popoverid = open ? "simple-popover" : undefined;
 
   const [dialogopen, setDialogOpen] = useState(false);
 
@@ -124,8 +158,15 @@ const EditArticle = () => {
     setDialogOpen(false);
   };
 
-  const open = Boolean(anchorEl);
-  const popoverid = open ? "simple-popover" : undefined;
+  const [dialog2open, setDialog2Open] = useState(false);
+
+  const handleDialog2Open = () => {
+    setDialog2Open(true);
+  };
+
+  const handleDialog2Close = () => {
+    setDialog2Open(false);
+  };
 
   const editor = {
     toolbar: [
@@ -185,13 +226,12 @@ const EditArticle = () => {
     }
   }, []);
 
-  const [debouncedText] = useDebounce(articleDetails, 2500);
+  const [debouncedText] = useDebounce(articleDetails, 1000);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
     if (debouncedText) {
       if (!articleDetails.is_published && articleDetails.title !== "") {
-        console.log("useeffect 1 debounce");
         Service.client
           .put(`/articles/${id}`, articleDetails)
           .then((res) => {
@@ -202,6 +242,7 @@ const EditArticle = () => {
           });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedText]);
 
   const [languages, setLanguages] = useState({
@@ -378,14 +419,23 @@ const EditArticle = () => {
 
   const publishArticle = () => {
     if (!validateArticle()) {
-      Service.client
-        .patch(`/articles/${id}/publish`)
-        .then((res) => {
-          history.push(`/article/${res.data.id}`);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      var millisecondsToWait = 1500;
+      setTimeout(function () {
+        Service.client
+          .patch(`/articles/${id}/publish`)
+          .then((res) => {
+            if (userType === "member") {
+              history.push(`/article/member/${res.data.id}`);
+            } else if (userType === "partner") {
+              history.push(`/article/partner/${res.data.id}`);
+            } else if (userType === "admin") {
+              history.push(`/article/admin/${res.data.id}`);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, millisecondsToWait);
     }
   };
 
@@ -393,8 +443,13 @@ const EditArticle = () => {
     Service.client
       .patch(`/articles/${id}/unpublish`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -405,8 +460,13 @@ const EditArticle = () => {
     Service.client
       .delete(`/articles/${id}`)
       .then((res) => {
-        alert("to check if member/admin/partner");
-        history.push(`/member/articles`);
+        if (userType === "member") {
+          history.push(`/member/articles`);
+        } else if (userType === "partner") {
+          history.push(`/partner/home/article`);
+        } else if (userType === "admin") {
+          history.push(`/admin/article`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -446,11 +506,27 @@ const EditArticle = () => {
         .then((res) => {
           console.log(data);
           setSaveState(true);
-          history.push(`/article/${id}`);
+          if (userType === "member") {
+            history.push(`/article/member/${id}`);
+          } else if (userType === "partner") {
+            history.push(`/article/partner/${id}`);
+          } else if (userType === "admin") {
+            history.push(`/article/admin/${id}`);
+          }
         })
         .catch((err) => {
           console.log(err);
         });
+    }
+  };
+
+  const backToArticle = () => {
+    if (userType === "member") {
+      history.push(`/article/member/${id}`);
+    } else if (userType === "partner") {
+      history.push(`/article/partner/${id}`);
+    } else if (userType === "admin") {
+      history.push(`/article/admin/${id}`);
     }
   };
 
@@ -467,7 +543,15 @@ const EditArticle = () => {
             width: 100,
           }}
         >
-          <img src={logo} width="120%" alt="codeine logo" />
+          {userType === "member" && (
+            <img src={memberLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "partner" && (
+            <img src={partnerLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "admin" && (
+            <img src={adminLogo} width="120%" alt="codeine logo" />
+          )}
         </Link>
         {user && articleDetails && !articleDetails.is_published && (
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -491,138 +575,162 @@ const EditArticle = () => {
 
   const loggedInNavbar = (
     <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Avatar
-          onClick={handleClick}
-          src={user && user.profile_photo}
-          alt=""
-          style={{ width: "34px", height: "34px", cursor: "pointer" }}
-        />
-        <Popover
-          id={popoverid}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <div className={classes.popover}>
-            <div className={classes.toprow}>
-              <Avatar
-                src={user && user.profile_photo}
-                alt=""
-                style={{ width: "55px", height: "55px", marginRight: "15px" }}
-              />
-              <div
-                style={{
-                  flexDirection: "column",
-                  width: "100%",
-                }}
+      {userType === "member" && (
+        <ListItem style={{ whiteSpace: "nowrap" }}>
+          <Avatar
+            onClick={handleClick}
+            src={user && user.profile_photo}
+            alt=""
+            style={{ width: "34px", height: "34px", cursor: "pointer" }}
+          />
+          <Popover
+            id={popoverid}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div className={classes.popover}>
+              <div className={classes.toprow}>
+                <Avatar
+                  src={user && user.profile_photo}
+                  alt=""
+                  style={{ width: "55px", height: "55px", marginRight: "15px" }}
+                />
+                <div
+                  style={{
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                  onClick={() => {
+                    history.push("/member/profile");
+                  }}
+                >
+                  <Typography
+                    style={{
+                      fontWeight: "600",
+                      paddingTop: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {user && user.first_name + " " + user.last_name}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "14px",
+                      color: "#757575",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Manage your profile
+                  </Typography>
+                </div>
+              </div>
+
+              <Divider style={{ marginBottom: "5px" }} />
+
+              <Typography
+                className={classes.typography}
                 onClick={() => {
-                  history.push("/member/profile");
+                  //history.push("/member/dashboard");
+                  alert("Clicked on Dashboard");
                 }}
               >
-                <Typography
-                  style={{
-                    fontWeight: "600",
-                    paddingTop: "5px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {user && user.first_name + " " + user.last_name}
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: "14px",
-                    color: "#757575",
-                    cursor: "pointer",
-                  }}
-                >
-                  Manage your profile
-                </Typography>
-              </div>
+                Dashboard
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/courses");
+                }}
+              >
+                Courses
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/consultations");
+                }}
+              >
+                Consultations
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/articles");
+                }}
+              >
+                Articles
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Industry projects");
+                }}
+              >
+                Industry Projects
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Helpdesk");
+                }}
+              >
+                Helpdesk
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  history.push("/member/payment");
+                }}
+              >
+                My Payments
+              </Typography>
+              <Typography
+                className={classes.typography}
+                onClick={() => {
+                  Service.removeCredentials();
+                  setLoggedIn(false);
+                  history.push("/");
+                }}
+              >
+                Log out
+              </Typography>
             </div>
-
-            <Divider style={{ marginBottom: "5px" }} />
-
+          </Popover>
+        </ListItem>
+      )}
+      {(userType === "partner" || userType === "admin") && (
+        <ListItem style={{ whiteSpace: "nowrap" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              textTransform: "capitalize",
+            }}
+            onClick={() => {
+              Service.removeCredentials();
+              history.push("/partner");
+            }}
+          >
             <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/member/dashboard");
-                alert("Clicked on Dashboard");
-              }}
+              variant="h6"
+              style={{ fontSize: "15px", color: "#fff" }}
             >
-              Dashboard
+              Logout
             </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/courses");
-              }}
-            >
-              Courses
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/consultations");
-              }}
-            >
-              Consultations
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/articles");
-              }}
-            >
-              Articles
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
-              }}
-            >
-              Industry Projects
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Helpdesk");
-              }}
-            >
-              Helpdesk
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/payment");
-              }}
-            >
-              My Payments
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }}
-            >
-              Log out
-            </Typography>
-          </div>
-        </Popover>
-      </ListItem>
+          </Button>
+        </ListItem>
+      )}
     </Fragment>
   );
 
@@ -904,10 +1012,8 @@ const EditArticle = () => {
             <>
               <Button
                 variant="contained"
-                color="primary"
-                style={{
-                  textTransform: "capitalize",
-                }}
+                className={classes.greenButton}
+                style={{ marginBottom: "10px" }}
                 onClick={(e) => saveAndPublishArticle(e)}
               >
                 Save and publish
@@ -918,8 +1024,11 @@ const EditArticle = () => {
                   textTransform: "capitalize",
                   marginLeft: "15px",
                   marginRight: "15px",
+                  marginBottom: "10px",
                 }}
-                onClick={() => history.push(`/article/${id}`)}
+                onClick={() => {
+                  setDialog2Open(true);
+                }}
               >
                 Back to Article
               </Button>
@@ -928,6 +1037,7 @@ const EditArticle = () => {
                 color="primary"
                 style={{
                   textTransform: "capitalize",
+                  marginBottom: "10px",
                 }}
                 onClick={(e) => unpublishArticle()}
               >
@@ -938,9 +1048,8 @@ const EditArticle = () => {
           {articleDetails && !articleDetails.is_published && (
             <Button
               variant="contained"
-              color="primary"
+              className={classes.greenButton}
               style={{
-                textTransform: "capitalize",
                 marginRight: "15px",
               }}
               onClick={(e) => publishArticle(e)}
@@ -950,10 +1059,7 @@ const EditArticle = () => {
           )}
           <Button
             variant="contained"
-            color="primary"
-            style={{
-              textTransform: "capitalize",
-            }}
+            className={classes.redButton}
             onClick={handleClickOpen}
           >
             Delete Article
@@ -966,7 +1072,7 @@ const EditArticle = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Delete Article?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Article?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this article?
@@ -978,10 +1084,35 @@ const EditArticle = () => {
           </Button>
           <Button
             onClick={() => deleteArticle()}
-            variant="contained"
-            color="primary"
+            className={classes.redButtonPadded}
           >
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={dialog2open}
+        onClose={handleDialog2Close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Back to Article</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Please take note that any changes will not be saved. PLease click
+            "Save And Publish" to save your changes.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialog2Close} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => backToArticle()}
+            className={classes.redButtonPadded}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

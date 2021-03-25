@@ -25,10 +25,7 @@ const useStyles = makeStyles((theme) => ({
   insideDrawer: {
     display: "flex",
     flexDirection: "column",
-    paddingTop: theme.spacing(5),
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(7),
-    minHeight: "100vh",
+    padding: theme.spacing(5),
   },
   avatar: {
     width: theme.spacing(15),
@@ -73,13 +70,10 @@ const CourseDetailsDrawer = ({
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
 
-  console.log(courseDetails);
+  // console.log(courseDetails);
 
   const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
 
@@ -160,6 +154,7 @@ const CourseDetailsDrawer = ({
               title: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
           required
         />
       </div>
@@ -174,8 +169,8 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           multiline
-          rows={4}
-          inputProps={{ className: classes.textarea }}
+          rows={8}
+          inputProps={{ className: classes.textarea, style: { fontSize: "14px" } }}
           value={courseDetails && courseDetails.description}
           onChange={(e) =>
             setCourseDetails({
@@ -194,11 +189,7 @@ const CourseDetailsDrawer = ({
             </Typography>
           </label>
           <Tooltip
-            title={
-              <Typography variant="body2">
-                Separate the requirements with commas (eg. NodeJS,HTML,CSS)
-              </Typography>
-            }
+            title={<Typography variant="body2">Separate the requirements with commas (eg. NodeJS,HTML,CSS)</Typography>}
           >
             <IconButton disableRipple size="small">
               <Help fontSize="small" color="primary" />
@@ -218,6 +209,7 @@ const CourseDetailsDrawer = ({
               requirements: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
           required
         />
       </div>
@@ -231,8 +223,7 @@ const CourseDetailsDrawer = ({
           <Tooltip
             title={
               <Typography variant="body2">
-                Separate the objectives with commas (eg. to gain knowledge,to
-                make use of)
+                Separate the objectives with commas (eg. to gain knowledge,to make use of)
               </Typography>
             }
           >
@@ -249,7 +240,7 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={4}
-          inputProps={{ className: classes.textarea }}
+          inputProps={{ className: classes.textarea, style: { fontSize: "14px" } }}
           value={courseDetails && courseDetails.learning_objectives}
           onChange={(e) =>
             setCourseDetails({
@@ -261,12 +252,7 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ float: "right" }}
-          onClick={() => handleNextPage()}
-        >
+        <Button variant="contained" color="primary" style={{ float: "right" }} onClick={() => handleNextPage()}>
           Next
         </Button>
       </div>
@@ -485,9 +471,7 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="preview">
-          <Typography variant="body2">
-            Introduction Preview Video URL (Required)
-          </Typography>
+          <Typography variant="body2">Introduction Preview Video URL (Required)</Typography>
         </label>
         <TextField
           id="preview"
@@ -502,6 +486,7 @@ const CourseDetailsDrawer = ({
               introduction_video_url: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -512,8 +497,7 @@ const CourseDetailsDrawer = ({
           <Tooltip
             title={
               <Typography variant="body2">
-                The repository URL will be used for the integrated coding
-                environment.
+                The repository URL will be used for the integrated coding environment.
               </Typography>
             }
           >
@@ -536,6 +520,7 @@ const CourseDetailsDrawer = ({
               github_repo: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -558,6 +543,7 @@ const CourseDetailsDrawer = ({
               exp_points: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -580,6 +566,7 @@ const CourseDetailsDrawer = ({
               duration: e.target.value,
             })
           }
+          inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
       <div style={{ marginBottom: "30px" }}>
@@ -610,11 +597,7 @@ const CourseDetailsDrawer = ({
         <Button variant="contained" onClick={() => setDrawerPageNum(1)}>
           Back
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleSaveCourseDetails()}
-        >
+        <Button variant="contained" color="primary" onClick={() => handleSaveCourseDetails()}>
           Save
         </Button>
       </div>
@@ -624,15 +607,8 @@ const CourseDetailsDrawer = ({
   return (
     <Fragment>
       <div>
-        <Drawer
-          anchor="right"
-          open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          classes={{ paper: classes.drawer }}
-        >
-          <div className={classes.insideDrawer}>
-            {drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}
-          </div>
+        <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)} classes={{ paper: classes.drawer }}>
+          <div className={classes.insideDrawer}>{drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}</div>
         </Drawer>
       </div>
 

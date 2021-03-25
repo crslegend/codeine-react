@@ -125,9 +125,13 @@ const Consultation = () => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h1">Upcoming schedule at a glance</Typography>
+        <Typography variant="h1" style={{ fontWeight: "700" }}>
+          Upcoming schedule at a glance
+        </Typography>
         <AddConsultation
-          handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+          handleGetAllConsultations={() =>
+            handleGetAllConsultations(setConsultations, setLoading)
+          }
           setSnackbar={setSnackbar}
           setSnackbarOpen={setSnackbarOpen}
         />
@@ -142,19 +146,31 @@ const Consultation = () => {
       />
       <Divider className={classes.divider} />
       <ConsultationApplication
-        handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+        handleGetAllConsultations={() =>
+          handleGetAllConsultations(setConsultations, setLoading)
+        }
       />
       {selectedConsultation && (
         <ConsultationDetailsModal
-          handleGetAllConsultations={() => handleGetAllConsultations(setConsultations, setLoading)}
+          handleGetAllConsultations={() =>
+            handleGetAllConsultations(setConsultations, setLoading)
+          }
           selectedConsultation={selectedConsultation}
           setSelectedConsultation={setSelectedConsultation}
           setSnackbar={setSnackbar}
           setSnackbarOpen={setSnackbarOpen}
         />
       )}
-      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} elevation={6} severity={snackbar.severity}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          elevation={6}
+          severity={snackbar.severity}
+        >
           <Typography variant="body1">{snackbar.message}</Typography>
         </Alert>
       </Snackbar>

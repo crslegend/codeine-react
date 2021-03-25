@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Service from "../../AxiosService";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import PageTitle from "../../components/PageTitle";
 import {
   Avatar,
   Box,
   Divider,
+  IconButton,
   Paper,
   Tab,
   Tabs,
@@ -16,13 +17,14 @@ import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 import StudentAnalysis from "./components/StudentAnalysis";
 import StudentDemographics from "./components/StudentDemographics";
+import { ArrowBack } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(4),
-    width: "80%",
-    marginLeft: "auto",
-    marginRight: "auto",
+    width: "100%",
+    // marginLeft: "auto",
+    // marginRight: "auto",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -41,10 +43,17 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   individualStats: {
-    display: "flex",
-    flexDirection: "column",
+    // display: "flex",
+    // flexDirection: "column",
     // alignItems: "center",
     // marginBottom: "5px",
+    display: "flex",
+    flexDirection: "column",
+    // border: "2px solid #e2e2e2",
+    backgroundColor: "#eeeeee",
+    padding: theme.spacing(2),
+    borderRadius: "5px",
+    // marginRight: "30px",
   },
   formControl: {
     marginTop: 0,
@@ -99,6 +108,7 @@ function TabPanel(props) {
 const CourseDetailAnalytics = () => {
   const classes = useStyles();
   const { id } = useParams();
+  const history = useHistory();
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1, 2, 3];
@@ -116,17 +126,15 @@ const CourseDetailAnalytics = () => {
   const [inactiveMembers, setInactiveMembers] = useState();
   const [falseStarters, setFalseStarters] = useState();
   const [memberDemographics, setMemberDemographics] = useState();
-  const [numDaysForStudents, setNumDaysForStudents] = useState();
+  const [numDaysForStudents, setNumDaysForStudents] = useState(7);
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;
 
-    if (newTime.toString().length >= 5) {
-      return newTime.toFixed(5);
-    } else if (newTime.toString.length <= 3) {
-      return newTime.toFixed(3);
+    if (newTime.toString().length >= 3) {
+      return newTime.toFixed(1);
     } else {
-      return newTime.toFixed(newTime.toString.length);
+      return newTime.toFixed(newTime.toString().length);
     }
   };
 
@@ -223,7 +231,15 @@ const CourseDetailAnalytics = () => {
 
   return (
     <div>
-      <PageTitle title="Course Analysis" />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          onClick={() => history.push(`/partner/home/dashboard`)}
+          style={{ marginRight: "30px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <PageTitle title="Course Analysis" />
+      </div>
 
       <Paper className={classes.paper}>
         <div style={{ display: "flex", alignItems: "center" }}>

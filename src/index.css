@@ -17,3 +17,8 @@ code {
   src: local("Roboto Mono"),
     url(./fonts/RobotoMono-VariableFont_wght.ttf) format("truetype");
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
