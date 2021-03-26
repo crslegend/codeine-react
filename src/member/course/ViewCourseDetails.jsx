@@ -14,7 +14,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   Breadcrumbs,
   LinearProgress,
   Typography,
@@ -99,6 +98,13 @@ const styles = makeStyles((theme) => ({
     flexDirection: "column",
     marginBottom: "30px",
   },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
   cardOnRight: {
     width: 400,
     margin: "auto",
@@ -120,6 +126,7 @@ const ViewCourseDetails = () => {
   const { id } = useParams();
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [decoded, setDecoded] = useState("");
   const [course, setCourse] = useState();
   const [courseReviews, setCourseReviews] = useState([]);
   const [progress, setProgress] = useState();
@@ -149,6 +156,7 @@ const ViewCourseDetails = () => {
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+      setDecoded(jwt_decode(Cookies.get("t1")));
     }
   };
 
@@ -229,10 +237,24 @@ const ViewCourseDetails = () => {
     return "";
   };
 
+  const handleProfileLink = (reviewMember) => {
+    if (reviewMember.id === (decoded && decoded.user_id)) {
+      console.log("hello");
+      return "/member/profile";
+    } else {
+      if (reviewMember.member.membership_tier === "PRO") {
+        console.log("hell");
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        console.log("o");
+        return undefined;
+      }
+    }
+  };
+
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
       if (course.pro) {
-        const decoded = jwt_decode(Cookies.get("t1"));
         Service.client
           .get(`/auth/members/${decoded.user_id}`)
           .then((res) => {
@@ -601,23 +623,37 @@ const ViewCourseDetails = () => {
                         key={index}
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
-                        {review.member.profile_photo &&
-                        review.member.profile_photo ? (
-                          <Avatar
-                            style={{ marginRight: "15px" }}
-                            src={review.member.profile_photo}
-                          />
-                        ) : (
-                          <Avatar style={{ marginRight: "15px" }}>
-                            {review.member.first_name.charAt(0)}
-                          </Avatar>
-                        )}
+                        <Link
+                          to={handleProfileLink(review.member)}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {review.member.profile_photo &&
+                          review.member.profile_photo ? (
+                            <Avatar
+                              style={{ marginRight: "15px" }}
+                              src={review.member.profile_photo}
+                            />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {review.member.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                        </Link>
 
                         <div style={{ flexDirection: "column" }}>
-                          <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            {review.member && review.member.first_name}{" "}
-                            {review.member && review.member.last_name}
-                          </Typography>
+                          <Link
+                            to={handleProfileLink(review.member)}
+                            className={classes.profileLink}
+                          >
+                            <Typography
+                              variant="h6"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {review.member && review.member.first_name}{" "}
+                              {review.member && review.member.last_name}
+                            </Typography>
+                          </Link>
+
                           <div
                             style={{ display: "flex", marginBottom: "10px" }}
                           >

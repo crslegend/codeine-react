@@ -20,7 +20,6 @@ const styles = makeStyles((theme) => ({
     borderRadius: 0,
   },
   pro: {
-    fontFamily: "Roboto Mono",
     backgroundColor: theme.palette.primary.main,
     color: "#FFFFFF",
     padding: "0px 3px",
