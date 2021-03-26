@@ -7,6 +7,12 @@ import {
   Button,
   Typography,
   Avatar,
+  Table,
+  TableCell,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@material-ui/core";
 import { LocationOn, Email } from "@material-ui/icons";
 import {
@@ -224,10 +230,10 @@ const PublicProfile = (props) => {
 
   const getMemberCompletedCourses = () => {
     Service.client
-      .get(`/enrollments`)
+      .get(`/auth/members/${id}/courses`)
       .then((res) => {
         console.log(res.data);
-        res.data = res.data.filter((course) => course.course !== null);
+        //res.data = res.data.filter((course) => course.is !== null);
         setCourses(res.data);
       })
       .catch((err) => console.log(err));
@@ -239,8 +245,6 @@ const PublicProfile = (props) => {
     getMemberCompletedCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log(languageList);
 
   const formatDate = (date) => {
     const options = {
@@ -460,43 +464,64 @@ const PublicProfile = (props) => {
               >
                 Courses
               </Typography>
-              <Grid
-                container
+
+              <TableContainer
                 style={{
-                  backgroundColor: "#C4C4C4",
-                  border: "1px solid #474747",
-                  paddingLeft: "20px",
+                  border: "2px solid #474747",
                 }}
+                component={Grid}
               >
-                <Grid item xs={7}>
-                  <Typography variant="body2">title</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="body2">category</Typography>
-                </Grid>
-                <Grid item xs={1}>
-                  <Typography variant="body2">result</Typography>
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                style={{
-                  backgroundColor: "transparent",
-                  border: "1px solid #474747",
-                  paddingLeft: "20px",
-                }}
-              >
-                <Grid item xs={7}>
-                  <Typography variant="body2">title</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="body2">category</Typography>
-                </Grid>
-                <Grid item xs={1}>
-                  <Typography variant="body2">result</Typography>
-                </Grid>
-              </Grid>
+                <Table
+                  className={classes.table}
+                  size="small"
+                  aria-label="a dense table"
+                >
+                  <TableHead>
+                    <TableRow
+                      style={{
+                        backgroundColor: "#C4C4C4",
+                      }}
+                    >
+                      <TableCell>title</TableCell>
+                      <TableCell align="right">category</TableCell>
+                      <TableCell align="right">marks</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {courses && courses.length > 0 ? (
+                      courses.slice(0, 5).map((row, index) => (
+                        <TableRow
+                          key={index}
+                          style={{
+                            borderTop: "1.2px solid #474747",
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {row.title}
+                          </TableCell>
+                          <TableCell align="right">{row.categories}</TableCell>
+                          <TableCell align="right">{row.exp_points}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow
+                        key="error"
+                        style={{
+                          borderTop: "1.2px solid #474747",
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          <Typography>
+                            Member has not completed any courses
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Grid>
+
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
               <Typography
                 variant="h5"

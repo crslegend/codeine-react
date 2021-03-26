@@ -237,6 +237,21 @@ const ViewCourseDetails = () => {
     return "";
   };
 
+  const handleProfileLink = (reviewMember) => {
+    if (reviewMember.id === (decoded && decoded.user_id)) {
+      console.log("hello");
+      return "/member/profile";
+    } else {
+      if (reviewMember.member.membership_tier === "PRO") {
+        console.log("hell");
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        console.log("o");
+        return undefined;
+      }
+    }
+  };
+
   const handleEnrollment = () => {
     if (Cookies.get("t1")) {
       if (course.pro) {
@@ -609,16 +624,9 @@ const ViewCourseDetails = () => {
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
                         <Link
-                          to={
-                            review.member.id === (decoded && decoded.user_id)
-                              ? "/member/profile"
-                              : `/member/profile/${review.member.id}`
-                          }
+                          to={handleProfileLink(review.member)}
                           style={{ textDecoration: "none" }}
                         >
-                          {console.log(
-                            decoded.user_id + " = " + review.member.id
-                          )}
                           {review.member.profile_photo &&
                           review.member.profile_photo ? (
                             <Avatar
@@ -634,11 +642,7 @@ const ViewCourseDetails = () => {
 
                         <div style={{ flexDirection: "column" }}>
                           <Link
-                            to={
-                              review.member.id === (decoded && decoded.user_id)
-                                ? "/member/profile"
-                                : `/member/profile/${review.member.id}`
-                            }
+                            to={handleProfileLink(review.member)}
                             className={classes.profileLink}
                           >
                             <Typography
