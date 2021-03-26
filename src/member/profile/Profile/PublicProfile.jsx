@@ -27,6 +27,7 @@ import MemberNavBar from "../../MemberNavBar";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import { useParams } from "react-router-dom";
+import Label from "./components/Label";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -233,7 +234,9 @@ const PublicProfile = (props) => {
       .get(`/auth/members/${id}/courses`)
       .then((res) => {
         console.log(res.data);
-        //res.data = res.data.filter((course) => course.is !== null);
+        res.data = res.data
+          .filter((course) => course.course !== null)
+          .filter((course) => course.progress === "100.00");
         setCourses(res.data);
       })
       .catch((err) => console.log(err));
@@ -458,12 +461,21 @@ const PublicProfile = (props) => {
               </Typography>
             </Grid>
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
-              <Typography
-                variant="h5"
-                style={{ fontWeight: 600, marginBottom: "15px" }}
-              >
-                Courses
-              </Typography>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                >
+                  Courses
+                </Typography>
+                <Button
+                  style={{ textTransform: "none", marginBottom: "15px" }}
+                  color="primary"
+                  variant="outlined"
+                >
+                  See All Courses
+                </Button>
+              </div>
 
               <TableContainer
                 style={{
@@ -471,11 +483,7 @@ const PublicProfile = (props) => {
                 }}
                 component={Grid}
               >
-                <Table
-                  className={classes.table}
-                  size="small"
-                  aria-label="a dense table"
-                >
+                <Table size="small" aria-label="course table">
                   <TableHead>
                     <TableRow
                       style={{
@@ -483,8 +491,7 @@ const PublicProfile = (props) => {
                       }}
                     >
                       <TableCell>title</TableCell>
-                      <TableCell align="right">category</TableCell>
-                      <TableCell align="right">marks</TableCell>
+                      <TableCell>category</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -497,10 +504,16 @@ const PublicProfile = (props) => {
                           }}
                         >
                           <TableCell component="th" scope="row">
-                            {row.title}
+                            {row.course.title}
                           </TableCell>
-                          <TableCell align="right">{row.categories}</TableCell>
-                          <TableCell align="right">{row.exp_points}</TableCell>
+                          <TableCell>
+                            <div style={{ display: "flex" }}>
+                              {row.course.categories &&
+                                row.course.categories.map((label) => (
+                                  <Label label={label} />
+                                ))}
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))
                     ) : (
