@@ -13,6 +13,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Dialog,
 } from "@material-ui/core";
 import { LocationOn, Email } from "@material-ui/icons";
 import {
@@ -26,7 +27,7 @@ import {
 import MemberNavBar from "../../MemberNavBar";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Label from "./components/Label";
 
 const useStyles = makeStyles((theme) => ({
@@ -68,6 +69,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "9px",
     width: "30px",
   },
+  courseLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
 }));
 
 const CustomTooltip = ({ payload, label, active, category }) => {
@@ -101,6 +109,7 @@ const PublicProfile = (props) => {
   const [languageList, setLanguageList] = useState([]);
 
   const [courses, setCourses] = useState([]);
+  const [courseDialog, setCourseDialog] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -233,7 +242,7 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/auth/members/${id}/courses`)
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         res.data = res.data
           .filter((course) => course.course !== null)
           .filter((course) => course.progress === "100.00");
@@ -358,7 +367,7 @@ const PublicProfile = (props) => {
                 }}
               >
                 <Typography variant="body2">completed courses</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">{courses.length}</Typography>
               </div>
               <Typography
                 variant="body2"
@@ -468,13 +477,18 @@ const PublicProfile = (props) => {
                 >
                   Courses
                 </Typography>
-                <Button
-                  style={{ textTransform: "none", marginBottom: "15px" }}
-                  color="primary"
-                  variant="outlined"
-                >
-                  See All Courses
-                </Button>
+                {courses && courses.length > 0 ? (
+                  <Button
+                    style={{ textTransform: "none", marginBottom: "15px" }}
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => setCourseDialog(true)}
+                  >
+                    See All Courses
+                  </Button>
+                ) : (
+                  ""
+                )}
               </div>
 
               <TableContainer
@@ -504,7 +518,12 @@ const PublicProfile = (props) => {
                           }}
                         >
                           <TableCell component="th" scope="row">
-                            {row.course.title}
+                            <Link
+                              className={classes.courseLink}
+                              to={`/courses/${row.course.id}`}
+                            >
+                              {row.course.title}
+                            </Link>
                           </TableCell>
                           <TableCell>
                             <div style={{ display: "flex" }}>
@@ -523,10 +542,15 @@ const PublicProfile = (props) => {
                           borderTop: "1.2px solid #474747",
                         }}
                       >
-                        <TableCell component="th" scope="row">
-                          <Typography>
-                            Member has not completed any courses
-                          </Typography>
+                        <TableCell
+                          colSpan={2}
+                          style={{
+                            textAlign: "center",
+                            height: "150px",
+                          }}
+                          valign="middle"
+                        >
+                          Member has not completed any courses
                         </TableCell>
                       </TableRow>
                     )}
@@ -546,6 +570,60 @@ const PublicProfile = (props) => {
           </Grid>
         </Grid>
       </Grid>
+
+      <Dialog
+        open={courseDialog}
+        onClose={() => setCourseDialog(false)}
+        style={{ borderRadius: "50px" }}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <TableContainer style={{ maxHeight: "500px" }} component={Grid}>
+          <Table size="small" aria-label="course table">
+            <TableHead>
+              <TableRow
+                style={{
+                  backgroundColor: "#C4C4C4",
+                  height: "55px",
+                }}
+              >
+                <TableCell>title</TableCell>
+                <TableCell>category</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {courses &&
+                courses.map((row, index) => (
+                  <TableRow
+                    key={index}
+                    style={{
+                      borderTop: "1.2px solid #474747",
+                      height: "40px",
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      <Link
+                        className={classes.courseLink}
+                        to={`/courses/${row.course.id}`}
+                      >
+                        {row.course.title}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ display: "flex" }}>
+                        {row.course.categories &&
+                          row.course.categories.map((label) => (
+                            <Label label={label} />
+                          ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Dialog>
     </Fragment>
   );
 };
