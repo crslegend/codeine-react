@@ -685,14 +685,17 @@ const ViewCourseDetails = () => {
                                   {review.member && review.member.last_name}
                                 </Typography>
                               </Link>
-                              <div style={{ marginTop: "4px" }}>
-                                <Typography
-                                  variant="subtitle1"
-                                  className={classes.pro}
-                                >
-                                  PRO
-                                </Typography>
-                              </div>
+                              {review.member.member.membership_tier ===
+                                "PRO" && (
+                                <div style={{ marginTop: "4px" }}>
+                                  <Typography
+                                    variant="subtitle1"
+                                    className={classes.pro}
+                                  >
+                                    PRO
+                                  </Typography>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <Typography
