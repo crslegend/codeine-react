@@ -29,6 +29,7 @@ import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import { useParams, Link } from "react-router-dom";
 import Label from "./components/Label";
+import ExperienceCard from "./components/ExperienceCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -110,6 +111,9 @@ const PublicProfile = (props) => {
 
   const [courses, setCourses] = useState([]);
   const [courseDialog, setCourseDialog] = useState(false);
+
+  const [badges, setBadges] = useState([]);
+  const [experiences, setExperiences] = useState([]);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -251,10 +255,21 @@ const PublicProfile = (props) => {
       .catch((err) => console.log(err));
   };
 
+  const getMemberCV = () => {
+    Service.client
+      .get(`/auth/cvs`)
+      .then((res) => {
+        console.log(res.data);
+        setExperiences(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
     getMemberData();
     getMemberCompletedCourses();
+    getMemberCV();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -468,6 +483,22 @@ const PublicProfile = (props) => {
               >
                 Badges
               </Typography>
+              {badges && badges.length > 0 ? (
+                badges.map((badge, index) => {
+                  //return <ExperienceCard key={index} experience={experience} />;
+                })
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography
+                    style={{
+                      textAlign: "center",
+                      color: "#C4C4C4",
+                    }}
+                  >
+                    No Achieved Badges
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -504,8 +535,10 @@ const PublicProfile = (props) => {
                         backgroundColor: "#C4C4C4",
                       }}
                     >
-                      <TableCell>title</TableCell>
-                      <TableCell>category</TableCell>
+                      <TableCell style={{ fontWeight: 600 }}>title</TableCell>
+                      <TableCell style={{ fontWeight: 600 }}>
+                        category
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -566,6 +599,17 @@ const PublicProfile = (props) => {
               >
                 Experiences
               </Typography>
+              {experiences && experiences.length > 0 ? (
+                experiences.map((experience, index) => {
+                  return <ExperienceCard key={index} experience={experience} />;
+                })
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography style={{ textAlign: "center", color: "#C4C4C4" }}>
+                    No Experience Yet
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
@@ -588,8 +632,8 @@ const PublicProfile = (props) => {
                   height: "55px",
                 }}
               >
-                <TableCell>title</TableCell>
-                <TableCell>category</TableCell>
+                <TableCell style={{ fontWeight: 600 }}>title</TableCell>
+                <TableCell style={{ fontWeight: 600 }}>category</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

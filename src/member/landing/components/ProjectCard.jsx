@@ -64,31 +64,20 @@ const ProjectCard = (props) => {
               >
                 <Typography
                   style={{
-                    fontFamily: "Roboto Mono",
                     fontWeight: 600,
                   }}
                   variant="h5"
                 >
                   {project && project.title}
                 </Typography>
-                <Typography
-                  style={{
-                    fontFamily: "Roboto Mono",
-                  }}
-                  variant="h6"
-                >
+                <Typography variant="h6">
                   {project &&
                     formatDate(project.start_date) +
                       " to " +
                       formatDate(project.end_date)}
                 </Typography>
               </div>
-              <Typography
-                style={{
-                  fontFamily: "Roboto Mono",
-                }}
-                variant="h6"
-              >
+              <Typography variant="h6">
                 {project &&
                   project.partner.partner.organization.organization_name}
               </Typography>
@@ -100,7 +89,6 @@ const ProjectCard = (props) => {
 
                 <Typography
                   style={{
-                    fontFamily: "Roboto Mono",
                     color: "#921515",
                   }}
                   variant="h6"

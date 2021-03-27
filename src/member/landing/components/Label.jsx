@@ -52,15 +52,17 @@ const Label = (props) => {
 
   return (
     <Tooltip title={getTitle()}>
-      <Typography
-        variant="subtitle1"
-        className={classes.root}
-        style={{
-          backgroundColor: getColor(),
-        }}
-      >
-        {label}
-      </Typography>
+      <label>
+        <Typography
+          variant="subtitle1"
+          className={classes.root}
+          style={{
+            backgroundColor: getColor(),
+          }}
+        >
+          {label}
+        </Typography>
+      </label>
     </Tooltip>
   );
 };
