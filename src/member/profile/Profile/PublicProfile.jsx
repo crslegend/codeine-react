@@ -30,8 +30,8 @@ import Navbar from "../../../components/Navbar";
 import partnerLogo from "../../../assets/CodeineLogos/Partner.svg";
 import adminLogo from "../../../assets/CodeineLogos/Admin.svg";
 import Service from "../../../AxiosService";
+import { useHistory, useParams, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import { useHistory, useParams, useLocation, Link } from "react-router-dom";
 import Label from "./components/Label";
 import ExperienceCard from "./components/ExperienceCard";
 
@@ -107,13 +107,10 @@ const PublicProfile = (props) => {
   const classes = useStyles();
   const { id } = useParams();
   const history = useHistory();
-  const location = useLocation();
-  const userType = location.pathname.split("/", 3)[2];
-
+  const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [member, setMember] = useState("");
-
   const [dataList, setDataList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
 
@@ -126,34 +123,21 @@ const PublicProfile = (props) => {
   const checkIfLoggedIn = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const userid = jwt_decode(Service.getJWT()).user_id;
-      if (userType === "member") {
-        Service.client
-          .get(`/auth/members/${userid}`)
-          .then((res) => {
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else if (userType === "partner") {
-        Service.client
-          .get(`/auth/partners/${userid}`)
-          .then((res) => {
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else if (userType === "admin") {
-        Service.client
-          .get(`/auth/admins/${userid}`)
-          .then((res) => {
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      Service.client
+        .get(`/auth/members/${userid}`)
+        .then((res) => {
+          setLoggedIn(true);
+          if (res.data.member !== null) {
+            setUserType("member");
+          } else if (res.data.is_admin) {
+            setUserType("admin");
+          } else if (res.data.partner !== null) {
+            setUserType("partner");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -282,7 +266,6 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/auth/members/${id}/courses`)
       .then((res) => {
-        //console.log(res.data);
         res.data = res.data
           .filter((course) => course.course !== null)
           .filter((course) => course.progress === "100.00");
@@ -394,6 +377,7 @@ const PublicProfile = (props) => {
 
       <Grid container className={classes.root}>
         {console.log(member)}
+
         <Grid item xs={3}>
           <div className={classes.avatar}>
             {member.profile_photo && member.profile_photo ? (
