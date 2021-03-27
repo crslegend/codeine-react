@@ -130,7 +130,7 @@ const MemberNavBar = (props) => {
   };
 
   const handlePayment = () => {
-    console.log(user);
+    // console.log(user);
 
     const data = {
       subscription_fee: "5.99",
@@ -141,7 +141,7 @@ const MemberNavBar = (props) => {
     Service.client
       .post(`/auth/membership-subscriptions`, data)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
 
         handleStripePaymentGateway(
           5.99,
