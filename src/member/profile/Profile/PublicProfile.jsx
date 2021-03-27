@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
+  ListItem,
   Card,
   CardContent,
   Button,
@@ -25,9 +26,12 @@ import {
   Tooltip,
 } from "recharts";
 import MemberNavBar from "../../MemberNavBar";
-import Cookies from "js-cookie";
+import Navbar from "../../../components/Navbar";
+import partnerLogo from "../../../assets/CodeineLogos/Partner.svg";
+import adminLogo from "../../../assets/CodeineLogos/Admin.svg";
 import Service from "../../../AxiosService";
-import { useParams, Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import { useHistory, useParams, useLocation, Link } from "react-router-dom";
 import Label from "./components/Label";
 import ExperienceCard from "./components/ExperienceCard";
 
@@ -102,8 +106,12 @@ const CustomTooltip = ({ payload, label, active, category }) => {
 const PublicProfile = (props) => {
   const classes = useStyles();
   const { id } = useParams();
+  const history = useHistory();
+  const location = useLocation();
+  const userType = location.pathname.split("/", 3)[2];
 
   const [loggedIn, setLoggedIn] = useState(false);
+
   const [member, setMember] = useState("");
 
   const [dataList, setDataList] = useState([]);
@@ -116,8 +124,36 @@ const PublicProfile = (props) => {
   const [experiences, setExperiences] = useState([]);
 
   const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      if (userType === "member") {
+        Service.client
+          .get(`/auth/members/${userid}`)
+          .then((res) => {
+            setLoggedIn(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (userType === "partner") {
+        Service.client
+          .get(`/auth/partners/${userid}`)
+          .then((res) => {
+            setLoggedIn(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (userType === "admin") {
+        Service.client
+          .get(`/auth/admins/${userid}`)
+          .then((res) => {
+            setLoggedIn(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
   };
 
@@ -257,10 +293,20 @@ const PublicProfile = (props) => {
 
   const getMemberCV = () => {
     Service.client
-      .get(`/auth/cvs`)
+      .get(`/members/${id}/cvs`)
       .then((res) => {
         console.log(res.data);
         setExperiences(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getMemberBadges = () => {
+    Service.client
+      .get(`/members/${id}/achievements`)
+      .then((res) => {
+        console.log(res.data);
+        setBadges(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -270,6 +316,7 @@ const PublicProfile = (props) => {
     getMemberData();
     getMemberCompletedCourses();
     getMemberCV();
+    getMemberBadges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -287,9 +334,64 @@ const PublicProfile = (props) => {
     return "";
   };
 
+  const navLogo = (
+    <Fragment>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Link
+          to="/"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            marginRight: "35px",
+            width: 100,
+          }}
+        >
+          {userType === "partner" && (
+            <img src={partnerLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "admin" && (
+            <img src={adminLogo} width="120%" alt="codeine logo" />
+          )}
+        </Link>
+      </div>
+    </Fragment>
+  );
+
+  const loggedInNavbar = (
+    <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{
+            textTransform: "capitalize",
+          }}
+          onClick={() => {
+            Service.removeCredentials();
+            if (userType === "partner") {
+              history.push("/partner");
+            } else if (userType === "admin") {
+              history.push("/admin");
+            }
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Logout
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
   return (
     <Fragment>
-      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      {userType === "partner" || userType === "admin" ? (
+        <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
+      ) : (
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+
       <Grid container className={classes.root}>
         {console.log(member)}
         <Grid item xs={3}>
