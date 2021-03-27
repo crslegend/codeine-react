@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Typography,
@@ -7,7 +7,6 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
@@ -76,16 +75,15 @@ const CourseCard = (props) => {
                 fontFamily: "Roboto Mono",
                 fontWeight: 600,
               }}
-              variant="h5"
+              variant="h6"
             >
               {course && course.title}
             </Typography>
             <Typography
-              variant="h6"
+              variant="body1"
               style={{
                 paddingBottom: "30px",
                 fontFamily: "Roboto Mono",
-                fontWeight: 600,
               }}
             >
               {course &&

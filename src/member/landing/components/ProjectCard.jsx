@@ -37,7 +37,6 @@ const ProjectCard = (props) => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -81,11 +80,20 @@ const ProjectCard = (props) => {
                 {project &&
                   project.partner.partner.organization.organization_name}
               </Typography>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                {/*project &&
-                  project.categories.map((category) => (
-                    <Label label={category} />
-                  ))*/}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "5px",
+                }}
+              >
+                <div style={{ display: "flex" }}>
+                  {project &&
+                    project.categories.map((category) => (
+                      <Label label={category} />
+                    ))}
+                  {console.log(project)}
+                </div>
 
                 <Typography
                   style={{
