@@ -73,6 +73,22 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
     height: "230px",
   },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
 }));
 
 const StudentPage = () => {
@@ -127,6 +143,7 @@ const StudentPage = () => {
     is_active: "",
     date_joined: "",
     profile_photo: "",
+    membership_tier: "",
   });
 
   const studentColumns = [
@@ -175,6 +192,10 @@ const StudentPage = () => {
         </div>
       ),
       width: 130,
+    },
+    {
+      field: "membership_tier",
+      hidden: true,
     },
   ];
 
@@ -240,8 +261,24 @@ const StudentPage = () => {
     Service.client
       .get(`/enrolled-members`, { params: { ...queryParams } })
       .then((res) => {
-        // console.log(res.data);
-        setAllStudentList(res.data);
+        console.log(res.data);
+        let arr = [];
+        let obj = {};
+        for (let i = 0; i < res.data.length; i++) {
+          obj = {
+            course: res.data[i].course,
+            first_name: res.data[i].first_name,
+            last_name: res.data[i].last_name,
+            email: res.data[i].email,
+            is_active: res.data[i].is_active,
+            date_joined: res.data[i].date_joined,
+            profile_photo: res.data[i].profile_photo,
+            member: res.data[i].member,
+            membership_tier: res.data[i].member.member.membership_tier,
+          };
+          arr.push(obj);
+        }
+        setAllStudentList(arr);
         studentRows = removeDuplicateStudent(allStudentList);
       })
       .catch((err) => console.log(err));
@@ -283,6 +320,21 @@ const StudentPage = () => {
 
   const handleClose = () => {
     setOpenDialog(false);
+  };
+
+  const handleProfileLink = (m) => {
+    if (m.membership_tier === "PRO") {
+      // console.log("hell");
+      return `/member/profile/${m.id}`;
+    }
+  };
+
+  const toRenderProfileLinkOrNot = (m) => {
+    if (m.membership_tier === "PRO") {
+      return true;
+    }
+
+    return false;
   };
 
   return (
@@ -366,7 +418,24 @@ const StudentPage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                {selectedStudent.profile_photo ? (
+                {toRenderProfileLinkOrNot(selectedStudent) ? (
+                  <a
+                    href={handleProfileLink(selectedStudent)}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {selectedStudent.profile_photo ? (
+                      <Avatar
+                        src={selectedStudent.profile_photo}
+                        alt=""
+                        className={classes.avatar}
+                      />
+                    ) : (
+                      <Avatar className={classes.avatar}>
+                        {selectedStudent.email.charAt(0)}
+                      </Avatar>
+                    )}
+                  </a>
+                ) : selectedStudent.profile_photo ? (
                   <Avatar
                     src={selectedStudent.profile_photo}
                     alt=""
@@ -386,11 +455,33 @@ const StudentPage = () => {
                     flexWrap: "wrap",
                   }}
                 >
-                  <Typography style={{ fontSize: "20px" }}>
-                    <strong>
-                      {selectedStudent.first_name} {selectedStudent.last_name}{" "}
-                    </strong>
-                  </Typography>
+                  {toRenderProfileLinkOrNot(selectedStudent) ? (
+                    <a
+                      href={handleProfileLink(selectedStudent)}
+                      className={classes.profileLink}
+                    >
+                      <Typography style={{ fontSize: "20px" }}>
+                        <strong>
+                          {selectedStudent.first_name}{" "}
+                          {selectedStudent.last_name}{" "}
+                        </strong>
+                      </Typography>
+                    </a>
+                  ) : (
+                    <Typography style={{ fontSize: "20px" }}>
+                      <strong>
+                        {selectedStudent.first_name} {selectedStudent.last_name}{" "}
+                      </strong>
+                    </Typography>
+                  )}
+                  {selectedStudent &&
+                    selectedStudent.membership_tier === "PRO" && (
+                      <div style={{ marginTop: "4px" }}>
+                        <Typography variant="subtitle1" className={classes.pro}>
+                          PRO
+                        </Typography>
+                      </div>
+                    )}
                   {selectedStudent.is_active ? (
                     <Typography style={{ color: "green" }}>
                       {"\u00A0"}(Active){" "}

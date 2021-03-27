@@ -58,6 +58,22 @@ const styles = makeStyles((theme) => ({
     marginLeft: "auto",
     backgroundColor: "#fff",
   },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
 }));
 
 const CommentsSection = ({ materialId, user }) => {
@@ -321,6 +337,32 @@ const CommentsSection = ({ materialId, user }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleProfileLink = (reviewMember) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    if (reviewMember.id === (decoded && decoded.user_id)) {
+      // console.log("hello");
+      return "/member/profile";
+    } else {
+      if (reviewMember.member.membership_tier === "PRO") {
+        // console.log("hell");
+        return `/member/profile/${reviewMember.id}`;
+      }
+    }
+  };
+
+  const toRenderProfileLinkOrNot = (reviewMember) => {
+    if (reviewMember.member) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      if (
+        reviewMember.id === (decoded && decoded.user_id) ||
+        reviewMember.member.membership_tier === "PRO"
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const deletedParentComment = (
     <div
       style={{
@@ -463,7 +505,23 @@ const CommentsSection = ({ materialId, user }) => {
           <SubdirectoryArrowRight fontSize="large" color="primary" />
         </div>
         <div className={classes.childComment}>
-          {reply.user.profile_photo ? (
+          {toRenderProfileLinkOrNot(reply.user) ? (
+            <a
+              href={handleProfileLink(reply.user)}
+              style={{ textDecoration: "none" }}
+            >
+              {reply.user.profile_photo ? (
+                <Avatar
+                  style={{ marginRight: "15px" }}
+                  src={reply.user.profile_photo}
+                />
+              ) : (
+                <Avatar style={{ marginRight: "15px" }}>
+                  {reply.user.first_name.charAt(0)}
+                </Avatar>
+              )}
+            </a>
+          ) : reply.user.profile_photo ? (
             <Avatar
               style={{ marginRight: "15px" }}
               src={reply.user.profile_photo}
@@ -480,10 +538,38 @@ const CommentsSection = ({ materialId, user }) => {
               width: "100%",
             }}
           >
-            <Typography variant="h6" style={{ fontWeight: 600 }}>
-              {reply.user && reply.user.first_name}{" "}
-              {reply.user && reply.user.last_name}
-            </Typography>
+            {toRenderProfileLinkOrNot(reply.user) ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <a
+                  href={handleProfileLink(reply.user)}
+                  className={classes.profileLink}
+                >
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    {reply.user && reply.user.first_name}{" "}
+                    {reply.user && reply.user.last_name}
+                  </Typography>
+                </a>
+                {reply.user.member &&
+                  reply.user.member.membership_tier === "PRO" && (
+                    <div style={{ marginTop: "4px" }}>
+                      <Typography variant="subtitle1" className={classes.pro}>
+                        PRO
+                      </Typography>
+                    </div>
+                  )}
+              </div>
+            ) : (
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                {reply.user && reply.user.first_name}{" "}
+                {reply.user && reply.user.last_name}
+              </Typography>
+            )}
+
             <div style={{ display: "flex" }}>
               <Typography variant="body2">
                 Reply to #{reply.reply_to.display_id}
@@ -627,7 +713,29 @@ const CommentsSection = ({ materialId, user }) => {
           <SubdirectoryArrowRight fontSize="large" color="primary" />
         </div>
         <div className={classes.nestedChildComment}>
-          {nestedReply.user.profile_photo ? (
+          {toRenderProfileLinkOrNot(nestedReply.user) ? (
+            <a
+              href={handleProfileLink(nestedReply.user)}
+              style={{ textDecoration: "none" }}
+            >
+              {nestedReply.user.profile_photo ? (
+                <Avatar
+                  style={{
+                    marginRight: "15px",
+                  }}
+                  src={nestedReply.user.profile_photo}
+                />
+              ) : (
+                <Avatar
+                  style={{
+                    marginRight: "15px",
+                  }}
+                >
+                  {nestedReply.user.first_name.charAt(0)}
+                </Avatar>
+              )}
+            </a>
+          ) : nestedReply.user.profile_photo ? (
             <Avatar
               style={{
                 marginRight: "15px",
@@ -650,15 +758,43 @@ const CommentsSection = ({ materialId, user }) => {
               width: "100%",
             }}
           >
-            <Typography
-              variant="h6"
-              style={{
-                fontWeight: 600,
-              }}
-            >
-              {nestedReply.user && nestedReply.user.first_name}{" "}
-              {nestedReply.user && nestedReply.user.last_name}
-            </Typography>
+            {toRenderProfileLinkOrNot(nestedReply.user) ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <a
+                  href={handleProfileLink(nestedReply.user)}
+                  className={classes.profileLink}
+                >
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    {nestedReply.user && nestedReply.user.first_name}{" "}
+                    {nestedReply.user && nestedReply.user.last_name}
+                  </Typography>
+                </a>
+                {nestedReply.user.member &&
+                  nestedReply.user.member.membership_tier === "PRO" && (
+                    <div style={{ marginTop: "4px" }}>
+                      <Typography variant="subtitle1" className={classes.pro}>
+                        PRO
+                      </Typography>
+                    </div>
+                  )}
+              </div>
+            ) : (
+              <Typography
+                variant="h6"
+                style={{
+                  fontWeight: 600,
+                }}
+              >
+                {nestedReply.user && nestedReply.user.first_name}{" "}
+                {nestedReply.user && nestedReply.user.last_name}
+              </Typography>
+            )}
+
             <div
               style={{
                 display: "flex",
@@ -786,7 +922,25 @@ const CommentsSection = ({ materialId, user }) => {
                     return (
                       <Fragment>
                         <div key={index} className={classes.parentComment}>
-                          {comment.user.profile_photo ? (
+                          {toRenderProfileLinkOrNot(comment.user) ? (
+                            <a
+                              href={handleProfileLink(comment.user)}
+                              style={{ textDecoration: "none" }}
+                            >
+                              {comment.user.profile_photo &&
+                              comment.user.profile_photo ? (
+                                <Avatar
+                                  style={{ marginRight: "15px" }}
+                                  src={comment.user.profile_photo}
+                                />
+                              ) : (
+                                <Avatar style={{ marginRight: "15px" }}>
+                                  {comment.user.first_name.charAt(0)}
+                                </Avatar>
+                              )}
+                            </a>
+                          ) : comment.user.profile_photo &&
+                            comment.user.profile_photo ? (
                             <Avatar
                               style={{ marginRight: "15px" }}
                               src={comment.user.profile_photo}
@@ -796,16 +950,52 @@ const CommentsSection = ({ materialId, user }) => {
                               {comment.user.first_name.charAt(0)}
                             </Avatar>
                           )}
+
                           <div
                             style={{ flexDirection: "column", width: "100%" }}
                           >
-                            <Typography
-                              variant="h6"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {comment.user && comment.user.first_name}{" "}
-                              {comment.user && comment.user.last_name}
-                            </Typography>
+                            {toRenderProfileLinkOrNot(comment.user) ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <a
+                                  href={handleProfileLink(comment.user)}
+                                  className={classes.profileLink}
+                                >
+                                  <Typography
+                                    variant="h6"
+                                    style={{ fontWeight: 600 }}
+                                  >
+                                    {comment.user && comment.user.first_name}{" "}
+                                    {comment.user && comment.user.last_name}
+                                  </Typography>
+                                </a>
+                                {comment.user.member &&
+                                  comment.user.member.membership_tier ===
+                                    "PRO" && (
+                                    <div style={{ marginTop: "4px" }}>
+                                      <Typography
+                                        variant="subtitle1"
+                                        className={classes.pro}
+                                      >
+                                        PRO
+                                      </Typography>
+                                    </div>
+                                  )}
+                              </div>
+                            ) : (
+                              <Typography
+                                variant="h6"
+                                style={{ fontWeight: 600 }}
+                              >
+                                {comment.user && comment.user.first_name}{" "}
+                                {comment.user && comment.user.last_name}
+                              </Typography>
+                            )}
+
                             <div style={{ display: "flex" }}>
                               <Typography variant="body2">
                                 #{comment.display_id}
@@ -956,7 +1146,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -985,7 +1174,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1025,7 +1213,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1054,7 +1241,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
