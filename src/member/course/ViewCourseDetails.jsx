@@ -105,6 +105,15 @@ const styles = makeStyles((theme) => ({
       textDecoration: "underline",
     },
   },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
   cardOnRight: {
     width: 400,
     margin: "auto",
@@ -239,17 +248,24 @@ const ViewCourseDetails = () => {
 
   const handleProfileLink = (reviewMember) => {
     if (reviewMember.id === (decoded && decoded.user_id)) {
-      console.log("hello");
+      // console.log("hello");
       return "/member/profile";
     } else {
       if (reviewMember.member.membership_tier === "PRO") {
-        console.log("hell");
+        // console.log("hell");
         return `/member/profile/${reviewMember.id}`;
-      } else {
-        console.log("o");
-        return undefined;
       }
     }
+  };
+
+  const toRenderProfileLinkOrNot = (reviewMember) => {
+    if (
+      reviewMember.id === (decoded && decoded.user_id) ||
+      reviewMember.member.membership_tier === "PRO"
+    ) {
+      return true;
+    }
+    return false;
   };
 
   const handleEnrollment = () => {
@@ -623,28 +639,62 @@ const ViewCourseDetails = () => {
                         key={index}
                         style={{ display: "flex", marginBottom: "20px" }}
                       >
-                        <Link
-                          to={handleProfileLink(review.member)}
-                          style={{ textDecoration: "none" }}
-                        >
-                          {review.member.profile_photo &&
-                          review.member.profile_photo ? (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={review.member.profile_photo}
-                            />
-                          ) : (
-                            <Avatar style={{ marginRight: "15px" }}>
-                              {review.member.first_name.charAt(0)}
-                            </Avatar>
-                          )}
-                        </Link>
-
-                        <div style={{ flexDirection: "column" }}>
+                        {toRenderProfileLinkOrNot(review.member) ? (
                           <Link
                             to={handleProfileLink(review.member)}
-                            className={classes.profileLink}
+                            style={{ textDecoration: "none" }}
                           >
+                            {review.member.profile_photo &&
+                            review.member.profile_photo ? (
+                              <Avatar
+                                style={{ marginRight: "15px" }}
+                                src={review.member.profile_photo}
+                              />
+                            ) : (
+                              <Avatar style={{ marginRight: "15px" }}>
+                                {review.member.first_name.charAt(0)}
+                              </Avatar>
+                            )}
+                          </Link>
+                        ) : review.member.profile_photo &&
+                          review.member.profile_photo ? (
+                          <Avatar
+                            style={{ marginRight: "15px" }}
+                            src={review.member.profile_photo}
+                          />
+                        ) : (
+                          <Avatar style={{ marginRight: "15px" }}>
+                            {review.member.first_name.charAt(0)}
+                          </Avatar>
+                        )}
+
+                        <div style={{ flexDirection: "column" }}>
+                          {toRenderProfileLinkOrNot(review.member) ? (
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <Link
+                                to={handleProfileLink(review.member)}
+                                className={classes.profileLink}
+                              >
+                                <Typography
+                                  variant="h6"
+                                  style={{ fontWeight: 600 }}
+                                >
+                                  {review.member && review.member.first_name}{" "}
+                                  {review.member && review.member.last_name}
+                                </Typography>
+                              </Link>
+                              <div style={{ marginTop: "4px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.pro}
+                                >
+                                  PRO
+                                </Typography>
+                              </div>
+                            </div>
+                          ) : (
                             <Typography
                               variant="h6"
                               style={{ fontWeight: 600 }}
@@ -652,7 +702,7 @@ const ViewCourseDetails = () => {
                               {review.member && review.member.first_name}{" "}
                               {review.member && review.member.last_name}
                             </Typography>
-                          </Link>
+                          )}
 
                           <div
                             style={{ display: "flex", marginBottom: "10px" }}
