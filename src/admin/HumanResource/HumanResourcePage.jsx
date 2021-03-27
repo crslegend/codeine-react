@@ -69,6 +69,22 @@ const styles = makeStyles((theme) => ({
       },
     },
   },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
 }));
 
 function TabPanel(props) {
@@ -176,6 +192,7 @@ const AdminHumanResourcePage = () => {
     is_active: "",
     date_joined: "",
     profile_photo: "",
+    membership_tier: "",
   });
 
   const memberColumns = [
@@ -212,6 +229,10 @@ const AdminHumanResourcePage = () => {
       ),
       width: 160,
     },
+    {
+      field: "membership_tier",
+      hidden: true,
+    },
   ];
 
   let memberRows = allMembersList;
@@ -243,7 +264,24 @@ const AdminHumanResourcePage = () => {
       Service.client
         .get(`/auth/members`, { params: { ...queryParams } })
         .then((res) => {
-          setAllMemberList(res.data);
+          // console.log(res.data);
+          let arr = [];
+          let obj = {};
+          for (let i = 0; i < res.data.length; i++) {
+            obj = {
+              id: res.data[i].id,
+              first_name: res.data[i].first_name,
+              last_name: res.data[i].last_name,
+              email: res.data[i].email,
+              is_active: res.data[i].is_active,
+              date_joined: res.data[i].date_joined,
+              profile_photo: res.data[i].profile_photo,
+              membership_tier: res.data[i].member.membership_tier,
+            };
+            arr.push(obj);
+          }
+
+          setAllMemberList(arr);
           memberRows = allMembersList;
           console.log("called member: " + searchValueMember);
         })
@@ -614,6 +652,21 @@ const AdminHumanResourcePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValueMember, searchValueAdmin, searchValuePartner]);
 
+  const handleProfileLink = (m) => {
+    if (m.membership_tier === "PRO") {
+      // console.log("hell");
+      return `/member/profile/${m.id}`;
+    }
+  };
+
+  const toRenderProfileLinkOrNot = (m) => {
+    if (m.membership_tier === "PRO") {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -697,7 +750,24 @@ const AdminHumanResourcePage = () => {
           <DialogContent>
             <Grid container>
               <Grid item xs={2}>
-                {selectedMember.profile_photo ? (
+                {toRenderProfileLinkOrNot(selectedMember) ? (
+                  <a
+                    href={handleProfileLink(selectedMember)}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {selectedMember.profile_photo ? (
+                      <Avatar
+                        src={selectedMember.profile_photo}
+                        alt=""
+                        className={classes.avatar}
+                      />
+                    ) : (
+                      <Avatar className={classes.avatar}>
+                        {selectedMember.email.charAt(0)}
+                      </Avatar>
+                    )}
+                  </a>
+                ) : selectedMember.profile_photo ? (
                   <Avatar
                     src={selectedMember.profile_photo}
                     alt=""
@@ -718,10 +788,28 @@ const AdminHumanResourcePage = () => {
                   }}
                 >
                   <div style={{ fontSize: "20px" }}>
-                    <strong>
-                      {selectedMember.first_name} {selectedMember.last_name}{" "}
-                    </strong>
+                    {toRenderProfileLinkOrNot(selectedMember) ? (
+                      <a
+                        href={handleProfileLink(selectedMember)}
+                        className={classes.profileLink}
+                      >
+                        <strong>
+                          {selectedMember.first_name} {selectedMember.last_name}{" "}
+                        </strong>
+                      </a>
+                    ) : (
+                      <strong>
+                        {selectedMember.first_name} {selectedMember.last_name}{" "}
+                      </strong>
+                    )}
                   </div>
+                  {selectedMember && selectedMember.membership_tier === "PRO" && (
+                    <div style={{ marginTop: "4px" }}>
+                      <Typography variant="subtitle1" className={classes.pro}>
+                        PRO
+                      </Typography>
+                    </div>
+                  )}
                   {selectedMember.is_active ? (
                     <div style={{ color: "green" }}>{"\u00A0"}(Active) </div>
                   ) : (
