@@ -7,6 +7,7 @@ import MemberRegisterPage from "./member/auth/MemberRegisterPage";
 import MemberLoginPage from "./member/auth/MemberLoginPage";
 import ViewArticlePage from "./article/ArticleMain";
 import EditArticlePage from "./article/EditArticle";
+import AllArticlePage from "./article/ViewAllArticles";
 import MemberArticlePage from "./member/profile/article/MemberArticleList";
 import MemberCoursePage from "./member/profile/Courses/CoursesPage";
 import MemberConsultationPage from "./member/profile/Consultation/ConsultationPage";
@@ -47,7 +48,7 @@ const App = () => {
         path="/article/guest/:id"
         component={ViewArticlePage}
       />
-
+      <Route strict sensitive path="/viewarticles" component={AllArticlePage} />
       <PrivateRoute
         strict
         sensitive

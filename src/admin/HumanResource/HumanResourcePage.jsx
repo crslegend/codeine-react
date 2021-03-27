@@ -134,7 +134,6 @@ const AdminHumanResourcePage = () => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -245,7 +244,6 @@ const AdminHumanResourcePage = () => {
         .then((res) => {
           setAllMemberList(res.data);
           memberRows = allMembersList;
-          console.log("called member: " + searchValueMember);
         })
         .catch((err) => {
           //setProfile(null);
@@ -415,7 +413,6 @@ const AdminHumanResourcePage = () => {
         .get(`/auth/partners`, { params: { ...queryParams } })
         .then((res) => {
           setAllPartnerList(res.data);
-          console.log(res.data);
           partnerRows = allPartnerList;
         })
         .catch((err) => {
@@ -606,7 +603,6 @@ const AdminHumanResourcePage = () => {
     }
     if (searchValueMember === "") {
       getMemberData();
-      console.log("empty search value: " + searchValueMember);
     }
     if (searchValuePartner === "") {
       getPartnerData();

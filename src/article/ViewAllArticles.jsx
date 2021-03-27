@@ -7,14 +7,20 @@ import {
   TextField,
   Fragment,
   ListItem,
+  Container,
   Typography,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import Service from "../../AxiosService";
-import Toast from "../../components/Toast.js";
+import MemberNavBar from "../member/MemberNavBar";
+import SearchBar from "material-ui-search-bar";
+import Service from "../AxiosService";
+import Cookies from "js-cookie";
+import Toast from "../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    paddingTop: "65px",
+  },
 }));
 
 const ViewAllArticles = () => {
@@ -34,8 +40,18 @@ const ViewAllArticles = () => {
   });
 
   const [listOfArticles, setListOfArticles] = useState();
+  const [searchValue, setSearchValue] = useState("");
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const checkIfLoggedIn = () => {
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+    }
+  };
 
   useEffect(() => {
+    checkIfLoggedIn();
     getAllArticles();
   }, []);
 
@@ -51,13 +67,64 @@ const ViewAllArticles = () => {
       });
   };
 
-  const [loading, setLoading] = useState(false);
+  const getArticleData = () => {
+    let queryParams = {
+      search: searchValue,
+    };
+
+    if (searchValue !== "") {
+      queryParams = {
+        search: searchValue,
+      };
+    }
+
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      Service.client
+        .get(`/articles`, { params: { ...queryParams } })
+        .then((res) => {
+          setListOfArticles(res.data);
+        })
+        .catch((err) => {
+          //setProfile(null);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getArticleData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
 
   return (
-    <div>
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <Container maxWidth="md">
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         <Typography>All Articles</Typography>
-      </div>
+        <SearchBar
+          style={{
+            width: "70%",
+            marginBottom: "20px",
+            elavation: "0px",
+          }}
+          placeholder="Search article"
+          value={searchValue}
+          onChange={(newValue) => setSearchValue(newValue)}
+          onCancelSearch={() => setSearchValue("")}
+          onRequestSearch={getArticleData}
+        />
+
+        {listOfArticles &&
+          listOfArticles.length > 0 &&
+          listOfArticles.map((article, index) => {
+            return (
+              <div key={article.id}>
+                {article.id} - {article.title}
+              </div>
+            );
+          })}
+      </Container>
     </div>
   );
 };

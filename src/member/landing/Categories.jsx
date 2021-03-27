@@ -109,7 +109,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/viewarticles"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
