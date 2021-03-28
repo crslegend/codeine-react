@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
@@ -19,7 +19,7 @@ import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 
 import CourseCard from "../landing/components/CourseCard";
-import components from "./components/NavbarComponents";
+// import components from "./components/NavbarComponents";
 import { NoteAdd } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
@@ -89,7 +89,7 @@ const styles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = styles();
-  const history = useHistory();
+  // const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchValue, setSearchValue] = useState("");

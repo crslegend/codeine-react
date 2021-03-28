@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
-import { useHistory, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import EarningsReport from "./components/EarningsReport";
 import HealthReport from "./components/HealthReport";
 import CourseReport from "./components/CourseReport";
@@ -88,7 +88,7 @@ function TabPanel(props) {
 
 const AdminAnalyticsPage = () => {
   const classes = useStyles();
-  const history = useHistory();
+  // const history = useHistory();
   const location = useLocation();
 
   const [value, setValue] = useState(0);

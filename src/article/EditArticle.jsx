@@ -28,7 +28,7 @@ import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
 import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
@@ -130,13 +130,13 @@ const EditArticle = (props) => {
     autoHideDuration: 3000,
   });
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
 
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
+  // const checkIfLoggedIn = () => {
+  //   if (Cookies.get("t1")) {
+  //     setLoggedIn(true);
+  //   }
+  // };
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -163,9 +163,9 @@ const EditArticle = (props) => {
 
   const [dialog2open, setDialog2Open] = useState(false);
 
-  const handleDialog2Open = () => {
-    setDialog2Open(true);
-  };
+  // const handleDialog2Open = () => {
+  //   setDialog2Open(true);
+  // };
 
   const handleDialog2Close = () => {
     setDialog2Open(false);
@@ -215,7 +215,7 @@ const EditArticle = (props) => {
         .get(`/auth/members/${memberid}`)
         .then((res) => {
           setUser(res.data);
-          setLoggedIn(true);
+          // setLoggedIn(true);
         })
         .catch((err) => {
           setUser();
@@ -227,6 +227,7 @@ const EditArticle = (props) => {
         })
         .catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [debouncedText] = useDebounce(articleDetails, 1000);
@@ -702,7 +703,7 @@ const EditArticle = (props) => {
                 className={classes.typography}
                 onClick={() => {
                   Service.removeCredentials();
-                  setLoggedIn(false);
+                  // setLoggedIn(false);
                   history.push("/");
                 }}
               >

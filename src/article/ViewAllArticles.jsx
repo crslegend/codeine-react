@@ -4,7 +4,6 @@ import {
   Avatar,
   Divider,
   Grid,
-  Chip,
   Button,
   Typography,
   ListItem,
@@ -69,7 +68,7 @@ const ViewAllArticles = () => {
   //   }
   // };
 
-  const [user, setUser] = useState();
+  // const [user, setUser] = useState();
   const [userType, setUserType] = useState();
 
   const getUserDetails = () => {
@@ -78,7 +77,7 @@ const ViewAllArticles = () => {
       Service.client
         .get(`/auth/members/${userid}`)
         .then((res) => {
-          setUser(res.data);
+          // setUser(res.data);
           setLoggedIn(true);
           if (res.data.is_admin) {
             setUserType("admin");

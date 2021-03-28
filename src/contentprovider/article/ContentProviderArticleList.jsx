@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Service from "../../AxiosService";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -210,18 +210,18 @@ const PartnerArticlesList = (props) => {
       });
   };
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
 
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
+  // const checkIfLoggedIn = () => {
+  //   if (Cookies.get("t1")) {
+  //     setLoggedIn(true);
+  //   }
+  // };
 
   const [articleList, setArticleList] = useState([]);
 
   useEffect(() => {
-    checkIfLoggedIn();
+    // checkIfLoggedIn();
     getArticles();
   }, []);
 
