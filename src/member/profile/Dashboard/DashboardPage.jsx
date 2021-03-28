@@ -15,7 +15,12 @@ import {
   Paper,
   Select,
   Typography,
+  Card,
+  Button,
+  CardMedia,
+  Divider,
 } from "@material-ui/core";
+import { lighten } from "@material-ui/core/styles";
 import {
   BarChart,
   Bar,
@@ -26,6 +31,7 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
+import image from "../../../assets/icons/py_icon.png";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -58,6 +64,24 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "15px",
     marginBottom: "10px",
     width: "200px",
+  },
+  badgeheader: {
+    color: theme.palette.primary.main,
+    textAlign: "center",
+    margin: "0px auto",
+    paddingLeft: "80px",
+  },
+  cardmediafirst: {
+    height: "150px",
+    width: "150px",
+    borderRadius: "50%",
+    margin: "15px auto",
+  },
+  cardmedia: {
+    height: "130px",
+    width: "130px",
+    borderRadius: "50%",
+    margin: "15px auto",
   },
 }));
 
@@ -203,48 +227,141 @@ const DashboardPage = () => {
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
         <div style={{ width: "80%", margin: "auto" }}>
+          <PageTitle title="Dashboard" />
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
             }}
           >
-            <PageTitle title="Dashboard" />
+            <Typography variant="h5" className={classes.badgeheader}>
+              Your Top Badges
+              <Divider
+                style={{
+                  paddingTop: "0.5px",
+                  marginTop: "3px",
+                  backgroundColor: lighten("#437FC7", 0.5),
+                }}
+              />
+            </Typography>
+
+            <Button
+              variant="outlined"
+              size="small"
+              style={{ textTransform: "none" }}
+            >
+              view more
+            </Button>
+          </div>
+          <Card
+            elevation={0}
+            style={{
+              backgroundColor: "transparent",
+              display: "flex",
+              justifyContent: "center",
+              margin: "30px 0px",
+              paddingTop: "30px",
+            }}
+          >
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
+                flexDirection: "column",
+                color: "#A9A9A9",
               }}
             >
-              <Typography variant="h6" style={{ paddingRight: "15px" }}>
-                View By
-              </Typography>
-              <FormControl
-                margin="dense"
-                variant="outlined"
-                className={classes.formControl}
+              <Typography
+                variant="h4"
+                style={{ fontWeight: 600, textAlign: "center" }}
               >
-                <InputLabel>Date Range</InputLabel>
-                <Select
-                  label="Date Range"
-                  value={numDays ? numDays : ""}
-                  onChange={(e) => {
-                    setNumDays(e.target.value);
-                  }}
-                  style={{ backgroundColor: "#fff" }}
-                >
-                  <MenuItem value="">
-                    <em>Select a date range</em>
-                  </MenuItem>
-                  <MenuItem value="7">Past Week</MenuItem>
-                  <MenuItem value="14">Past 2 Weeks</MenuItem>
-                  <MenuItem value="30">Past Month</MenuItem>
-                  <MenuItem value="90">Past 3 Months</MenuItem>
-                  <MenuItem value="240">Past 6 Months</MenuItem>
-                </Select>
-              </FormControl>
+                2
+              </Typography>
+              <CardMedia className={classes.cardmedia} image={image} />
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, textAlign: "center" }}
+              >
+                Python (Beginner)
+              </Typography>
             </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                margin: "-30px 70px 0px",
+                color: "#d4af37",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ fontWeight: 600, textAlign: "center" }}
+              >
+                1
+              </Typography>
+              <CardMedia className={classes.cardmediafirst} image={image} />
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, textAlign: "center" }}
+              >
+                Python (Beginner)
+              </Typography>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                color: "#cd7f32",
+              }}
+            >
+              <Typography
+                variant="h4"
+                style={{ fontWeight: 600, textAlign: "center" }}
+              >
+                3
+              </Typography>
+              <CardMedia className={classes.cardmedia} image={image} />
+              <Typography
+                variant="body1"
+                style={{ fontWeight: 600, textAlign: "center" }}
+              >
+                Python (Beginner)
+              </Typography>
+            </div>
+          </Card>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" style={{ paddingRight: "15px" }}>
+              View By
+            </Typography>
+            <FormControl
+              margin="dense"
+              variant="outlined"
+              className={classes.formControl}
+            >
+              <InputLabel>Date Range</InputLabel>
+              <Select
+                label="Date Range"
+                value={numDays ? numDays : ""}
+                onChange={(e) => {
+                  setNumDays(e.target.value);
+                }}
+                style={{ backgroundColor: "#fff" }}
+              >
+                <MenuItem value="">
+                  <em>Select a date range</em>
+                </MenuItem>
+                <MenuItem value="7">Past Week</MenuItem>
+                <MenuItem value="14">Past 2 Weeks</MenuItem>
+                <MenuItem value="30">Past Month</MenuItem>
+                <MenuItem value="90">Past 3 Months</MenuItem>
+                <MenuItem value="240">Past 6 Months</MenuItem>
+              </Select>
+            </FormControl>
           </div>
 
           <Paper className={classes.paper}>

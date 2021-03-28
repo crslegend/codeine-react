@@ -76,7 +76,7 @@ const TopPicks = () => {
         params: { sortRating: "-rating" },
       })
       .then((res) => {
-        res.data.results = res.data.results.slice(0, 3);
+        res.data.results = res.data.results.slice(0, 4);
         setCourses(res.data.results);
       })
       .catch((err) => console.log(err));
@@ -108,7 +108,7 @@ const TopPicks = () => {
     Service.client
       .get(`/articles`)
       .then((res) => {
-        res.data = res.data.slice(0, 4);
+        res.data = res.data.slice(0, 3);
         setArticles(res.data);
         console.log(res.data);
       })

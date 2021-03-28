@@ -144,7 +144,7 @@ const CoursesPage = () => {
   const [progressArr, setProgressArr] = useState([]);
   const [doneReview] = useState([]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
@@ -430,7 +430,6 @@ const CoursesPage = () => {
                               variant="body1"
                               style={{
                                 paddingBottom: "30px",
-                                fontFamily: "Roboto Mono",
                               }}
                             >
                               {course &&
