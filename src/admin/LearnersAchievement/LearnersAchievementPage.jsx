@@ -673,8 +673,8 @@ const AdminLearnersAchievementPage = () => {
             Learners Achievement
           </Typography>
         </Grid>
-        <Grid item xs={12} style={{ margin: "30px 0px" }}>
-          <div style={{ width: "65%" }}>
+        <Grid item xs={8} style={{ margin: "30px 0px" }}>
+          <div style={{ width: "95%" }}>
             <SearchBar
               placeholder="Search Badges"
               value={searchValue}
@@ -687,6 +687,22 @@ const AdminLearnersAchievementPage = () => {
             />
           </div>
         </Grid>
+        <Grid item xs={3} style={{ margin: "40px 0px" }}>
+          <Button
+            variant="outlined"
+            style={{
+              borderColor: "#164D8F",
+              color: "#164D8F",
+
+              width: "100%",
+            }}
+            onClick={handleOpenAchievementDialog}
+          >
+            <Add style={{ color: "#164D8F" }} />
+            New achievement
+          </Button>
+        </Grid>
+        <Grid item xs={1} />
       </Grid>
 
       <Grid container>
@@ -875,19 +891,6 @@ const AdminLearnersAchievementPage = () => {
               {totalBadge}
             </Typography>
           </Card>
-          <Button
-            variant="outlined"
-            style={{
-              borderColor: "#164D8F",
-              color: "#164D8F",
-              marginTop: "20px",
-              width: "100%",
-            }}
-            onClick={handleOpenAchievementDialog}
-          >
-            <Add style={{ color: "#164D8F" }} />
-            New achievement
-          </Button>
         </Grid>
       </Grid>
 
