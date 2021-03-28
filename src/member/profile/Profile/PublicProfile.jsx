@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
+  ListItem,
   Card,
   CardContent,
   Button,
@@ -13,6 +14,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CardMedia,
   Dialog,
 } from "@material-ui/core";
 import { LocationOn, Email } from "@material-ui/icons";
@@ -25,10 +27,14 @@ import {
   Tooltip,
 } from "recharts";
 import MemberNavBar from "../../MemberNavBar";
-import Cookies from "js-cookie";
+import Navbar from "../../../components/Navbar";
+import partnerLogo from "../../../assets/CodeineLogos/Partner.svg";
+import adminLogo from "../../../assets/CodeineLogos/Admin.svg";
 import Service from "../../../AxiosService";
-import { useParams, Link } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import Label from "./components/Label";
+import ExperienceCard from "./components/ExperienceCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline",
     },
   },
+  cardmedia: {
+    height: "100px",
+    width: "100px",
+    borderRadius: "50%",
+    marginRight: "35px",
+    marginBottom: "25px",
+  },
 }));
 
 const CustomTooltip = ({ payload, label, active, category }) => {
@@ -101,19 +114,38 @@ const CustomTooltip = ({ payload, label, active, category }) => {
 const PublicProfile = (props) => {
   const classes = useStyles();
   const { id } = useParams();
-
+  const history = useHistory();
+  const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [member, setMember] = useState("");
 
+  const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
 
   const [courses, setCourses] = useState([]);
   const [courseDialog, setCourseDialog] = useState(false);
 
+  const [badges, setBadges] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+
   const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const userid = jwt_decode(Service.getJWT()).user_id;
+      Service.client
+        .get(`/auth/members/${userid}`)
+        .then((res) => {
+          setLoggedIn(true);
+          if (res.data.member !== null) {
+            setUserType("member");
+          } else if (res.data.is_admin) {
+            setUserType("admin");
+          } else if (res.data.partner !== null) {
+            setUserType("partner");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -153,8 +185,20 @@ const PublicProfile = (props) => {
     setDataList(list);
   };
 
+  const getPoints = () => {
+    let tempPoints = 0;
+    for (var i = 0; i < dataList.length; i++) {
+      tempPoints = tempPoints + dataList[i].points;
+    }
+    for (var j = 0; j < languageList.length; j++) {
+      tempPoints = tempPoints + languageList[j].points;
+    }
+    return tempPoints;
+  };
+
   const handleTopLanguages = (statsData) => {
     let list = [];
+
     if (statsData.JAVA > 0) {
       list.push({
         language: "Java",
@@ -225,36 +269,35 @@ const PublicProfile = (props) => {
 
   const getMemberData = () => {
     Service.client
-      .get(`/auth/members/${id}`)
+      .get(`/members/${id}/profile`)
       .then((res) => {
-        setMember(res.data);
-        if (dataList.length === 0) {
-          handleSetRadarData(res.data.member.stats);
-        }
-        if (languageList.length === 0) {
-          handleTopLanguages(res.data.member.stats);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
+        console.log(res.data);
+        setMember(res.data.member);
 
-  const getMemberCompletedCourses = () => {
-    Service.client
-      .get(`/auth/members/${id}/courses`)
-      .then((res) => {
-        //console.log(res.data);
-        res.data = res.data
+        if (dataList.length === 0) {
+          handleSetRadarData(res.data.member.member.stats);
+        }
+
+        if (languageList.length === 0) {
+          handleTopLanguages(res.data.member.member.stats);
+        }
+
+        res.data.courses = res.data.courses
           .filter((course) => course.course !== null)
           .filter((course) => course.progress === "100.00");
-        setCourses(res.data);
+        setCourses(res.data.courses);
+
+        setBadges(res.data.achievements.reverse());
+
+        setExperiences(res.data.cv);
       })
+
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     checkIfLoggedIn();
     getMemberData();
-    getMemberCompletedCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -272,11 +315,67 @@ const PublicProfile = (props) => {
     return "";
   };
 
+  const navLogo = (
+    <Fragment>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Link
+          to="/"
+          style={{
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "10px",
+            marginRight: "35px",
+            width: 100,
+          }}
+        >
+          {userType === "partner" && (
+            <img src={partnerLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "admin" && (
+            <img src={adminLogo} width="120%" alt="codeine logo" />
+          )}
+        </Link>
+      </div>
+    </Fragment>
+  );
+
+  const loggedInNavbar = (
+    <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{
+            textTransform: "capitalize",
+          }}
+          onClick={() => {
+            Service.removeCredentials();
+            if (userType === "partner") {
+              history.push("/partner");
+            } else if (userType === "admin") {
+              history.push("/admin");
+            }
+          }}
+        >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
+            Logout
+          </Typography>
+        </Button>
+      </ListItem>
+    </Fragment>
+  );
+
   return (
     <Fragment>
-      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      {userType === "partner" || userType === "admin" ? (
+        <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
+      ) : (
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+
       <Grid container className={classes.root}>
         {console.log(member)}
+
         <Grid item xs={3}>
           <div className={classes.avatar}>
             {member.profile_photo && member.profile_photo ? (
@@ -347,7 +446,7 @@ const PublicProfile = (props) => {
                 }}
               >
                 <Typography variant="body2">badges</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">{badges.length}</Typography>
               </div>
               <div
                 style={{
@@ -357,7 +456,7 @@ const PublicProfile = (props) => {
                 }}
               >
                 <Typography variant="body2">exp. points</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">{getPoints()}</Typography>
               </div>
               <div
                 style={{
@@ -399,10 +498,10 @@ const PublicProfile = (props) => {
         <Grid item xs={9}>
           <Grid container className={classes.rightContainer}>
             {languageList && languageList.length > 0 ? (
-              <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Grid item xs={12} style={{ marginBottom: "60px" }}>
                 <Typography
                   variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
                 >
                   Top languages
                 </Typography>
@@ -414,9 +513,9 @@ const PublicProfile = (props) => {
                           style={{
                             color: `${language.font}`,
                             backgroundColor: `${language.background}`,
-                            padding: "10px 30px",
+                            padding: "10px 10px",
                             marginRight: "40px",
-                            width: "250px",
+                            width: "260px",
                             height: "150px",
                           }}
                           key={index}
@@ -461,25 +560,54 @@ const PublicProfile = (props) => {
               ""
             )}
 
-            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+            <Grid item xs={12} style={{ marginBottom: "35px" }}>
               <Typography
                 variant="h5"
-                style={{ fontWeight: 600, marginBottom: "15px" }}
+                style={{ fontWeight: 600, marginBottom: "20px" }}
               >
                 Badges
               </Typography>
+
+              {badges && badges.length > 0 ? (
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {badges &&
+                    badges.map((badge, index) => (
+                      <CardMedia
+                        className={classes.cardmedia}
+                        image={badge.achievement.badge}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography
+                    style={{
+                      textAlign: "center",
+                      color: "#C4C4C4",
+                    }}
+                  >
+                    No Achieved Badges
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
-            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+            <Grid item xs={12} style={{ marginBottom: "60px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
                 >
                   Courses
                 </Typography>
                 {courses && courses.length > 0 ? (
                   <Button
-                    style={{ textTransform: "none", marginBottom: "15px" }}
+                    style={{ textTransform: "none", marginBottom: "20px" }}
                     color="primary"
                     variant="outlined"
                     onClick={() => setCourseDialog(true)}
@@ -504,8 +632,13 @@ const PublicProfile = (props) => {
                         backgroundColor: "#C4C4C4",
                       }}
                     >
-                      <TableCell>title</TableCell>
-                      <TableCell>category</TableCell>
+                      <TableCell style={{ fontWeight: 600 }}>title</TableCell>
+                      <TableCell style={{ fontWeight: 600 }}>
+                        category
+                      </TableCell>
+                      <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                        results
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -532,6 +665,11 @@ const PublicProfile = (props) => {
                                   <Label label={label} />
                                 ))}
                             </div>
+                          </TableCell>
+                          <TableCell
+                            style={{ width: "60px", textAlign: "center" }}
+                          >
+                            {row.quiz_result.actual_score}
                           </TableCell>
                         </TableRow>
                       ))
@@ -562,10 +700,21 @@ const PublicProfile = (props) => {
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
               <Typography
                 variant="h5"
-                style={{ fontWeight: 600, marginBottom: "15px" }}
+                style={{ fontWeight: 600, marginBottom: "20px" }}
               >
                 Experiences
               </Typography>
+              {experiences && experiences.length > 0 ? (
+                experiences.map((experience, index) => {
+                  return <ExperienceCard key={index} experience={experience} />;
+                })
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography style={{ textAlign: "center", color: "#C4C4C4" }}>
+                    No Experience Yet
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
@@ -588,8 +737,11 @@ const PublicProfile = (props) => {
                   height: "55px",
                 }}
               >
-                <TableCell>title</TableCell>
-                <TableCell>category</TableCell>
+                <TableCell style={{ fontWeight: 600 }}>title</TableCell>
+                <TableCell style={{ fontWeight: 600 }}>category</TableCell>
+                <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                  results
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -617,6 +769,9 @@ const PublicProfile = (props) => {
                             <Label label={label} />
                           ))}
                       </div>
+                    </TableCell>
+                    <TableCell style={{ width: "60px", textAlign: "center" }}>
+                      {row.quiz_result.actual_score}
                     </TableCell>
                   </TableRow>
                 ))}
