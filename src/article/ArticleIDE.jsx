@@ -67,8 +67,7 @@ const MemberArticleIDE = (props) => {
     Service.client
       .get(`ide`, {
         params: {
-          git_url: "https://github.com/ptm108/Graspfood2",
-          course_name: "",
+          course_name: articleDetails && articleDetails.title,
         },
       })
       .then((res) => {
