@@ -136,8 +136,23 @@ const PublicProfile = (props) => {
 
   const [badges, setBadges] = useState([]);
   const [badgesDialog, setBadgesDialog] = useState(false);
-  console.log(badges);
+  // console.log(badges);
   const [experiences, setExperiences] = useState([]);
+
+  const checkIfMemberIdIsPro = () => {
+    Service.client
+      .get(`/auth/members/${id}`)
+      .then((res) => {
+        // console.log(res.data);
+        if (res.data.member.membership_tier === "FREE") {
+          history.push(`/404`);
+          // history.go();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const checkIfLoggedIn = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -307,6 +322,7 @@ const PublicProfile = (props) => {
   };
 
   useEffect(() => {
+    checkIfMemberIdIsPro();
     checkIfLoggedIn();
     getMemberData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
