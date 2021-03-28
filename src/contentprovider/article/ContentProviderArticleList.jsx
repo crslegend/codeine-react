@@ -274,7 +274,7 @@ const PartnerArticlesList = (props) => {
             variant="contained"
             color="primary"
             onClick={() => history.push("/viewarticles")}
-            style={{ textTransform: "capitalize" }}
+            style={{ textTransform: "capitalize", marginLeft: "15px" }}
           >
             View all articles
           </Button>
