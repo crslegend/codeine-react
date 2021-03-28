@@ -92,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
   badgeDetail: {
     display: "flex",
     padding: theme.spacing(2),
+    color: theme.palette.primary.main,
     border: "1px solid #164D8F",
     borderRadius: "5px",
     marginBottom: "10px",
@@ -162,11 +163,38 @@ const DashboardPage = () => {
   };
 
   const getAllBadge = () => {
+    let list = [];
+
     Service.client.get(`/achievements`).then((res) => {
-      console.log(res.data);
       res.data = res.data.filter((badge) => !badge.is_deleted);
-      setBadges(res.data);
+
+      for (var i = 0; i < res.data.length; i++) {
+        for (var j = 0; j < memberBadges.length; j++) {
+          if (res.data[i].id === memberBadges[j].badgeDetails.achievement.id) {
+            list.push({
+              achievement_requirements: res.data[i].achievement_requirements,
+              badge: res.data[i].badge,
+              title: res.data[i].title,
+              id: res.data[i].id,
+              is_owned: true,
+            });
+          } else if (
+            res.data[i].id !== memberBadges[j].badgeDetails.achievement.id &&
+            j === memberBadges.length - 1
+          ) {
+            list.push({
+              achievement_requirements: res.data[i].achievement_requirements,
+              badge: res.data[i].badge,
+              title: res.data[i].title,
+              id: res.data[i].id,
+              is_owned: false,
+            });
+          }
+        }
+      }
     });
+
+    setBadges(list);
   };
 
   const formatDataIntoArr = (data) => {
@@ -567,11 +595,18 @@ const DashboardPage = () => {
       >
         <DialogTitle>All Achievements</DialogTitle>
         <DialogContent>
+          {console.log(badges)}
           {badges &&
             badges.length > 0 &&
             badges.map((badge, index) => {
               return (
-                <div key={index} className={classes.badgeDetail}>
+                <div
+                  key={index}
+                  style={{
+                    WebkitFilter: !badge.is_owned ? "grayscale(1)" : "",
+                  }}
+                  className={classes.badgeDetail}
+                >
                   <CardMedia
                     className={classes.dialogmedia}
                     image={badge.badge}
@@ -583,7 +618,13 @@ const DashboardPage = () => {
                     >
                       {badge.title}
                     </Typography>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        color: "#000000",
+                      }}
+                    >
                       {badge.achievement_requirements.length > 0 &&
                         badge.achievement_requirements.map((requirement) => {
                           if (requirement.stat === "UI") {
