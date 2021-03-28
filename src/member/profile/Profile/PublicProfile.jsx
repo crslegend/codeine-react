@@ -14,6 +14,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CardMedia,
   Dialog,
 } from "@material-ui/core";
 import { LocationOn, Email } from "@material-ui/icons";
@@ -81,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline",
     },
   },
+  cardmedia: {
+    height: "100px",
+    width: "100px",
+    borderRadius: "50%",
+    marginRight: "35px",
+    marginBottom: "25px",
+  },
 }));
 
 const CustomTooltip = ({ payload, label, active, category }) => {
@@ -113,7 +121,6 @@ const PublicProfile = (props) => {
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
-  const [points, setPoints] = useState("0");
 
   const [courses, setCourses] = useState([]);
   const [courseDialog, setCourseDialog] = useState(false);
@@ -280,7 +287,7 @@ const PublicProfile = (props) => {
           .filter((course) => course.progress === "100.00");
         setCourses(res.data.courses);
 
-        setBadges(res.data.achievements);
+        setBadges(res.data.achievements.reverse());
 
         setExperiences(res.data.cv);
       })
@@ -494,7 +501,7 @@ const PublicProfile = (props) => {
               <Grid item xs={12} style={{ marginBottom: "60px" }}>
                 <Typography
                   variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
                 >
                   Top languages
                 </Typography>
@@ -506,9 +513,9 @@ const PublicProfile = (props) => {
                           style={{
                             color: `${language.font}`,
                             backgroundColor: `${language.background}`,
-                            padding: "10px 30px",
+                            padding: "10px 10px",
                             marginRight: "40px",
-                            width: "250px",
+                            width: "260px",
                             height: "150px",
                           }}
                           key={index}
@@ -553,17 +560,30 @@ const PublicProfile = (props) => {
               ""
             )}
 
-            <Grid item xs={12} style={{ marginBottom: "60px" }}>
+            <Grid item xs={12} style={{ marginBottom: "35px" }}>
               <Typography
                 variant="h5"
-                style={{ fontWeight: 600, marginBottom: "15px" }}
+                style={{ fontWeight: 600, marginBottom: "20px" }}
               >
                 Badges
               </Typography>
+
               {badges && badges.length > 0 ? (
-                badges.map((badge, index) => {
-                  //return <ExperienceCard key={index} experience={experience} />;
-                })
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {badges &&
+                    badges.map((badge, index) => (
+                      <CardMedia
+                        className={classes.cardmedia}
+                        image={badge.achievement.badge}
+                      />
+                    ))}
+                </div>
               ) : (
                 <Grid style={{ height: "100px", paddingTop: "40px" }}>
                   <Typography
@@ -581,13 +601,13 @@ const PublicProfile = (props) => {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
                 >
                   Courses
                 </Typography>
                 {courses && courses.length > 0 ? (
                   <Button
-                    style={{ textTransform: "none", marginBottom: "15px" }}
+                    style={{ textTransform: "none", marginBottom: "20px" }}
                     color="primary"
                     variant="outlined"
                     onClick={() => setCourseDialog(true)}
@@ -616,6 +636,9 @@ const PublicProfile = (props) => {
                       <TableCell style={{ fontWeight: 600 }}>
                         category
                       </TableCell>
+                      <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                        results
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -642,6 +665,11 @@ const PublicProfile = (props) => {
                                   <Label label={label} />
                                 ))}
                             </div>
+                          </TableCell>
+                          <TableCell
+                            style={{ width: "60px", textAlign: "center" }}
+                          >
+                            {row.quiz_result.actual_score}
                           </TableCell>
                         </TableRow>
                       ))
@@ -672,7 +700,7 @@ const PublicProfile = (props) => {
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
               <Typography
                 variant="h5"
-                style={{ fontWeight: 600, marginBottom: "15px" }}
+                style={{ fontWeight: 600, marginBottom: "20px" }}
               >
                 Experiences
               </Typography>
@@ -711,6 +739,9 @@ const PublicProfile = (props) => {
               >
                 <TableCell style={{ fontWeight: 600 }}>title</TableCell>
                 <TableCell style={{ fontWeight: 600 }}>category</TableCell>
+                <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                  results
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -738,6 +769,9 @@ const PublicProfile = (props) => {
                             <Label label={label} />
                           ))}
                       </div>
+                    </TableCell>
+                    <TableCell style={{ width: "60px", textAlign: "center" }}>
+                      {row.quiz_result.actual_score}
                     </TableCell>
                   </TableRow>
                 ))}
