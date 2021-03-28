@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#eeeeee",
     padding: theme.spacing(2),
     borderRadius: "5px",
-    width: "290px",
+    // minWidth: "200px",
     justifyContent: "space-between",
   },
   result: {
@@ -205,16 +205,23 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       {coursesRanking[1] ? coursesRanking[1].title : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {coursesRanking[1] ? coursesRanking[1].Enrollment : "-"}
                     </Typography>
                   </div>
                 </div>
-                <div className={classes.statsDiv} style={{ minHeight: 220 }}>
+                <div
+                  className={classes.statsDiv}
+                  style={{
+                    minHeight: 220,
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                  }}
+                >
                   <div style={{ textAlign: "center" }}>
                     <LooksOne
                       style={{
@@ -224,10 +231,10 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       {coursesRanking[0] ? coursesRanking[0].title : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {coursesRanking[0] ? coursesRanking[0].Enrollment : "-"}
                     </Typography>
@@ -243,10 +250,10 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       {coursesRanking[2] ? coursesRanking[2].title : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {coursesRanking[2] ? coursesRanking[2].Enrollment : "-"}
                     </Typography>
@@ -391,17 +398,24 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {courseSearches[1] ? courseSearches[1].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {courseSearches[1] ? courseSearches[1].Occurences : "-"}
                     </Typography>
                   </div>
                 </div>
-                <div className={classes.statsDiv} style={{ minHeight: 150 }}>
+                <div
+                  className={classes.statsDiv}
+                  style={{
+                    minHeight: 150,
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                  }}
+                >
                   <div style={{ textAlign: "center" }}>
                     <LooksOne
                       style={{
@@ -411,11 +425,11 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {courseSearches[0] ? courseSearches[0].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {courseSearches[0] ? courseSearches[0].Occurences : "-"}
                     </Typography>
@@ -431,11 +445,11 @@ const CourseReport = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {courseSearches[2] ? courseSearches[2].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {courseSearches[2] ? courseSearches[2].Occurences : "-"}
                     </Typography>

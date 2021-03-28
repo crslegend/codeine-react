@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#eeeeee",
     padding: theme.spacing(2),
     borderRadius: "5px",
-    minWidth: "250px",
+    minWidth: "200px",
     justifyContent: "space-between",
   },
   result: {
@@ -221,7 +221,14 @@ const CourseSearchRanking = () => {
                   </Typography>
                 </div>
               </div>
-              <div className={classes.statsDiv} style={{ minHeight: 150 }}>
+              <div
+                className={classes.statsDiv}
+                style={{
+                  minHeight: 150,
+                  marginLeft: "20px",
+                  marginRight: "20px",
+                }}
+              >
                 <div style={{ textAlign: "center" }}>
                   <LooksOne
                     style={{

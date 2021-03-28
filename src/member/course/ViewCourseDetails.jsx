@@ -34,7 +34,7 @@ import {
   RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
-import components from "./components/NavbarComponents";
+// import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
 import { calculateDateInterval } from "../../utils.js";
 import Toast from "../../components/Toast.js";
@@ -978,7 +978,7 @@ const ViewCourseDetails = () => {
             color="primary"
             onClick={() => {
               // direct user to pay for pro-tier membership
-              history.push(`/member/home/transaction`);
+              history.push(`/member/payment`);
             }}
           >
             Upgrade to Pro-Tier

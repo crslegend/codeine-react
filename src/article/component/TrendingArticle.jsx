@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CLogo from "../../assets/CodeineLogos/C.svg";
 import { Typography, Avatar } from "@material-ui/core";
@@ -33,7 +33,7 @@ const TrendingArticle = (props) => {
           style={{
             fontWeight: 800,
             fontSize: "30px",
-            color: "rgba(230, 230, 230, 1)",
+            color: "#b0b0b0",
             padding: "10px",
             paddingTop: "0px",
           }}

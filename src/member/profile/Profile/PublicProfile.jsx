@@ -136,7 +136,6 @@ const PublicProfile = (props) => {
 
   const [badges, setBadges] = useState([]);
   const [badgesDialog, setBadgesDialog] = useState(false);
-  // console.log(badges);
   const [experiences, setExperiences] = useState([]);
 
   const checkIfMemberIdIsPro = () => {

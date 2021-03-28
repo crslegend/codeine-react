@@ -126,6 +126,7 @@ const ArticleMain = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getArticleDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getArticleDetails = () => {

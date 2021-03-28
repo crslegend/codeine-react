@@ -133,7 +133,7 @@ const CourseDetailAnalytics = () => {
   const [inactiveMembers, setInactiveMembers] = useState();
   const [falseStarters, setFalseStarters] = useState();
   const [memberDemographics, setMemberDemographics] = useState();
-  const [numDaysForStudents, setNumDaysForStudents] = useState();
+  const [numDaysForStudents, setNumDaysForStudents] = useState(7);
 
   const formatSecondsToHours = (time) => {
     let newTime = time / 3600;

@@ -8,7 +8,7 @@ import {
   Radio,
   Typography,
 } from "@material-ui/core";
-import { ArrowBack, Assignment, Edit } from "@material-ui/icons";
+import { ArrowBack, Assignment } from "@material-ui/icons";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../../AxiosService";
 

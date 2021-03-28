@@ -118,6 +118,7 @@ const EnrollCourseWithIDE = ({
 
   useEffect(() => {
     startIDE();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -712,6 +713,7 @@ const EnrollCourseWithIDE = ({
                 width="100%"
                 height="100%"
                 src={`http://localhost:${portNum}`}
+                title="ide"
               />
             ) : (
               <div className={classes.loader}>

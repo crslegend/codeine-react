@@ -17,9 +17,9 @@ import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import CommentDrawer from "./ArticleComments";
 import Toast from "../../../components/Toast.js";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import jwt_decode from "jwt-decode";
-import Cookies from "js-cookie";
+// import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+// import jwt_decode from "jwt-decode";
+// import Cookies from "js-cookie";
 import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({

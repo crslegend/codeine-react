@@ -284,14 +284,24 @@ const MemberArticleList = (props) => {
         >
           <PageTitle title="Your articles" />
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => createNewArticle()}
-            style={{ marginLeft: "auto", height: 40 }}
-          >
-            New Article
-          </Button>
+          <div style={{ marginLeft: "auto" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => createNewArticle()}
+              style={{ textTransform: "capitalize" }}
+            >
+              New Article
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => history.push("/viewarticles")}
+              style={{ textTransform: "capitalize", marginLeft: "15px" }}
+            >
+              View all articles
+            </Button>
+          </div>
         </div>
 
         <AppBar

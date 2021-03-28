@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Service from "../../AxiosService";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -210,18 +210,18 @@ const PartnerArticlesList = (props) => {
       });
   };
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
 
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
+  // const checkIfLoggedIn = () => {
+  //   if (Cookies.get("t1")) {
+  //     setLoggedIn(true);
+  //   }
+  // };
 
   const [articleList, setArticleList] = useState([]);
 
   useEffect(() => {
-    checkIfLoggedIn();
+    // checkIfLoggedIn();
     getArticles();
   }, []);
 
@@ -274,7 +274,7 @@ const PartnerArticlesList = (props) => {
             variant="contained"
             color="primary"
             onClick={() => history.push("/viewarticles")}
-            style={{ textTransform: "capitalize" }}
+            style={{ textTransform: "capitalize", marginLeft: "15px" }}
           >
             View all articles
           </Button>
