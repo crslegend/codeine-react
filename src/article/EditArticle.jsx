@@ -743,7 +743,7 @@ const EditArticle = (props) => {
       <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       <Grid container>
         <Grid item xs={8} className={classes.gridlayout}>
-          <Breadcrumbs
+          {/* <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
           >
@@ -756,7 +756,7 @@ const EditArticle = (props) => {
               My Articles
             </Link>
             <Typography color="primary">Edit Article</Typography>
-          </Breadcrumbs>
+          </Breadcrumbs> */}
           <TextField
             margin="normal"
             id="title"

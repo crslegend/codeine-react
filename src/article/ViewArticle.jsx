@@ -21,6 +21,7 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
@@ -312,7 +313,13 @@ const ViewArticle = (props) => {
         )}
 
         <div style={{ fontSize: "20px", marginBottom: "30px" }}>
-          {parse(articleDetails.content, options)}
+          {/* {parse(articleDetails.content, options)} */}
+
+          <ReactQuill
+            value={articleDetails.content}
+            readOnly={true}
+            theme={"bubble"}
+          />
 
           {articleDetails &&
             articleDetails.coding_languages &&
@@ -527,12 +534,6 @@ const ViewArticle = (props) => {
         >
           Categories this article falls under:
         </Typography> */}
-
-        {/* <ReactQuill
-          value={articleDetails.content}
-          readOnly={openEditor}
-          theme={"bubble"}
-        /> */}
       </Container>
       <Dialog
         open={dialogopen}
