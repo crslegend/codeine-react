@@ -33,7 +33,7 @@ const TrendingArticle = (props) => {
           style={{
             fontWeight: 800,
             fontSize: "30px",
-            color: "rgba(230, 230, 230, 1)",
+            color: "#b0b0b0",
             padding: "10px",
             paddingTop: "0px",
           }}

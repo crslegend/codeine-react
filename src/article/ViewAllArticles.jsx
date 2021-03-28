@@ -9,6 +9,7 @@ import {
   Typography,
   ListItem,
 } from "@material-ui/core";
+import LinkMui from "@material-ui/core/Link";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
@@ -24,9 +25,17 @@ import jwt_decode from "jwt-decode";
 const useStyles = makeStyles((theme) => ({
   root: {
     paddingTop: "65px",
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    backgroundColor: "#fff",
+    paddingLeft: theme.spacing(10),
+    paddingRight: theme.spacing(10),
+    // backgroundColor: "#fff",
+  },
+  linkMui: {
+    fontWeight: 700,
+    fontSize: "25px",
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "none",
+    },
   },
 }));
 
@@ -210,7 +219,14 @@ const ViewAllArticles = () => {
               listOfArticles.length > 0 &&
               listOfArticles.map((article, index) => {
                 return (
-                  <div key={article.id} style={{ padding: "5px" }}>
+                  <div
+                    key={article.id}
+                    style={{
+                      padding: "16px",
+                      backgroundColor: "#fff",
+                      marginBottom: "20px",
+                    }}
+                  >
                     <div style={{ display: "flex" }}>
                       <Avatar
                         src={
@@ -254,30 +270,29 @@ const ViewAllArticles = () => {
                           }
                         })}
                     </div>
-                    <Typography
-                      onClick={() => {
-                        if (setLoggedIn) {
-                          if (userType === "admin") {
-                            history.push(`/article/admin/${article.id}`);
-                          } else if (userType === "member") {
-                            history.push(`/article/member/${article.id}`);
-                          } else if (userType === "partner") {
-                            history.push(`/article/partner/${article.id}`);
-                          } else if (userType === "guest") {
+                    <div>
+                      <LinkMui
+                        onClick={() => {
+                          if (setLoggedIn) {
+                            if (userType === "admin") {
+                              history.push(`/article/admin/${article.id}`);
+                            } else if (userType === "member") {
+                              history.push(`/article/member/${article.id}`);
+                            } else if (userType === "partner") {
+                              history.push(`/article/partner/${article.id}`);
+                            } else if (userType === "guest") {
+                              history.push(`/article/guest/${article.id}`);
+                            }
+                          } else {
                             history.push(`/article/guest/${article.id}`);
                           }
-                        } else {
-                          history.push(`/article/guest/${article.id}`);
-                        }
-                      }}
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "25px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {article.title}
-                    </Typography>
+                        }}
+                        className={classes.linkMui}
+                      >
+                        {article.title}
+                      </LinkMui>
+                    </div>
+
                     <Typography style={{ fontSize: "12px", color: "#757575" }}>
                       {formatDate(article.date_created)}
                     </Typography>
