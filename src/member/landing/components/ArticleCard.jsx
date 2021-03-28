@@ -8,6 +8,7 @@ import {
   Grid,
 } from "@material-ui/core";
 import Label from "./Label";
+import { useHistory } from "react-router";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -28,7 +29,8 @@ const styles = makeStyles((theme) => ({
 const ArticleCard = (props) => {
   const classes = styles();
   const { article, index } = props;
-  console.log(article);
+  const history = useHistory();
+  // console.log(article);
 
   let numbering = index + 1;
   if (numbering < 10) {
@@ -51,7 +53,9 @@ const ArticleCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea>
+      <CardActionArea
+        onClick={() => history.push(`/article/member/${article.id}`)}
+      >
         <CardContent>
           <Grid container>
             <Grid item xs={1}>
