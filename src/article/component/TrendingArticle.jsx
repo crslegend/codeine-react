@@ -40,22 +40,7 @@ const TrendingArticle = (props) => {
         >
           {number}
         </Typography>
-        <div
-          style={{ flexDirection: "column", cursor: "pointer" }}
-          onClick={() => {
-            if (setLoggedIn) {
-              if (userType === "admin") {
-                history.push(`/article/admin/${article.id}`);
-              } else if (userType === "member") {
-                history.push(`/article/member/${article.id}`);
-              } else if (userType === "partner") {
-                history.push(`/article/partner/${article.id}`);
-              }
-            } else {
-              history.push(`/article/guest/${article.id}`);
-            }
-          }}
-        >
+        <div style={{ flexDirection: "column" }}>
           <div style={{ display: "flex" }}>
             <Avatar
               src={
@@ -73,7 +58,24 @@ const TrendingArticle = (props) => {
               : article.user.first_name + " " + article.user.last_name}
           </div>
 
-          <Typography style={{ fontWeight: 600, fontSize: "18px" }}>
+          <Typography
+            onClick={() => {
+              if (setLoggedIn) {
+                if (userType === "admin") {
+                  history.push(`/article/admin/${article.id}`);
+                } else if (userType === "member") {
+                  history.push(`/article/member/${article.id}`);
+                } else if (userType === "partner") {
+                  history.push(`/article/partner/${article.id}`);
+                } else if (userType === "guest") {
+                  history.push(`/article/guest/${article.id}`);
+                }
+              } else {
+                history.push(`/article/guest/${article.id}`);
+              }
+            }}
+            style={{ fontWeight: 600, fontSize: "18px", cursor: "pointer" }}
+          >
             {article.title}
           </Typography>
           <Typography style={{ fontSize: "12px", color: "#757575" }}>

@@ -263,6 +263,8 @@ const ViewAllArticles = () => {
                             history.push(`/article/member/${article.id}`);
                           } else if (userType === "partner") {
                             history.push(`/article/partner/${article.id}`);
+                          } else if (userType === "guest") {
+                            history.push(`/article/guest/${article.id}`);
                           }
                         } else {
                           history.push(`/article/guest/${article.id}`);
