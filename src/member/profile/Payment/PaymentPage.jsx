@@ -1,12 +1,28 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
-import { Chip, Paper, Typography } from "@material-ui/core";
+import {
+  Button,
+  Chip,
+  Paper,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+} from "@material-ui/core";
 // import jwt_decode from "jwt-decode";
 import Service from "../../../AxiosService";
+import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
 import PageTitle from "../../../components/PageTitle";
+
+import pricing from "../../../assets/pricing_asset.png";
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -58,9 +74,23 @@ const Payment = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const [upgradeToProDialog, setUpgradeToProDialog] = useState(false);
+  const [month, setMonth] = useState(1);
+  const [user, setUser] = useState();
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+      const decoded = jwt_decode(Cookies.get("t1"));
+      // console.log(decoded);
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+
+          setUser(res.data);
+        })
+        .catch((err) => console.log(err));
     }
   };
 
@@ -117,6 +147,64 @@ const Payment = () => {
   useEffect(() => {
     getTransactionData();
   }, [setAllTransactions]);
+
+  const handleStripePaymentGateway = async (
+    amount,
+    email,
+    userId,
+    numOfMonths,
+    transactionId
+  ) => {
+    // Get Stripe.js instance
+    const stripe = await stripePromise;
+
+    const data = {
+      total_price: amount * numOfMonths,
+      email: email,
+      description:
+        numOfMonths && numOfMonths === 1
+          ? `Pro-Tier for 1 Month`
+          : `Pro-Tier for ${numOfMonths} Months`,
+      mId: userId,
+      numOfMonths: numOfMonths,
+      transaction: transactionId,
+    };
+
+    axios
+      .post("/create-checkout-session-upgrade-pro", data)
+      .then((res) => {
+        // console.log(res);
+        stripe.redirectToCheckout({
+          sessionId: res.data.id,
+        });
+      })
+      .catch((err) => console.log(err.response));
+  };
+
+  const handlePayment = () => {
+    // console.log(user);
+
+    const data = {
+      subscription_fee: "5.99",
+      payment_type: "Credit Card",
+      month_duration: parseInt(month),
+    };
+    // console.log(data);
+    Service.client
+      .post(`/auth/membership-subscriptions`, data)
+      .then((res) => {
+        // console.log(res);
+
+        handleStripePaymentGateway(
+          5.99,
+          user.email,
+          user.id,
+          month,
+          res.data.id
+        );
+      })
+      .catch((err) => console.log(err));
+  };
 
   const formatStatus = (status) => {
     if (status !== "Payment") {
@@ -275,11 +363,11 @@ const Payment = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                marginBottom: "10px",
+                marginBottom: "20px",
               }}
             >
               <Typography
-                variant="h6"
+                variant="h5"
                 style={{ fontWeight: 600, paddingRight: "10px" }}
               >
                 Current Tier:
@@ -297,6 +385,27 @@ const Payment = () => {
                   size="small"
                 />
               )}
+              <div style={{ marginLeft: "auto" }}>
+                {latestTransactionForPro ? (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginLeft: "30px", height: 30 }}
+                    onClick={() => setUpgradeToProDialog(true)}
+                  >
+                    Extend Pro-Tier Membership
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginLeft: "30px", height: 30 }}
+                    onClick={() => setUpgradeToProDialog(true)}
+                  >
+                    Upgrade To Pro-Tier
+                  </Button>
+                )}
+              </div>
             </div>
 
             <Typography
@@ -352,6 +461,60 @@ const Payment = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={upgradeToProDialog}
+        onClose={() => setUpgradeToProDialog(false)}
+        PaperProps={{
+          style: {
+            width: "600px",
+          },
+        }}
+      >
+        <DialogTitle>Upgrade To Pro-Tier</DialogTitle>
+        <DialogContent>
+          <Typography variant="h6" style={{ paddingBottom: "20px" }}>
+            Price per month: <span style={{ color: "#437FC7" }}>$5.99</span>
+          </Typography>
+          <img width="100%" alt="pricing" src={pricing}></img>
+          <label htmlFor="month">
+            <Typography variant="body1" style={{ marginTop: "20px" }}>
+              Enter number of months for Pro-Tier
+            </Typography>
+          </label>
+          <TextField
+            id="month"
+            variant="outlined"
+            placeholder="Enter number of months"
+            type="number"
+            required
+            fullWidth
+            margin="dense"
+            value={month && month}
+            onChange={(e) => setMonth(e.target.value)}
+            InputProps={{
+              inputProps: { min: 1 },
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setUpgradeToProDialog(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handlePayment()}
+          >
+            Proceed To Pay
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

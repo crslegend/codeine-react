@@ -345,7 +345,7 @@ const Profile = (props) => {
                       style={{ marginLeft: "30px", height: 30 }}
                       onClick={() => history.push(`/member/payment`)}
                     >
-                      Extend Pro Membership
+                      Extend Pro-Tier Membership
                     </Button>
                   )}
               </div>
