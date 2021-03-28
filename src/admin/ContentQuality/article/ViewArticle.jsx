@@ -20,6 +20,7 @@ import Toast from "../../../components/Toast.js";
 // import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 // import jwt_decode from "jwt-decode";
 // import Cookies from "js-cookie";
+import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 
 const useStyles = makeStyles((theme) => ({
@@ -251,7 +252,16 @@ const ViewArticle = (props) => {
       )}
 
       <div style={{ fontSize: "20px", marginBottom: "30px" }}>
-        {parse(articleDetails.content, options)}
+        {/* {parse(articleDetails.content, options)} */}
+
+        <div style={{ fontSize: "18px" }}>
+          <ReactQuill
+            //modules={modules}
+            value={articleDetails.content}
+            readOnly={true}
+            theme={"bubble"}
+          />
+        </div>
 
         {articleDetails &&
           articleDetails.coding_languages &&
