@@ -553,7 +553,7 @@ const DashboardPage = () => {
                 variant="h6"
                 style={{ textAlign: "center", paddingBottom: "20px" }}
               >
-                Total Time Spent in Respective Cateogries
+                Total Time Spent in Respective Categories
               </Typography>
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart

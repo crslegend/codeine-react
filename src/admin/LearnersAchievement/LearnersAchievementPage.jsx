@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     height: "120px",
     width: "120px",
     borderRadius: "50%",
-    margin: "28px",
+    margin: "28px 35px 10px 35px",
   },
   description: {
     width: "100%",
@@ -804,21 +804,31 @@ const AdminLearnersAchievementPage = () => {
                       </Card>
                     }
                   >
-                    <CardMedia
-                      disabled={badge.is_deleted}
-                      onClick={
-                        !badge.is_deleted
-                          ? () => handleOpenEditDialog(badge)
-                          : undefined
-                      }
-                      className={classes.cardmedia}
-                      image={badge.badge}
-                      style={{
-                        WebkitFilter: badge.is_deleted
-                          ? "brightness(50%)"
-                          : "brightness(100%)",
-                      }}
-                    />
+                    <div>
+                      <CardMedia
+                        disabled={badge.is_deleted}
+                        onClick={
+                          !badge.is_deleted
+                            ? () => handleOpenEditDialog(badge)
+                            : undefined
+                        }
+                        className={classes.cardmedia}
+                        image={badge.badge}
+                        style={{
+                          WebkitFilter: badge.is_deleted
+                            ? "brightness(50%)"
+                            : "brightness(100%)",
+                          cursor: badge.is_deleted ? "" : "pointer",
+                        }}
+                      />
+                      <Typography
+                        style={{ textAlign: "center", marginBottom: "20px" }}
+                      >
+                        {badge && badge.title.length > 15
+                          ? `${badge.title.substr(0, 15)}...`
+                          : badge && badge.title}
+                      </Typography>
+                    </div>
                   </Tooltip>
                 ))
             ) : (
@@ -830,7 +840,7 @@ const AdminLearnersAchievementPage = () => {
                 }}
               >
                 <Typography
-                  variant="h3"
+                  variant="h4"
                   style={{
                     textAlign: "center",
                     lineHeight: "40px",
@@ -838,8 +848,7 @@ const AdminLearnersAchievementPage = () => {
                     color: "#9B9B9B",
                   }}
                 >
-                  Codeine has no achievement badges. <br />
-                  Help create one today!
+                  No results found
                 </Typography>
               </div>
             )}
@@ -869,7 +878,7 @@ const AdminLearnersAchievementPage = () => {
             <Typography
               style={{
                 color: "#FFFFFF",
-                fontSize: "54px",
+                fontSize: "48px",
                 fontWeight: 700,
                 marginLeft: "30px",
               }}
@@ -883,7 +892,7 @@ const AdminLearnersAchievementPage = () => {
             <Typography
               style={{
                 color: "#FFFFFF",
-                fontSize: "54px",
+                fontSize: "48px",
                 fontWeight: 700,
                 marginLeft: "30px",
               }}
@@ -996,8 +1005,8 @@ const AdminLearnersAchievementPage = () => {
                 }}
               >
                 Click on the{" "}
-                {<Done color="secondary" style={{ fontSize: "12px" }} />} icon
-                to confirm requirement.
+                {<Add color="secondary" style={{ fontSize: "12px" }} />} icon to
+                confirm requirement.
               </Typography>
             </Grid>
           </Grid>
@@ -1144,7 +1153,7 @@ const AdminLearnersAchievementPage = () => {
                 handleAddToList(newBadgeRequirement);
               }}
             >
-              <Done color="secondary" />
+              <Add color="secondary" />
             </IconButton>
           </Grid>
         </DialogContent>
