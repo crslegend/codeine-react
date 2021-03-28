@@ -6,7 +6,6 @@ import {
   Paper,
   TextField,
   Typography,
-  Grid,
   Avatar,
 } from "@material-ui/core";
 import Service from "../../AxiosService";

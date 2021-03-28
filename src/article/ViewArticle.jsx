@@ -238,6 +238,20 @@ const ViewArticle = (props) => {
   return (
     <div className={classes.root}>
       <Container maxWidth="md">
+        {/* <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+        >
+          <Link
+            color="inherit"
+            onClick={() => {
+              history.push("/member/profile");
+            }}
+          >
+            Profile
+          </Link>
+          <Typography color="textPrimary">Change Password</Typography>
+        </Breadcrumbs> */}
         <Typography
           variant="h1"
           style={{ fontWeight: "600", marginBottom: "10px" }}
@@ -274,26 +288,27 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {(userType === "member" &&
+            {((userType === "member" &&
               user &&
               user.member &&
               user.member.membership_tier !== "FREE") ||
-              ((userType === "partner" || userType === "admin") && (
-                <div style={{ marginLeft: "auto" }}>
-                  {!openIDE && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      style={{
-                        textTransform: "capitalize",
-                      }}
-                      onClick={() => openingIDE()}
-                    >
-                      Code along
-                    </Button>
-                  )}
-                </div>
-              ))}
+              userType === "partner" ||
+              userType === "admin") && (
+              <div style={{ marginLeft: "auto" }}>
+                {!openIDE && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      textTransform: "capitalize",
+                    }}
+                    onClick={() => openingIDE()}
+                  >
+                    Code along
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -399,12 +414,10 @@ const ViewArticle = (props) => {
             <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
             </Typography>
-            {user && checkIfOwnerOfComment(user.id) && (
-              <Menu
-                onClick={(e) => handleClick(e)}
-                style={{ marginLeft: "auto", cursor: "pointer" }}
-              />
-            )}
+            <Menu
+              onClick={(e) => handleClick(e)}
+              style={{ marginLeft: "auto", cursor: "pointer" }}
+            />
 
             <Popover
               id={popoverid}
@@ -421,26 +434,39 @@ const ViewArticle = (props) => {
               }}
             >
               <div style={{ padding: "5px" }}>
+                {user &&
+                  articleDetails.user &&
+                  checkIfOwnerOfComment(articleDetails.user.id) && (
+                    <>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={() => clickEditArticle()}
+                      >
+                        Edit article
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={() => unpublishArticle()}
+                      >
+                        Unpublish
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={handleClickOpen}
+                      >
+                        Delete
+                      </Typography>
+                    </>
+                  )}
                 <Typography
                   variant="body2"
                   className={classes.typography}
-                  onClick={() => clickEditArticle()}
+                  onClick={() => alert("Flag Article")}
                 >
-                  Edit article
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className={classes.typography}
-                  onClick={() => unpublishArticle()}
-                >
-                  Unpublish
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className={classes.typography}
-                  onClick={handleClickOpen}
-                >
-                  Delete
+                  Flag Article
                 </Typography>
               </div>
             </Popover>

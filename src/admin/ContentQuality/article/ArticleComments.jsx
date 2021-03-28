@@ -167,15 +167,16 @@ const ArticleComment = (props) => {
     return `${days} days ago`;
   };
 
-  const [comment, setComment] = useState({
-    comment: "",
-    textfield: "",
-  });
+  // const [comment, setComment] = useState({
+  //   comment: "",
+  //   textfield: "",
+  // });
 
   const [commentList, setCommentList] = useState([]);
 
   useEffect(() => {
     getArticleComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addTextFieldStatus = (list) => {
@@ -433,20 +434,20 @@ const ArticleComment = (props) => {
       .catch((err) => console.log(err));
   };
 
-  const handleAddComment = (id) => {
-    Service.client
-      .post(`/articles/${articleDetails.id}/comments`, {
-        comment: comment.comment,
-      })
-      .then((res) => {
-        //console.log(res);
-        setComment({
-          comment: "",
-        });
-        getArticleComments();
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleAddComment = (id) => {
+  //   Service.client
+  //     .post(`/articles/${articleDetails.id}/comments`, {
+  //       comment: comment.comment,
+  //     })
+  //     .then((res) => {
+  //       //console.log(res);
+  //       setComment({
+  //         comment: "",
+  //       });
+  //       getArticleComments();
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   // const handleEditReplyTextField = (replyid, status) => {
   //   let newArray = [...commentList];

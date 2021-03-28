@@ -34,7 +34,7 @@ import {
   RateReview,
 } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
-import components from "./components/NavbarComponents";
+// import components from "./components/NavbarComponents";
 import ReactPlayer from "react-player";
 import { calculateDateInterval } from "../../utils.js";
 import Toast from "../../components/Toast.js";

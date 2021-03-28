@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Service from "../../AxiosService";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -209,18 +209,18 @@ const AdminArticleList = (props) => {
       });
   };
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
 
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
+  // const checkIfLoggedIn = () => {
+  //   if (Cookies.get("t1")) {
+  //     setLoggedIn(true);
+  //   }
+  // };
 
   const [articleList, setArticleList] = useState([]);
 
   useEffect(() => {
-    checkIfLoggedIn();
+    // checkIfLoggedIn();
     getArticles();
   }, []);
 
@@ -294,9 +294,9 @@ const AdminArticleList = (props) => {
       <TabPanel value={value} index={0}>
         {articleList.map((article, index) => {
           return (
-            <Fragment>
+            <div key={article.id} className={classes.articlelists}>
               {!article.is_published && (
-                <div key={article.id} className={classes.articlelists}>
+                <>
                   <Typography
                     style={{ fontWeight: "700", cursor: "pointer" }}
                     onClick={() => {
@@ -358,48 +358,48 @@ const AdminArticleList = (props) => {
                   <div className={classes.divider}>
                     <Divider />
                   </div>
-                </div>
-              )}
-              <Dialog
-                open={dialogStatus.dialogId === article.id}
-                onClose={handleDialogClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Delete Article?"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this article?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleDialogClose} variant="outlined">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      deleteArticle(article.id);
-                      handlePopoverClose();
-                    }}
-                    variant="contained"
-                    className={classes.redButton}
+                  <Dialog
+                    open={dialogStatus.dialogId === article.id}
+                    onClose={handleDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
                   >
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </Fragment>
+                    <DialogTitle id="alert-dialog-title">
+                      {"Delete Article?"}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete this article?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleDialogClose} variant="outlined">
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          deleteArticle(article.id);
+                          handlePopoverClose();
+                        }}
+                        variant="contained"
+                        className={classes.redButton}
+                      >
+                        Delete
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+              )}
+            </div>
           );
         })}
       </TabPanel>
       <TabPanel value={value} index={1}>
         {articleList.map((article, index) => {
           return (
-            <Fragment>
+            <div key={article.id} className={classes.articlelists}>
               {article.is_published && (
-                <div key={article.id} className={classes.articlelists}>
+                <>
                   <div style={{ display: "flex" }}>
                     <div>
                       <Typography
@@ -479,39 +479,39 @@ const AdminArticleList = (props) => {
                   <div className={classes.divider}>
                     <Divider />
                   </div>
-                </div>
-              )}
-              <Dialog
-                open={dialogStatus.dialogId === article.id}
-                onClose={handleDialogClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Delete Article?"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this article?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleDialogClose} variant="outlined">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      deleteArticle(article.id);
-                      handlePopoverClose();
-                    }}
-                    variant="contained"
-                    className={classes.redButton}
+                  <Dialog
+                    open={dialogStatus.dialogId === article.id}
+                    onClose={handleDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
                   >
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </Fragment>
+                    <DialogTitle id="alert-dialog-title">
+                      {"Delete Article?"}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete this article?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleDialogClose} variant="outlined">
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          deleteArticle(article.id);
+                          handlePopoverClose();
+                        }}
+                        variant="contained"
+                        className={classes.redButton}
+                      >
+                        Delete
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+              )}
+            </div>
           );
         })}
       </TabPanel>
