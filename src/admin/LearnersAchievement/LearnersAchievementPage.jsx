@@ -274,6 +274,7 @@ const AdminLearnersAchievementPage = () => {
     setAvatar();
     setNewBadge({ badge: "", title: "" });
     setRequirementList([]);
+    setSelectedBadge();
     setNewBadgeRequirement({ experience_point: "0", stat: "" });
     setTemporarystat([...stats]);
   };
