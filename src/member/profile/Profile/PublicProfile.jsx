@@ -16,6 +16,8 @@ import {
   TableRow,
   CardMedia,
   Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@material-ui/core";
 import { LocationOn, Email } from "@material-ui/icons";
 import {
@@ -87,7 +89,14 @@ const useStyles = makeStyles((theme) => ({
     width: "100px",
     borderRadius: "50%",
     marginRight: "35px",
-    marginBottom: "25px",
+    // marginBottom: "25px",
+  },
+  badgeDetail: {
+    display: "flex",
+    padding: theme.spacing(2),
+    border: "1px solid #164D8F",
+    borderRadius: "5px",
+    marginBottom: "10px",
   },
 }));
 
@@ -126,7 +135,24 @@ const PublicProfile = (props) => {
   const [courseDialog, setCourseDialog] = useState(false);
 
   const [badges, setBadges] = useState([]);
+  const [badgesDialog, setBadgesDialog] = useState(false);
+  // console.log(badges);
   const [experiences, setExperiences] = useState([]);
+
+  const checkIfMemberIdIsPro = () => {
+    Service.client
+      .get(`/auth/members/${id}`)
+      .then((res) => {
+        // console.log(res.data);
+        if (res.data.member.membership_tier === "FREE") {
+          history.push(`/404`);
+          // history.go();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const checkIfLoggedIn = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -296,6 +322,7 @@ const PublicProfile = (props) => {
   };
 
   useEffect(() => {
+    checkIfMemberIdIsPro();
     checkIfLoggedIn();
     getMemberData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -374,8 +401,6 @@ const PublicProfile = (props) => {
       )}
 
       <Grid container className={classes.root}>
-        {console.log(member)}
-
         <Grid item xs={3}>
           <div className={classes.avatar}>
             {member.profile_photo && member.profile_photo ? (
@@ -561,12 +586,22 @@ const PublicProfile = (props) => {
             )}
 
             <Grid item xs={12} style={{ marginBottom: "35px" }}>
-              <Typography
-                variant="h5"
-                style={{ fontWeight: 600, marginBottom: "20px" }}
-              >
-                Badges
-              </Typography>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
+                >
+                  Badges
+                </Typography>
+                <Button
+                  style={{ marginBottom: "20px" }}
+                  color="primary"
+                  variant="outlined"
+                  onClick={() => setBadgesDialog(true)}
+                >
+                  See All Achievements
+                </Button>
+              </div>
 
               {badges && badges.length > 0 ? (
                 <div
@@ -607,7 +642,7 @@ const PublicProfile = (props) => {
                 </Typography>
                 {courses && courses.length > 0 ? (
                   <Button
-                    style={{ textTransform: "none", marginBottom: "20px" }}
+                    style={{ marginBottom: "20px" }}
                     color="primary"
                     variant="outlined"
                     onClick={() => setCourseDialog(true)}
@@ -778,6 +813,145 @@ const PublicProfile = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
+      </Dialog>
+
+      <Dialog
+        open={badgesDialog}
+        onClose={() => setBadgesDialog(false)}
+        style={{ borderRadius: "50px" }}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <DialogTitle>All Achievements</DialogTitle>
+        <DialogContent>
+          {badges &&
+            badges.length > 0 &&
+            badges.map((badge, index) => {
+              return (
+                <div key={index} className={classes.badgeDetail}>
+                  <CardMedia
+                    className={classes.cardmedia}
+                    image={badge.achievement.badge}
+                  />
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="h6"
+                      style={{ fontWeight: 600, paddingBottom: "5px" }}
+                    >
+                      {badge.achievement.title}
+                    </Typography>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      {badge.achievement.achievement_requirements.length > 0 &&
+                        badge.achievement.achievement_requirements.map(
+                          (requirement) => {
+                            if (requirement.stat === "UI") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in UI/UX"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "FE") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Frontend"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "BE") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Backend"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "DB") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Database Administration"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "SEC") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Security"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "ML") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Machine Learning"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "PY") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Python"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "JAVA") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Java"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "JS") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Javascript"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "RUBY") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in Ruby"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "CPP") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in C++"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "CS") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in C#"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "HTML") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in HTML"}
+                                </Typography>
+                              );
+                            } else if (requirement.stat === "CSS") {
+                              return (
+                                <Typography variant="body2">
+                                  {requirement.experience_point +
+                                    " Exp Points in CSS"}
+                                </Typography>
+                              );
+                            }
+                          }
+                        )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </DialogContent>
       </Dialog>
     </Fragment>
   );
