@@ -280,6 +280,45 @@ const ViewArticle = (props) => {
             }
           })}
 
+        {articleDetails &&
+          articleDetails.categories &&
+          articleDetails.categories.length > 0 &&
+          articleDetails.categories.map((category, index) => {
+            if (category === "FE") {
+              return (
+                <Chip key={index} label="Frontend" className={classes.chip} />
+              );
+            } else if (category === "BE") {
+              return (
+                <Chip key={index} label="Backend" className={classes.chip} />
+              );
+            } else if (category === "UI") {
+              return (
+                <Chip key={index} label="UI/UX" className={classes.chip} />
+              );
+            } else if (category === "DB") {
+              return (
+                <Chip
+                  key={index}
+                  label="Database Administration"
+                  className={classes.chip}
+                />
+              );
+            } else if (category === "ML") {
+              return (
+                <Chip
+                  key={index}
+                  label="Machine Learning"
+                  className={classes.chip}
+                />
+              );
+            } else {
+              return (
+                <Chip key={index} label="Security" className={classes.chip} />
+              );
+            }
+          })}
+
         <div
           style={{
             alignItems: "center",
@@ -293,106 +332,14 @@ const ViewArticle = (props) => {
             //onClick={(e) => handleLikeArticle(e)}
           />
           <Typography style={{ marginRight: "15px" }}>
-            {articleDetails.engagements.length} likes
+            {articleDetails.engagements.length}
           </Typography>
           <CommentIcon onClick={() => setDrawerOpen(true)} />
           <Typography style={{ display: "inline-flex" }}>
-            {articleDetails.top_level_comments.length} responses
-          </Typography>
-        </div>
-        <Divider style={{ marginTop: "20px" }} />
-      </div>
-
-      <div style={{ display: "flex" }}>
-        <div style={{ display: "flex" }}>
-          <Avatar
-            src={articleDetails.user && articleDetails.user.profile_photo}
-            alt=""
-            style={{ width: "60px", height: "60px", marginRight: "15px" }}
-          ></Avatar>
-        </div>
-        <div style={{ flexDirection: "column" }}>
-          <Typography
-            style={{ display: "flex", fontWeight: "550" }}
-            variant="body2"
-          >
-            WRITTEN BY
-          </Typography>
-          <Typography variant="h6" style={{ fontWeight: "600" }}>
-            {articleDetails.user && articleDetails.user.first_name}{" "}
-            {articleDetails.user && articleDetails.user.last_name}
-            {articleDetails.user && articleDetails.user.bio}
+            {articleDetails.top_level_comments.length}
           </Typography>
         </div>
       </div>
-
-      <div style={{ display: "flex" }}>
-        <Language style={{ marginRight: "10px" }} />
-        {articleDetails &&
-          articleDetails.languages &&
-          articleDetails.languages.length > 0 &&
-          articleDetails.languages.map((language, index) => {
-            if (index + 1 !== articleDetails.languages.length) {
-              if (language === "ENG") {
-                return <Typography key={index}>English, </Typography>;
-              } else if (language === "MAN") {
-                return <Typography key={index}>中文, </Typography>;
-              } else {
-                return <Typography key={index}>Français, </Typography>;
-              }
-            } else {
-              if (language === "ENG") {
-                return <Typography key={index}>English</Typography>;
-              } else if (language === "MAN") {
-                return <Typography key={index}>中文</Typography>;
-              } else {
-                return <Typography key={index}>Français</Typography>;
-              }
-            }
-          })}
-      </div>
-      <Typography
-        variant="body1"
-        style={{ fontWeight: 600, marginBottom: "10px" }}
-      >
-        Categories this article falls under:
-      </Typography>
-      {articleDetails &&
-        articleDetails.categories &&
-        articleDetails.categories.length > 0 &&
-        articleDetails.categories.map((category, index) => {
-          if (category === "FE") {
-            return (
-              <Chip key={index} label="Frontend" className={classes.chip} />
-            );
-          } else if (category === "BE") {
-            return (
-              <Chip key={index} label="Backend" className={classes.chip} />
-            );
-          } else if (category === "UI") {
-            return <Chip key={index} label="UI/UX" className={classes.chip} />;
-          } else if (category === "DB") {
-            return (
-              <Chip
-                key={index}
-                label="Database Administration"
-                className={classes.chip}
-              />
-            );
-          } else if (category === "ML") {
-            return (
-              <Chip
-                key={index}
-                label="Machine Learning"
-                className={classes.chip}
-              />
-            );
-          } else {
-            return (
-              <Chip key={index} label="Security" className={classes.chip} />
-            );
-          }
-        })}
       <CommentDrawer
         articleDetails={articleDetails}
         drawerOpen={drawerOpen}

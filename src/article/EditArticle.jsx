@@ -22,7 +22,6 @@ import memberLogo from "../assets/CodeineLogos/Member.svg";
 import partnerLogo from "../assets/CodeineLogos/Partner.svg";
 import adminLogo from "../assets/CodeineLogos/Admin.svg";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import Menu from "@material-ui/icons/MoreHoriz";
 import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
@@ -108,6 +107,14 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "capitalize",
     "&:hover": {
       backgroundColor: theme.palette.darkgreen.main,
+    },
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
     },
   },
 }));
@@ -743,20 +750,27 @@ const EditArticle = (props) => {
       <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       <Grid container>
         <Grid item xs={8} className={classes.gridlayout}>
-          {/* <Breadcrumbs
+          <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
           >
             <Link
-              color="primary"
               onClick={() => {
-                history.push("/member/profile");
+                if (userType === "member") {
+                  history.push("/member/articles");
+                } else if (userType === "partner") {
+                  history.push("/partner/home/article");
+                } else if (userType === "admin") {
+                  history.push("/admin/article");
+                }
               }}
+              className={classes.backLink}
             >
               My Articles
             </Link>
-            <Typography color="primary">Edit Article</Typography>
-          </Breadcrumbs> */}
+            <Typography>Edit Article</Typography>
+          </Breadcrumbs>
+
           <TextField
             margin="normal"
             id="title"
@@ -1030,12 +1044,12 @@ const EditArticle = (props) => {
               <Button
                 variant="contained"
                 className={classes.greenButton}
-                style={{ marginBottom: "10px" }}
+                style={{ marginBottom: "10px", marginRight: "15px" }}
                 onClick={(e) => saveAndPublishArticle(e)}
               >
                 Save and publish
               </Button>
-              <Button
+              {/* <Button
                 variant="contained"
                 style={{
                   textTransform: "capitalize",
@@ -1048,53 +1062,20 @@ const EditArticle = (props) => {
                 }}
               >
                 Back to Article
-              </Button>
-              <Menu
-                onClick={(e) => handleClick(e)}
-                style={{ marginLeft: "auto", cursor: "pointer" }}
-              />
-              <Popover
-                id={popoverid}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                <div style={{ padding: "5px" }}>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => unpublishArticle()}
-                  >
-                    Unpublish
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={handleClickOpen}
-                  >
-                    Delete
-                  </Typography>
-                </div>
-              </Popover>
-              {/* <Button
+              </Button> */}
+
+              <Button
                 variant="contained"
                 color="primary"
                 style={{
                   textTransform: "capitalize",
+                  marginRight: "15px",
                   marginBottom: "10px",
                 }}
                 onClick={(e) => unpublishArticle()}
               >
                 Unpublish
-              </Button> */}
+              </Button>
             </>
           )}
           {articleDetails && !articleDetails.is_published && (
@@ -1103,19 +1084,23 @@ const EditArticle = (props) => {
               className={classes.greenButton}
               style={{
                 marginRight: "15px",
+                marginBottom: "10px",
               }}
               onClick={(e) => publishArticle(e)}
             >
               Publish
             </Button>
           )}
-          {/* <Button
+          <Button
             variant="contained"
             className={classes.redButton}
             onClick={handleClickOpen}
+            style={{
+              marginBottom: "10px",
+            }}
           >
             Delete Article
-          </Button> */}
+          </Button>
         </Grid>
       </Grid>
       <Dialog

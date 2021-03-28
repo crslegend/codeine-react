@@ -316,6 +316,7 @@ const AdminArticleList = (props) => {
                         " words so far"}
                     </Typography>
                     <ExpandMoreIcon
+                      style={{ color: "#757575" }}
                       onClick={(e) => handlePopoverOpen(e, article.id)}
                     />
                     <Popover
@@ -427,6 +428,7 @@ const AdminArticleList = (props) => {
                       Published {calculateDateInterval(article.date_edited)}
                     </Typography>
                     <ExpandMoreIcon
+                      style={{ color: "#757575" }}
                       onClick={(e) => handlePopoverOpen(e, article.id)}
                     />
                     <Popover
