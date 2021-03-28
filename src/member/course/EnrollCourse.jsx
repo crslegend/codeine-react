@@ -410,6 +410,13 @@ const EnrollCourse = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (parseInt(progress) === 100) {
+      getCourseReviews();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress]);
+
   const handleSubmitReview = () => {
     if (review.rating === 0 || review.description === "") {
       setSbOpen(true);
