@@ -276,7 +276,7 @@ const EditArticle = (props) => {
 
   useEffect(() => {
     if (!articleDetails.is_published && articleDetails.title !== "") {
-      console.log("useeffect 2");
+      //console.log("useeffect 2");
       let data = {
         ...articleDetails,
         content: content,

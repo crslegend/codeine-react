@@ -3,7 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
   Divider,
-  Container,
+  Grid,
+  Chip,
   Button,
   Typography,
   ListItem,
@@ -15,12 +16,17 @@ import partnerLogo from "../assets/CodeineLogos/Partner.svg";
 import adminLogo from "../assets/CodeineLogos/Admin.svg";
 import SearchBar from "material-ui-search-bar";
 import Service from "../AxiosService";
+import PageTitle from "../components/PageTitle";
 import CLogo from "../assets/CodeineLogos/C.svg";
+import TrendingCard from "./component/TrendingArticle";
 import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     paddingTop: "65px",
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
+    backgroundColor: "#fff",
   },
 }));
 
@@ -32,6 +38,19 @@ const ViewAllArticles = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const [loggedIn, setLoggedIn] = useState(false);
+
+  const formatDate = (date) => {
+    const options = {
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      return newDate;
+    }
+    return "";
+  };
 
   // const checkIfLoggedIn = () => {
   //   if (Cookies.get("t1")) {
@@ -165,71 +184,152 @@ const ViewAllArticles = () => {
 
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
-        {(userType === "member" || userType === "guest") && (
-          <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-        )}
-        {(userType === "partner" || userType === "admin") && (
-          <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
-        )}
-        <Typography>All Articles</Typography>
-        <SearchBar
-          style={{
-            width: "70%",
-            marginBottom: "20px",
-            elavation: "0px",
-          }}
-          placeholder="Search article"
-          value={searchValue}
-          onChange={(newValue) => setSearchValue(newValue)}
-          onCancelSearch={() => setSearchValue("")}
-          onRequestSearch={getArticleData}
-        />
+      {(userType === "member" || userType === "guest") && (
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+      {(userType === "partner" || userType === "admin") && (
+        <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
+      )}
+      <PageTitle title="All Articles" />
 
-        {listOfArticles &&
-          listOfArticles.length > 0 &&
-          listOfArticles.map((article, index) => {
-            return (
-              <div key={article.id} style={{ padding: "5px" }}>
-                <div
-                  style={{ display: "flex", cursor: "pointer" }}
-                  onClick={() => {
-                    if (setLoggedIn) {
-                      if (userType === "admin") {
-                        history.push(`/article/admin/${article.id}`);
-                      } else if (userType === "member") {
-                        history.push(`/article/member/${article.id}`);
-                      } else if (userType === "partner") {
-                        history.push(`/article/partner/${article.id}`);
-                      }
-                    } else {
-                      history.push(`/article/guest/${article.id}`);
-                    }
-                  }}
-                >
-                  <Avatar
-                    src={
-                      article.user.first_name !== null &&
-                      article.user.last_name !== null &&
-                      !article.user.profile_photo
-                        ? article.user.profile_photo
-                        : CLogo
-                    }
-                    alt=""
-                    style={{ height: "20px", width: "20px" }}
-                  ></Avatar>
-                  {article.user.first_name === null &&
-                  article.user.last_name === null
-                    ? "Codeine Admin"
-                    : article.user.first_name + " " + article.user.last_name}
-                </div>
-                {article.title}
+      <Grid container spacing={3}>
+        <Grid item xs={8}>
+          <div>
+            <SearchBar
+              style={{
+                marginBottom: "20px",
+                elavation: "0px",
+              }}
+              placeholder="Search article"
+              value={searchValue}
+              onChange={(newValue) => setSearchValue(newValue)}
+              onCancelSearch={() => setSearchValue("")}
+              onRequestSearch={getArticleData}
+            />
+            {listOfArticles &&
+              listOfArticles.length > 0 &&
+              listOfArticles.map((article, index) => {
+                return (
+                  <div key={article.id} style={{ padding: "5px" }}>
+                    <div style={{ display: "flex" }}>
+                      <Avatar
+                        src={
+                          article.user.is_admin && !article.user.profile_photo
+                            ? CLogo
+                            : article.user.profile_photo
+                        }
+                        alt=""
+                        style={{
+                          height: "18px",
+                          width: "18px",
+                          marginRight: "5px",
+                        }}
+                      ></Avatar>
 
-                <Divider />
-              </div>
-            );
-          })}
-      </Container>
+                      {article.user.is_admin &&
+                      article.user.first_name === null &&
+                      article.user.last_name === null
+                        ? "Codeine Admin in "
+                        : article.user.first_name +
+                          " " +
+                          article.user.last_name +
+                          " in "}
+
+                      {article &&
+                        article.categories &&
+                        article.categories.length > 0 &&
+                        article.categories.map((category, index) => {
+                          if (category === "FE") {
+                            return "Frontend ";
+                          } else if (category === "BE") {
+                            return "Backend ";
+                          } else if (category === "UI") {
+                            return "UI/UX ";
+                          } else if (category === "DB") {
+                            return "Database Administration ";
+                          } else if (category === "ML") {
+                            return "Machine Learning ";
+                          } else {
+                            return "Security ";
+                          }
+                        })}
+                    </div>
+                    <Typography
+                      onClick={() => {
+                        if (setLoggedIn) {
+                          if (userType === "admin") {
+                            history.push(`/article/admin/${article.id}`);
+                          } else if (userType === "member") {
+                            history.push(`/article/member/${article.id}`);
+                          } else if (userType === "partner") {
+                            history.push(`/article/partner/${article.id}`);
+                          }
+                        } else {
+                          history.push(`/article/guest/${article.id}`);
+                        }
+                      }}
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "25px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {article.title}
+                    </Typography>
+                    <Typography style={{ fontSize: "12px", color: "#757575" }}>
+                      {formatDate(article.date_created)}
+                    </Typography>
+
+                    <Divider
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <div>
+            <Typography style={{ fontWeight: 700 }}>
+              TRENDING ON CODEINE
+            </Typography>
+
+            {listOfArticles &&
+              listOfArticles.length > 0 &&
+              listOfArticles[0] && (
+                <TrendingCard
+                  number={"01"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[0]}
+                  userType={userType}
+                />
+              )}
+            {listOfArticles &&
+              listOfArticles.length > 1 &&
+              listOfArticles[1] && (
+                <TrendingCard
+                  number={"02"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[1]}
+                  userType={userType}
+                />
+              )}
+            {listOfArticles &&
+              listOfArticles.length > 2 &&
+              listOfArticles[2] && (
+                <TrendingCard
+                  number={"03"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[2]}
+                  userType={userType}
+                />
+              )}
+          </div>
+        </Grid>
+      </Grid>
     </div>
   );
 };

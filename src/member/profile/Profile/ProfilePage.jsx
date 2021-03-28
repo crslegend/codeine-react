@@ -33,11 +33,8 @@ import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import PageTitle from "../../../components/PageTitle";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
+import { KeyboardDatePicker } from "@material-ui/pickers";
+import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -52,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     padding: theme.spacing(3),
     width: "100%",
+    
   },
   avatar: {
     fontSize: "80px",
@@ -94,6 +92,14 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     width: "100%",
+  },
+  redButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    textTransform: "capitalize",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
   },
 }));
 
@@ -175,7 +181,9 @@ const Profile = (props) => {
   });
 
   const [CVList, setCVList] = useState([]);
-  const [addCV, setAddCV] = useState(false);
+  const [CVDialogState, setCVDialogState] = useState(false);
+  const [editingCV, setEditingCV] = useState(false);
+  const [deleteDialogState, setDeleteDialogState] = useState(false);
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -331,8 +339,7 @@ const Profile = (props) => {
       });
   };
 
-  const submitCV = (e) => {
-    e.preventDefault();
+  const checkCVDetails = () => {
     if (!CVDetail.title) {
       setSbOpen(true);
       setSnackbar({
@@ -340,7 +347,7 @@ const Profile = (props) => {
         message: "Please enter a Job Title!",
         severity: "error",
       });
-      return;
+      return true;
     }
     if (!CVDetail.description) {
       setSbOpen(true);
@@ -349,7 +356,7 @@ const Profile = (props) => {
         message: "Please enter a Description!",
         severity: "error",
       });
-      return;
+      return true;
     }
     if (!CVDetail.organisation) {
       setSbOpen(true);
@@ -358,7 +365,7 @@ const Profile = (props) => {
         message: "Please enter an Organisation!",
         severity: "error",
       });
-      return;
+      return true;
     }
     if (!CVDetail.start_date) {
       setSbOpen(true);
@@ -367,7 +374,7 @@ const Profile = (props) => {
         message: "Please enter the Start Date!",
         severity: "error",
       });
-      return;
+      return true;
     }
     if (!CVDetail.end_date) {
       setSbOpen(true);
@@ -376,7 +383,7 @@ const Profile = (props) => {
         message: "Please enter the End Date!",
         severity: "error",
       });
-      return;
+      return true;
     }
     if (CVDetail.end_date < CVDetail.start_date) {
       setSbOpen(true);
@@ -385,11 +392,56 @@ const Profile = (props) => {
         message: "End date cannot be smaller than start date!",
         severity: "error",
       });
-      return;
+      return true;
     }
+  };
 
+  const submitCV = (e) => {
+    e.preventDefault();
+
+    if (!checkCVDetails()) {
+      Service.client
+        .post(`/auth/cvs`, {
+          ...CVDetail,
+          start_date:
+            CVDetail.start_date.getFullYear() +
+            "-" +
+            (CVDetail.start_date.getMonth() + 1) +
+            "-" +
+            CVDetail.start_date.getDate(),
+          end_date:
+            CVDetail.end_date.getFullYear() +
+            "-" +
+            (CVDetail.end_date.getMonth() + 1) +
+            "-" +
+            CVDetail.end_date.getDate(),
+        })
+        .then((res) => {
+          getProfileDetails();
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Job experience created successfully!",
+            severity: "success",
+          });
+          setCVDetail({
+            title: "",
+            description: "",
+            organisation: "",
+            start_date: new Date("2000-01-01"),
+            end_date: new Date("2000-01-01"),
+          });
+          setCVDialogState(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  const updateCV = () => {
     Service.client
-      .post(`/auth/cvs`, {
+      .patch(`/auth/cvs/${CVDetail.id}`, {
         ...CVDetail,
         start_date:
           CVDetail.start_date.getFullYear() +
@@ -404,12 +456,12 @@ const Profile = (props) => {
           "-" +
           CVDetail.end_date.getDate(),
       })
-      .then((res) => {
+      .then(() => {
         getProfileDetails();
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "CV created successfully!",
+          message: "Job experience updated successfully!",
           severity: "success",
         });
         setCVDetail({
@@ -419,11 +471,32 @@ const Profile = (props) => {
           start_date: new Date("2000-01-01"),
           end_date: new Date("2000-01-01"),
         });
-        setAddCV(false);
+        setCVDialogState(false);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch();
+  };
+
+  const deleteCV = (CVid) => {
+    Service.client
+      .delete(`/auth/cvs/${CVid}`)
+      .then(() => {
+        getProfileDetails();
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Job experience deleted successfully!",
+          severity: "success",
+        });
+        setCVDetail({
+          title: "",
+          description: "",
+          organisation: "",
+          start_date: new Date("2000-01-01"),
+          end_date: new Date("2000-01-01"),
+        });
+        setCVDialogState(false);
+      })
+      .catch();
   };
 
   return (
@@ -613,7 +686,7 @@ const Profile = (props) => {
                   />
                 </div>
 
-                <div style={{ marginTop: "15px" }}>
+                <div style={{ marginTop: "20px" }}>
                   <FormControl className={classes.formControl}>
                     <InputLabel style={{ top: -4 }}>Country</InputLabel>
                     <Select
@@ -636,7 +709,7 @@ const Profile = (props) => {
                   </FormControl>
                 </div>
 
-                <div style={{ marginTop: "15px" }}>
+                <div style={{ marginTop: "20px" }}>
                   <FormControl component="fieldset">
                     <FormLabel component="legend">Gender</FormLabel>
                     <RadioGroup
@@ -719,14 +792,85 @@ const Profile = (props) => {
               textTransform: "capitalize",
             }}
             onClick={() => {
-              setAddCV(true);
+              setCVDetail({
+                title: "",
+                description: "",
+                organisation: "",
+                start_date: new Date("2000-01-01"),
+                end_date: new Date("2000-01-01"),
+              });
+              setCVDialogState(true);
+              setEditingCV(false);
             }}
           >
             + Add Job Experience
           </Button>
         </div>
 
-        {addCV && (
+        {CVList.map((cv, index) => {
+          // return (
+          //   <div key={cv.id} className={classes.cvcontainer}>
+          //     <div style={{ display: "flex" }}>
+          //       <div>
+          //         <Typography style={{ fontWeight: "600" }}>
+          //           {cv.organisation}
+          //         </Typography>
+          //       </div>
+          //       <div style={{ marginLeft: "auto" }}>
+          //         {cv.start_date} - {cv.end_date}
+          //       </div>
+          //     </div>
+          //     <Typography>{cv.title}</Typography>
+          //     <br />
+          //     {cv.description}
+          //   </div>
+          // );
+          return (
+            <CVCard
+              key={index}
+              experience={cv}
+              setCVDetail={setCVDetail}
+              setCVDialogState={setCVDialogState}
+              setEditingCV={setEditingCV}
+              setDeleteDialogState={setDeleteDialogState}
+            />
+          );
+        })}
+      </div>
+
+      <Dialog
+        open={deleteDialogState}
+        onClose={() => setDeleteDialogState(false)}
+      >
+        <DialogTitle id="alert-dialog-title">Delete Job experience</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete your job experience? You will no
+          longer be able to retrieve your job experience any longer.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogState(false)}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              deleteCV();
+            }}
+            className={classes.redButton}
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={CVDialogState} onClose={() => setCVDialogState(false)}>
+        <DialogTitle id="alert-dialog-title">
+          {editingCV ? "Edit CV" : "New Job Experience"}
+        </DialogTitle>
+        <DialogContent>
           <div>
             <div>
               <TextField
@@ -823,6 +967,20 @@ const Profile = (props) => {
                 }}
               />
             </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          {editingCV ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(e) => {
+                updateCV(e);
+              }}
+            >
+              Save Changes
+            </Button>
+          ) : (
             <Button
               variant="contained"
               color="primary"
@@ -830,31 +988,11 @@ const Profile = (props) => {
                 submitCV(e);
               }}
             >
-              Save Changes
+              Create
             </Button>
-          </div>
-        )}
-
-        {CVList.map((cv, index) => {
-          return (
-            <div key={cv.id} className={classes.cvcontainer}>
-              <div style={{ display: "flex" }}>
-                <div>
-                  <Typography style={{ fontWeight: "600" }}>
-                    {cv.organisation}
-                  </Typography>
-                </div>
-                <div style={{ marginLeft: "auto" }}>
-                  {cv.start_date} - {cv.end_date}
-                </div>
-              </div>
-              <Typography>{cv.title}</Typography>
-              <br />
-              {cv.description}
-            </div>
-          );
-        })}
-      </div>
+          )}
+        </DialogActions>
+      </Dialog>
 
       {/* upload photo dialog here */}
       <Dialog onClose={() => setUploadOpen(false)} open={uploadOpen}>
