@@ -185,6 +185,7 @@ const DashboardPage = () => {
                   id: res.data[i].id,
                   is_owned: true,
                 });
+                break;
               } else if (
                 res.data[i].id !== badges[j].badgeDetails.achievement.id &&
                 j === badges.length - 1
@@ -197,14 +198,26 @@ const DashboardPage = () => {
                   id: res.data[i].id,
                   is_owned: false,
                 });
+
+                break;
               }
             }
           }
+        } else {
+          res.data.forEach((item) => {
+            list.push({
+              achievement_requirements: item.achievement_requirements,
+              badge: item.badge,
+              title: item.title,
+              id: item.id,
+              is_owned: false,
+            });
+          });
         }
       })
       .catch((err) => console.log(err));
 
-    setBadges(list.sort((a, b) => a.is_owned - b.is_owned));
+    setBadges(list);
   };
 
   const formatDataIntoArr = (data) => {
@@ -387,7 +400,7 @@ const DashboardPage = () => {
                   <CardMedia
                     className={classes.cardmedia}
                     image={
-                      memberBadges.length > 1
+                      memberBadges && memberBadges.length > 1
                         ? memberBadges &&
                           memberBadges[1].badgeDetails.achievement.badge
                         : silver
@@ -397,7 +410,7 @@ const DashboardPage = () => {
                     variant="body1"
                     style={{ fontWeight: 600, textAlign: "center" }}
                   >
-                    {memberBadges.length > 1
+                    {memberBadges && memberBadges.length > 1
                       ? memberBadges &&
                         memberBadges[2].badgeDetails.achievement.title
                       : ""}
@@ -420,7 +433,7 @@ const DashboardPage = () => {
                   <CardMedia
                     className={classes.cardmediafirst}
                     image={
-                      memberBadges.length > 0
+                      memberBadges && memberBadges.length > 0
                         ? memberBadges &&
                           memberBadges[0].badgeDetails.achievement.badge
                         : gold
@@ -430,7 +443,7 @@ const DashboardPage = () => {
                     variant="body1"
                     style={{ fontWeight: 600, textAlign: "center" }}
                   >
-                    {memberBadges.length > 0
+                    {memberBadges && memberBadges.length > 0
                       ? memberBadges &&
                         memberBadges[0].badgeDetails.achievement.title
                       : ""}
@@ -452,7 +465,7 @@ const DashboardPage = () => {
                   <CardMedia
                     className={classes.cardmedia}
                     image={
-                      memberBadges.length > 2
+                      memberBadges && memberBadges.length > 2
                         ? memberBadges &&
                           memberBadges[2].badgeDetails.achievement.badge
                         : bronze
@@ -462,7 +475,7 @@ const DashboardPage = () => {
                     variant="body1"
                     style={{ fontWeight: 600, textAlign: "center" }}
                   >
-                    {memberBadges.length > 2
+                    {memberBadges && memberBadges.length > 2
                       ? memberBadges &&
                         memberBadges[2].badgeDetails.achievement.title
                       : ""}
@@ -612,144 +625,156 @@ const DashboardPage = () => {
         <DialogContent>
           {badges &&
             badges.length > 0 &&
-            badges.map((badge, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    WebkitFilter: !badge.is_owned ? "grayscale(1)" : "",
-                    marginTop:
-                      !badge.is_owned && badges[index - 1].is_owned
-                        ? "70px"
-                        : "0px",
-                  }}
-                  className={classes.badgeDetail}
-                >
-                  <CardMedia
-                    className={classes.dialogmedia}
-                    image={badge.badge}
-                  />
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <Typography
-                      variant="h6"
-                      style={{ fontWeight: 600, paddingBottom: "5px" }}
-                    >
-                      {badge.title}
-                    </Typography>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        color: "#000000",
-                      }}
-                    >
-                      {badge.achievement_requirements.length > 0 &&
-                        badge.achievement_requirements.map((requirement) => {
-                          if (requirement.stat === "UI") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in UI/UX"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "FE") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Frontend"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "BE") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Backend"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "DB") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Database Administration"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "SEC") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Security"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "ML") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Machine Learning"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "PY") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Python"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "JAVA") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Java"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "JS") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Javascript"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "RUBY") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in Ruby"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "CPP") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in C++"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "CS") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in C#"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "HTML") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in HTML"}
-                              </Typography>
-                            );
-                          } else if (requirement.stat === "CSS") {
-                            return (
-                              <Typography variant="body2">
-                                {requirement.experience_point +
-                                  " Exp Points in CSS"}
-                              </Typography>
-                            );
-                          }
-                        })}
+            badges
+              .sort((a, b) => b.is_owned - a.is_owned)
+              .map((badge, index) => {
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      WebkitFilter:
+                        badge && badge.is_owned === false ? "grayscale(1)" : "",
+                      marginTop:
+                        badge &&
+                        badge.is_owned === false &&
+                        badges[index - 1] &&
+                        badges[index - 1].is_owned
+                          ? "70px"
+                          : "0px",
+                    }}
+                    className={classes.badgeDetail}
+                  >
+                    <CardMedia
+                      className={classes.dialogmedia}
+                      image={badge.badge}
+                    />
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <Typography
+                        variant="h6"
+                        style={{ fontWeight: 600, paddingBottom: "5px" }}
+                      >
+                        {badge.title}
+                      </Typography>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          color: "#000000",
+                        }}
+                      >
+                        {badge.achievement_requirements.length > 0 &&
+                          badge.achievement_requirements.map(
+                            (requirement, index) => {
+                              if (requirement.stat === "UI/UX") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in UI/UX"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Frontend") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Frontend"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Backend") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Backend"}
+                                  </Typography>
+                                );
+                              } else if (
+                                requirement.stat === "Database Administration"
+                              ) {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Database Administration"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Security") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Security"}
+                                  </Typography>
+                                );
+                              } else if (
+                                requirement.stat === "Machine Learning"
+                              ) {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Machine Learning"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Python") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Python"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Java") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Java"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Javascript") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Javascript"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "Ruby") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in Ruby"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "C++") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in C++"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "C#") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in C#"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "HTML") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in HTML"}
+                                  </Typography>
+                                );
+                              } else if (requirement.stat === "CSS") {
+                                return (
+                                  <Typography variant="body2">
+                                    {requirement.experience_point +
+                                      " Exp Points in CSS"}
+                                  </Typography>
+                                );
+                              }
+                            }
+                          )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
         </DialogContent>
       </Dialog>
     </div>
