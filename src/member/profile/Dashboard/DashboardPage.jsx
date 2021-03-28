@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TooltipMui from "@material-ui/core/Tooltip";
 import PageTitle from "../../../components/PageTitle";
@@ -110,6 +110,7 @@ const DashboardPage = () => {
   //   const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [member, setMember] = useState();
 
   const [numDays, setNumDays] = useState(7);
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
@@ -150,6 +151,7 @@ const DashboardPage = () => {
         Service.client
           .get(`/members/${decoded.user_id}/profile`)
           .then((res) => {
+            setMember(res.data.member);
             for (var i = 0; i < res.data.achievements.length; i++) {
               tempList.push(handleBadgePoints(res.data.achievements[i]));
             }
@@ -332,139 +334,145 @@ const DashboardPage = () => {
       <div style={{ marginTop: "65px" }}>
         <div style={{ width: "80%", margin: "auto" }}>
           <PageTitle title="Dashboard" />
-          <div
-            style={{
-              display: "flex",
-            }}
-          >
-            <Typography variant="h5" className={classes.badgeheader}>
-              Your Top Badges
-              <Divider
+          {member && member.member.membership_tier === "PRO" ? (
+            <Fragment>
+              <div
                 style={{
-                  paddingTop: "0.5px",
-                  marginTop: "3px",
-                  backgroundColor: lighten("#437FC7", 0.5),
+                  display: "flex",
                 }}
-              />
-            </Typography>
+              >
+                <Typography variant="h5" className={classes.badgeheader}>
+                  Your Top Badges
+                  <Divider
+                    style={{
+                      paddingTop: "0.5px",
+                      marginTop: "3px",
+                      backgroundColor: lighten("#437FC7", 0.5),
+                    }}
+                  />
+                </Typography>
 
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setBadgesDialog(true)}
-              style={{ textTransform: "none" }}
-            >
-              view all
-            </Button>
-          </div>
-          <Card
-            elevation={0}
-            style={{
-              backgroundColor: "transparent",
-              display: "flex",
-              justifyContent: "center",
-              margin: "30px 0px",
-              paddingTop: "30px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                color: "#A9A9A9",
-              }}
-            >
-              <Typography
-                variant="h4"
-                style={{ fontWeight: 600, textAlign: "center" }}
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => setBadgesDialog(true)}
+                  style={{ textTransform: "none" }}
+                >
+                  view all
+                </Button>
+              </div>
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: "transparent",
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: "30px 0px",
+                  paddingTop: "30px",
+                }}
               >
-                2
-              </Typography>
-              <CardMedia
-                className={classes.cardmedia}
-                image={
-                  memberBadges.length > 1
-                    ? memberBadges &&
-                      memberBadges[1].badgeDetails.achievement.badge
-                    : silver
-                }
-              />
-              <Typography
-                variant="body1"
-                style={{ fontWeight: 600, textAlign: "center" }}
-              >
-                {memberBadges.length > 1
-                  ? memberBadges &&
-                    memberBadges[2].badgeDetails.achievement.title
-                  : ""}
-              </Typography>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                margin: "-30px 70px 0px",
-                color: "#d4af37",
-              }}
-            >
-              <Typography
-                variant="h4"
-                style={{ fontWeight: 600, textAlign: "center" }}
-              >
-                1
-              </Typography>
-              <CardMedia
-                className={classes.cardmediafirst}
-                image={
-                  memberBadges.length > 0
-                    ? memberBadges &&
-                      memberBadges[0].badgeDetails.achievement.badge
-                    : gold
-                }
-              />
-              <Typography
-                variant="body1"
-                style={{ fontWeight: 600, textAlign: "center" }}
-              >
-                {memberBadges.length > 0
-                  ? memberBadges &&
-                    memberBadges[0].badgeDetails.achievement.title
-                  : ""}
-              </Typography>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                color: "#cd7f32",
-              }}
-            >
-              <Typography
-                variant="h4"
-                style={{ fontWeight: 600, textAlign: "center" }}
-              >
-                3
-              </Typography>
-              <CardMedia
-                className={classes.cardmedia}
-                image={
-                  memberBadges.length > 2
-                    ? memberBadges &&
-                      memberBadges[2].badgeDetails.achievement.badge
-                    : bronze
-                }
-              />
-              <Typography
-                variant="body1"
-                style={{ fontWeight: 600, textAlign: "center" }}
-              >
-                {memberBadges.length > 2
-                  ? memberBadges &&
-                    memberBadges[2].badgeDetails.achievement.title
-                  : ""}
-              </Typography>
-            </div>
-          </Card>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    color: "#A9A9A9",
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    2
+                  </Typography>
+                  <CardMedia
+                    className={classes.cardmedia}
+                    image={
+                      memberBadges.length > 1
+                        ? memberBadges &&
+                          memberBadges[1].badgeDetails.achievement.badge
+                        : silver
+                    }
+                  />
+                  <Typography
+                    variant="body1"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    {memberBadges.length > 1
+                      ? memberBadges &&
+                        memberBadges[2].badgeDetails.achievement.title
+                      : ""}
+                  </Typography>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: "-30px 70px 0px",
+                    color: "#d4af37",
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    1
+                  </Typography>
+                  <CardMedia
+                    className={classes.cardmediafirst}
+                    image={
+                      memberBadges.length > 0
+                        ? memberBadges &&
+                          memberBadges[0].badgeDetails.achievement.badge
+                        : gold
+                    }
+                  />
+                  <Typography
+                    variant="body1"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    {memberBadges.length > 0
+                      ? memberBadges &&
+                        memberBadges[0].badgeDetails.achievement.title
+                      : ""}
+                  </Typography>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    color: "#cd7f32",
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    3
+                  </Typography>
+                  <CardMedia
+                    className={classes.cardmedia}
+                    image={
+                      memberBadges.length > 2
+                        ? memberBadges &&
+                          memberBadges[2].badgeDetails.achievement.badge
+                        : bronze
+                    }
+                  />
+                  <Typography
+                    variant="body1"
+                    style={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    {memberBadges.length > 2
+                      ? memberBadges &&
+                        memberBadges[2].badgeDetails.achievement.title
+                      : ""}
+                  </Typography>
+                </div>
+              </Card>
+            </Fragment>
+          ) : (
+            ""
+          )}
 
           <div
             style={{
@@ -595,7 +603,7 @@ const DashboardPage = () => {
       <Dialog
         open={badgesDialog}
         onClose={() => setBadgesDialog(false)}
-        style={{ borderRadius: "50px" }}
+        style={{ borderRadius: "50px", height: "700px" }}
         aria-labelledby="form-dialog-title"
         maxWidth="md"
         fullWidth={true}

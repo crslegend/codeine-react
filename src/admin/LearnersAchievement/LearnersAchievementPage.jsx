@@ -20,7 +20,7 @@ import {
 import SearchBar from "material-ui-search-bar";
 import Pagination from "@material-ui/lab/Pagination";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { Add, Close, Clear, Done } from "@material-ui/icons";
+import { Add, Close, Clear } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 
@@ -388,7 +388,7 @@ const AdminLearnersAchievementPage = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -413,6 +413,7 @@ const AdminLearnersAchievementPage = () => {
         .then((res) => {
           setOpenAchievementDialog(false);
           handleResetFields();
+
           getBadgesData();
           setSbOpen(true);
           setSnackbar({
@@ -446,6 +447,7 @@ const AdminLearnersAchievementPage = () => {
                       if (index === requirementList.length - 1) {
                         setOpenAchievementDialog(false);
                         handleResetFields();
+
                         getBadgesData();
                         setSbOpen(true);
                         setSnackbar({
@@ -480,7 +482,7 @@ const AdminLearnersAchievementPage = () => {
     } else if (requirementList.length === 0) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -558,7 +560,7 @@ const AdminLearnersAchievementPage = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -611,7 +613,7 @@ const AdminLearnersAchievementPage = () => {
     } else if (requirementList.length === 0) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -631,6 +633,7 @@ const AdminLearnersAchievementPage = () => {
           .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
           .sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
+        console.log(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
       .catch((err) => {
@@ -804,7 +807,11 @@ const AdminLearnersAchievementPage = () => {
                       </Card>
                     }
                   >
-                    <div>
+                    <div
+                      style={{
+                        width: "200px",
+                      }}
+                    >
                       <CardMedia
                         disabled={badge.is_deleted}
                         onClick={
@@ -822,11 +829,13 @@ const AdminLearnersAchievementPage = () => {
                         }}
                       />
                       <Typography
-                        style={{ textAlign: "center", marginBottom: "20px" }}
+                        style={{
+                          textAlign: "center",
+                          marginBottom: "20px",
+                          wordWrap: "break-word",
+                        }}
                       >
-                        {badge && badge.title.length > 15
-                          ? `${badge.title.substr(0, 15)}...`
-                          : badge && badge.title}
+                        {badge.title}
                       </Typography>
                     </div>
                   </Tooltip>
