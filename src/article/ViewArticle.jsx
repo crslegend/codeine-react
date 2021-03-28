@@ -288,26 +288,27 @@ const ViewArticle = (props) => {
                 {formatDate(articleDetails.date_created)}
               </Typography>
             </div>
-            {(userType === "member" &&
+            {((userType === "member" &&
               user &&
               user.member &&
               user.member.membership_tier !== "FREE") ||
-              ((userType === "partner" || userType === "admin") && (
-                <div style={{ marginLeft: "auto" }}>
-                  {!openIDE && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      style={{
-                        textTransform: "capitalize",
-                      }}
-                      onClick={() => openingIDE()}
-                    >
-                      Code along
-                    </Button>
-                  )}
-                </div>
-              ))}
+              userType === "partner" ||
+              userType === "admin") && (
+              <div style={{ marginLeft: "auto" }}>
+                {!openIDE && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      textTransform: "capitalize",
+                    }}
+                    onClick={() => openingIDE()}
+                  >
+                    Code along
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         )}
 
