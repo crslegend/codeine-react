@@ -58,6 +58,10 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: "20px",
   },
+  cvcontainer: {
+    border: "solid black 1px",
+    padding: theme.spacing(2),
+  },
 }));
 
 const SmallAvatar = withStyles((theme) => ({
@@ -114,7 +118,7 @@ const Profile = (props) => {
     first_name: "",
     last_name: "",
     age: "",
-    country: "",
+    location: "",
     gender: "",
     email: "",
     date_joined: "",
@@ -128,11 +132,11 @@ const Profile = (props) => {
     { name: "China" },
     { name: "Singapore" },
   ]);
+  const [CVs, setCVs] = useState([]);
 
   useEffect(() => {
     checkIfLoggedIn();
     getProfileDetails();
-    console.log(countryList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -143,6 +147,12 @@ const Profile = (props) => {
         .get(`/auth/members/${userid}`)
         .then((res) => {
           setProfileDetails(res.data);
+          Service.client
+            .get(`/auth/cvs`)
+            .then((res1) => {
+              setCVs(res1.data);
+            })
+            .catch();
         })
         .catch((err) => {
           setProfileDetails();
@@ -275,134 +285,133 @@ const Profile = (props) => {
   };
 
   return (
-    <Fragment>
+    <div className={classes.paper}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
-        <Paper elevation={0} className={classes.paper}>
-          <div style={{ display: "flex", marginTop: "65px" }}>
-            <Typography variant="h5">Profile Details</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginLeft: "auto" }}
-              onClick={() => {
-                history.push("/member/profile/changepassword");
-              }}
+        <div style={{ display: "flex", marginTop: "65px" }}>
+          <Typography variant="h5">Profile Details</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: "auto" }}
+            onClick={() => {
+              history.push("/member/profile/changepassword");
+            }}
+          >
+            Change Password
+          </Button>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+          <div style={{ width: "20%", marginLeft: "30px" }}>
+            <br />
+            <a
+              href="#profile_photo"
+              onClick={(e) => setUploadOpen(true)}
+              style={{ textDecoration: "none" }}
             >
-              Change Password
-            </Button>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-            <div style={{ width: "20%", marginLeft: "30px" }}>
-              <br />
-              <a
-                href="#profile_photo"
-                onClick={(e) => setUploadOpen(true)}
-                style={{ textDecoration: "none" }}
-              >
-                {!profileDetails.profile_photo ? (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    className={classes.avatar}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar className={classes.avatar}>
-                      {profileDetails.first_name.charAt(0)}
-                    </Avatar>
-                  </Badge>
-                ) : (
-                  <Badge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    badgeContent={
-                      <SmallAvatar
-                        alt=""
-                        src={EditIcon}
-                        style={{ backgroundColor: "#d1d1d1" }}
-                      />
-                    }
-                  >
-                    <Avatar
-                      alt="Pic"
-                      src={profileDetails.profile_photo}
-                      className={classes.avatar}
+              {!profileDetails.profile_photo ? (
+                <Badge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  className={classes.avatar}
+                  badgeContent={
+                    <SmallAvatar
+                      alt=""
+                      src={EditIcon}
+                      style={{ backgroundColor: "#d1d1d1" }}
                     />
-                  </Badge>
-                )}
-              </a>
+                  }
+                >
+                  <Avatar className={classes.avatar}>
+                    {profileDetails.first_name.charAt(0)}
+                  </Avatar>
+                </Badge>
+              ) : (
+                <Badge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  badgeContent={
+                    <SmallAvatar
+                      alt=""
+                      src={EditIcon}
+                      style={{ backgroundColor: "#d1d1d1" }}
+                    />
+                  }
+                >
+                  <Avatar
+                    alt="Pic"
+                    src={profileDetails.profile_photo}
+                    className={classes.avatar}
+                  />
+                </Badge>
+              )}
+            </a>
+          </div>
+          <div style={{ width: "50%" }}>
+            <div>
+              <TextField
+                margin="normal"
+                id="first_name"
+                label="First Name"
+                name="first_name"
+                required
+                fullWidth
+                value={profileDetails.first_name}
+                // error={firstNameError}
+                onChange={(event) =>
+                  setProfileDetails({
+                    ...profileDetails,
+                    first_name: event.target.value,
+                  })
+                }
+              />
             </div>
-            <div style={{ width: "50%" }}>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="first_name"
-                  label="First Name"
-                  name="first_name"
-                  required
-                  fullWidth
-                  value={profileDetails.first_name}
-                  // error={firstNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      first_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="last_name"
-                  label="Last Name"
-                  name="last_name"
-                  required
-                  fullWidth
-                  value={profileDetails.last_name}
-                  // error={lastNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      last_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <TextField
-                  margin="normal"
-                  id="age"
-                  label="Age"
-                  name="age"
-                  required
-                  fullWidth
-                  value={profileDetails.age}
-                  // error={lastNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      age: event.target.value,
-                    })
-                  }
-                />
-              </div>
+            <div>
+              <TextField
+                margin="normal"
+                id="last_name"
+                label="Last Name"
+                name="last_name"
+                required
+                fullWidth
+                value={profileDetails.last_name}
+                // error={lastNameError}
+                onChange={(event) =>
+                  setProfileDetails({
+                    ...profileDetails,
+                    last_name: event.target.value,
+                  })
+                }
+              />
+            </div>
+            <div>
+              <TextField
+                margin="normal"
+                id="age"
+                label="Age"
+                name="age"
+                type="number"
+                fullWidth
+                value={profileDetails.age || ""}
+                // error={lastNameError}
+                onChange={(event) =>
+                  setProfileDetails({
+                    ...profileDetails,
+                    age: event.target.value,
+                  })
+                }
+              />
+            </div>
 
-              {/* <div>
+            {/* <div>
                 <FormControl className={classes.formControl}>
                   <InputLabel style={{ top: -4 }}>Country</InputLabel>
                   <Select
@@ -426,59 +435,81 @@ const Profile = (props) => {
                 </FormControl>
               </div> */}
 
-              <div>
-                <TextField
-                  margin="normal"
-                  id="email"
-                  label="Email"
-                  name="email"
-                  autoComplete="email"
-                  required
-                  fullWidth
-                  value={profileDetails.email}
-                  // error={emailError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      email: event.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div>
-                <TextField
-                  margin="normal"
-                  id="date_joined"
-                  label="Date Joined"
-                  name="date_joined"
-                  autoComplete="date_joined"
-                  required
-                  fullWidth
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  value={formatDate(profileDetails.date_joined)}
-                />
-              </div>
-
-              <Button
-                disabled={loading}
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                type="submit"
-              >
-                {loading ? (
-                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
+            <div>
+              <TextField
+                margin="normal"
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                required
+                fullWidth
+                value={profileDetails.email}
+                // error={emailError}
+                onChange={(event) =>
+                  setProfileDetails({
+                    ...profileDetails,
+                    email: event.target.value,
+                  })
+                }
+              />
             </div>
+
+            <div>
+              <TextField
+                margin="normal"
+                id="date_joined"
+                label="Date Joined"
+                name="date_joined"
+                autoComplete="date_joined"
+                required
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+                value={formatDate(profileDetails.date_joined)}
+              />
+            </div>
+
+            <Button
+              disabled={loading}
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              type="submit"
+            >
+              {loading ? (
+                <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
           </div>
-        </Paper>
+        </div>
       </form>
+
+      <div>
+        <Typography variant="h5">Experiences</Typography>
+        {CVs.map((cv, index) => {
+          return (
+            <div key={cv.id} className={classes.cvcontainer}>
+              <div style={{ display: "flex" }}>
+                <div>
+                  <Typography style={{ fontWeight: "600" }}>
+                    {cv.organisation}
+                  </Typography>
+                </div>
+                <div style={{ marginLeft: "auto" }}>
+                  {cv.start_date} - {cv.end_date}
+                </div>
+              </div>
+              <Typography>{cv.title}</Typography>
+              <br />
+              {cv.description}
+            </div>
+          );
+        })}
+      </div>
 
       {/* upload photo dialog here */}
       <Dialog onClose={() => setUploadOpen(false)} open={uploadOpen}>
@@ -542,7 +573,7 @@ const Profile = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Fragment>
+    </div>
   );
 };
 

@@ -261,14 +261,24 @@ const PartnerArticlesList = (props) => {
         <Typography variant="h1" style={{ fontWeight: "700" }}>
           Your articles
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => createNewArticle()}
-          style={{ marginLeft: "auto" }}
-        >
-          New Article
-        </Button>
+        <div style={{ marginLeft: "auto" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => createNewArticle()}
+            style={{ textTransform: "capitalize" }}
+          >
+            New Article
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push("/viewarticles")}
+            style={{ textTransform: "capitalize" }}
+          >
+            View all articles
+          </Button>
+        </div>
       </div>
 
       <AppBar

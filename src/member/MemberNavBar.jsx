@@ -57,8 +57,6 @@ const MemberNavBar = (props) => {
       Service.client
         .get(`/auth/members/${decoded.user_id}`)
         .then((res) => {
-          // console.log(res);
-
           if (!res.data.member) {
             //history.push("/404");
           } else {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Breadcrumbs,
   Button,
   TextField,
   Typography,
@@ -20,6 +21,8 @@ import Navbar from "../components/Navbar";
 import memberLogo from "../assets/CodeineLogos/Member.svg";
 import partnerLogo from "../assets/CodeineLogos/Partner.svg";
 import adminLogo from "../assets/CodeineLogos/Admin.svg";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import Menu from "@material-ui/icons/MoreHoriz";
 import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
@@ -740,6 +743,20 @@ const EditArticle = (props) => {
       <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       <Grid container>
         <Grid item xs={8} className={classes.gridlayout}>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+          >
+            <Link
+              color="primary"
+              onClick={() => {
+                history.push("/member/profile");
+              }}
+            >
+              My Articles
+            </Link>
+            <Typography color="primary">Edit Article</Typography>
+          </Breadcrumbs>
           <TextField
             margin="normal"
             id="title"
@@ -1032,7 +1049,42 @@ const EditArticle = (props) => {
               >
                 Back to Article
               </Button>
-              <Button
+              <Menu
+                onClick={(e) => handleClick(e)}
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+              <Popover
+                id={popoverid}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <div style={{ padding: "5px" }}>
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={() => unpublishArticle()}
+                  >
+                    Unpublish
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.typography}
+                    onClick={handleClickOpen}
+                  >
+                    Delete
+                  </Typography>
+                </div>
+              </Popover>
+              {/* <Button
                 variant="contained"
                 color="primary"
                 style={{
@@ -1042,7 +1094,7 @@ const EditArticle = (props) => {
                 onClick={(e) => unpublishArticle()}
               >
                 Unpublish
-              </Button>
+              </Button> */}
             </>
           )}
           {articleDetails && !articleDetails.is_published && (
@@ -1057,13 +1109,13 @@ const EditArticle = (props) => {
               Publish
             </Button>
           )}
-          <Button
+          {/* <Button
             variant="contained"
             className={classes.redButton}
             onClick={handleClickOpen}
           >
             Delete Article
-          </Button>
+          </Button> */}
         </Grid>
       </Grid>
       <Dialog
