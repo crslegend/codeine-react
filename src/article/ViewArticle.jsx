@@ -25,6 +25,12 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
+import hljs from "highlight.js";
+import "highlight.js/styles/darcula.css";
+
+hljs.configure({
+  languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,6 +106,9 @@ const ViewArticle = (props) => {
 
   const modules = {
     toolbar: [[{ size: ["18px"] }]],
+    syntax: {
+      highlight: (text) => hljs.highlightAuto(text).value,
+    },
   };
 
   const formatDate = (date) => {
