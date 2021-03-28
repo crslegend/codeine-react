@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Breadcrumbs,
   Button,
   Popover,
   Container,
@@ -13,15 +14,23 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
+import hljs from "highlight.js";
+import "highlight.js/styles/darcula.css";
+
+hljs.configure({
+  languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,6 +79,14 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -86,6 +103,13 @@ const ViewArticle = (props) => {
     setOpenIDE,
     userType,
   } = props;
+
+  const modules = {
+    toolbar: [[{ size: ["18px"] }]],
+    syntax: {
+      highlight: (text) => hljs.highlightAuto(text).value,
+    },
+  };
 
   const formatDate = (date) => {
     const options = {
@@ -238,23 +262,33 @@ const ViewArticle = (props) => {
   return (
     <div className={classes.root}>
       <Container maxWidth="md">
-        {/* <Breadcrumbs
+        <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
           aria-label="breadcrumb"
         >
           <Link
-            color="inherit"
+            className={classes.backLink}
             onClick={() => {
-              history.push("/member/profile");
+              if (userType === "guest") {
+                history.push("/viewarticles");
+              } else if (userType === "member") {
+                history.push("/member/articles");
+              }
+              if (userType === "partner") {
+                history.push("/partner/home/article");
+              }
+              if (userType === "admin") {
+                history.push("/admin/article");
+              }
             }}
           >
-            Profile
+            Articles
           </Link>
-          <Typography color="textPrimary">Change Password</Typography>
-        </Breadcrumbs> */}
+          <Typography>{articleDetails.title}</Typography>
+        </Breadcrumbs>
         <Typography
           variant="h1"
-          style={{ fontWeight: "600", marginBottom: "10px" }}
+          style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}
         >
           {articleDetails.title}
         </Typography>
@@ -313,7 +347,16 @@ const ViewArticle = (props) => {
         )}
 
         <div style={{ fontSize: "20px", marginBottom: "30px" }}>
-          {parse(articleDetails.content, options)}
+          {/* {parse(articleDetails.content, options)} */}
+
+          <div style={{ fontSize: "18px" }}>
+            <ReactQuill
+              modules={modules}
+              value={articleDetails.content}
+              readOnly={true}
+              theme={"bubble"}
+            />
+          </div>
 
           {articleDetails &&
             articleDetails.coding_languages &&
@@ -528,12 +571,6 @@ const ViewArticle = (props) => {
         >
           Categories this article falls under:
         </Typography> */}
-
-        {/* <ReactQuill
-          value={articleDetails.content}
-          readOnly={openEditor}
-          theme={"bubble"}
-        /> */}
       </Container>
       <Dialog
         open={dialogopen}

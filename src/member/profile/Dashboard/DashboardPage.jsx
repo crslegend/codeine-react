@@ -402,6 +402,7 @@ const DashboardPage = () => {
                     image={
                       memberBadges && memberBadges.length > 1
                         ? memberBadges &&
+                          memberBadges[1] &&
                           memberBadges[1].badgeDetails.achievement.badge
                         : silver
                     }
@@ -412,7 +413,8 @@ const DashboardPage = () => {
                   >
                     {memberBadges && memberBadges.length > 1
                       ? memberBadges &&
-                        memberBadges[2].badgeDetails.achievement.title
+                        memberBadges[1] &&
+                        memberBadges[1].badgeDetails.achievement.title
                       : ""}
                   </Typography>
                 </div>
@@ -435,6 +437,7 @@ const DashboardPage = () => {
                     image={
                       memberBadges && memberBadges.length > 0
                         ? memberBadges &&
+                          memberBadges[0] &&
                           memberBadges[0].badgeDetails.achievement.badge
                         : gold
                     }
@@ -445,6 +448,7 @@ const DashboardPage = () => {
                   >
                     {memberBadges && memberBadges.length > 0
                       ? memberBadges &&
+                        memberBadges[0] &&
                         memberBadges[0].badgeDetails.achievement.title
                       : ""}
                   </Typography>
@@ -467,6 +471,7 @@ const DashboardPage = () => {
                     image={
                       memberBadges && memberBadges.length > 2
                         ? memberBadges &&
+                          memberBadges[2] &&
                           memberBadges[2].badgeDetails.achievement.badge
                         : bronze
                     }
@@ -477,6 +482,7 @@ const DashboardPage = () => {
                   >
                     {memberBadges && memberBadges.length > 2
                       ? memberBadges &&
+                        memberBadges[2] &&
                         memberBadges[2].badgeDetails.achievement.title
                       : ""}
                   </Typography>

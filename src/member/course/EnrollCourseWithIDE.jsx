@@ -89,28 +89,27 @@ const EnrollCourseWithIDE = ({
       Service.client
         .get(`ide`, {
           params: {
-            git_url: "https://github.com/ptm108/Graspfood2",
+            git_url: course.github_repo,
             course_name: course.title,
           },
         })
         .then((res) => {
           //   console.log(res);
           setPortNum(res.data.port);
-          setLoadingIDE(false);
+          // setLoadingIDE(false);
         })
         .catch((err) => console.log(err));
     } else {
       Service.client
         .get(`ide`, {
           params: {
-            git_url: "https://github.com/ptm108/Graspfood2",
             course_name: course.title,
           },
         })
         .then((res) => {
           // console.log(res);
           setPortNum(res.data.port);
-          setLoadingIDE(false);
+          // setLoadingIDE(false);
         })
         .catch((err) => console.log(err));
     }
@@ -120,6 +119,11 @@ const EnrollCourseWithIDE = ({
     startIDE();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const hideLoader = () => {
+    console.log("FINISH");
+    setLoadingIDE(false);
+  };
 
   return (
     <div className={classes.courseSection}>
@@ -708,21 +712,23 @@ const EnrollCourseWithIDE = ({
             </div>
           </div>
           <div className={classes.rightCol}>
-            {!loadingIDE && portNum ? (
-              <iframe
-                width="100%"
-                height="100%"
-                src={`http://localhost:${portNum}`}
-                title="ide"
-              />
-            ) : (
+            {loadingIDE ? (
               <div className={classes.loader}>
                 <CircularProgress />
                 <Typography variant="h6" style={{ paddingTop: "10px" }}>
                   Fetching your IDE...
                 </Typography>
               </div>
-            )}
+            ) : null}
+
+            <iframe
+              width="100%"
+              height="100%"
+              src={`http://localhost:${portNum}`}
+              title="ide"
+              loading="lazy"
+              onLoad={() => hideLoader()}
+            />
           </div>
         </Splitter>
       </div>
