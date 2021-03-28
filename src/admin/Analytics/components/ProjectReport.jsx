@@ -200,17 +200,24 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {projectSearches[1] ? projectSearches[1].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {projectSearches[1] ? projectSearches[1].Occurences : "-"}
                     </Typography>
                   </div>
                 </div>
-                <div className={classes.statsDiv} style={{ minHeight: 150 }}>
+                <div
+                  className={classes.statsDiv}
+                  style={{
+                    minHeight: 150,
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                  }}
+                >
                   <div style={{ textAlign: "center" }}>
                     <LooksOne
                       style={{
@@ -220,11 +227,11 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {projectSearches[0] ? projectSearches[0].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {projectSearches[0] ? projectSearches[0].Occurences : "-"}
                     </Typography>
@@ -240,11 +247,11 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
                     />
                   </div>
                   <div>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Keywords:{" "}
                       {projectSearches[2] ? projectSearches[2].keyword : "-"}
                     </Typography>
-                    <Typography variant="h6" style={{ textAlign: "center" }}>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
                       Occurence:{" "}
                       {projectSearches[2] ? projectSearches[2].Occurences : "-"}
                     </Typography>
