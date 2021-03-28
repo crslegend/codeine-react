@@ -20,6 +20,9 @@ import {
   Button,
   CardMedia,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@material-ui/core";
 import { lighten } from "@material-ui/core/styles";
 import {
@@ -32,7 +35,9 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
-import image from "../../../assets/icons/py_icon.png";
+import silver from "../../../assets/silver_medal.png";
+import bronze from "../../../assets/bronze_medal.png";
+import gold from "../../../assets/gold_medal.png";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -84,6 +89,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "50%",
     margin: "15px auto",
   },
+  badgeDetail: {
+    display: "flex",
+    padding: theme.spacing(2),
+    border: "1px solid #164D8F",
+    borderRadius: "5px",
+    marginBottom: "10px",
+  },
+  dialogmedia: {
+    height: "100px",
+    width: "100px",
+    borderRadius: "50%",
+    marginRight: "35px",
+  },
 }));
 
 const DashboardPage = () => {
@@ -96,11 +114,10 @@ const DashboardPage = () => {
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
   const [timeSpentCategories, setTimeSpentCategories] = useState();
 
-  const [allBadges, setAllBadges] = useState([]);
+  const [badges, setBadges] = useState([]);
   const [memberBadges, setMemberBadges] = useState([]);
-  const [firstBadge, setFirstBadge] = useState();
-  const [secondBadge, setSecondBadge] = useState();
-  const [thirdBadge, setThirdBadge] = useState();
+
+  const [badgesDialog, setBadgesDialog] = useState(false);
 
   const handleBadgePoints = (badge) => {
     let totalPoints = 0;
@@ -142,6 +159,14 @@ const DashboardPage = () => {
           });
       }
     }
+  };
+
+  const getAllBadge = () => {
+    Service.client.get(`/achievements`).then((res) => {
+      console.log(res.data);
+      res.data = res.data.filter((badge) => !badge.is_deleted);
+      setBadges(res.data);
+    });
   };
 
   const formatDataIntoArr = (data) => {
@@ -227,8 +252,6 @@ const DashboardPage = () => {
     setTimeSpentCategories(arr);
   };
 
-  const getMemberBadge = () => {};
-
   const getAnalytics = () => {
     // get time spent breakdown for member
 
@@ -259,7 +282,7 @@ const DashboardPage = () => {
   useEffect(() => {
     getAnalytics();
     checkIfLoggedIn();
-    getMemberBadge();
+    getAllBadge();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -293,9 +316,10 @@ const DashboardPage = () => {
             <Button
               variant="outlined"
               size="small"
+              onClick={() => setBadgesDialog(true)}
               style={{ textTransform: "none" }}
             >
-              view more
+              view all
             </Button>
           </div>
           <Card
@@ -327,7 +351,7 @@ const DashboardPage = () => {
                   memberBadges.length > 1
                     ? memberBadges &&
                       memberBadges[1].badgeDetails.achievement.badge
-                    : image
+                    : silver
                 }
               />
               <Typography
@@ -360,7 +384,7 @@ const DashboardPage = () => {
                   memberBadges.length > 0
                     ? memberBadges &&
                       memberBadges[0].badgeDetails.achievement.badge
-                    : image
+                    : gold
                 }
               />
               <Typography
@@ -392,7 +416,7 @@ const DashboardPage = () => {
                   memberBadges.length > 2
                     ? memberBadges &&
                       memberBadges[2].badgeDetails.achievement.badge
-                    : image
+                    : bronze
                 }
               />
               <Typography
@@ -533,6 +557,142 @@ const DashboardPage = () => {
           </Paper>
         </div>
       </div>
+      <Dialog
+        open={badgesDialog}
+        onClose={() => setBadgesDialog(false)}
+        style={{ borderRadius: "50px" }}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <DialogTitle>All Achievements</DialogTitle>
+        <DialogContent>
+          {badges &&
+            badges.length > 0 &&
+            badges.map((badge, index) => {
+              return (
+                <div key={index} className={classes.badgeDetail}>
+                  <CardMedia
+                    className={classes.dialogmedia}
+                    image={badge.badge}
+                  />
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="h6"
+                      style={{ fontWeight: 600, paddingBottom: "5px" }}
+                    >
+                      {badge.title}
+                    </Typography>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      {badge.achievement_requirements.length > 0 &&
+                        badge.achievement_requirements.map((requirement) => {
+                          if (requirement.stat === "UI") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in UI/UX"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "FE") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Frontend"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "BE") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Backend"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "DB") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Database Administration"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "SEC") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Security"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "ML") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Machine Learning"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "PY") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Python"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "JAVA") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Java"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "JS") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Javascript"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "RUBY") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in Ruby"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "CPP") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in C++"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "CS") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in C#"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "HTML") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in HTML"}
+                              </Typography>
+                            );
+                          } else if (requirement.stat === "CSS") {
+                            return (
+                              <Typography variant="body2">
+                                {requirement.experience_point +
+                                  " Exp Points in CSS"}
+                              </Typography>
+                            );
+                          }
+                        })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
