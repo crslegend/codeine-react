@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 import pricing from "../../assets/pricing_asset.png";
 
@@ -55,7 +56,13 @@ const Pricing = () => {
             days
           </Typography>
 
-          <Button variant="outlined" color="primary" className={classes.button}>
+          <Button
+            component={Link}
+            to="/member/register"
+            variant="outlined"
+            color="primary"
+            className={classes.button}
+          >
             Start Free Trial
           </Button>
         </Grid>

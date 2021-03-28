@@ -20,7 +20,7 @@ import {
 import SearchBar from "material-ui-search-bar";
 import Pagination from "@material-ui/lab/Pagination";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { Add, Close, Clear, Done } from "@material-ui/icons";
+import { Add, Close, Clear } from "@material-ui/icons";
 import Toast from "../../components/Toast.js";
 import Service from "../../AxiosService";
 
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     height: "120px",
     width: "120px",
     borderRadius: "50%",
-    margin: "28px",
+    margin: "28px 35px 10px 35px",
   },
   description: {
     width: "100%",
@@ -388,7 +388,7 @@ const AdminLearnersAchievementPage = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -413,6 +413,7 @@ const AdminLearnersAchievementPage = () => {
         .then((res) => {
           setOpenAchievementDialog(false);
           handleResetFields();
+
           getBadgesData();
           setSbOpen(true);
           setSnackbar({
@@ -446,6 +447,7 @@ const AdminLearnersAchievementPage = () => {
                       if (index === requirementList.length - 1) {
                         setOpenAchievementDialog(false);
                         handleResetFields();
+
                         getBadgesData();
                         setSbOpen(true);
                         setSnackbar({
@@ -480,7 +482,7 @@ const AdminLearnersAchievementPage = () => {
     } else if (requirementList.length === 0) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -558,7 +560,7 @@ const AdminLearnersAchievementPage = () => {
     ) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -611,7 +613,7 @@ const AdminLearnersAchievementPage = () => {
     } else if (requirementList.length === 0) {
       setSbOpen(true);
       setSnackbar({
-        message: "Click on the tick icon to confirm requirement!",
+        message: "Click on the add icon to confirm requirement!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -631,6 +633,7 @@ const AdminLearnersAchievementPage = () => {
           .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
           .sort((a, b) => a.is_deleted - b.is_deleted);
         setBadges(res.data);
+        console.log(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
       .catch((err) => {
@@ -804,21 +807,37 @@ const AdminLearnersAchievementPage = () => {
                       </Card>
                     }
                   >
-                    <CardMedia
-                      disabled={badge.is_deleted}
-                      onClick={
-                        !badge.is_deleted
-                          ? () => handleOpenEditDialog(badge)
-                          : undefined
-                      }
-                      className={classes.cardmedia}
-                      image={badge.badge}
+                    <div
                       style={{
-                        WebkitFilter: badge.is_deleted
-                          ? "brightness(50%)"
-                          : "brightness(100%)",
+                        width: "200px",
                       }}
-                    />
+                    >
+                      <CardMedia
+                        disabled={badge.is_deleted}
+                        onClick={
+                          !badge.is_deleted
+                            ? () => handleOpenEditDialog(badge)
+                            : undefined
+                        }
+                        className={classes.cardmedia}
+                        image={badge.badge}
+                        style={{
+                          WebkitFilter: badge.is_deleted
+                            ? "brightness(50%)"
+                            : "brightness(100%)",
+                          cursor: badge.is_deleted ? "" : "pointer",
+                        }}
+                      />
+                      <Typography
+                        style={{
+                          textAlign: "center",
+                          marginBottom: "20px",
+                          wordWrap: "break-word",
+                        }}
+                      >
+                        {badge.title}
+                      </Typography>
+                    </div>
                   </Tooltip>
                 ))
             ) : (
@@ -830,7 +849,7 @@ const AdminLearnersAchievementPage = () => {
                 }}
               >
                 <Typography
-                  variant="h3"
+                  variant="h4"
                   style={{
                     textAlign: "center",
                     lineHeight: "40px",
@@ -838,8 +857,7 @@ const AdminLearnersAchievementPage = () => {
                     color: "#9B9B9B",
                   }}
                 >
-                  Codeine has no achievement badges. <br />
-                  Help create one today!
+                  No results found
                 </Typography>
               </div>
             )}
@@ -869,7 +887,7 @@ const AdminLearnersAchievementPage = () => {
             <Typography
               style={{
                 color: "#FFFFFF",
-                fontSize: "54px",
+                fontSize: "48px",
                 fontWeight: 700,
                 marginLeft: "30px",
               }}
@@ -883,7 +901,7 @@ const AdminLearnersAchievementPage = () => {
             <Typography
               style={{
                 color: "#FFFFFF",
-                fontSize: "54px",
+                fontSize: "48px",
                 fontWeight: 700,
                 marginLeft: "30px",
               }}
@@ -996,8 +1014,8 @@ const AdminLearnersAchievementPage = () => {
                 }}
               >
                 Click on the{" "}
-                {<Done color="secondary" style={{ fontSize: "12px" }} />} icon
-                to confirm requirement.
+                {<Add color="secondary" style={{ fontSize: "12px" }} />} icon to
+                confirm requirement.
               </Typography>
             </Grid>
           </Grid>
@@ -1144,7 +1162,7 @@ const AdminLearnersAchievementPage = () => {
                 handleAddToList(newBadgeRequirement);
               }}
             >
-              <Done color="secondary" />
+              <Add color="secondary" />
             </IconButton>
           </Grid>
         </DialogContent>

@@ -62,7 +62,7 @@ const Footer = () => {
           </Link> */}
         </div>
         <div className={classes.rightCol}>
-          <Link to="/" className={classes.footerLink}>
+          <Link to="/viewarticles" className={classes.footerLink}>
             Articles
           </Link>
           <Link to="/" className={classes.footerLink}>
