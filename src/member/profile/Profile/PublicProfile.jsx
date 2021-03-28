@@ -249,57 +249,35 @@ const PublicProfile = (props) => {
 
   const getMemberData = () => {
     Service.client
-      .get(`/auth/members/${id}`)
+      .get(`/members/${id}/profile`)
       .then((res) => {
-        setMember(res.data);
-        if (dataList.length === 0) {
-          handleSetRadarData(res.data.member.stats);
-        }
-        if (languageList.length === 0) {
-          handleTopLanguages(res.data.member.stats);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
+        console.log(res.data);
+        setMember(res.data.member);
 
-  const getMemberCompletedCourses = () => {
-    Service.client
-      .get(`/auth/members/${id}/courses`)
-      .then((res) => {
-        res.data = res.data
+        if (dataList.length === 0) {
+          handleSetRadarData(res.data.member.member.stats);
+        }
+
+        if (languageList.length === 0) {
+          handleTopLanguages(res.data.member.member.stats);
+        }
+
+        res.data.courses = res.data.courses
           .filter((course) => course.course !== null)
           .filter((course) => course.progress === "100.00");
-        setCourses(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+        setCourses(res.data.courses);
 
-  const getMemberCV = () => {
-    Service.client
-      .get(`/members/${id}/cvs`)
-      .then((res) => {
-        console.log(res.data);
-        setExperiences(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+        setBadges(res.data.achievements);
 
-  const getMemberBadges = () => {
-    Service.client
-      .get(`/members/${id}/achievements`)
-      .then((res) => {
-        console.log(res.data);
-        setBadges(res.data);
+        setExperiences(res.data.cv);
       })
+
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     checkIfLoggedIn();
     getMemberData();
-    getMemberCompletedCourses();
-    getMemberCV();
-    getMemberBadges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -500,7 +478,7 @@ const PublicProfile = (props) => {
         <Grid item xs={9}>
           <Grid container className={classes.rightContainer}>
             {languageList && languageList.length > 0 ? (
-              <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Grid item xs={12} style={{ marginBottom: "60px" }}>
                 <Typography
                   variant="h5"
                   style={{ fontWeight: 600, marginBottom: "15px" }}
@@ -562,7 +540,7 @@ const PublicProfile = (props) => {
               ""
             )}
 
-            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+            <Grid item xs={12} style={{ marginBottom: "60px" }}>
               <Typography
                 variant="h5"
                 style={{ fontWeight: 600, marginBottom: "15px" }}
@@ -586,7 +564,7 @@ const PublicProfile = (props) => {
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+            <Grid item xs={12} style={{ marginBottom: "60px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   variant="h5"

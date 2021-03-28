@@ -72,7 +72,6 @@ const CourseCard = (props) => {
 
             <Typography
               style={{
-                fontFamily: "Roboto Mono",
                 fontWeight: 600,
               }}
               variant="h6"
@@ -83,7 +82,6 @@ const CourseCard = (props) => {
               variant="body1"
               style={{
                 paddingBottom: "30px",
-                fontFamily: "Roboto Mono",
               }}
             >
               {course &&
@@ -91,16 +89,10 @@ const CourseCard = (props) => {
             </Typography>
           </div>
           <div>
-            <Typography
-              variant="body1"
-              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
-            >
+            <Typography variant="body1" style={{ fontWeight: 600 }}>
               duration: {course && course.duration}h
             </Typography>
-            <Typography
-              variant="body1"
-              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
-            >
+            <Typography variant="body1" style={{ fontWeight: 600 }}>
               exp points: {course && course.exp_points}p
             </Typography>
             <div style={{ display: "flex", margin: "10px 0" }}>

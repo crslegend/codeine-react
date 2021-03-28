@@ -1,24 +1,14 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Card,
-  Grid,
-  CardMedia,
-  CardContent,
-} from "@material-ui/core";
+import { Typography, Card, CardContent } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    padding: "10px 10px",
+    height: "130px",
     marginTop: "30px",
     border: "1px solid",
     borderRadius: 0,
-  },
-  cardmedia: {
-    height: "100%",
-    width: "7vw",
   },
 }));
 
@@ -35,7 +25,6 @@ const ExperienceCard = (props) => {
 
     if (date !== null) {
       const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
       return newDate;
     }
     return "";
@@ -43,46 +32,56 @@ const ExperienceCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardContent>
-        <Grid container>
-          <Grid item xs={12}>
-            <div
+      <CardContent
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "5px",
+            }}
+          >
+            <Typography
               style={{
-                display: "flex",
-                justifyContent: "space-between",
+                fontWeight: 600,
+                display: "inline-block",
               }}
+              variant="body1"
             >
-              <div>
-                <Typography
-                  style={{
-                    fontWeight: 600,
-                  }}
-                  variant="h5"
-                >
-                  {experience && experience.title},
-                </Typography>
-                <Typography
-                  style={{
-                    fontWeight: 600,
-                  }}
-                  variant="h5"
-                >
-                  {experience && experience.organisation}
-                </Typography>
-              </div>
+              {experience && experience.title}
+            </Typography>
+            <Typography
+              style={{
+                display: "inline-block",
+              }}
+              variant="body1"
+            >
+              , {experience && experience.organisation}
+            </Typography>
+          </div>
 
-              <Typography variant="h6">
-                {experience &&
-                  formatDate(experience.start_date) +
-                    " to " +
-                    formatDate(experience.end_date)}
-              </Typography>
-            </div>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography> {experience && experience.description}</Typography>
-          </Grid>
-        </Grid>
+          <Typography variant="body1">
+            {experience &&
+              formatDate(experience.start_date) +
+                " to " +
+                formatDate(experience.end_date)}
+          </Typography>
+        </div>
+
+        <div>
+          <Typography variant="body2">
+            {experience && experience.description}
+          </Typography>
+        </div>
       </CardContent>
     </Card>
   );
