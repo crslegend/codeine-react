@@ -383,7 +383,7 @@ const MemberLanding = () => {
             setUser(res.data);
           }
         })
-        .catch((err) => console.log(err));
+        .catch(() => ());
     }
   };
 

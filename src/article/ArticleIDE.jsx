@@ -55,16 +55,10 @@ const MemberArticleIDE = (props) => {
     articleDetails,
     setArticleDetails,
     setDrawerOpen,
-    openIDE,
     setOpenIDE,
-    setSbOpen,
-    setSnackbar,
-    articleEngagement,
-    setArticleEngagement,
   } = props;
 
   const [user, setUser] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const [portNum, setPortNum] = useState();
   const [loadingIDE, setLoadingIDE] = useState(true);
