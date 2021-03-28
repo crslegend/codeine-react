@@ -156,13 +156,14 @@ const DashboardPage = () => {
             setMemberBadges(
               tempList.sort((a, b) => b.totalPoints - a.totalPoints)
             );
+            getAllBadge(tempList);
           })
           .catch((err) => console.log(err));
       }
     }
   };
 
-  const getAllBadge = () => {
+  const getAllBadge = (badges) => {
     let list = [];
 
     Service.client
@@ -170,12 +171,10 @@ const DashboardPage = () => {
       .then((res) => {
         res.data = res.data.filter((badge) => !badge.is_deleted);
 
-        if (memberBadges.length > 0) {
+        if (badges.length > 0) {
           for (var i = 0; i < res.data.length; i++) {
-            for (var j = 0; j < memberBadges.length; j++) {
-              if (
-                res.data[i].id === memberBadges[j].badgeDetails.achievement.id
-              ) {
+            for (var j = 0; j < badges.length; j++) {
+              if (res.data[i].id === badges[j].badgeDetails.achievement.id) {
                 list.push({
                   achievement_requirements:
                     res.data[i].achievement_requirements,
@@ -185,9 +184,8 @@ const DashboardPage = () => {
                   is_owned: true,
                 });
               } else if (
-                res.data[i].id !==
-                  memberBadges[j].badgeDetails.achievement.id &&
-                j === memberBadges.length - 1
+                res.data[i].id !== badges[j].badgeDetails.achievement.id &&
+                j === badges.length - 1
               ) {
                 list.push({
                   achievement_requirements:
@@ -203,6 +201,7 @@ const DashboardPage = () => {
         }
       })
       .catch((err) => console.log(err));
+
     setBadges(list.sort((a, b) => a.is_owned - b.is_owned));
   };
 
@@ -319,7 +318,6 @@ const DashboardPage = () => {
   useEffect(() => {
     getAnalytics();
     checkIfLoggedIn();
-    getAllBadge();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -612,6 +610,10 @@ const DashboardPage = () => {
                   key={index}
                   style={{
                     WebkitFilter: !badge.is_owned ? "grayscale(1)" : "",
+                    marginTop:
+                      !badge.is_owned && badges[index - 1].is_owned
+                        ? "70px"
+                        : "0px",
                   }}
                   className={classes.badgeDetail}
                 >
