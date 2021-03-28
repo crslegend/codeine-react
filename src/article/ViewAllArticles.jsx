@@ -1,13 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Avatar,
-  Divider,
-  Grid,
-  Button,
-  Typography,
-  ListItem,
-} from "@material-ui/core";
+import { Avatar, Grid, Button, Typography, ListItem } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../member/MemberNavBar";
@@ -295,10 +288,6 @@ const ViewAllArticles = () => {
                     <Typography style={{ fontSize: "12px", color: "#757575" }}>
                       {formatDate(article.date_created)}
                     </Typography>
-
-                    <Divider
-                      style={{ marginTop: "10px", marginBottom: "10px" }}
-                    />
                   </div>
                 );
               })}
