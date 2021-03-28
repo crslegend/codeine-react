@@ -83,8 +83,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardmedia: {
-    height: "120px",
-    width: "120px",
+    height: "100px",
+    width: "100px",
     borderRadius: "50%",
     marginRight: "35px",
     marginBottom: "25px",
@@ -569,7 +569,13 @@ const PublicProfile = (props) => {
               </Typography>
 
               {badges && badges.length > 0 ? (
-                <div style={{ display: "flex" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    flexWrap: "wrap",
+                  }}
+                >
                   {badges &&
                     badges.map((badge, index) => (
                       <CardMedia
@@ -630,6 +636,9 @@ const PublicProfile = (props) => {
                       <TableCell style={{ fontWeight: 600 }}>
                         category
                       </TableCell>
+                      <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                        results
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -656,6 +665,11 @@ const PublicProfile = (props) => {
                                   <Label label={label} />
                                 ))}
                             </div>
+                          </TableCell>
+                          <TableCell
+                            style={{ width: "60px", textAlign: "center" }}
+                          >
+                            {row.quiz_result.actual_score}
                           </TableCell>
                         </TableRow>
                       ))
@@ -725,6 +739,9 @@ const PublicProfile = (props) => {
               >
                 <TableCell style={{ fontWeight: 600 }}>title</TableCell>
                 <TableCell style={{ fontWeight: 600 }}>category</TableCell>
+                <TableCell style={{ width: "60px", fontWeight: 600 }}>
+                  results
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -752,6 +769,9 @@ const PublicProfile = (props) => {
                             <Label label={label} />
                           ))}
                       </div>
+                    </TableCell>
+                    <TableCell style={{ width: "60px", textAlign: "center" }}>
+                      {row.quiz_result.actual_score}
                     </TableCell>
                   </TableRow>
                 ))}

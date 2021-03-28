@@ -7,8 +7,16 @@ const styles = makeStyles((theme) => ({
     width: "100%",
     height: "130px",
     marginBottom: "30px",
-    border: "1px solid",
+    border: "1px solid #C4C4C4",
     borderRadius: 0,
+  },
+  title: {
+    display: "flex",
+    justifyContent: "space-between",
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    margin: "-20px -20px 5px",
+    padding: "8px 20px",
   },
 }));
 
@@ -39,17 +47,8 @@ const ExperienceCard = (props) => {
           height: "100%",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: "5px",
-            }}
-          >
+        <div className={classes.title}>
+          <div>
             <Typography
               style={{
                 fontWeight: 600,
