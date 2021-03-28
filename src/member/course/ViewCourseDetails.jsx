@@ -978,7 +978,7 @@ const ViewCourseDetails = () => {
             color="primary"
             onClick={() => {
               // direct user to pay for pro-tier membership
-              history.push(`/member/home/transaction`);
+              history.push(`/member/payment`);
             }}
           >
             Upgrade to Pro-Tier
