@@ -131,7 +131,6 @@ const DashboardPage = () => {
         totalPoints +
         badge.achievement.achievement_requirements[i].experience_point;
     }
-    console.log(badge);
 
     let tempItem = {
       badgeDetails: badge,
@@ -157,7 +156,8 @@ const DashboardPage = () => {
             setMemberBadges(
               tempList.sort((a, b) => b.totalPoints - a.totalPoints)
             );
-          });
+          })
+          .catch((err) => console.log(err));
       }
     }
   };
@@ -165,36 +165,45 @@ const DashboardPage = () => {
   const getAllBadge = () => {
     let list = [];
 
-    Service.client.get(`/achievements`).then((res) => {
-      res.data = res.data.filter((badge) => !badge.is_deleted);
+    Service.client
+      .get(`/achievements`)
+      .then((res) => {
+        res.data = res.data.filter((badge) => !badge.is_deleted);
 
-      for (var i = 0; i < res.data.length; i++) {
-        for (var j = 0; j < memberBadges.length; j++) {
-          if (res.data[i].id === memberBadges[j].badgeDetails.achievement.id) {
-            list.push({
-              achievement_requirements: res.data[i].achievement_requirements,
-              badge: res.data[i].badge,
-              title: res.data[i].title,
-              id: res.data[i].id,
-              is_owned: true,
-            });
-          } else if (
-            res.data[i].id !== memberBadges[j].badgeDetails.achievement.id &&
-            j === memberBadges.length - 1
-          ) {
-            list.push({
-              achievement_requirements: res.data[i].achievement_requirements,
-              badge: res.data[i].badge,
-              title: res.data[i].title,
-              id: res.data[i].id,
-              is_owned: false,
-            });
+        if (memberBadges.length > 0) {
+          for (var i = 0; i < res.data.length; i++) {
+            for (var j = 0; j < memberBadges.length; j++) {
+              if (
+                res.data[i].id === memberBadges[j].badgeDetails.achievement.id
+              ) {
+                list.push({
+                  achievement_requirements:
+                    res.data[i].achievement_requirements,
+                  badge: res.data[i].badge,
+                  title: res.data[i].title,
+                  id: res.data[i].id,
+                  is_owned: true,
+                });
+              } else if (
+                res.data[i].id !==
+                  memberBadges[j].badgeDetails.achievement.id &&
+                j === memberBadges.length - 1
+              ) {
+                list.push({
+                  achievement_requirements:
+                    res.data[i].achievement_requirements,
+                  badge: res.data[i].badge,
+                  title: res.data[i].title,
+                  id: res.data[i].id,
+                  is_owned: false,
+                });
+              }
+            }
           }
         }
-      }
-    });
-
-    setBadges(list);
+      })
+      .catch((err) => console.log(err));
+    setBadges(list.sort((a, b) => a.is_owned - b.is_owned));
   };
 
   const formatDataIntoArr = (data) => {
@@ -595,7 +604,6 @@ const DashboardPage = () => {
       >
         <DialogTitle>All Achievements</DialogTitle>
         <DialogContent>
-          {console.log(badges)}
           {badges &&
             badges.length > 0 &&
             badges.map((badge, index) => {
