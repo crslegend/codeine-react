@@ -113,6 +113,7 @@ const PublicProfile = (props) => {
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
+  const [points, setPoints] = useState("0");
 
   const [courses, setCourses] = useState([]);
   const [courseDialog, setCourseDialog] = useState(false);
@@ -177,8 +178,20 @@ const PublicProfile = (props) => {
     setDataList(list);
   };
 
+  const getPoints = () => {
+    let tempPoints = 0;
+    for (var i = 0; i < dataList.length; i++) {
+      tempPoints = tempPoints + dataList[i].points;
+    }
+    for (var j = 0; j < languageList.length; j++) {
+      tempPoints = tempPoints + languageList[j].points;
+    }
+    return tempPoints;
+  };
+
   const handleTopLanguages = (statsData) => {
     let list = [];
+
     if (statsData.JAVA > 0) {
       list.push({
         language: "Java",
@@ -426,7 +439,7 @@ const PublicProfile = (props) => {
                 }}
               >
                 <Typography variant="body2">badges</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">{badges.length}</Typography>
               </div>
               <div
                 style={{
@@ -436,7 +449,7 @@ const PublicProfile = (props) => {
                 }}
               >
                 <Typography variant="body2">exp. points</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">{getPoints()}</Typography>
               </div>
               <div
                 style={{
