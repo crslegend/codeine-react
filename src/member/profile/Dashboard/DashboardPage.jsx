@@ -5,6 +5,7 @@ import PageTitle from "../../../components/PageTitle";
 import Service from "../../../AxiosService";
 import { Info } from "@material-ui/icons";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import MemberNavBar from "../../MemberNavBar";
 // import { useHistory } from "react-router";
 import {
@@ -95,9 +96,51 @@ const DashboardPage = () => {
   const [timeSpentOnPlatform, setTimeSpentOnPlatform] = useState();
   const [timeSpentCategories, setTimeSpentCategories] = useState();
 
+  const [allBadges, setAllBadges] = useState([]);
+  const [memberBadges, setMemberBadges] = useState([]);
+  const [firstBadge, setFirstBadge] = useState();
+  const [secondBadge, setSecondBadge] = useState();
+  const [thirdBadge, setThirdBadge] = useState();
+
+  const handleBadgePoints = (badge) => {
+    let totalPoints = 0;
+    for (
+      var i = 0;
+      i < badge.achievement.achievement_requirements.length;
+      i++
+    ) {
+      totalPoints =
+        totalPoints +
+        badge.achievement.achievement_requirements[i].experience_point;
+    }
+    console.log(badge);
+
+    let tempItem = {
+      badgeDetails: badge,
+      totalPoints: totalPoints,
+    };
+    return tempItem;
+  };
+
   const checkIfLoggedIn = () => {
+    let decoded;
+    let tempList = [];
+
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+      decoded = jwt_decode(Cookies.get("t1"));
+      if (memberBadges.length === 0) {
+        Service.client
+          .get(`/members/${decoded.user_id}/profile`)
+          .then((res) => {
+            for (var i = 0; i < res.data.achievements.length; i++) {
+              tempList.push(handleBadgePoints(res.data.achievements[i]));
+            }
+            setMemberBadges(
+              tempList.sort((a, b) => b.totalPoints - a.totalPoints)
+            );
+          });
+      }
     }
   };
 
@@ -184,6 +227,8 @@ const DashboardPage = () => {
     setTimeSpentCategories(arr);
   };
 
+  const getMemberBadge = () => {};
+
   const getAnalytics = () => {
     // get time spent breakdown for member
 
@@ -214,6 +259,7 @@ const DashboardPage = () => {
   useEffect(() => {
     getAnalytics();
     checkIfLoggedIn();
+    getMemberBadge();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -275,12 +321,23 @@ const DashboardPage = () => {
               >
                 2
               </Typography>
-              <CardMedia className={classes.cardmedia} image={image} />
+              <CardMedia
+                className={classes.cardmedia}
+                image={
+                  memberBadges.length > 1
+                    ? memberBadges &&
+                      memberBadges[1].badgeDetails.achievement.badge
+                    : image
+                }
+              />
               <Typography
                 variant="body1"
                 style={{ fontWeight: 600, textAlign: "center" }}
               >
-                Python (Beginner)
+                {memberBadges.length > 1
+                  ? memberBadges &&
+                    memberBadges[2].badgeDetails.achievement.title
+                  : ""}
               </Typography>
             </div>
             <div
@@ -297,12 +354,23 @@ const DashboardPage = () => {
               >
                 1
               </Typography>
-              <CardMedia className={classes.cardmediafirst} image={image} />
+              <CardMedia
+                className={classes.cardmediafirst}
+                image={
+                  memberBadges.length > 0
+                    ? memberBadges &&
+                      memberBadges[0].badgeDetails.achievement.badge
+                    : image
+                }
+              />
               <Typography
                 variant="body1"
                 style={{ fontWeight: 600, textAlign: "center" }}
               >
-                Python (Beginner)
+                {memberBadges.length > 0
+                  ? memberBadges &&
+                    memberBadges[0].badgeDetails.achievement.title
+                  : ""}
               </Typography>
             </div>
             <div
@@ -318,12 +386,23 @@ const DashboardPage = () => {
               >
                 3
               </Typography>
-              <CardMedia className={classes.cardmedia} image={image} />
+              <CardMedia
+                className={classes.cardmedia}
+                image={
+                  memberBadges.length > 2
+                    ? memberBadges &&
+                      memberBadges[2].badgeDetails.achievement.badge
+                    : image
+                }
+              />
               <Typography
                 variant="body1"
                 style={{ fontWeight: 600, textAlign: "center" }}
               >
-                Python (Beginner)
+                {memberBadges.length > 2
+                  ? memberBadges &&
+                    memberBadges[2].badgeDetails.achievement.title
+                  : ""}
               </Typography>
             </div>
           </Card>
