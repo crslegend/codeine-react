@@ -75,6 +75,22 @@ const styles = makeStyles((theme) => ({
     flexDirection: "column",
     marginBottom: "30px",
   },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
   cardOnRight: {
     width: 400,
     margin: "auto",
@@ -145,6 +161,20 @@ const ViewCourseDetailsPage = () => {
       return newDate;
     }
     return "";
+  };
+
+  const handleProfileLink = (reviewMember) => {
+    if (reviewMember.member.membership_tier === "PRO") {
+      // console.log("hell");
+      return `/member/profile/${reviewMember.id}`;
+    }
+  };
+
+  const toRenderProfileLinkOrNot = (reviewMember) => {
+    if (reviewMember.member.membership_tier === "PRO") {
+      return true;
+    }
+    return false;
   };
 
   const handleDeleteCourse = (courseId) => {
@@ -571,8 +601,25 @@ const ViewCourseDetailsPage = () => {
                       key={index}
                       style={{ display: "flex", marginBottom: "20px" }}
                     >
-                      {review.member.profile_photo &&
-                      review.member.profile_photo ? (
+                      {toRenderProfileLinkOrNot(review.member) ? (
+                        <a
+                          href={handleProfileLink(review.member)}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {review.member.profile_photo &&
+                          review.member.profile_photo ? (
+                            <Avatar
+                              style={{ marginRight: "15px" }}
+                              src={review.member.profile_photo}
+                            />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {review.member.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                        </a>
+                      ) : review.member.profile_photo &&
+                        review.member.profile_photo ? (
                         <Avatar
                           style={{ marginRight: "15px" }}
                           src={review.member.profile_photo}
@@ -583,10 +630,39 @@ const ViewCourseDetailsPage = () => {
                         </Avatar>
                       )}
                       <div style={{ flexDirection: "column" }}>
-                        <Typography variant="h6" style={{ fontWeight: 600 }}>
-                          {review.member && review.member.first_name}{" "}
-                          {review.member && review.member.last_name}
-                        </Typography>
+                        {toRenderProfileLinkOrNot(review.member) ? (
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <a
+                              href={handleProfileLink(review.member)}
+                              className={classes.profileLink}
+                            >
+                              <Typography
+                                variant="h6"
+                                style={{ fontWeight: 600 }}
+                              >
+                                {review.member && review.member.first_name}{" "}
+                                {review.member && review.member.last_name}
+                              </Typography>
+                            </a>
+                            {review.member.member.membership_tier === "PRO" && (
+                              <div style={{ marginTop: "4px" }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  className={classes.pro}
+                                >
+                                  PRO
+                                </Typography>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <Typography variant="h6" style={{ fontWeight: 600 }}>
+                            {review.member && review.member.first_name}{" "}
+                            {review.member && review.member.last_name}
+                          </Typography>
+                        )}
                         <div style={{ display: "flex", marginBottom: "10px" }}>
                           <Rating
                             name="read-only"

@@ -1,11 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@material-ui/data-grid";
-import { Box, Typography } from "@material-ui/core";
+import { Chip, Paper, Typography } from "@material-ui/core";
 // import jwt_decode from "jwt-decode";
 import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
+import PageTitle from "../../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -17,18 +18,43 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "65px",
   },
   dataGrid: {
+    backgroundColor: "#fff",
     "@global": {
       ".MuiDataGrid-row": {
-        cursor: "pointer",
+        // cursor: "pointer",
       },
     },
+  },
+  paper: {
+    padding: theme.spacing(5),
+    marginBottom: "30px",
+    display: "flex",
+    flexDirection: "column",
+  },
+  pro: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    fontSize: 16,
+  },
+  free: {
+    backgroundColor: "  #F7DF1E",
+    color: "#000",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    fontSize: 16,
   },
 }));
 
 const Payment = () => {
   const classes = useStyles();
   const [allTransactions, setAllTransactions] = useState([]);
-  // const [application, setApplication] = useState();
+  const [latestTransactionForPro, setLatestTransactionForPro] = useState();
 
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -42,17 +68,51 @@ const Payment = () => {
     checkIfLoggedIn();
   }, []);
 
-  const getTransactionData = () => {
+  const getTransactionData = async () => {
     Service.client
       .get("/consultations/member/payments")
       .then((res) => {
-        setAllTransactions(res.data);
+        // console.log(res);
+        let arr = res.data;
+
+        Service.client
+          .get(`auth/membership-subscriptions`)
+          .then((res) => {
+            // console.log(res.data);
+            for (let i = 0; i < res.data.length; i++) {
+              arr.push(res.data[i]);
+            }
+            // console.log(arr);
+            setAllTransactions(arr);
+          })
+          .catch((err) => console.log(err));
+        // setAllTransactions(res.data);
       })
       .catch((error) => {
-        setAllTransactions(null);
+        // setAllTransactions(null);
       });
+
+    Service.client
+      .get(`/auth/membership-subscriptions`, {
+        params: { latest: 1 },
+      })
+      .then((res) => {
+        // console.log(res);
+        if (res.data.payment_transaction.payment_status === "COMPLETED") {
+          const futureDate = new Date(res.data.expiry_date);
+          const currentDate = new Date();
+          const diffTime = futureDate - currentDate;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays > 29) {
+            // check = false;
+            setLatestTransactionForPro(res.data);
+          }
+        }
+      })
+      .catch((err) => console.log(err));
   };
-  console.log(allTransactions);
+  // console.log(allTransactions);
 
   useEffect(() => {
     getTransactionData();
@@ -64,18 +124,45 @@ const Payment = () => {
     }
   };
 
+  const formatDateToReturnWithoutTime = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate;
+    }
+    return "";
+  };
+
   const transactionColumns = [
-    { field: "id", headerName: "Transaction ID", width: 320 },
+    { field: "id", headerName: "Transaction ID", width: 200 },
     {
       field: "date",
       headerName: "Payment Date",
       type: "date",
-      width: 220,
+      width: 250,
+    },
+    {
+      field: "pay_for",
+      headerName: "Pay For",
+      width: 200,
+    },
+    {
+      field: "expiry_date",
+      headerName: "Expires On",
+      // valueFormatter: (params) => formatDateToReturnWithoutTime(params.value),
+      width: 150,
     },
     {
       field: "title",
       headerName: "Consultation Title",
-      width: 300,
+      width: 250,
     },
     {
       field: "consultation_date",
@@ -136,16 +223,27 @@ const Payment = () => {
     return "";
   };
 
-  const transactionRows = allTransactions;
+  const transactionRows = [...allTransactions];
 
   for (var h = 0; h < allTransactions.length; h++) {
-    transactionRows[h].title = allTransactions[h].consultation_slot.title;
-    transactionRows[h].partner =
-      allTransactions[h].consultation_slot.partner_name;
+    transactionRows[h].title = allTransactions[h].consultation
+      ? allTransactions[h].consultation_slot.title
+      : "-";
+    transactionRows[h].partner = allTransactions[h].consultation_slot
+      ? allTransactions[h].consultation_slot.partner_name
+      : "-";
 
-    transactionRows[h].consultation_date = formatDate(
-      allTransactions[h].consultation_slot.start_time
-    );
+    transactionRows[h].pay_for = allTransactions[h].consultation_slot
+      ? "Consultation"
+      : "Pro-Tier Membership";
+
+    transactionRows[h].expiry_date = allTransactions[h].expiry_date
+      ? formatDateToReturnWithoutTime(allTransactions[h].expiry_date)
+      : "-";
+
+    transactionRows[h].consultation_date = allTransactions[h].consultation_slot
+      ? formatDate(allTransactions[h].consultation_slot.start_time)
+      : "-";
 
     transactionRows[h].date = formatDate(
       allTransactions[h].payment_transaction.timestamp
@@ -164,22 +262,95 @@ const Payment = () => {
   return (
     <Fragment>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <Box className={classes.heading}>
-        <Typography variant="h4" style={{ marginLeft: "56px", color: "#fff" }}>
-          Past Transactions
-        </Typography>
-      </Box>
-      <div style={{ height: "700px", width: "100%" }}>
-        <DataGrid
-          className={classes.dataGrid}
-          rows={transactionRows}
-          columns={transactionColumns.map((column) => ({
-            ...column,
-          }))}
-          pageSize={10}
-          disableSelectionOnClick
-          /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
-        />
+      <div style={{ marginTop: "65px" }}>
+        <div
+          style={{
+            width: "80%",
+            paddingTop: "30px",
+            margin: "auto",
+          }}
+        >
+          <Paper className={classes.paper}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <Typography
+                variant="h6"
+                style={{ fontWeight: 600, paddingRight: "10px" }}
+              >
+                Current Tier:
+              </Typography>
+              {latestTransactionForPro ? (
+                <Chip
+                  label="PRO"
+                  style={{ backgroundColor: "#437FC7", color: "#fff" }}
+                  size="small"
+                />
+              ) : (
+                <Chip
+                  label="FREE"
+                  style={{ backgroundColor: "#F7DF1E", color: "#000" }}
+                  size="small"
+                />
+              )}
+            </div>
+
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
+              Paid On:{" "}
+              <span style={{ fontWeight: 500 }}>
+                {latestTransactionForPro
+                  ? formatDateToReturnWithoutTime(
+                      latestTransactionForPro.payment_transaction.timestamp
+                    )
+                  : "-"}
+              </span>
+            </Typography>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
+              Paid By:{" "}
+              <span style={{ fontWeight: 500 }}>
+                {latestTransactionForPro
+                  ? latestTransactionForPro.payment_transaction.payment_type
+                  : "-"}
+              </span>
+            </Typography>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
+              Pro-Tier Membership Expires On:{" "}
+              <span style={{ fontWeight: 500 }}>
+                {latestTransactionForPro
+                  ? formatDateToReturnWithoutTime(
+                      latestTransactionForPro.expiry_date
+                    )
+                  : "-"}
+              </span>
+            </Typography>
+          </Paper>
+          <PageTitle title="Past Transactions" />
+          <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
+            <DataGrid
+              className={classes.dataGrid}
+              rows={transactionRows}
+              columns={transactionColumns.map((column) => ({
+                ...column,
+              }))}
+              pageSize={10}
+              disableSelectionOnClick
+              /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
+            />
+          </div>
+        </div>
       </div>
     </Fragment>
   );

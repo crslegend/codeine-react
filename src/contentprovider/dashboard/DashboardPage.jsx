@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid",
     borderRadius: 0,
     height: "100%",
+    marginRight: "40px",
   },
   individualStats: {
     display: "flex",
@@ -332,15 +333,7 @@ const DashboardPage = () => {
           courses.length > 0 &&
           courses.map((course, index) => {
             return (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={index}
-                style={{ marginBottom: "30px" }}
-              >
+              <Grid item key={index} style={{ marginBottom: "30px" }}>
                 <Card elevation={0} className={classes.cardRoot}>
                   <CardActionArea
                     style={{ height: "100%" }}

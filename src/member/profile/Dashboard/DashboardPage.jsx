@@ -202,42 +202,49 @@ const DashboardPage = () => {
     <div>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
-        <PageTitle title="Dashboard" />
         <div style={{ width: "80%", margin: "auto" }}>
           <div
             style={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" style={{ paddingRight: "15px" }}>
-              View By
-            </Typography>
-            <FormControl
-              margin="dense"
-              variant="outlined"
-              className={classes.formControl}
+            <PageTitle title="Dashboard" />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
             >
-              <InputLabel>Date Range</InputLabel>
-              <Select
-                label="Date Range"
-                value={numDays ? numDays : ""}
-                onChange={(e) => {
-                  setNumDays(e.target.value);
-                }}
-                style={{ backgroundColor: "#fff" }}
+              <Typography variant="h6" style={{ paddingRight: "15px" }}>
+                View By
+              </Typography>
+              <FormControl
+                margin="dense"
+                variant="outlined"
+                className={classes.formControl}
               >
-                <MenuItem value="">
-                  <em>Select a date range</em>
-                </MenuItem>
-                <MenuItem value="7">Past Week</MenuItem>
-                <MenuItem value="14">Past 2 Weeks</MenuItem>
-                <MenuItem value="30">Past Month</MenuItem>
-                <MenuItem value="90">Past 3 Months</MenuItem>
-                <MenuItem value="240">Past 6 Months</MenuItem>
-              </Select>
-            </FormControl>
+                <InputLabel>Date Range</InputLabel>
+                <Select
+                  label="Date Range"
+                  value={numDays ? numDays : ""}
+                  onChange={(e) => {
+                    setNumDays(e.target.value);
+                  }}
+                  style={{ backgroundColor: "#fff" }}
+                >
+                  <MenuItem value="">
+                    <em>Select a date range</em>
+                  </MenuItem>
+                  <MenuItem value="7">Past Week</MenuItem>
+                  <MenuItem value="14">Past 2 Weeks</MenuItem>
+                  <MenuItem value="30">Past Month</MenuItem>
+                  <MenuItem value="90">Past 3 Months</MenuItem>
+                  <MenuItem value="240">Past 6 Months</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </div>
 
           <Paper className={classes.paper}>

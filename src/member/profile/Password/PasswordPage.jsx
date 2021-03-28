@@ -21,13 +21,14 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
+import PageTitle from "../../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
   content: {
     paddingTop: "65px",
     padding: theme.spacing(3),
-    backgroundColor: "#fff",
-    height: "100vh",
+    // backgroundColor: "#fff",
+    // height: "100vh",
   },
   margin: {
     margin: theme.spacing(1),
@@ -176,124 +177,131 @@ const Password = (props) => {
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
       <div className={classes.content}>
-        <form onSubmit={handleSubmit} noValidate>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small" />}
-            aria-label="breadcrumb"
-          >
-            <Link
-              color="inherit"
-              onClick={() => {
-                history.push("/member/profile");
-              }}
+        <div style={{ width: "80%", margin: "auto" }}>
+          <form onSubmit={handleSubmit} noValidate>
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="small" />}
+              style={{ marginTop: "20px" }}
             >
-              Profile
-            </Link>
-            <Typography color="textPrimary">Change Password</Typography>
-          </Breadcrumbs>
-          <Typography variant="h5">Change Password</Typography>
-          <Grid container>
-            <Grid item xs={6}>
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="standard-adornment-password">
-                  Current Password
-                </InputLabel>
-                <Input
-                  id="old_password"
-                  type={passwordDetails.showOldPassword ? "text" : "password"}
-                  value={passwordDetails.old_password}
-                  onChange={handleChange("old_password")}
-                  required
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowOldPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {passwordDetails.showOldPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="standard-adornment-password">
-                  New Password
-                </InputLabel>
-                <Input
-                  id="new_password"
-                  type={passwordDetails.showNewPassword ? "text" : "password"}
-                  value={passwordDetails.new_password}
-                  onChange={handleChange("new_password")}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowNewPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {passwordDetails.showNewPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="standard-adornment-password">
-                  Repeat Password
-                </InputLabel>
-                <Input
-                  id="repeat_password"
-                  type={
-                    passwordDetails.showRepeatPassword ? "text" : "password"
-                  }
-                  value={passwordDetails.repeat_password}
-                  onChange={handleChange("repeat_password")}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowRepeatPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {passwordDetails.showRepeatPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-
-              <Button
-                disabled={loading}
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                type="submit"
+              <Link
+                color="inherit"
+                onClick={() => {
+                  history.push("/member/profile");
+                }}
+                style={{ cursor: "pointer" }}
               >
-                {loading ? (
-                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
+                Profile
+              </Link>
+              <Typography color="textPrimary">Change Password</Typography>
+            </Breadcrumbs>
+            <PageTitle title="Change Password" />
+
+            <Grid
+              container
+              style={{ backgroundColor: "#fff", padding: "16px" }}
+            >
+              <Grid item xs={6}>
+                <FormControl className={classes.margin}>
+                  <InputLabel htmlFor="standard-adornment-password">
+                    Current Password
+                  </InputLabel>
+                  <Input
+                    id="old_password"
+                    type={passwordDetails.showOldPassword ? "text" : "password"}
+                    value={passwordDetails.old_password}
+                    onChange={handleChange("old_password")}
+                    required
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowOldPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showOldPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.margin}>
+                  <InputLabel htmlFor="standard-adornment-password">
+                    New Password
+                  </InputLabel>
+                  <Input
+                    id="new_password"
+                    type={passwordDetails.showNewPassword ? "text" : "password"}
+                    value={passwordDetails.new_password}
+                    onChange={handleChange("new_password")}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowNewPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showNewPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.margin}>
+                  <InputLabel htmlFor="standard-adornment-password">
+                    Repeat Password
+                  </InputLabel>
+                  <Input
+                    id="repeat_password"
+                    type={
+                      passwordDetails.showRepeatPassword ? "text" : "password"
+                    }
+                    value={passwordDetails.repeat_password}
+                    onChange={handleChange("repeat_password")}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowRepeatPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showRepeatPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  type="submit"
+                >
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
+          </form>
+        </div>
       </div>
     </Fragment>
   );

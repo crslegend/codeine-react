@@ -23,6 +23,7 @@ import Toast from "../../../components/Toast.js";
 import { useHistory } from "react-router-dom";
 import Service from "../../../AxiosService";
 import Cookies from "js-cookie";
+import PageTitle from "../../../components/PageTitle.js";
 
 const useStyles = makeStyles((theme) => ({
   root: { paddingTop: "65px" },
@@ -274,16 +275,19 @@ const MemberArticleList = (props) => {
         <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
         <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         <div
-          style={{ display: "flex", marginTop: "50px", marginBottom: "30px" }}
+          style={{
+            display: "flex",
+            marginBottom: "30px",
+            alignItems: "center",
+          }}
         >
-          <Typography variant="h1" style={{ fontWeight: "700" }}>
-            Your articles
-          </Typography>
+          <PageTitle title="Your articles" />
+
           <Button
             variant="contained"
             color="primary"
             onClick={() => createNewArticle()}
-            style={{ marginLeft: "auto" }}
+            style={{ marginLeft: "auto", height: 40 }}
           >
             New Article
           </Button>

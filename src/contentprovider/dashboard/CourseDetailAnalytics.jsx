@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Service from "../../AxiosService";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import PageTitle from "../../components/PageTitle";
 import {
   Avatar,
   Box,
   Divider,
+  IconButton,
   Paper,
   Tab,
   Tabs,
@@ -16,6 +17,7 @@ import CourseMaterialAnalysis from "./components/CourseMaterialAnalysis";
 import FinalQuizAnalysis from "./components/FinalQuizAnalysis";
 import StudentAnalysis from "./components/StudentAnalysis";
 import StudentDemographics from "./components/StudentDemographics";
+import { ArrowBack } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -106,6 +108,7 @@ function TabPanel(props) {
 const CourseDetailAnalytics = () => {
   const classes = useStyles();
   const { id } = useParams();
+  const history = useHistory();
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1, 2, 3];
@@ -228,7 +231,15 @@ const CourseDetailAnalytics = () => {
 
   return (
     <div>
-      <PageTitle title="Course Analysis" />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          onClick={() => history.push(`/partner/home/dashboard`)}
+          style={{ marginRight: "30px" }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <PageTitle title="Course Analysis" />
+      </div>
 
       <Paper className={classes.paper}>
         <div style={{ display: "flex", alignItems: "center" }}>

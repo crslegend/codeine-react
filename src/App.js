@@ -30,6 +30,7 @@ import BookConsult from "./member/course/BookConsult";
 import PaymentSuccess from "./components/PaymentSuccess";
 import ResetPassword from "./resetPassword/ResetPasswordPage";
 import NewPassword from "./resetPassword/NewPasswordPage";
+import PublicProfile from "./member/profile/Profile/PublicProfile";
 import Activation from "./resetPassword/ActivationPage";
 import AdminRoute from "./components/Routes/AdminRoute";
 import PartnerRoute from "./components/Routes/PartnerRoute";
@@ -216,6 +217,7 @@ const App = () => {
         sensitive
         component={ResetPassword}
       />
+      <Route exact path="/member/profile/:id" component={PublicProfile} />
       <Route path="/reset-password" component={NewPassword} />
       <Route exact path="/verify/:id" strict sensitive component={Activation} />
       <Route component={NotFound} />
