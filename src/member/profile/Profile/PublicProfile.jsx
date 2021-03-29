@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomTooltip = ({ payload, label, active, category }) => {
+const CustomTooltip = ({ payload, active, category }) => {
   if (active && payload && payload.length) {
     return (
       <div
