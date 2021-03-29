@@ -18,9 +18,9 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import memberLogo from "../assets/CodeineLogos/Member.svg";
-import partnerLogo from "../assets/CodeineLogos/Partner.svg";
-import adminLogo from "../assets/CodeineLogos/Admin.svg";
+import memberLogo from "../assets/codeineLogos/Member.svg";
+import partnerLogo from "../assets/codeineLogos/Partner.svg";
+import adminLogo from "../assets/codeineLogos/Admin.svg";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import Service from "../AxiosService";
 import { useDebounce } from "use-debounce";

@@ -35,9 +35,9 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
-import silver from "../../../assets/silver_medal.png";
-import bronze from "../../../assets/bronze_medal.png";
-import gold from "../../../assets/gold_medal.png";
+import silver from "../../../assets/SilverMedal.png";
+import bronze from "../../../assets/BronzeMedal.png";
+import gold from "../../../assets/GoldMedal.png";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

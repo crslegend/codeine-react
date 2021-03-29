@@ -22,7 +22,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Toast from "../../components/Toast.js";
 import validator from "validator";
 import Badge from "@material-ui/core/Badge";
-import EditIcon from "../../assets/editIcon.svg";
+import EditIcon from "../../assets/EditIcon.svg";
 import PageTitle from "../../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({

@@ -28,7 +28,7 @@ import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import Toast from "../../../components/Toast.js";
 import validator from "validator";
-import EditIcon from "../../../assets/editIcon.svg";
+import EditIcon from "../../../assets/EditIcon.svg";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -49,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     padding: theme.spacing(3),
     width: "100%",
-    
   },
   avatar: {
     fontSize: "80px",

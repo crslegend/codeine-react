@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 import Toast from "../../components/Toast.js";
 import ReactQuill, { Quill } from "react-quill";
 import Footer from "./Footer";

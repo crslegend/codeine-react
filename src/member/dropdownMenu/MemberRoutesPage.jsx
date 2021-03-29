@@ -30,14 +30,14 @@ import MemberNavBar from "../MemberNavBar";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import Consultation from "./Consultation/ConsultationPage";
-import Helpdesk from "./Helpdesk/HelpdeskPage";
-import Profile from "./Profile/ProfilePage";
-import Password from "./Password/PasswordPage";
-import Transaction from "./Payment/PaymentPage";
+import Consultation from "./consultation/ConsultationPage";
+import Helpdesk from "./helpdesk/HelpdeskPage";
+import Profile from "./profile/ProfilePage";
+import Password from "./password/PasswordPage";
+import Transaction from "./payment/PaymentPage";
 import logo from "../../assets/CodeineLogos/Member.svg";
-import CoursesPage from "./Courses/CoursesPage";
-import DashboardPage from "./Dashboard/DashboardPage";
+import CoursesPage from "./courses/CoursesPage";
+import DashboardPage from "./dashboard/DashboardPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {

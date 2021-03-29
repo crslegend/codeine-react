@@ -5,7 +5,7 @@ import {
   UI_REPOSITION_SIDENOTES,
   UI_SELECT_SIDENOTE,
   UI_SELECT_ANCHOR,
-} from "./types";
+} from "./Types";
 
 export function deselectSidenote(docId) {
   console.log(docId);

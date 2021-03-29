@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import CLogo from "../../assets/CodeineLogos/C.svg";
+import CLogo from "../../assets/codeineLogos/C.svg";
 import { Typography, Avatar } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({

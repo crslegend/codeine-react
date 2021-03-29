@@ -14,8 +14,7 @@ code {
 
 @font-face {
   font-family: "Roboto Mono";
-  src: local("Roboto Mono"),
-    url(./fonts/RobotoMono-VariableFont_wght.ttf) format("truetype");
+  src: local("Roboto Mono"), url(./fonts/RobotoMono.ttf) format("truetype");
 }
 
 ::-webkit-scrollbar {

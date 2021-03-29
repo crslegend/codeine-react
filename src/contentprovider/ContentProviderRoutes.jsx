@@ -10,7 +10,7 @@ import {
   useHistory,
   Route,
 } from "react-router-dom";
-import PrivateRoute from "../components/Routes/PrivateRoute";
+import PrivateRoute from "../components/routes/PrivateRoute";
 import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
@@ -24,7 +24,7 @@ import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
-import logo from "../assets/CodeineLogos/Partner.svg";
+import logo from "../assets/codeineLogos/Partner.svg";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";

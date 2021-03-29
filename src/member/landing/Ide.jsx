@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
-import ide from "../../assets/ide_asset.png";
+import ide from "../../assets/IdeAsset.png";
 
 const styles = makeStyles((theme) => ({
   root: {

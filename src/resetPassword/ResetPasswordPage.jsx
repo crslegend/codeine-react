@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { Link, useParams } from "react-router-dom";
 // import Service from "../AxiosService";
-import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
-import Memberlogo from "../assets/CodeineLogos/Member.svg";
-import Adminlogo from "../assets/CodeineLogos/Admin.svg";
+import Partnerlogo from "../assets/codeineLogos/Partner.svg";
+import Memberlogo from "../assets/codeineLogos/Member.svg";
+import Adminlogo from "../assets/codeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";
