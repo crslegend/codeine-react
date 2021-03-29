@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper, Typography } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-import logo from "../assets/CodeineLogos/Member.svg";
+import logo from "../assets/codeineLogos/Member.svg";
 import Service from "../AxiosService";
 
 const useStyles = makeStyles((theme) => ({

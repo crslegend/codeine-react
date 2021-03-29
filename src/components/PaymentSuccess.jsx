@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
 import { useLocation, useHistory } from "react-router-dom";
 import Service from "../AxiosService";
-import logo from "../assets/CodeineLogos/Partner.svg";
-import logo1 from "../assets/CodeineLogos/Member.svg";
+import logo from "../assets/codeineLogos/Partner.svg";
+import logo1 from "../assets/codeineLogos/Member.svg";
 
 const styles = makeStyles((theme) => ({
   root: {

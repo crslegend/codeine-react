@@ -7,7 +7,7 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
 
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";

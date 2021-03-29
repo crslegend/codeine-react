@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {

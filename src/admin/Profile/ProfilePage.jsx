@@ -7,20 +7,21 @@ import {
   TextField,
   Typography,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Badge,
+  IconButton,
 } from "@material-ui/core";
 import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
 import Toast from "../../components/Toast.js";
 import validator from "validator";
-import Badge from "@material-ui/core/Badge";
-import EditIcon from "../../assets/editIcon.svg";
+
+import EditIcon from "../../assets/EditIcon.svg";
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -181,6 +182,8 @@ const AdminProfilePage = (props) => {
     // instantiate form-data
     e.preventDefault();
 
+    console.log(profilePhoto);
+
     if (profilePhoto && profilePhoto.length === 0) {
       setSbOpen(true);
       setSnackbar({
@@ -194,13 +197,14 @@ const AdminProfilePage = (props) => {
     const formData = new FormData();
 
     // appending data to form-data
-    Object.keys(profileDetails).forEach((key) =>
-      formData.append(key, profileDetails[key])
-    );
+    // Object.keys(profileDetails).forEach((key) =>
+    //   formData.append(key, profileDetails[key])
+    // );
 
     if (profilePhoto.length > 0) {
       formData.append("profile_photo", profilePhoto[0].file);
     }
+    console.log(profilePhoto[0].file);
 
     // submit form-data as per usual
     Service.client

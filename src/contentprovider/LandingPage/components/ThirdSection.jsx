@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
-import image from "../../../assets/third-section-img.png";
+import image from "../../../assets/ThirdSection.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {

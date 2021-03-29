@@ -14,7 +14,7 @@ import { Avatar, ListItem, Typography } from "@material-ui/core";
 import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
-import logo from "../assets/CodeineLogos/Admin.svg";
+import logo from "../assets/codeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";

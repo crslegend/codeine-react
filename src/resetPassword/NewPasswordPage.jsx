@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router-dom";
-import MemberLogo from "../assets/CodeineLogos/Member.svg";
+import MemberLogo from "../assets/codeineLogos/Member.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";

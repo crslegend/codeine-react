@@ -14,7 +14,7 @@ import MemberConsultationPage from "./member/profile/consultation/ConsultationPa
 import MemberProfilePage from "./member/profile/profile/ProfilePage";
 import MemberPasswordPage from "./member/profile/password/PasswordPage";
 import MemberPaymentPage from "./member/profile/payment/PaymentPage";
-import ContentProviderLanding from "./contentprovider/LandingPage/ContentProviderLanding";
+import ContentProviderLanding from "./contentprovider/landingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
 import PrivateRoute from "./components/routes/PrivateRoute.jsx";

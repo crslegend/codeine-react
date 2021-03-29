@@ -9,8 +9,8 @@ import ArticleIDE from "./ArticleIDE";
 import Footer from "./Footer";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
-import partnerLogo from "../assets/CodeineLogos/Partner.svg";
-import adminLogo from "../assets/CodeineLogos/Admin.svg";
+import partnerLogo from "../assets/codeineLogos/Partner.svg";
+import adminLogo from "../assets/codeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 import jwt_decode from "jwt-decode";
 

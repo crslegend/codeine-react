@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import logo from "../assets/CodeineLogos/Member.svg";
+import logo from "../assets/codeineLogos/Member.svg";
 import {
   Avatar,
   ListItem,
@@ -19,7 +19,7 @@ import {
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import pricing from "../assets/pricing_asset.png";
+import pricing from "../assets/PricingAsset.png";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";

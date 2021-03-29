@@ -3,14 +3,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Card, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import py from "../../assets/icons/py_icon.png";
-import js from "../../assets/icons/js_icon.png";
-import java from "../../assets/icons/java_icon.png";
-import ruby from "../../assets/icons/ruby_icon.png";
-import cplus from "../../assets/icons/c++_icon.png";
-import csharp from "../../assets/icons/csharp_icon.png";
-import html from "../../assets/icons/html_icon.png";
-import css from "../../assets/icons/css_icon.png";
+import py from "../../assets/icons/PyIcon.png";
+import js from "../../assets/icons/JsIcon.png";
+import java from "../../assets/icons/JavaIcon.png";
+import ruby from "../../assets/icons/RubyIcon.png";
+import cplus from "../../assets/icons/C++Icon.png";
+import csharp from "../../assets/icons/CsharpIcon.png";
+import html from "../../assets/icons/HtmlIcon.png";
+import css from "../../assets/icons/CssIcon.png";
 
 const styles = makeStyles((theme) => ({
   root: {

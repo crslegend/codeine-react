@@ -5,12 +5,12 @@ import LinkMui from "@material-ui/core/Link";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
-import partnerLogo from "../assets/CodeineLogos/Partner.svg";
-import adminLogo from "../assets/CodeineLogos/Admin.svg";
+import partnerLogo from "../assets/codeineLogos/Partner.svg";
+import adminLogo from "../assets/codeineLogos/Admin.svg";
 import SearchBar from "material-ui-search-bar";
 import Service from "../AxiosService";
 import PageTitle from "../components/PageTitle";
-import CLogo from "../assets/CodeineLogos/C.svg";
+import CLogo from "../assets/codeineLogos/C.svg";
 import TrendingCard from "./component/TrendingArticle";
 import jwt_decode from "jwt-decode";
 

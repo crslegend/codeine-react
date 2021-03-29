@@ -19,7 +19,7 @@ import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
 import PageTitle from "../../../components/PageTitle";
 
-import pricing from "../../../assets/pricing_asset.png";
+import pricing from "../../../assets/PricingAsset.png";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);

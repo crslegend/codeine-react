@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Button, ListItem, Typography } from "@material-ui/core";
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 import { Link } from "react-router-dom";
 
 const memberNavbar = (

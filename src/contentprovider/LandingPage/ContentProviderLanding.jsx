@@ -8,7 +8,7 @@ import SecondSection from "./components/SecondSection";
 import ThirdSection from "./components/ThirdSection";
 import FourthSection from "./components/FourthSection";
 import Footer from "./components/Footer";
-import logo from "../../assets/CodeineLogos/Partner.svg";
+import logo from "../../assets/codeineLogos/Partner.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {

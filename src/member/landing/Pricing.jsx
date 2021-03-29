@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import pricing from "../../assets/pricing_asset.png";
+import pricing from "../../assets/PricingAsset.png";
 
 const styles = makeStyles((theme) => ({
   root: {

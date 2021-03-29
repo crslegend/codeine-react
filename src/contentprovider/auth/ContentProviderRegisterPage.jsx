@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Partner.svg";
+import logo from "../../assets/codeineLogos/Partner.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
