@@ -27,6 +27,7 @@ import {
   PolarRadiusAxis,
   PolarGrid,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 import MemberNavBar from "../../MemberNavBar";
 import Navbar from "../../../components/Navbar";
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: "20px",
     marginTop: "-45px",
     height: "680px",
-    padding: "55px 15px 30px",
+    padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
       padding: "55px 0px 30px",
@@ -498,24 +499,26 @@ const PublicProfile = (props) => {
               >
                 Skills
               </Typography>
-              <RadarChart
-                width={290}
-                style={{ margin: "0px auto" }}
-                height={300}
-                data={dataList && dataList}
-              >
-                <PolarGrid />
-                <PolarAngleAxis dataKey="display" />
-                <PolarRadiusAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Radar
-                  name="Category"
-                  dataKey="points"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  fillOpacity={0.6}
-                />
-              </RadarChart>
+              <ResponsiveContainer width={250} height={260}>
+                <RadarChart
+                  width="100%"
+                  style={{ margin: "0px 0px" }}
+                  height="100%"
+                  data={dataList && dataList}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="display" />
+                  <PolarRadiusAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Radar
+                    name="Category"
+                    dataKey="points"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </Grid>
