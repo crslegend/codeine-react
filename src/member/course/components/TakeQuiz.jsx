@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 // import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
-import MCQ from "./MCQ";
-import MRQ from "./MRQ";
+import MCQ from "./Mcq";
+import MRQ from "./Mrq";
 import ShortAnswer from "./ShortAnswer";
 // import Service from "../../../AxiosService";
 
