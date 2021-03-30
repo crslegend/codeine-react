@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   contactUs: {
@@ -157,8 +158,19 @@ const Helpdesk = () => {
           >
             Can't find what you're looking for?
           </Typography>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Button variant="contained" className={classes.contactUs}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              className={classes.contactUs}
+              component={Link}
+              to="/member/helpdesk/contact-us"
+            >
               Contact Us
             </Button>
           </div>

@@ -40,6 +40,7 @@ import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 
 const App = () => {
   return (
@@ -174,6 +175,12 @@ const App = () => {
         exact
         path="/member/helpdesk"
         component={MemberHelpdeskPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk/contact-us"
+        component={CreateNewTicketPage}
         user="member"
       />
       <PrivateRoute
