@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Delete, Edit } from "@material-ui/icons";
-import logo from "../assets/CodeineLogos/Member.svg";
+import logo from "../assets/codeineLogos/Member.svg";
 
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
@@ -23,7 +23,7 @@ import Cookies from "js-cookie";
 import "./sidenotes.css";
 import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 import TextSelector from "text-selection-react";
-import store from "../redux/store";
+import store from "../redux/Store";
 import {
   deselectSidenote,
   repositionSidenotes,
@@ -31,7 +31,7 @@ import {
   connectSidenote,
   selectSidenote,
   selectAnchor,
-} from "../redux/actions";
+} from "../redux/Actions";
 import jwt_decode from "jwt-decode";
 // import SyntaxHighlighter from "react-syntax-highlighter";
 // import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
