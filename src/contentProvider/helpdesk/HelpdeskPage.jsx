@@ -34,20 +34,22 @@ const FAQ = [
       "To change your password, select your avatar icon at the top of the page and click on 'Manage Your Profile' from the dropdown menu to access your profile. At that page, click on 'Change Password' to change your password.",
   },
   {
-    question: "How Do I Upgrade To Pro-Tier Membership?",
-    answer: `To upgrade to Pro-Tier, click on 'Upgrade' at the top of the page. You will be brought to a page where you can see our pricing plan and choose the number of months to be in the Pro-Tier.`,
+    question: "Where Can I See My Earnings For The Month?",
+    answer: `To see your earnings, click on 'Earnings' on the sidebar.`,
   },
   {
-    question: "How Do I Extend My Pro-Tier Membership?",
-    answer: `To extend your Pro-Tier membership, select your avatar icon at the top of the page and click on 'My Payments' from the dropdown menu. At that page, click on 'Extend Pro-Tier Membership' to extend your membership.`,
+    question:
+      "A Student Is Displaying Inappropriate Behaviour/Comments In My Course. What Can I Do?",
+    answer: `Please contact us directly so that we can carry out further investigation if necessary. All individuals are expected to abide by Codeine's terms and can be removed from a course or have their account terminated if they violate these terms.`,
   },
   {
-    question: "Where Can I Find My Enrolled Courses?",
-    answer: `To get the list of your enrolled courses, select your avatar icon at the top of the page and click on 'Courses' from the dropdown menu. You will be able to see all the courses that you have enrolled in.`,
+    question:
+      "Can My University or Organisation Offer Courses/Seminars On Codeine?",
+    answer: `Yes, it is possible. Codeine is always looking forward to work with different types of organisations around the world to provide education courses or seminars for our members here. Do register with us on a sperate account as an organisation.`,
   },
   {
-    question: "Where Can I Get Help With Course Content?",
-    answer: `You can get help from your course instructor in the discussion forum within that course. Alternatively, you could apply for an online consultation with the course instructor.`,
+    question: "What Is The Difference Between Free-Tier And Pro-Tier Members?",
+    answer: `Pro-Tier members have to pay a monthly subscription fee to have access to Codeine's integrated coding environment and unlimited access to course consultations. Courses that you have created can also be set to be limited to only for Pro-Tier members. The earnings from the subscriptions forms a part of your monthly earnings.`,
   },
 ];
 
