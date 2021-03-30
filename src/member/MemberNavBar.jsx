@@ -339,7 +339,7 @@ const MemberNavBar = (props) => {
               className={classes.typography}
               onClick={() => {
                 //history.push("/");
-                alert("clicked on Helpdesk");
+                history.push("/member/helpdesk");
               }}
             >
               Helpdesk

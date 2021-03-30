@@ -14,6 +14,7 @@ import MemberConsultationPage from "./member/dropdownMenu/consultation/Consultat
 import MemberProfilePage from "./member/dropdownMenu/profile/ProfilePage";
 import MemberPasswordPage from "./member/dropdownMenu/password/PasswordPage";
 import MemberPaymentPage from "./member/dropdownMenu/payment/PaymentPage";
+import MemberHelpdeskPage from "./member/dropdownMenu/helpdesk/HelpdeskPage";
 import ContentProviderLanding from "./contentProvider/landingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
@@ -167,6 +168,12 @@ const App = () => {
         exact
         path="/member/consultations"
         component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk"
+        component={MemberHelpdeskPage}
         user="member"
       />
       <PrivateRoute
