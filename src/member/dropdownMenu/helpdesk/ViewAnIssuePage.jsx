@@ -6,18 +6,10 @@ import MemberNavBar from "../../MemberNavBar.jsx";
 import Cookies from "js-cookie";
 import PageTitle from "../../../components/PageTitle.js";
 import Service from "../../../AxiosService";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import SubmittedTickets from "../../../helpdeskComponents/SubmittedTickets.jsx";
 
 const useStyles = makeStyles((theme) => ({
-  contactUs: {
-    backgroundColor: theme.palette.red.main,
-    color: "#fff",
-    "&:hover": {
-      backgroundColor: theme.palette.darkred.main,
-    },
-  },
   backLink: {
     textDecoration: "none",
     color: theme.palette.primary.main,
@@ -28,13 +20,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ViewSubmittedIssuesPage = () => {
+const ViewAnIssuePage = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const { id } = useParams();
 
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const [enquiries, setEnquiries] = useState();
+  const [enquiry, setEnquiry] = useState();
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -42,19 +33,19 @@ const ViewSubmittedIssuesPage = () => {
     }
   };
 
-  const getSubmittedEnquiries = () => {
+  const getEnquiry = () => {
     Service.client
-      .get(`helpdesk/tickets`, { params: { is_user: "true" } })
+      .get(`helpdesk/tickets/${id}`)
       .then((res) => {
         console.log(res);
-        setEnquiries(res.data);
+        setEnquiry(res.data);
       })
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     checkIfLoggedIn();
-    getSubmittedEnquiries();
+    getEnquiry();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,29 +61,16 @@ const ViewSubmittedIssuesPage = () => {
                   Helpdesk
                 </Typography>
               </Link>
-              <Typography variant="body1">My Submitted Enquiries</Typography>
+              <Link
+                className={classes.backLink}
+                to={`/member/helpdesk/tickets`}
+              >
+                <Typography style={{ marginRight: "8px" }} variant="body1">
+                  My Submitted Enquiries
+                </Typography>
+              </Link>
+              <Typography variant="body1">View an Enquiry</Typography>
             </Breadcrumbs>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <PageTitle title="My Submitted Enquiries" />
-            <Button
-              variant="contained"
-              className={classes.contactUs}
-              component={Link}
-              to="/member/helpdesk/contact-us"
-            >
-              Contact Us
-            </Button>
-          </div>
-          <div style={{ marginTop: "20px" }}>
-            <SubmittedTickets user={"member"} enquiries={enquiries} />
           </div>
         </div>
       </div>
@@ -100,4 +78,4 @@ const ViewSubmittedIssuesPage = () => {
   );
 };
 
-export default ViewSubmittedIssuesPage;
+export default ViewAnIssuePage;

@@ -79,7 +79,7 @@ const ViewSubmittedIssuesPage = () => {
         </Button>
       </div>
       <div style={{ marginTop: "20px" }}>
-        <SubmittedTickets enquiries={enquiries} />
+        <SubmittedTickets user={"partner"} enquiries={enquiries} />
       </div>
     </div>
   );

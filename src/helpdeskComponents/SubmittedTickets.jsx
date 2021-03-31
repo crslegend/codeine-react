@@ -10,6 +10,7 @@ import {
   Person,
 } from "@material-ui/icons";
 import { Timeline } from "@material-ui/lab";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,8 +40,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SubmittedTickets = ({ enquiries }) => {
+const SubmittedTickets = ({ user, enquiries }) => {
   const classes = useStyles();
+  const history = useHistory();
   //   console.log(enquiries);
 
   const formatDateToReturnWithoutTime = (date) => {
@@ -59,7 +61,15 @@ const SubmittedTickets = ({ enquiries }) => {
     return "";
   };
 
-  const handleRedirect = (id) => {};
+  const handleRedirect = (id) => {
+    if (user) {
+      if (user === "member") {
+        return history.push(`/member/helpdesk/tickets/${id}`);
+      } else {
+        return history.push(`/partner/home/helpdesk/tickets/${id}`);
+      }
+    }
+  };
 
   return (
     <div className={classes.root}>
