@@ -19,9 +19,9 @@ import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
 import PageTitle from "../../../components/PageTitle";
 
-import pricing from "../../../assets/PricingAsset.png";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
+import { useHistory } from "react-router";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
     "@global": {
       ".MuiDataGrid-row": {
         // cursor: "pointer",
+      },
+    },
+  },
+  dataGridClick: {
+    backgroundColor: "#fff",
+    "@global": {
+      ".MuiDataGrid-row": {
+        cursor: "pointer",
       },
     },
   },
@@ -69,33 +77,29 @@ const useStyles = makeStyles((theme) => ({
 
 const Payment = () => {
   const classes = useStyles();
+  const history = useHistory();
+
   const [allTransactions, setAllTransactions] = useState([]);
   const [latestTransactionForPro, setLatestTransactionForPro] = useState();
+  const [membershipTransactions, setMembershipTransactions] = useState([]);
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [upgradeToProDialog, setUpgradeToProDialog] = useState(false);
-  const [month, setMonth] = useState(1);
-  const [user, setUser] = useState();
+  const [selectedTransaction, setSelectedTransaction] = useState();
+  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(
+    false
+  );
+  const [existPending, setExistPending] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
-      const decoded = jwt_decode(Cookies.get("t1"));
-      // console.log(decoded);
-      Service.client
-        .get(`/auth/members/${decoded.user_id}`)
-        .then((res) => {
-          // console.log(res);
-
-          setUser(res.data);
-        })
-        .catch((err) => console.log(err));
     }
   };
 
   useEffect(() => {
     checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getTransactionData = async () => {
@@ -103,24 +107,33 @@ const Payment = () => {
       .get("/consultations/member/payments")
       .then((res) => {
         // console.log(res);
-        let arr = res.data;
-
-        Service.client
-          .get(`auth/membership-subscriptions`)
-          .then((res) => {
-            // console.log(res.data);
-            for (let i = 0; i < res.data.length; i++) {
-              arr.push(res.data[i]);
-            }
-            // console.log(arr);
-            setAllTransactions(arr);
-          })
-          .catch((err) => console.log(err));
-        // setAllTransactions(res.data);
+        setAllTransactions(res.data);
       })
       .catch((error) => {
         // setAllTransactions(null);
       });
+
+    Service.client
+      .get(`auth/membership-subscriptions`)
+      .then((res) => {
+        // console.log(res.data);
+        let arr = [];
+        let obj = {};
+        for (let i = 0; i < res.data.length; i++) {
+          obj = {
+            id: res.data[i].id,
+            expiry_date: res.data[i].expiry_date,
+            payment_amount: res.data[i].payment_transaction.payment_amount,
+            payment_status: res.data[i].payment_transaction.payment_status,
+            payment_type: res.data[i].payment_transaction.payment_type,
+            date: res.data[i].payment_transaction.timestamp,
+            month_duration: res.data[i].month_duration,
+          };
+          arr.push(obj);
+        }
+        setMembershipTransactions(arr);
+      })
+      .catch((err) => console.log(err));
 
     Service.client
       .get(`/auth/membership-subscriptions`, {
@@ -133,11 +146,15 @@ const Payment = () => {
           const currentDate = new Date();
           const diffTime = futureDate - currentDate;
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-          if (diffDays > 29) {
+          // console.log(diffDays);
+          if (diffDays > 0) {
             // check = false;
             setLatestTransactionForPro(res.data);
           }
+        } else if (
+          res.data.payment_transaction.payment_status === "PENDING_COMPLETION"
+        ) {
+          setExistPending(true);
         }
       })
       .catch((err) => console.log(err));
@@ -146,6 +163,7 @@ const Payment = () => {
 
   useEffect(() => {
     getTransactionData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setAllTransactions]);
 
   const handleStripePaymentGateway = async (
@@ -181,35 +199,26 @@ const Payment = () => {
       .catch((err) => console.log(err.response));
   };
 
-  const handlePayment = () => {
-    // console.log(user);
-
-    const data = {
-      subscription_fee: "5.99",
-      payment_type: "Credit Card",
-      month_duration: parseInt(month),
-    };
-    // console.log(data);
-    Service.client
-      .post(`/auth/membership-subscriptions`, data)
-      .then((res) => {
-        // console.log(res);
-
-        handleStripePaymentGateway(
-          5.99,
-          user.email,
-          user.id,
-          month,
-          res.data.id
-        );
-      })
-      .catch((err) => console.log(err));
-  };
-
   const formatStatus = (status) => {
     if (status !== "Payment") {
       return "green";
     }
+  };
+
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+      // console.log(newDate);
+      return newDate + " " + newDateTime;
+    }
+    return "";
   };
 
   const formatDateToReturnWithoutTime = (date) => {
@@ -228,24 +237,107 @@ const Payment = () => {
     return "";
   };
 
+  const handleClickOpen = (e) => {
+    console.log(e.row);
+    setSelectedTransaction(e.row);
+    setSelectedTransactionDialog(true);
+  };
+
+  const handleContinueTransaction = () => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+    const month_duration = selectedTransaction.month_duration;
+    const amountToPay =
+      parseFloat(selectedTransaction.payment_amount) /
+      selectedTransaction.month_duration;
+
+    const cId = selectedTransaction.id;
+
+    // console.log(decoded);
+    Service.client
+      .get(`/auth/members/${decoded.user_id}`)
+      .then((res) => {
+        const emailAdd = res.data.email;
+
+        handleStripePaymentGateway(
+          amountToPay,
+          emailAdd,
+          decoded.user_id,
+          month_duration,
+          cId
+        );
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDeleteTransaction = () => {
+    Service.client
+      .delete(`/auth/membership-subscriptions/${selectedTransaction.id}`)
+      .then((res) => {
+        // console.log(res);
+        setSelectedTransactionDialog(false);
+        setSelectedTransaction();
+        getTransactionData();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const paymentColumns = [
+    { field: "id", headerName: "Transaction ID", width: 350 },
+    {
+      field: "payment_amount",
+      headerName: "Amount Paid",
+      width: 150,
+      valueFormatter: (params) => `$${params.value}`,
+    },
+    {
+      field: "payment_type",
+      headerName: "Paid By",
+      width: 150,
+    },
+    {
+      field: "payment_status",
+      headerName: "Payment Status",
+      width: 200,
+      renderCell: (params) => (
+        <div>
+          {params.value && params.value === "COMPLETED" ? (
+            <div variant="body2" style={{ color: "green" }}>
+              {params.value}
+            </div>
+          ) : (
+            <div variant="body2" style={{ color: "red" }}>
+              {`PENDING COMPLETION`}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      field: "date",
+      headerName: "Payment On",
+      type: "date",
+      width: 260,
+      valueFormatter: (params) => formatDate(params.value),
+    },
+    {
+      field: "expiry_date",
+      headerName: "Expires On",
+      valueFormatter: (params) => formatDateToReturnWithoutTime(params.value),
+      width: 150,
+    },
+    {
+      field: "month_duration",
+      hide: true,
+    },
+  ];
+
   const transactionColumns = [
-    { field: "id", headerName: "Transaction ID", width: 200 },
+    { field: "id", headerName: "Transaction ID", width: 350 },
     {
       field: "date",
       headerName: "Payment Date",
       type: "date",
       width: 250,
-    },
-    {
-      field: "pay_for",
-      headerName: "Pay For",
-      width: 200,
-    },
-    {
-      field: "expiry_date",
-      headerName: "Expires On",
-      // valueFormatter: (params) => formatDateToReturnWithoutTime(params.value),
-      width: 150,
     },
     {
       field: "title",
@@ -294,46 +386,23 @@ const Payment = () => {
     },
   ];
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    };
-
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
-
   const transactionRows = [...allTransactions];
 
   for (var h = 0; h < allTransactions.length; h++) {
-    transactionRows[h].title = allTransactions[h].consultation
-      ? allTransactions[h].consultation_slot.title
-      : "-";
-    transactionRows[h].partner = allTransactions[h].consultation_slot
-      ? allTransactions[h].consultation_slot.partner_name
-      : "-";
+    transactionRows[h].title = allTransactions[h].consultation_slot.title;
 
-    transactionRows[h].pay_for = allTransactions[h].consultation_slot
-      ? "Consultation"
-      : "Pro-Tier Membership";
+    transactionRows[h].partner =
+      allTransactions[h].consultation_slot.partner_name;
 
     transactionRows[h].expiry_date = allTransactions[h].expiry_date
       ? formatDateToReturnWithoutTime(allTransactions[h].expiry_date)
       : "-";
 
-    transactionRows[h].consultation_date = allTransactions[h].consultation_slot
-      ? formatDate(allTransactions[h].consultation_slot.start_time)
-      : "-";
+    transactionRows[h].consultation_date = formatDateToReturnWithoutTime(
+      allTransactions[h].consultation_slot.start_time
+    );
 
-    transactionRows[h].date = formatDate(
+    transactionRows[h].date = formatDateToReturnWithoutTime(
       allTransactions[h].payment_transaction.timestamp
     );
 
@@ -347,6 +416,7 @@ const Payment = () => {
         allTransactions[h].payment_transaction.payment_amount;
     }
   }
+
   return (
     <Fragment>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
@@ -354,10 +424,10 @@ const Payment = () => {
         <div
           style={{
             width: "80%",
-            paddingTop: "30px",
             margin: "auto",
           }}
         >
+          <PageTitle title="My Payments" />
           <Paper className={classes.paper}>
             <div
               style={{
@@ -385,27 +455,29 @@ const Payment = () => {
                   size="small"
                 />
               )}
-              <div style={{ marginLeft: "auto" }}>
-                {latestTransactionForPro ? (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
-                    onClick={() => setUpgradeToProDialog(true)}
-                  >
-                    Extend Pro-Tier Membership
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
-                    onClick={() => setUpgradeToProDialog(true)}
-                  >
-                    Upgrade To Pro-Tier
-                  </Button>
-                )}
-              </div>
+              {!existPending && (
+                <div style={{ marginLeft: "auto" }}>
+                  {latestTransactionForPro ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ marginLeft: "30px", height: 30 }}
+                      onClick={() => history.push(`/member/membership`)}
+                    >
+                      Extend Pro-Tier Membership
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ marginLeft: "30px", height: 30 }}
+                      onClick={() => history.push(`/member/membership`)}
+                    >
+                      Upgrade To Pro-Tier
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
 
             <Typography
@@ -446,14 +518,34 @@ const Payment = () => {
               </span>
             </Typography>
           </Paper>
-          <PageTitle title="Past Transactions" />
+          <Typography
+            variant="h5"
+            style={{ fontWeight: "600", paddingBottom: "10px" }}
+          >
+            Membership Transactions
+          </Typography>
+          <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
+            <DataGrid
+              className={classes.dataGridClick}
+              rows={membershipTransactions}
+              columns={paymentColumns}
+              pageSize={10}
+              disableSelectionOnClick
+              onRowClick={(e) => handleClickOpen(e)}
+            />
+          </div>
+
+          <Typography
+            variant="h5"
+            style={{ fontWeight: "600", paddingBottom: "10px" }}
+          >
+            Consultation Transactions
+          </Typography>
           <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
             <DataGrid
               className={classes.dataGrid}
               rows={transactionRows}
-              columns={transactionColumns.map((column) => ({
-                ...column,
-              }))}
+              columns={transactionColumns}
               pageSize={10}
               disableSelectionOnClick
               /*{onRowClick={(e) => handleClickOpenMember(e)}}*/
@@ -463,57 +555,90 @@ const Payment = () => {
       </div>
 
       <Dialog
-        open={upgradeToProDialog}
-        onClose={() => setUpgradeToProDialog(false)}
-        PaperProps={{
-          style: {
-            width: "600px",
-          },
+        open={selectedTransactionDialog}
+        onClose={() => {
+          setSelectedTransactionDialog(false);
+          setTimeout(() => {
+            setSelectedTransaction();
+          }, 500);
         }}
+        maxWidth="sm"
+        fullWidth={true}
       >
-        <DialogTitle>Upgrade To Pro-Tier</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6" style={{ paddingBottom: "20px" }}>
-            Price per month: <span style={{ color: "#437FC7" }}>$5.99</span>
-          </Typography>
-          <img width="100%" alt="pricing" src={pricing}></img>
-          <label htmlFor="month">
-            <Typography variant="body1" style={{ marginTop: "20px" }}>
-              Enter number of months for Pro-Tier
-            </Typography>
-          </label>
-          <TextField
-            id="month"
-            variant="outlined"
-            placeholder="Enter number of months"
-            type="number"
-            required
-            fullWidth
-            margin="dense"
-            value={month && month}
-            onChange={(e) => setMonth(e.target.value)}
-            InputProps={{
-              inputProps: { min: 1 },
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setUpgradeToProDialog(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handlePayment()}
-          >
-            Proceed To Pay
-          </Button>
-        </DialogActions>
+        {selectedTransaction &&
+        selectedTransaction &&
+        selectedTransaction.payment_status !== "COMPLETED" ? (
+          <Fragment>
+            <DialogTitle>Transaction Pending Completion</DialogTitle>
+            <DialogContent>This transaction is incomplete.</DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => handleDeleteTransaction()}
+                style={{ backgroundColor: "#C74343", color: "#fff" }}
+              >
+                Delete Transaction
+              </Button>
+              <Button
+                style={{ backgroundColor: "#437FC7", color: "#fff" }}
+                className={classes.dialogButtons}
+                onClick={() => {
+                  handleContinueTransaction();
+                }}
+              >
+                Continue To Payment
+              </Button>
+            </DialogActions>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <DialogTitle>Transaction Complete</DialogTitle>
+            <DialogContent>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  style={{ marginRight: "10px", fontWeight: 600 }}
+                >
+                  Transaction Status:{" "}
+                </Typography>
+                <Chip
+                  label="Completed"
+                  style={{ backgroundColor: "green", color: "#fff" }}
+                  size="small"
+                />
+              </div>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Transaction ID: </span>
+                {selectedTransaction && selectedTransaction.id}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid On: </span>
+                {formatDate(
+                  selectedTransaction && selectedTransaction.timestamp
+                )}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Paid By: </span>
+                {selectedTransaction && selectedTransaction.payment_type}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Contribution Amount: </span>$
+                {selectedTransaction && selectedTransaction.payment_amount}
+              </Typography>
+              <Typography variant="body1" style={{ paddingBottom: "5px" }}>
+                <span style={{ fontWeight: 600 }}>Expires On: </span>
+                {formatDateToReturnWithoutTime(
+                  selectedTransaction && selectedTransaction.expiry_date
+                )}
+              </Typography>
+            </DialogContent>
+          </Fragment>
+        )}
       </Dialog>
     </Fragment>
   );
