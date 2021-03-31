@@ -53,6 +53,7 @@ const CreateNewTicket = ({
   issueType,
   setIssueType,
   courses,
+  articles,
   selectedTagging,
   setSelectedTagging,
   description,
@@ -227,6 +228,42 @@ const CreateNewTicket = ({
                 </div>
               );
             } else if (issueType === "ARTICLE") {
+              return (
+                <div style={{ marginTop: "20px" }}>
+                  <Typography variant="h6">Article</Typography>
+                  <FormControl
+                    margin="dense"
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <Select
+                      displayEmpty
+                      value={selectedTagging ? selectedTagging : ""}
+                      onChange={(e) => {
+                        setSelectedTagging(e.target.value);
+                      }}
+                      style={{ backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="" classes={{ root: classes.resize }}>
+                        <em>Select Article</em>
+                      </MenuItem>
+                      {articles &&
+                        articles.length > 0 &&
+                        articles.map((article, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={article.id}
+                              classes={{ root: classes.resize }}
+                            >
+                              {article.title}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </div>
+              );
             } else if (issueType === "CONSULTATION") {
             } else if (issueType === "INDUSTRY_PROJECT") {
             }

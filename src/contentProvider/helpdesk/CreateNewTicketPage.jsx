@@ -57,6 +57,9 @@ const CreateNewTicketPage = () => {
   const [transactionId, setTransactionId] = useState();
 
   const [courses, setCourses] = useState();
+  const [articles, setArticles] = useState();
+  // const [consultations, setConsultations] = useState();
+  // const [industryProjects, setIndustryProjects] = useState();
 
   const checkPartnerType = () => {
     if (Cookies.get("t1")) {
@@ -85,6 +88,19 @@ const CreateNewTicketPage = () => {
         setCourses(res.data.results);
       })
       .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/articles/user/`)
+      .then((res) => {
+        let arr = res.data;
+        if (arr.length > 0) {
+          arr = arr.filter((article) => article.is_published);
+        }
+        setArticles(arr);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -253,7 +269,7 @@ const CreateNewTicketPage = () => {
         <PageTitle title="Contact Us" />
       </div>
 
-      <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "20px", marginBottom: "30px" }}>
         <CreateNewTicket
           user={partnerType}
           issueType={issueType}
@@ -266,6 +282,7 @@ const CreateNewTicketPage = () => {
           file={file}
           setFile={setFile}
           courses={courses}
+          articles={articles}
           transactionId={transactionId}
           setTransactionId={setTransactionId}
         />
