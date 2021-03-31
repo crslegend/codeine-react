@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Breadcrumbs, Button, Typography } from "@material-ui/core";
 
-import Cookies from "js-cookie";
 import PageTitle from "../../components/PageTitle.js";
 import Service from "../../AxiosService";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import SubmittedTickets from "../../helpdeskComponents/SubmittedTickets.jsx";
 
 const useStyles = makeStyles((theme) => ({
   contactUs: {
@@ -30,27 +30,19 @@ const ViewSubmittedIssuesPage = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [loggedIn, setLoggedIn] = useState(false);
-
   const [enquiries, setEnquiries] = useState();
-
-  const checkIfLoggedIn = () => {
-    if (Cookies.get("t1")) {
-      setLoggedIn(true);
-    }
-  };
 
   const getSubmittedEnquiries = () => {
     Service.client
       .get(`helpdesk/tickets`)
       .then((res) => {
         console.log(res);
+        setEnquiries(res.data);
       })
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
-    checkIfLoggedIn();
     getSubmittedEnquiries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -62,10 +54,7 @@ const ViewSubmittedIssuesPage = () => {
         separator="›"
         aria-label="breadcrumb"
       >
-        <Link
-          className={classes.backLink}
-          onClick={() => history.push(`/partner/home/helpdesk`)}
-        >
+        <Link className={classes.backLink} to={`/partner/home/helpdesk`}>
           <Typography style={{ marginRight: "8px" }} variant="body1">
             Helpdesk
           </Typography>
@@ -88,6 +77,9 @@ const ViewSubmittedIssuesPage = () => {
         >
           Contact Us
         </Button>
+      </div>
+      <div style={{ marginTop: "20px" }}>
+        <SubmittedTickets enquiries={enquiries} />
       </div>
     </div>
   );

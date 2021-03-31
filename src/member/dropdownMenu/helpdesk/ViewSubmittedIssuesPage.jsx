@@ -8,6 +8,7 @@ import PageTitle from "../../../components/PageTitle.js";
 import Service from "../../../AxiosService";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import SubmittedTickets from "../../../helpdeskComponents/SubmittedTickets.jsx";
 
 const useStyles = makeStyles((theme) => ({
   contactUs: {
@@ -46,6 +47,7 @@ const ViewSubmittedIssuesPage = () => {
       .get(`helpdesk/tickets`)
       .then((res) => {
         console.log(res);
+        setEnquiries(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -63,10 +65,7 @@ const ViewSubmittedIssuesPage = () => {
         <div style={{ width: "80%", margin: "auto" }}>
           <div style={{ paddingTop: "20px" }}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
-              <Link
-                className={classes.backLink}
-                onClick={() => history.push(`/member/helpdesk`)}
-              >
+              <Link className={classes.backLink} to={`/member/helpdesk`}>
                 <Typography style={{ marginRight: "8px" }} variant="body1">
                   Helpdesk
                 </Typography>
@@ -91,6 +90,9 @@ const ViewSubmittedIssuesPage = () => {
             >
               Contact Us
             </Button>
+          </div>
+          <div style={{ marginTop: "20px" }}>
+            <SubmittedTickets enquiries={enquiries} />
           </div>
         </div>
       </div>

@@ -284,10 +284,7 @@ const CreateNewTicketPage = () => {
         separator="›"
         aria-label="breadcrumb"
       >
-        <Link
-          className={classes.backLink}
-          onClick={() => history.push(`/partner/home/helpdesk`)}
-        >
+        <Link className={classes.backLink} to={`/partner/home/helpdesk`}>
           <Typography style={{ marginRight: "8px" }} variant="body1">
             Helpdesk
           </Typography>
