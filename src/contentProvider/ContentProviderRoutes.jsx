@@ -17,6 +17,7 @@ import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import WorkOutlineIcon from '@material-ui/icons/WorkOutline';
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import Toast from "../components/Toast.js";
@@ -25,6 +26,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
+import IndutsryProject from "./indutsryProject/IndustryProject";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
@@ -243,6 +245,16 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/partner/home/industryproject"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <WorkOutlineIcon className={classes.listIcon} />
+        <Typography variant="body1">My Industry Projects</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/partner/home/helpdesk"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -443,6 +455,12 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/industryproject"
+              render={() => <IndutsryProject />}
               user="partner"
             />
             <PrivateRoute
