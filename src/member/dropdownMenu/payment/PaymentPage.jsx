@@ -119,6 +119,7 @@ const Payment = () => {
         // console.log(res.data);
         let arr = [];
         let obj = {};
+        let pendingCheck = false;
         for (let i = 0; i < res.data.length; i++) {
           obj = {
             id: res.data[i].id,
@@ -130,8 +131,16 @@ const Payment = () => {
             month_duration: res.data[i].month_duration,
           };
           arr.push(obj);
+          if (
+            res.data[i].payment_transaction.payment_status ===
+              "PENDING_COMPLETION" &&
+            !pendingCheck
+          ) {
+            pendingCheck = true;
+          }
         }
-        setMembershipTransactions(arr);
+        setExistPending(pendingCheck);
+        setMembershipTransactions(arr.reverse());
       })
       .catch((err) => console.log(err));
 
@@ -275,8 +284,10 @@ const Payment = () => {
       .then((res) => {
         // console.log(res);
         setSelectedTransactionDialog(false);
-        setSelectedTransaction();
-        getTransactionData();
+        setTimeout(() => {
+          setSelectedTransaction();
+          getTransactionData();
+        }, 500);
       })
       .catch((err) => console.log(err));
   };

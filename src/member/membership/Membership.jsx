@@ -9,6 +9,8 @@ import pricing from "../../assets/PricingAsset.png";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import MemberNavBar from "../MemberNavBar";
+import PageTitle from "../../components/PageTitle";
+import { Button, TextField, Typography } from "@material-ui/core";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
@@ -140,9 +142,55 @@ const Membership = () => {
         <div
           style={{
             width: "80%",
-            margin: "auto",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginBottom: "20px",
           }}
-        ></div>
+        >
+          <PageTitle title="Pro-Tier Membership" />
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+            }}
+          >
+            <div style={{ width: "60%" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <img alt="pricing plan" src={pricing} width="85%" />
+              </div>
+            </div>
+            <div style={{ width: "10%" }} />
+            <div
+              style={{ width: "40%", display: "flex", flexDirection: "column" }}
+            >
+              <Typography variant="h5" style={{ paddingBottom: "10px" }}>
+                Enter the number of months for membership below
+              </Typography>
+              <TextField
+                id="month"
+                variant="outlined"
+                placeholder="Enter number of months"
+                type="number"
+                required
+                fullWidth
+                margin="dense"
+                value={month && month}
+                onChange={(e) => setMonth(e.target.value)}
+                InputProps={{
+                  inputProps: { min: 1 },
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handlePayment()}
+                style={{ marginTop: "20px" }}
+              >
+                Proceed To Pay
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </Fragment>
   );
