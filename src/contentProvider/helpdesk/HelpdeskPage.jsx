@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Cookies from "js-cookie";
 import PageTitle from "../../components/PageTitle.js";
 import {
   Accordion,
