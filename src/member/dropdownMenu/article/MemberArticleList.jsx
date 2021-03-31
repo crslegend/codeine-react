@@ -755,7 +755,23 @@ const MemberArticleList = (props) => {
                   );
                 })
               ) : (
-                <CardContent></CardContent>
+                <CardContent
+                  style={{
+                    height: "150px",
+                    borderTop: "1px solid #F3F3F3",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    style={{
+                      textAlign: "center",
+                      marginTop: "35px",
+                      color: "#C4C4C4",
+                    }}
+                  >
+                    No recommended articles
+                  </Typography>
+                </CardContent>
               )}
             </Card>
           </Grid>
