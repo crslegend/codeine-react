@@ -74,7 +74,11 @@ const FirstSection = () => {
         </Typography>
         <Button
           className={classes.startButton}
-          style={{ marginTop: "40px", marginBottom: "40px" }}
+          style={{
+            marginTop: "40px",
+            marginBottom: "40px",
+            textTransform: "capitalize",
+          }}
           component={Link}
           to="/partner/register"
         >

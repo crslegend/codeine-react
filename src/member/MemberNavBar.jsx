@@ -360,7 +360,7 @@ const MemberNavBar = (props) => {
                 history.push("/");
               }}
             >
-              Log out
+              Log Out
             </Typography>
           </div>
         </Popover>

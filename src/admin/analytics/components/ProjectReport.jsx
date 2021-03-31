@@ -81,7 +81,7 @@ const ProjectReport = ({ popularSkill, projectSearches }) => {
         </Typography>
         <Button
           variant="outlined"
-          color="primary"
+          color="secondary"
           onClick={() => history.push(`/admin/analytics/projects`)}
         >
           View More Project-Related Analysis

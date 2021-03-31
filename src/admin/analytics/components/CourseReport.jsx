@@ -86,7 +86,7 @@ const CourseReport = ({
         </Typography>
         <Button
           variant="outlined"
-          color="primary"
+          color="secondary"
           onClick={() => history.push(`/admin/analytics/courses`)}
         >
           View More Course-Related Analysis

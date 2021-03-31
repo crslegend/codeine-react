@@ -64,14 +64,14 @@ const useStyles = makeStyles((theme) => ({
   activeLink: {
     width: "100%",
     padding: 10,
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
     "& p": {
       fontWeight: 600,
     },
     "&:hover": {
-      borderLeft: "5px solid #437FC7",
+      borderLeft: "5px solid #164D8F",
     },
   },
   avatar: {
@@ -142,7 +142,7 @@ const AdminRoutesPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const memberNavbar = (
+  const adminNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
@@ -151,7 +151,8 @@ const AdminRoutesPage = () => {
             history.push("/admin/login");
           }}
           variant="contained"
-          color="primary"
+          color="secondary"
+          style={{ textTransform: "capitalize" }}
         >
           Log Out
         </Button>
@@ -296,7 +297,7 @@ const AdminRoutesPage = () => {
         loggedIn={loggedIn}
         bgColor="#fff"
         logo={navLogo}
-        navbarItems={memberNavbar}
+        navbarItems={adminNavbar}
       />
       <SideBar head={sidebarHead} list={sidebarList} />
       <main className={classes.content}>

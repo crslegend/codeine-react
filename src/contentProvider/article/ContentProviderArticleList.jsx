@@ -16,6 +16,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Service from "../../AxiosService";
 // import Cookies from "js-cookie";
@@ -259,15 +260,15 @@ const PartnerArticlesList = (props) => {
     <div className={classes.root}>
       <div style={{ display: "flex", marginTop: "30px", marginBottom: "30px" }}>
         <Typography variant="h1" style={{ fontWeight: "700" }}>
-          Your articles
+          My Articles
         </Typography>
         <div style={{ marginLeft: "auto" }}>
           <Button
             variant="contained"
             color="primary"
             onClick={() => createNewArticle()}
-            style={{ textTransform: "capitalize" }}
           >
+            <Add style={{ color: "#FFFFFF" }} />
             New Article
           </Button>
           <Button
