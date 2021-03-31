@@ -122,7 +122,7 @@ const Payment = () => {
         let pendingCheck = false;
         for (let i = 0; i < res.data.length; i++) {
           obj = {
-            id: res.data[i].id,
+            id: res.data[i].payment_transaction.id,
             expiry_date: res.data[i].expiry_date,
             payment_amount: res.data[i].payment_transaction.payment_amount,
             payment_status: res.data[i].payment_transaction.payment_status,
@@ -416,6 +416,8 @@ const Payment = () => {
     transactionRows[h].date = formatDateToReturnWithoutTime(
       allTransactions[h].payment_transaction.timestamp
     );
+
+    transactionRows[h].id = allTransactions[h].payment_transaction.id;
 
     if (allTransactions[h].payment_transaction.payment_status === "COMPLETED") {
       transactionRows[h].type = "Payment";
