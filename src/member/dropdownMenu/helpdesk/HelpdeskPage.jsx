@@ -98,8 +98,13 @@ const Helpdesk = () => {
             }}
           >
             <PageTitle title="Helpdesk" />
-            <Button variant="outlined" color="primary">
-              View Submitted Issues
+            <Button
+              variant="outlined"
+              color="primary"
+              component={Link}
+              to={`/member/helpdesk/tickets`}
+            >
+              View Submitted Enquiries
             </Button>
           </div>
 

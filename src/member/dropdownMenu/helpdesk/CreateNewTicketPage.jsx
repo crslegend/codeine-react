@@ -4,12 +4,12 @@ import MemberNavBar from "../../MemberNavBar.jsx";
 import Cookies from "js-cookie";
 import CreateNewTicket from "../../../helpdeskComponents/CreateNewTicket";
 import PageTitle from "../../../components/PageTitle.js";
-import { Button, IconButton, Paper, Typography } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
+import { Breadcrumbs, Button, Paper, Typography } from "@material-ui/core";
 import { useHistory } from "react-router";
 import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
 import logo from "../../../assets/codeineLogos/Member.svg";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -29,6 +29,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     padding: "10px",
     width: "25%",
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
 }));
 
@@ -264,15 +272,20 @@ const CreateNewTicketPage = () => {
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
         <div style={{ width: "80%", margin: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <IconButton
-              style={{ marginRight: "20px" }}
-              onClick={() => history.push(`/member/helpdesk`)}
-            >
-              <ArrowBack />
-            </IconButton>
-            <PageTitle title="Contact Us" />
+          <div style={{ paddingTop: "20px" }}>
+            <Breadcrumbs separator="›" aria-label="breadcrumb">
+              <Link
+                className={classes.backLink}
+                onClick={() => history.push(`/member/helpdesk`)}
+              >
+                <Typography style={{ marginRight: "8px" }} variant="body1">
+                  Helpdesk
+                </Typography>
+              </Link>
+              <Typography variant="body1">Contact Us</Typography>
+            </Breadcrumbs>
           </div>
+          <PageTitle title="Contact Us" />
 
           <div style={{ marginTop: "20px", marginBottom: "30px" }}>
             <CreateNewTicket

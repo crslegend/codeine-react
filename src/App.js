@@ -42,6 +42,7 @@ import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 import Membership from "./member/membership/Membership";
+import ViewSubmittedIssuesPage from "./member/dropdownMenu/helpdesk/ViewSubmittedIssuesPage";
 
 const App = () => {
   return (
@@ -182,6 +183,12 @@ const App = () => {
         exact
         path="/member/helpdesk/contact-us"
         component={CreateNewTicketPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk/tickets"
+        component={ViewSubmittedIssuesPage}
         user="member"
       />
       <PrivateRoute

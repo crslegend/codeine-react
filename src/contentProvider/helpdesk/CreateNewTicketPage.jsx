@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, IconButton, Paper, Typography } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
+import { Breadcrumbs, Button, Paper, Typography } from "@material-ui/core";
 import Cookies from "js-cookie";
 import CreateNewTicket from "../../helpdeskComponents/CreateNewTicket";
 import PageTitle from "../../components/PageTitle.js";
@@ -10,6 +9,7 @@ import jwt_decode from "jwt-decode";
 import Service from "../../AxiosService";
 import Toast from "../../components/Toast";
 import logo from "../../assets/codeineLogos/Partner.svg";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -29,6 +29,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     padding: "10px",
     width: "25%",
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
 }));
 
@@ -271,15 +279,22 @@ const CreateNewTicketPage = () => {
   return (
     <div>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <IconButton
-          style={{ marginRight: "20px" }}
+      <Breadcrumbs
+        style={{ margin: "20px 0px" }}
+        separator="›"
+        aria-label="breadcrumb"
+      >
+        <Link
+          className={classes.backLink}
           onClick={() => history.push(`/partner/home/helpdesk`)}
         >
-          <ArrowBack />
-        </IconButton>
-        <PageTitle title="Contact Us" />
-      </div>
+          <Typography style={{ marginRight: "8px" }} variant="body1">
+            Helpdesk
+          </Typography>
+        </Link>
+        <Typography variant="body1">Contact Us</Typography>
+      </Breadcrumbs>
+      <PageTitle title="Contact Us" />
 
       <div style={{ marginTop: "20px", marginBottom: "30px" }}>
         <CreateNewTicket
