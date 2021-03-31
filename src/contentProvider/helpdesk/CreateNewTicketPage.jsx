@@ -58,8 +58,8 @@ const CreateNewTicketPage = () => {
 
   const [courses, setCourses] = useState();
   const [articles, setArticles] = useState();
-  // const [consultations, setConsultations] = useState();
-  // const [industryProjects, setIndustryProjects] = useState();
+  const [consultations, setConsultations] = useState();
+  const [industryProjects, setIndustryProjects] = useState();
 
   const checkPartnerType = () => {
     if (Cookies.get("t1")) {
@@ -97,6 +97,18 @@ const CreateNewTicketPage = () => {
           arr = arr.filter((article) => article.is_published);
         }
         setArticles(arr);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    Service.client
+      .get(`/consultations/partner/applications`, {
+        params: { is_past: "True" },
+      })
+      .then((res) => {
+        // console.log(res);
+        setIndustryProjects(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -283,6 +295,8 @@ const CreateNewTicketPage = () => {
           setFile={setFile}
           courses={courses}
           articles={articles}
+          consultations={consultations}
+          industryProjects={industryProjects}
           transactionId={transactionId}
           setTransactionId={setTransactionId}
         />
