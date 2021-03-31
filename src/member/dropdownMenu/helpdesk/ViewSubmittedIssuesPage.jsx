@@ -44,7 +44,7 @@ const ViewSubmittedIssuesPage = () => {
 
   const getSubmittedEnquiries = () => {
     Service.client
-      .get(`helpdesk/tickets`)
+      .get(`helpdesk/tickets`, { params: { is_user: "true" } })
       .then((res) => {
         console.log(res);
         setEnquiries(res.data);

@@ -51,7 +51,7 @@ const PaymentSuccess = () => {
       history.push(`/partner/home/contributions`);
     } else {
       // return to member consult
-      history.push(`/member/consultation`);
+      history.push(`/member/consultations`);
     }
   };
 

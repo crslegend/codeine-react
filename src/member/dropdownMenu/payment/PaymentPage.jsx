@@ -630,9 +630,7 @@ const Payment = () => {
               </Typography>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Paid On: </span>
-                {formatDate(
-                  selectedTransaction && selectedTransaction.timestamp
-                )}
+                {formatDate(selectedTransaction && selectedTransaction.date)}
               </Typography>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Paid By: </span>

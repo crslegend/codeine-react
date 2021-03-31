@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Button, Paper, Typography } from "@material-ui/core";
+import { Avatar, Paper, Typography } from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SubmittedTickets = ({ enquiries }) => {
   const classes = useStyles();
-  console.log(enquiries);
+  //   console.log(enquiries);
 
   const formatDateToReturnWithoutTime = (date) => {
     const options = {
