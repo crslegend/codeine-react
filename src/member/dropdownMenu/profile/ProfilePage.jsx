@@ -927,8 +927,6 @@ const Profile = (props) => {
             </div>
             <div style={{ display: "flex" }}>
               <KeyboardDatePicker
-                disableToolbar
-                variant="inline"
                 format="MM/dd/yyyy"
                 margin="normal"
                 id="start_date"
@@ -947,8 +945,6 @@ const Profile = (props) => {
                 style={{ marginRight: "20px" }}
               />
               <KeyboardDatePicker
-                disableToolbar
-                variant="inline"
                 format="MM/dd/yyyy"
                 margin="normal"
                 id="end_date"
