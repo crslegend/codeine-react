@@ -85,6 +85,16 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline",
     },
   },
+  seeAll: {
+    marginBottom: "20px",
+    color: "#515050",
+    fontWeight: 600,
+    "&:hover": {
+      textDecoration: "underline #515050",
+      color: "#515050",
+      backgroundColor: "transparent",
+    },
+  },
   cardmedia: {
     height: "100px",
     width: "100px",
@@ -371,7 +381,7 @@ const PublicProfile = (props) => {
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
-          color="primary"
+          color={userType === "admin" ? "secondary" : "primary"}
           style={{
             textTransform: "capitalize",
           }}
@@ -385,7 +395,7 @@ const PublicProfile = (props) => {
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
+            Log Out
           </Typography>
         </Button>
       </ListItem>
@@ -596,12 +606,10 @@ const PublicProfile = (props) => {
                   Badges
                 </Typography>
                 <Button
-                  style={{ marginBottom: "20px" }}
-                  color="primary"
-                  variant="outlined"
+                  className={classes.seeAll}
                   onClick={() => setBadgesDialog(true)}
                 >
-                  See All Achievements
+                  See All
                 </Button>
               </div>
 
@@ -644,12 +652,10 @@ const PublicProfile = (props) => {
                 </Typography>
                 {courses && courses.length > 0 ? (
                   <Button
-                    style={{ marginBottom: "20px" }}
-                    color="primary"
-                    variant="outlined"
+                    className={classes.seeAll}
                     onClick={() => setCourseDialog(true)}
                   >
-                    See All Courses
+                    See All
                   </Button>
                 ) : (
                   ""

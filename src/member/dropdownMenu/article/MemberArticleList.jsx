@@ -18,6 +18,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import parse, { attributesToProps } from "html-react-parser";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Toast from "../../../components/Toast.js";
@@ -282,15 +283,15 @@ const MemberArticleList = (props) => {
             alignItems: "center",
           }}
         >
-          <PageTitle title="Your articles" />
+          <PageTitle title="My Articles" />
 
           <div style={{ marginLeft: "auto" }}>
             <Button
               variant="contained"
               color="primary"
               onClick={() => createNewArticle()}
-              style={{ textTransform: "capitalize" }}
             >
+              <Add style={{ color: "#FFFFFF" }} />
               New Article
             </Button>
             <Button

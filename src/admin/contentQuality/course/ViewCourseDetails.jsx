@@ -666,25 +666,27 @@ const ViewCourseDetails = () => {
 
               {course && course.is_available ? (
                 <Button
-                  variant="contained"
                   style={{
                     width: "80%",
                     margin: "auto",
                     marginBottom: "20px",
-                    color: "red",
+                    color: "#E12424",
+                    borderColor: "#E12424",
                   }}
                   onClick={() => handleDeactivation()}
+                  variant="outlined"
                 >
                   Deactivate
                 </Button>
               ) : (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   style={{
                     width: "80%",
                     margin: "auto",
                     marginBottom: "20px",
                     color: "green",
+                    borderColor: "green",
                   }}
                   onClick={() => handleActivation()}
                 >

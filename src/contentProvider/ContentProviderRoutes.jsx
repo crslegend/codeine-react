@@ -150,7 +150,7 @@ const ContentProviderHome = () => {
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
+            Log Out
           </Typography>
         </Button>
       </ListItem>
