@@ -466,29 +466,30 @@ const Payment = () => {
                   size="small"
                 />
               )}
-              {!existPending && (
-                <div style={{ marginLeft: "auto" }}>
-                  {latestTransactionForPro ? (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      style={{ marginLeft: "30px", height: 30 }}
-                      onClick={() => history.push(`/member/membership`)}
-                    >
-                      Extend Pro-Tier Membership
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      style={{ marginLeft: "30px", height: 30 }}
-                      onClick={() => history.push(`/member/membership`)}
-                    >
-                      Upgrade To Pro-Tier
-                    </Button>
-                  )}
-                </div>
-              )}
+
+              <div style={{ marginLeft: "auto" }}>
+                {latestTransactionForPro ? (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginLeft: "30px", height: 30 }}
+                    onClick={() => history.push(`/member/membership`)}
+                    disabled={existPending}
+                  >
+                    Extend Pro-Tier Membership
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginLeft: "30px", height: 30 }}
+                    onClick={() => history.push(`/member/membership`)}
+                    disabled={existPending}
+                  >
+                    Upgrade To Pro-Tier
+                  </Button>
+                )}
+              </div>
             </div>
 
             <Typography

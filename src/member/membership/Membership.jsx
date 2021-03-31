@@ -5,12 +5,23 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import pricing from "../../assets/PricingAsset.png";
+import pricing1 from "../../assets/PricingAsset1.png";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import MemberNavBar from "../MemberNavBar";
 import PageTitle from "../../components/PageTitle";
-import { Button, TextField, Typography } from "@material-ui/core";
+import {
+  DialogActions,
+  Button,
+  Dialog,
+  DialogContent,
+  TextField,
+  Typography,
+  DialogTitle,
+} from "@material-ui/core";
+import { ToggleButton } from "@material-ui/lab";
+import { useHistory } from "react-router";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 16,
   },
   free: {
-    backgroundColor: "  #F7DF1E",
+    backgroundColor: "#F7DF1E",
     color: "#000",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -46,15 +57,44 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "9px",
     fontSize: 16,
   },
+  toggle: {
+    border: "1px solid #437FC7",
+    color: "#437FC7",
+    "&.Mui-selected": {
+      backgroundColor: "#164D8F",
+      color: "#fff",
+      "&:hover": {
+        backgroundColor: "#164D8F",
+        color: "#fff",
+      },
+    },
+  },
+  superscript: {
+    padding: "3px",
+    borderTopRightRadius: "12px",
+    borderBottomRightRadius: "12px",
+    backgroundColor: theme.palette.yellow.main,
+    color: "#000",
+    marginLeft: "0px",
+    lineHeight: "0px",
+    fontWeight: 600,
+  },
 }));
 
 const Membership = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [month, setMonth] = useState(1);
   const [user, setUser] = useState();
+  const [plan, setPlan] = useState({
+    monthly: true,
+    annual: false,
+  });
+
+  const [pendingDialog, setPendingDialog] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -109,7 +149,7 @@ const Membership = () => {
     // console.log(user);
 
     const data = {
-      subscription_fee: "5.99",
+      subscription_fee: plan && plan.monthly ? "5.99" : "3.99",
       payment_type: "Credit Card",
       month_duration: parseInt(month),
     };
@@ -120,14 +160,17 @@ const Membership = () => {
         // console.log(res);
 
         handleStripePaymentGateway(
-          5.99,
+          parseFloat(data.subscription_fee),
           user.email,
           user.id,
           month,
           res.data.id
         );
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setPendingDialog(true);
+      });
   };
 
   useEffect(() => {
@@ -156,30 +199,87 @@ const Membership = () => {
           >
             <div style={{ width: "60%" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img alt="pricing plan" src={pricing} width="85%" />
+                <img
+                  alt="pricing plan"
+                  src={plan && plan.monthly ? pricing : pricing1}
+                  width="85%"
+                />
               </div>
             </div>
             <div style={{ width: "10%" }} />
             <div
               style={{ width: "40%", display: "flex", flexDirection: "column" }}
             >
-              <Typography variant="h5" style={{ paddingBottom: "10px" }}>
-                Enter the number of months for membership below
+              <Typography variant="h5" style={{ paddingBottom: "20px" }}>
+                Choose Your Membership Plan
               </Typography>
-              <TextField
-                id="month"
-                variant="outlined"
-                placeholder="Enter number of months"
-                type="number"
-                required
-                fullWidth
-                margin="dense"
-                value={month && month}
-                onChange={(e) => setMonth(e.target.value)}
-                InputProps={{
-                  inputProps: { min: 1 },
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "20px",
                 }}
-              />
+              >
+                <ToggleButton
+                  value="monthly"
+                  style={{ marginRight: "20px", height: 35 }}
+                  selected={plan && plan.monthly}
+                  onClick={() => {
+                    setPlan({
+                      monthly: true,
+                      annual: false,
+                    });
+                    setMonth(1);
+                  }}
+                  className={classes.toggle}
+                >
+                  Monthly
+                </ToggleButton>
+                <div>
+                  <ToggleButton
+                    value="annual"
+                    selected={plan && plan.annual}
+                    style={{ height: 35 }}
+                    onClick={() => {
+                      setPlan({
+                        monthly: false,
+                        annual: true,
+                      });
+                      setMonth(12);
+                    }}
+                    className={classes.toggle}
+                  >
+                    Annual
+                  </ToggleButton>
+                  <sup className={classes.superscript}>Save $24!</sup>
+                </div>
+              </div>
+
+              {plan && plan.monthly && (
+                <div>
+                  <label htmlFor="month">
+                    <Typography variant="body1">
+                      Enter number of months
+                    </Typography>
+                  </label>
+                  <TextField
+                    id="month"
+                    variant="outlined"
+                    placeholder="Enter number of months"
+                    type="number"
+                    required
+                    fullWidth
+                    margin="dense"
+                    value={month && month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    InputProps={{
+                      inputProps: { min: 1 },
+                    }}
+                    autoFocus
+                  />
+                </div>
+              )}
+
               <Button
                 variant="contained"
                 color="primary"
@@ -192,6 +292,22 @@ const Membership = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={pendingDialog} onClose={() => setPendingDialog(false)}>
+        <DialogTitle>Pending Transaction</DialogTitle>
+        <DialogContent>
+          You have a past transaction that is still pending for completion
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(`/member/payment`)}
+          >
+            Bring Me There
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
