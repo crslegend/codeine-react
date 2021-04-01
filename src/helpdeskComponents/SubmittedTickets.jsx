@@ -8,6 +8,7 @@ import {
   Description,
   NoteAdd,
   Person,
+  Work,
 } from "@material-ui/icons";
 import { Timeline } from "@material-ui/lab";
 import { useHistory } from "react-router";
@@ -107,7 +108,7 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You had an issue with one of the enrolled courses.
+                            You have issue with one of the enrolled courses.
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
                             {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -123,7 +124,7 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You had an issue with your billing/payment.
+                            You have issue with your billing/payment.
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
                             {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -187,7 +188,7 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You have an issue with one of the consultations that
+                            You have issue with one of the consultations that
                             you had previously.
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
@@ -200,11 +201,11 @@ const SubmittedTickets = ({ user, enquiries }) => {
                     return (
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Avatar className={classes.avatar}>
-                          <Person />
+                          <Work />
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You have an issue with one of the industry projects
+                            You have issue with one of the industry projects
                             that you applied for.
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
