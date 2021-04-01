@@ -38,8 +38,8 @@ export const calculateDateInterval = (timestamp) => {
 export const downloadJSON = (jsonObj) => {
   let copy = {
     ...jsonObj,
-    label: jsonObj.label + " copy",
+    label: jsonObj.label + " (copy)",
   };
-  
+
   return "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy));
 };

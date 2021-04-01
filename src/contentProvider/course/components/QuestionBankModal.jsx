@@ -18,7 +18,7 @@ import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
 import QuestionDialog from "./QuestionDialog";
 import { downloadJSON } from "../../../utils";
-import { Link } from "react-router-dom";
+import ImportQuestionBankDialog from "./ImportQuestionBankDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -496,6 +496,9 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
   const [options, setOptions] = useState([]);
   const [correctAnswer, setCorrectAnswer] = useState();
 
+  //import dialog
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+
   const [questionNum, setQuestionNum] = useState();
 
   useEffect(() => {
@@ -629,13 +632,14 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
                 style={{ textTransform: "none", justifySelf: "flex-end" }}
                 fullWidth
                 color="primary"
+                onClick={() => setImportDialogOpen(true)}
               >
                 Import .JSON
               </Button>
             </div>
             <Divider orientation="vertical" flexItem />
             <div className={classes.rightContainer}>
-              <Typography variant="body2" style={{ fontWeight: 700 }}>
+              <Typography variant="body2" style={{ fontWeight: 700, margin: 16 }}>
                 Question Bank Details
               </Typography>
               <QuestionBankDetails
@@ -680,6 +684,18 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
         setSnackbar={setSnackbar}
         questionNum={questionNum}
       />
+
+      <ImportQuestionBankDialog
+        open={importDialogOpen}
+        setOpen={setImportDialogOpen}
+        courseId={courseId}
+        setSbOpen={setSbOpen}
+        snackbar={snackbar}
+        setSnackbar={setSnackbar}
+        setSelectedQuestionBank={setSelectedQuestionBank}
+        setQuestionBanks={setQuestionBanks}
+      />
+
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
     </div>
   );
