@@ -338,7 +338,7 @@ const PublicProfile = (props) => {
         setBadges(res.data.achievements.reverse());
 
         setExperiences(
-          res.data.cv.sort((a, b) => a.start_date.localeCompare(b.start_date))
+          res.data.cv.sort((a, b) => b.start_date.localeCompare(a.start_date))
         );
         console.log(dataList);
       })
