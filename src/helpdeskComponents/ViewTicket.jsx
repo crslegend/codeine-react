@@ -5,11 +5,13 @@ import {
   Button,
   Chip,
   Divider,
+  Link,
   Paper,
   TextField,
   Typography,
 } from "@material-ui/core";
 import {
+  AttachFile,
   Computer,
   ContactSupport,
   CreditCard,
@@ -69,6 +71,9 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "16px",
       },
     },
+  },
+  link: {
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -425,6 +430,25 @@ const ViewTicket = ({
           <Typography variant="body2">
             {enquiry && enquiry.description}
           </Typography>
+          {enquiry && enquiry.photo && (
+            <div
+              style={{
+                marginTop: "10px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <AttachFile fontSize="small" />
+              <Link
+                className={classes.link}
+                href={enquiry.photo}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Attachment
+              </Link>
+            </div>
+          )}
         </div>
         <div className={classes.conversation}>
           <Typography
@@ -440,7 +464,7 @@ const ViewTicket = ({
                   return replyDiv();
                 }
               } else {
-                if (enquiry.ticket_messages.length > 1) {
+                if (enquiry.ticket_messages.length < 1) {
                   return (
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <LiveHelp
