@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   cardroot: {
     marginRight: "20px",
     marginTop: "-45px",
-    height: "100%",
+    height: "80%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
@@ -337,7 +337,9 @@ const PublicProfile = (props) => {
 
         setBadges(res.data.achievements.reverse());
 
-        setExperiences(res.data.cv);
+        setExperiences(
+          res.data.cv.sort((a, b) => a.start_date.localeCompare(b.start_date))
+        );
         console.log(dataList);
       })
 
@@ -424,7 +426,7 @@ const PublicProfile = (props) => {
       )}
 
       <Grid container className={classes.root}>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <div className={classes.avatar}>
             {member.profile_photo && member.profile_photo ? (
               <Avatar
@@ -536,6 +538,7 @@ const PublicProfile = (props) => {
                   {badges &&
                     badges.map((badge, index) => (
                       <CardMedia
+                        key={index}
                         className={classes.cardmedia}
                         image={badge.achievement.badge}
                       />
@@ -560,12 +563,12 @@ const PublicProfile = (props) => {
               >
                 Skills
               </Typography>
-              <ResponsiveContainer width="100%" height={260}>
+              <ResponsiveContainer width="100%" height={380}>
                 <RadarChart
                   width="100%"
                   height="100%"
                   style={{
-                    backgroundColor: "#F1F2F6",
+                    paddingBottom: "10px",
                   }}
                   data={dataList && dataList}
                 >
@@ -589,7 +592,7 @@ const PublicProfile = (props) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <Grid container className={classes.rightContainer}>
             {languageList && languageList.length > 0 ? (
               <Grid item xs={12} style={{ marginBottom: "60px" }}>
@@ -716,8 +719,8 @@ const PublicProfile = (props) => {
                           <TableCell>
                             <div style={{ display: "flex" }}>
                               {row.course.categories &&
-                                row.course.categories.map((label) => (
-                                  <Label label={label} />
+                                row.course.categories.map((label, index) => (
+                                  <Label label={label} key={index} />
                                 ))}
                             </div>
                           </TableCell>
@@ -820,8 +823,8 @@ const PublicProfile = (props) => {
                     <TableCell>
                       <div style={{ display: "flex" }}>
                         {row.course.categories &&
-                          row.course.categories.map((label) => (
-                            <Label label={label} />
+                          row.course.categories.map((label, index) => (
+                            <Label label={label} key={index} />
                           ))}
                       </div>
                     </TableCell>
@@ -864,101 +867,101 @@ const PublicProfile = (props) => {
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       {badge.achievement.achievement_requirements.length > 0 &&
                         badge.achievement.achievement_requirements.map(
-                          (requirement) => {
+                          (requirement, index) => {
                             if (requirement.stat === "UI") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in UI/UX"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "FE") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Frontend"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "BE") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Backend"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "DB") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Database Administration"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "SEC") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Security"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "ML") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Machine Learning"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "PY") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Python"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "JAVA") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Java"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "JS") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Javascript"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "RUBY") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in Ruby"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "CPP") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in C++"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "CS") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in C#"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "HTML") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in HTML"}
                                 </Typography>
                               );
                             } else if (requirement.stat === "CSS") {
                               return (
-                                <Typography variant="body2">
+                                <Typography key={index} variant="body2">
                                   {requirement.experience_point +
                                     " Exp Points in CSS"}
                                 </Typography>
