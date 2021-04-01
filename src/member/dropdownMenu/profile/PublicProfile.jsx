@@ -97,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
   },
   seeBadges: {
     marginTop: "-10px",
+    marginRight: "-9px",
     color: "#515050",
     fontSize: "12px",
     fontWeight: 600,
