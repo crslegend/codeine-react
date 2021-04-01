@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ViewSubmittedIssuesPage = () => {
+const ViewSubmittedTicketsPage = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -100,4 +100,4 @@ const ViewSubmittedIssuesPage = () => {
   );
 };
 
-export default ViewSubmittedIssuesPage;
+export default ViewSubmittedTicketsPage;

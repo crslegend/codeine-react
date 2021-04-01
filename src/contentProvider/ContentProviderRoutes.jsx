@@ -44,8 +44,8 @@ import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
-import ViewSubmittedIssuesPage from "./helpdesk/ViewSubmittedIssuesPage";
-import ViewAnIssuePage from "./helpdesk/ViewAnIssuePage";
+import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
+import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -463,14 +463,14 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/helpdesk/tickets"
-              render={() => <ViewSubmittedIssuesPage />}
+              render={() => <ViewSubmittedTicketsPage />}
               user="partner"
             />
             <PrivateRoute
               strict
               sensitive
               path="/partner/home/helpdesk/tickets/:id"
-              render={() => <ViewAnIssuePage />}
+              render={() => <ViewTicketPage />}
               user="partner"
             />
             <PrivateRoute

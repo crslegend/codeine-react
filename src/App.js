@@ -42,8 +42,8 @@ import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 import Membership from "./member/membership/Membership";
-import ViewSubmittedIssuesPage from "./member/dropdownMenu/helpdesk/ViewSubmittedIssuesPage";
-import ViewAnIssuePage from "./member/dropdownMenu/helpdesk/ViewAnIssuePage";
+import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
+import ViewTicketPage from "./member/dropdownMenu/helpdesk/ViewTicketPage";
 
 const App = () => {
   return (
@@ -189,14 +189,14 @@ const App = () => {
       <PrivateRoute
         exact
         path="/member/helpdesk/tickets"
-        component={ViewSubmittedIssuesPage}
+        component={ViewSubmittedTicketsPage}
         user="member"
       />
       <PrivateRoute
         strict
         sensitive
         path="/member/helpdesk/tickets/:id"
-        component={ViewAnIssuePage}
+        component={ViewTicketPage}
         user="member"
       />
       <PrivateRoute

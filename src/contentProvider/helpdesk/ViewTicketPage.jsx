@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ViewAnIssuePage = () => {
+const ViewTicketPage = () => {
   const classes = useStyles();
   const { id } = useParams();
 
@@ -61,4 +61,4 @@ const ViewAnIssuePage = () => {
   );
 };
 
-export default ViewAnIssuePage;
+export default ViewTicketPage;
