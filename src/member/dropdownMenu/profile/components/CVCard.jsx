@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import More from "@material-ui/icons/MoreVert";
 import { Typography, Card, CardContent, Popover } from "@material-ui/core";
+import Service from "../../../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,10 @@ const ExperienceCard = (props) => {
     setCVDialogState,
     setEditingCV,
     setDeleteDialogState,
+    setSbOpen,
+    setSnackbar,
+    snackbar,
+    getProfileDetails,
   } = props;
 
   const formatDate = (date) => {
@@ -70,8 +75,6 @@ const ExperienceCard = (props) => {
       anchorEl: null,
     });
   };
-
-  const handleDeleteCV = () => {};
 
   return (
     <Card elevation={0} className={classes.root}>
@@ -129,6 +132,7 @@ const ExperienceCard = (props) => {
                 setCVDetail(experience);
                 setCVDialogState(true);
                 setEditingCV(true);
+                handleClose();
               }}
             >
               Edit this reponse
@@ -138,6 +142,7 @@ const ExperienceCard = (props) => {
               className={classes.typography}
               onClick={() => {
                 setDeleteDialogState(true);
+                handleClose();
               }}
             >
               Delete

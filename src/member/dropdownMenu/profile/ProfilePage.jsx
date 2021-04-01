@@ -388,7 +388,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "End date cannot be smaller than start date!",
+        message: "End date cannot be earlier than start date!",
         severity: "error",
       });
       return true;
@@ -438,41 +438,48 @@ const Profile = (props) => {
     }
   };
 
-  const updateCV = () => {
-    Service.client
-      .patch(`/auth/cvs/${CVDetail.id}`, {
-        ...CVDetail,
-        start_date:
-          CVDetail.start_date.getFullYear() +
-          "-" +
-          (CVDetail.start_date.getMonth() + 1) +
-          "-" +
-          CVDetail.start_date.getDate(),
-        end_date:
-          CVDetail.end_date.getFullYear() +
-          "-" +
-          (CVDetail.end_date.getMonth() + 1) +
-          "-" +
-          CVDetail.end_date.getDate(),
-      })
-      .then(() => {
-        getProfileDetails();
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "Job experience updated successfully!",
-          severity: "success",
-        });
-        setCVDetail({
-          title: "",
-          description: "",
-          organisation: "",
-          start_date: new Date("2000-01-01"),
-          end_date: new Date("2000-01-01"),
-        });
-        setCVDialogState(false);
-      })
-      .catch();
+  const updateCV = (e) => {
+    e.preventDefault();
+
+    CVDetail.start_date = new Date(CVDetail.start_date);
+    CVDetail.end_date = new Date(CVDetail.end_date);
+
+    if (!checkCVDetails()) {
+      Service.client
+        .patch(`/auth/cvs/${CVDetail.id}`, {
+          ...CVDetail,
+          start_date:
+            CVDetail.start_date.getFullYear() +
+            "-" +
+            (CVDetail.start_date.getMonth() + 1) +
+            "-" +
+            CVDetail.start_date.getDate(),
+          end_date:
+            CVDetail.end_date.getFullYear() +
+            "-" +
+            (CVDetail.end_date.getMonth() + 1) +
+            "-" +
+            CVDetail.end_date.getDate(),
+        })
+        .then(() => {
+          getProfileDetails();
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "Job experience updated successfully!",
+            severity: "success",
+          });
+          setCVDetail({
+            title: "",
+            description: "",
+            organisation: "",
+            start_date: new Date("2000-01-01"),
+            end_date: new Date("2000-01-01"),
+          });
+          setCVDialogState(false);
+        })
+        .catch();
+    }
   };
 
   const deleteCV = (CVid) => {
@@ -807,63 +814,53 @@ const Profile = (props) => {
         </div>
 
         {CVList.map((cv, index) => {
-          // return (
-          //   <div key={cv.id} className={classes.cvcontainer}>
-          //     <div style={{ display: "flex" }}>
-          //       <div>
-          //         <Typography style={{ fontWeight: "600" }}>
-          //           {cv.organisation}
-          //         </Typography>
-          //       </div>
-          //       <div style={{ marginLeft: "auto" }}>
-          //         {cv.start_date} - {cv.end_date}
-          //       </div>
-          //     </div>
-          //     <Typography>{cv.title}</Typography>
-          //     <br />
-          //     {cv.description}
-          //   </div>
-          // );
           return (
-            <CVCard
-              key={index}
-              experience={cv}
-              setCVDetail={setCVDetail}
-              setCVDialogState={setCVDialogState}
-              setEditingCV={setEditingCV}
-              setDeleteDialogState={setDeleteDialogState}
-            />
+            <>
+              <CVCard
+                key={index}
+                experience={cv}
+                setCVDetail={setCVDetail}
+                setCVDialogState={setCVDialogState}
+                setEditingCV={setEditingCV}
+                setDeleteDialogState={setDeleteDialogState}
+                sbOpen={sbOpen}
+                setSbOpen={setSbOpen}
+                setSnackbar={setSnackbar}
+                getProfileDetails={getProfileDetails}
+              />
+              <Dialog
+                open={deleteDialogState}
+                onClose={() => setDeleteDialogState(false)}
+              >
+                <DialogTitle id="alert-dialog-title">
+                  Delete Job experience
+                </DialogTitle>
+                <DialogContent>
+                  Are you sure you want to delete your job experience? You will
+                  no longer be able to retrieve your job experience any longer.
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => setDeleteDialogState(false)}
+                    variant="outlined"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      deleteCV(cv.id);
+                    }}
+                    className={classes.redButton}
+                    variant="contained"
+                  >
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
           );
         })}
       </div>
-
-      <Dialog
-        open={deleteDialogState}
-        onClose={() => setDeleteDialogState(false)}
-      >
-        <DialogTitle id="alert-dialog-title">Delete Job experience</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete your job experience? You will no
-          longer be able to retrieve your job experience any longer.
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setDeleteDialogState(false)}
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              deleteCV();
-            }}
-            className={classes.redButton}
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <Dialog open={CVDialogState} onClose={() => setCVDialogState(false)}>
         <DialogTitle id="alert-dialog-title">
@@ -938,7 +935,7 @@ const Profile = (props) => {
                 onChange={(event) =>
                   setCVDetail({
                     ...CVDetail,
-                    start_date: event.toDateString(),
+                    start_date: event,
                   })
                 }
                 KeyboardButtonProps={{
