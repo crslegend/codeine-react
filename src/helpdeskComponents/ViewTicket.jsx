@@ -81,6 +81,7 @@ const ViewTicket = ({
   setFile,
   userAvatar,
   replyToTicket,
+  markTicketAsResolved,
 }) => {
   const classes = useStyles();
 
@@ -293,6 +294,7 @@ const ViewTicket = ({
                 <Button
                   variant="outlined"
                   className={classes.adminActionButton}
+                  onClick={() => markTicketAsResolved()}
                 >
                   Mark As Resolve
                 </Button>

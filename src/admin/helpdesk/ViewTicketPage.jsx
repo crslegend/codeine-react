@@ -6,21 +6,7 @@ import { IconButton } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
 import ViewTicket from "../../helpdeskComponents/ViewTicket";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-  },
-  container: {
-    maxHeight: 580,
-  },
-  dataGrid: {
-    "@global": {
-      ".MuiDataGrid-row": {
-        cursor: "pointer",
-      },
-    },
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 const ViewTicketPage = () => {
   const classes = useStyles();
@@ -55,6 +41,15 @@ const ViewTicketPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const markTicketAsResolved = () => {
+    Service.client
+      .patch(`helpdesk/tickets/${id}/resolve`)
+      .then((res) => {
+        getEnquiry();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
       <IconButton onClick={() => history.push(`/admin/helpdesk`)}>
@@ -69,6 +64,7 @@ const ViewTicketPage = () => {
           file={file}
           setFile={setFile}
           replyToTicket={replyToTicket}
+          markTicketAsResolved={markTicketAsResolved}
         />
       </div>
     </div>
