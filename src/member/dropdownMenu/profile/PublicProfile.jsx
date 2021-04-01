@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   cardroot: {
     marginRight: "20px",
     marginTop: "-45px",
-    height: "680px",
+    height: "100%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
@@ -95,12 +95,24 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "transparent",
     },
   },
+  seeBadges: {
+    marginTop: "-10px",
+    marginRight: "-9px",
+    color: "#515050",
+    fontSize: "12px",
+    fontWeight: 600,
+    "&:hover": {
+      textDecoration: "underline #515050",
+      color: "#515050",
+      backgroundColor: "transparent",
+    },
+  },
   cardmedia: {
-    height: "100px",
-    width: "100px",
+    height: "40px",
+    width: "40px",
     borderRadius: "50%",
-    marginRight: "35px",
-    // marginBottom: "25px",
+    marginRight: "10px",
+    marginBottom: "10px",
   },
   badgeDetail: {
     display: "flex",
@@ -326,6 +338,7 @@ const PublicProfile = (props) => {
         setBadges(res.data.achievements.reverse());
 
         setExperiences(res.data.cv);
+        console.log(dataList);
       })
 
       .catch((err) => console.log(err));
@@ -480,16 +493,6 @@ const PublicProfile = (props) => {
                   marginBottom: "10px",
                 }}
               >
-                <Typography variant="body2">badges</Typography>
-                <Typography variant="body2">{badges.length}</Typography>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "10px",
-                }}
-              >
                 <Typography variant="body2">exp. points</Typography>
                 <Typography variant="body2">{getPoints()}</Typography>
               </div>
@@ -503,29 +506,83 @@ const PublicProfile = (props) => {
                 <Typography variant="body2">completed courses</Typography>
                 <Typography variant="body2">{courses.length}</Typography>
               </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography
+                  variant="body2"
+                  style={{ fontWeight: 600, marginBottom: "15px" }}
+                >
+                  Badges
+                </Typography>
+                {badges && badges.length > 0 ? (
+                  <Button
+                    className={classes.seeBadges}
+                    onClick={() => setBadgesDialog(true)}
+                  >
+                    See All({badges.length})
+                  </Button>
+                ) : (
+                  ""
+                )}
+              </div>
+              {badges && badges.length > 0 ? (
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    marginBottom: "20px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {badges &&
+                    badges.map((badge, index) => (
+                      <CardMedia
+                        className={classes.cardmedia}
+                        image={badge.achievement.badge}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <Grid style={{ height: "50px", paddingTop: "5px" }}>
+                  <Typography
+                    variant="subtitle1"
+                    style={{
+                      textAlign: "center",
+                      color: "#C4C4C4",
+                    }}
+                  >
+                    No Achieved Badges
+                  </Typography>
+                </Grid>
+              )}
               <Typography
                 variant="body2"
                 style={{ fontWeight: 600, marginBottom: "15px" }}
               >
                 Skills
               </Typography>
-              <ResponsiveContainer width={250} height={260}>
+              <ResponsiveContainer width="100%" height={260}>
                 <RadarChart
                   width="100%"
-                  style={{ margin: "0px 0px" }}
                   height="100%"
+                  style={{
+                    backgroundColor: "#F1F2F6",
+                  }}
                   data={dataList && dataList}
                 >
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="display" />
-                  <PolarRadiusAxis />
+                  <PolarGrid stroke="#050404" />
+                  <PolarAngleAxis
+                    tickLine={false}
+                    dataKey="display"
+                    stroke="#050404"
+                  />
+                  <PolarRadiusAxis stroke="#050404" />
                   <Tooltip content={<CustomTooltip />} />
                   <Radar
                     name="Category"
                     dataKey="points"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
+                    stroke="#C74343"
+                    fill="#C74343"
+                    fillOpacity={0.8}
                   />
                 </RadarChart>
               </ResponsiveContainer>
@@ -597,51 +654,6 @@ const PublicProfile = (props) => {
               ""
             )}
 
-            <Grid item xs={12} style={{ marginBottom: "35px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography
-                  variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "20px" }}
-                >
-                  Badges
-                </Typography>
-                <Button
-                  className={classes.seeAll}
-                  onClick={() => setBadgesDialog(true)}
-                >
-                  See All
-                </Button>
-              </div>
-
-              {badges && badges.length > 0 ? (
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {badges &&
-                    badges.map((badge, index) => (
-                      <CardMedia
-                        className={classes.cardmedia}
-                        image={badge.achievement.badge}
-                      />
-                    ))}
-                </div>
-              ) : (
-                <Grid style={{ height: "100px", paddingTop: "40px" }}>
-                  <Typography
-                    style={{
-                      textAlign: "center",
-                      color: "#C4C4C4",
-                    }}
-                  >
-                    No Achieved Badges
-                  </Typography>
-                </Grid>
-              )}
-            </Grid>
             <Grid item xs={12} style={{ marginBottom: "60px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography

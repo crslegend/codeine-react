@@ -12,7 +12,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import theme from "../src/theme";
 
 import { Provider } from "react-redux";
-import store from "./redux/Store.js";
+import store from "./redux/Store.jss";
 
 let render = () => {
   ReactDOM.render(

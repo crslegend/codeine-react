@@ -15,6 +15,7 @@ import {
   DialogContent,
   TextField,
   DialogActions,
+  Badge,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -28,6 +29,7 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -46,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     "&:hover": {
       backgroundColor: "#f5f5f5",
+      cursor: "pointer",
     },
   },
   icon: {
@@ -59,6 +62,22 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: "#000",
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: "#000",
+    height: "30px",
+    width: "30px",
   },
 }));
 
@@ -97,7 +116,7 @@ const MemberNavBar = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -106,6 +125,22 @@ const MemberNavBar = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
 
   const handleStripePaymentGateway = async (
     amount,
@@ -164,9 +199,6 @@ const MemberNavBar = (props) => {
       })
       .catch((err) => console.log(err));
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   const navLogo = (
     <Fragment>
@@ -247,11 +279,46 @@ const MemberNavBar = (props) => {
         </ListItem>
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <div>
+          <Badge badgeContent={1} color="primary">
+            <NotificationsIcon
+              className={
+                notifOpen ? classes.notificationOpen : classes.notification
+              }
+              onClick={handleNotifClick}
+            />
+          </Badge>
+
+          <Popover
+            id={notifid}
+            open={notifOpen}
+            anchorEl={anchorE2}
+            onClose={handleNotifClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div className={classes.popover}>
+              Notifications
+              <Typography>View All Notification</Typography>
+            </div>
+          </Popover>
+        </div>
         <Avatar
           onClick={handleClick}
           src={user && user.profile_photo}
           alt=""
-          style={{ width: "34px", height: "34px", cursor: "pointer" }}
+          style={{
+            width: "34px",
+            height: "34px",
+            cursor: "pointer",
+            marginLeft: "30px",
+          }}
         />
         <Popover
           id={id}
@@ -306,112 +373,103 @@ const MemberNavBar = (props) => {
 
             <Divider style={{ marginBottom: "5px" }} />
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/member/dashboard");
+                // alert("Clicked on Dashboard");
+              }}
+            >
               <Dashboard className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  history.push("/member/dashboard");
-                  // alert("Clicked on Dashboard");
-                }}
-                className={classes.typography}
-              >
-                Dashboard
-              </Typography>
+              <Typography className={classes.typography}>Dashboard</Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/member/courses");
+              }}
+            >
               <InsertDriveFileIcon className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  history.push("/member/courses");
-                }}
-                className={classes.typography}
-              >
-                Courses
-              </Typography>
+              <Typography className={classes.typography}>Courses</Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/member/consultations");
+              }}
+            >
               <Timeline className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  history.push("/member/consultations");
-                }}
-                className={classes.typography}
-              >
+              <Typography className={classes.typography}>
                 Consultations
               </Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/member/articles");
+              }}
+            >
               <FontAwesomeIcon
                 icon={faNewspaper}
                 className={classes.icon}
                 style={{ height: "24px", width: "24px" }}
               />
-              <Typography
-                onClick={() => {
-                  history.push("/member/articles");
-                }}
-                className={classes.typography}
-              >
-                Articles
-              </Typography>
+              <Typography className={classes.typography}>Articles</Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                //history.push("/");
+                alert("clicked on Industry projects");
+              }}
+            >
               <Dashboard className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  //history.push("/");
-                  alert("clicked on Industry projects");
-                }}
-                className={classes.typography}
-              >
+              <Typography className={classes.typography}>
                 Industry Projects
               </Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                //history.push("/");
+                alert("clicked on Helpdesk");
+              }}
+            >
               <HelpOutlineOutlinedIcon className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  //history.push("/");
-                  alert("clicked on Helpdesk");
-                }}
-                className={classes.typography}
-              >
-                Helpdesk
-              </Typography>
+              <Typography className={classes.typography}>Helpdesk</Typography>
             </div>
 
-            <div className={classes.hover}>
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/member/payment");
+              }}
+            >
               <AccountBalanceWalletIcon className={classes.icon} />
-              <Typography
-                onClick={() => {
-                  history.push("/member/payment");
-                }}
-                className={classes.typography}
-              >
+              <Typography className={classes.typography}>
                 My Payments
               </Typography>
             </div>
 
             <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
 
-            <div className={classes.hover}>
-              <ExitToAppIcon
-                className={classes.icon}
-                style={{ color: "#eb0000" }}
-              />
+            <div
+              className={classes.hover}
+              onClick={() => {
+                Service.removeCredentials();
+                setLoggedIn(false);
+                history.push("/");
+              }}
+            >
+              <ExitToAppIcon className={classes.icon} />
               <Typography
-                onClick={() => {
-                  Service.removeCredentials();
-                  setLoggedIn(false);
-                  history.push("/");
-                }}
                 className={classes.typography}
-                style={{ color: "#eb0000", fontWeight: "700" }}
+                style={{ fontWeight: "700" }}
               >
                 Log Out
               </Typography>
