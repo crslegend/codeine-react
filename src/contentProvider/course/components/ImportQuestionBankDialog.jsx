@@ -52,7 +52,23 @@ const ImportQuestionBankDialog = ({
         setQuestionBanks(res.data);
         setOpen(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.status === 409) {
+          setSnackbar({
+            ...snackbar,
+            message: "Duplicate question bank found for this course",
+            severity: "error",
+          });
+        } else {
+          setSnackbar({
+            ...snackbar,
+            message: "Your file is corrupted",
+            severity: "error",
+          });
+        }
+        setSbOpen(true);
+        setOpen(false);
+      });
   };
 
   return (
@@ -67,7 +83,6 @@ const ImportQuestionBankDialog = ({
         {!file ? (
           <DropzoneAreaBase
             acceptedFiles={["application/json"]}
-            Icon=""
             filesLimit={1}
             dropzoneClass={classes.dropzoneRoot}
             dropzoneParagraphClass={classes.dropzoneText}
