@@ -14,13 +14,13 @@ import { Add } from "@material-ui/icons";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import PageTitle from "../../components/PageTitle";
 import Toast from "../../components/Toast.js";
+import ProjectCard from "./ProjectCard";
 import { Link, useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
 import { formatISO, addDays } from "date-fns";
-import { format } from "date-fns/esm";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const IndustryProject = () => {
   const classes = useStyles();
+  const [allIndustryProjects, setAllIndustryProjects] = useState([]);
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -75,6 +76,31 @@ const IndustryProject = () => {
   });
 
   const [open, setOpen] = useState(false);
+
+  let decoded;
+  if (Cookies.get("t1")) {
+    decoded = jwt_decode(Cookies.get("t1"));
+  }
+
+  let queryParams = {
+    //   search: searchValue,
+    partner_id: decoded.user_id,
+  };
+
+  const getAllIndustryProjects = () => {
+    Service.client
+      .get(`/industry-projects`, { params: { ...queryParams } })
+      .then((res) => {
+        // console.log(res);
+        setAllIndustryProjects(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getAllIndustryProjects();
+  }, []);
 
   const handleSubmit = () => {
     let neverChooseOne = true;
@@ -147,11 +173,13 @@ const IndustryProject = () => {
           autoHideDuration: 3000,
         });
       })
-      //   .then((res) => {
-      //     Service.client.get(`/industry-projects`).then((res) => {
-      //       setIndustryProject(res.data);
-      //     });
-      //   })
+      .then((res) => {
+        Service.client
+          .get(`/industry-projects`, { params: { ...queryParams } })
+          .then((res) => {
+            setAllIndustryProjects(res.data);
+          });
+      })
       .catch((err) => console.log(err));
   };
 
@@ -177,6 +205,18 @@ const IndustryProject = () => {
           Create New Industry Project
         </Button>
       </div>
+      <div>
+        {allIndustryProjects && allIndustryProjects.length !== 0 ? (
+          allIndustryProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+            />
+          ))
+        ) : (
+          <div>No industry projects created yet</div>
+        )}
+      </div>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -184,7 +224,7 @@ const IndustryProject = () => {
         classes={{ paper: classes.dialogPaper }}
       >
         <DialogTitle id="form-dialog-title">
-          Create a new industry Project
+          Create a new Industry Project
         </DialogTitle>
         <DialogContent>
           <label htmlFor="title">
@@ -237,7 +277,7 @@ const IndustryProject = () => {
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
-                [e.target.name]: e.target.value,
+                start_date: e,
               })
             }
             format="dd/MM/yyyy"
@@ -253,7 +293,7 @@ const IndustryProject = () => {
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
-                [e.target.name]: e.target.value,
+                end_date: e, 
               })
             }
             format="dd/MM/yyyy"
@@ -268,7 +308,7 @@ const IndustryProject = () => {
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
-                [e.target.name]: e.target.value,
+                application_deadline: e, 
               })
             }
             format="dd/MM/yyyy"

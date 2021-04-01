@@ -26,7 +26,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
-import IndutsryProject from "./indutsryProject/IndustryProject";
+import IndustryProject from "./industryProject/IndustryProject";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
@@ -45,6 +45,7 @@ import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
+import IndustryProjectDetails from "./industryProject/IndustryProjectDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -460,7 +461,14 @@ const ContentProviderHome = () => {
             <PrivateRoute
               exact
               path="/partner/home/industryproject"
-              render={() => <IndutsryProject />}
+              render={() => <IndustryProject />}
+              user="partner"
+            />
+            <PrivateRoute
+              strict
+              sensitive
+              path="/partner/home/industryproject/view/:id"
+              render={() => <IndustryProjectDetails />}
               user="partner"
             />
             <PrivateRoute
