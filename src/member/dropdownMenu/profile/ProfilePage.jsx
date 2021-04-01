@@ -895,6 +895,8 @@ const Profile = (props) => {
                 id="description"
                 label="Description"
                 name="description"
+                multiline
+                rows={4}
                 required
                 fullWidth
                 value={CVDetail.description}

@@ -466,13 +466,10 @@ const MemberNavBar = (props) => {
                 history.push("/");
               }}
             >
-              <ExitToAppIcon
-                className={classes.icon}
-                style={{ color: "#eb0000" }}
-              />
+              <ExitToAppIcon className={classes.icon} />
               <Typography
                 className={classes.typography}
-                style={{ color: "#eb0000", fontWeight: "700" }}
+                style={{ fontWeight: "700" }}
               >
                 Log Out
               </Typography>
