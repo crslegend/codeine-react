@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { AttachFile, LiveHelp } from "@material-ui/icons";
+import { AttachFile, Block, LiveHelp } from "@material-ui/icons";
 import AdminLogo from "../assets/codeineLogos/C.svg";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import TicketCategory from "./TicketCategory";
@@ -25,7 +25,9 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(4),
     paddingBottom: 0,
     width: "70%",
-    margin: "auto",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: "30px",
     display: "flex",
     flexDirection: "column",
   },
@@ -293,6 +295,30 @@ const ViewTicket = ({
     );
   };
 
+  const cannotReplyDiv = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Divider style={{ marginBottom: "15px", marginTop: "15px" }} />
+        <div
+          style={{
+            display: "flex",
+
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Block fontSize="large" style={{ marginRight: "10px" }} />
+          <Typography variant="body2">This enquiry has closed.</Typography>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -401,7 +427,9 @@ const ViewTicket = ({
                       {enquiry.ticket_messages.map((message, index) => {
                         return responseDiv(message, index);
                       })}
-                      {replyDiv()}
+                      {enquiry.ticket_status === "OPEN"
+                        ? replyDiv()
+                        : cannotReplyDiv()}
                     </div>
                   );
                 }
