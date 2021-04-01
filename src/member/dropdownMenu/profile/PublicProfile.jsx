@@ -337,6 +337,7 @@ const PublicProfile = (props) => {
         setBadges(res.data.achievements.reverse());
 
         setExperiences(res.data.cv);
+        console.log(dataList);
       })
 
       .catch((err) => console.log(err));
@@ -558,20 +559,13 @@ const PublicProfile = (props) => {
               >
                 Skills
               </Typography>
-              <ResponsiveContainer
-                width={"100%"}
-                height={"100%"}
-                style={{
-                  textAlign: "center",
-                }}
-              >
+              <ResponsiveContainer width="100%" height={260}>
                 <RadarChart
                   width="100%"
+                  height="100%"
                   style={{
                     backgroundColor: "#F1F2F6",
-                    color: "#FFFFFF",
                   }}
-                  height="100%"
                   data={dataList && dataList}
                 >
                   <PolarGrid stroke="#050404" />
