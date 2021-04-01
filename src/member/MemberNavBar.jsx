@@ -30,6 +30,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotifTile from "../components/NotificationTile";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -111,8 +112,22 @@ const MemberNavBar = (props) => {
     }
   };
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
     getUserDetails();
+    getUserNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -264,6 +279,43 @@ const MemberNavBar = (props) => {
     </Fragment>
   );
 
+  const notifBell = (
+    <div>
+      <Badge badgeContent={notificationList.length} color="primary">
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <div className={classes.popover}>
+          {notificationList.map((notification, index) => {
+            return <NotifTile key={index} notification={notification} />;
+          })}
+          <Typography style={{ textAlign: "center" }}>
+            View All Notification
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
   const loggedInNavBar = (
     <Fragment>
       {user && user.member && user.member.membership_tier !== "PRO" && (
@@ -279,36 +331,7 @@ const MemberNavBar = (props) => {
         </ListItem>
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <div>
-          <Badge badgeContent={1} color="primary">
-            <NotificationsIcon
-              className={
-                notifOpen ? classes.notificationOpen : classes.notification
-              }
-              onClick={handleNotifClick}
-            />
-          </Badge>
-
-          <Popover
-            id={notifid}
-            open={notifOpen}
-            anchorEl={anchorE2}
-            onClose={handleNotifClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <div className={classes.popover}>
-              Notifications
-              <Typography>View All Notification</Typography>
-            </div>
-          </Popover>
-        </div>
+        {notifBell}
         <Avatar
           onClick={handleClick}
           src={user && user.profile_photo}
