@@ -269,17 +269,7 @@ const ViewArticle = (props) => {
           <Link
             className={classes.backLink}
             onClick={() => {
-              if (userType === "guest") {
-                history.push("/viewarticles");
-              } else if (userType === "member") {
-                history.push("/member/articles");
-              }
-              if (userType === "partner") {
-                history.push("/partner/home/article");
-              }
-              if (userType === "admin") {
-                history.push("/admin/article");
-              }
+              history.push("/viewarticles");
             }}
           >
             Articles

@@ -10,10 +10,20 @@ import {
   Popover,
   Button,
   Divider,
+  Badge,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+import { Dashboard, Timeline } from "@material-ui/icons";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -22,11 +32,17 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     cursor: "pointer",
+  },
+  hover: {
     padding: theme.spacing(1),
+    display: "flex",
     "&:hover": {
       backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
   toprow: {
     display: "flex",
@@ -36,6 +52,22 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: "#000",
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: "#000",
+    height: "30px",
+    width: "30px",
   },
 }));
 
@@ -72,7 +104,7 @@ const MemberNavBar = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,6 +116,19 @@ const MemberNavBar = (props) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
 
   const navLogo = (
     <Fragment>
@@ -164,11 +209,46 @@ const MemberNavBar = (props) => {
         </ListItem>
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <div>
+          <Badge badgeContent={1} color="primary">
+            <NotificationsIcon
+              className={
+                notifOpen ? classes.notificationOpen : classes.notification
+              }
+              onClick={handleNotifClick}
+            />
+          </Badge>
+
+          <Popover
+            id={notifid}
+            open={notifOpen}
+            anchorEl={anchorE2}
+            onClose={handleNotifClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div className={classes.popover}>
+              Notifications
+              <Typography>View All Notification</Typography>
+            </div>
+          </Popover>
+        </div>
         <Avatar
           onClick={handleClick}
           src={user && user.profile_photo}
           alt=""
-          style={{ width: "34px", height: "34px", cursor: "pointer" }}
+          style={{
+            width: "34px",
+            height: "34px",
+            cursor: "pointer",
+            marginLeft: "30px",
+          }}
         />
         <Popover
           id={id}
@@ -212,9 +292,9 @@ const MemberNavBar = (props) => {
                 <Typography
                   style={{
                     fontSize: "14px",
-                    color: "#757575",
                     cursor: "pointer",
                   }}
+                  color="primary"
                 >
                   Manage your profile
                 </Typography>
@@ -223,75 +303,107 @@ const MemberNavBar = (props) => {
 
             <Divider style={{ marginBottom: "5px" }} />
 
-            <Typography
-              className={classes.typography}
+            <div
+              className={classes.hover}
               onClick={() => {
                 history.push("/member/dashboard");
                 // alert("Clicked on Dashboard");
               }}
             >
-              Dashboard
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <Dashboard className={classes.icon} />
+              <Typography className={classes.typography}>Dashboard</Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 history.push("/member/courses");
               }}
             >
-              Courses
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <InsertDriveFileIcon className={classes.icon} />
+              <Typography className={classes.typography}>Courses</Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 history.push("/member/consultations");
               }}
             >
-              Consultations
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <Timeline className={classes.icon} />
+              <Typography className={classes.typography}>
+                Consultations
+              </Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 history.push("/member/articles");
               }}
             >
-              Articles
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <FontAwesomeIcon
+                icon={faNewspaper}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
+              <Typography className={classes.typography}>Articles</Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 //history.push("/");
                 alert("clicked on Industry projects");
               }}
             >
-              Industry Projects
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <Dashboard className={classes.icon} />
+              <Typography className={classes.typography}>
+                Industry Projects
+              </Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 //history.push("/");
                 history.push("/member/helpdesk");
               }}
             >
-              Helpdesk
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <HelpOutlineOutlinedIcon className={classes.icon} />
+              <Typography className={classes.typography}>Helpdesk</Typography>
+            </div>
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 history.push("/member/payment");
               }}
             >
-              My Payments
-            </Typography>
-            <Typography
-              className={classes.typography}
+              <AccountBalanceWalletIcon className={classes.icon} />
+              <Typography className={classes.typography}>
+                My Payments
+              </Typography>
+            </div>
+
+            <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
+
+            <div
+              className={classes.hover}
               onClick={() => {
                 Service.removeCredentials();
                 setLoggedIn(false);
                 history.push("/");
               }}
             >
-              Log out
-            </Typography>
+              <ExitToAppIcon className={classes.icon} />
+              <Typography
+                className={classes.typography}
+                style={{ fontWeight: "700" }}
+              >
+                Log Out
+              </Typography>
+            </div>
           </div>
         </Popover>
       </ListItem>

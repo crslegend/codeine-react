@@ -5,16 +5,11 @@ import { Typography, Card, CardContent } from "@material-ui/core";
 const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    height: "130px",
     marginBottom: "30px",
     border: "1px solid #C4C4C4",
     borderRadius: 0,
   },
   title: {
-    display: "flex",
-    justifyContent: "space-between",
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFFFFF",
     margin: "-20px -20px 5px",
     padding: "8px 20px",
   },
@@ -48,27 +43,19 @@ const ExperienceCard = (props) => {
         }}
       >
         <div className={classes.title}>
-          <div>
-            <Typography
-              style={{
-                fontWeight: 600,
-                display: "inline-block",
-              }}
-              variant="body1"
-            >
-              {experience && experience.title}
-            </Typography>
-            <Typography
-              style={{
-                display: "inline-block",
-              }}
-              variant="body1"
-            >
-              , {experience && experience.organisation}
-            </Typography>
-          </div>
+          <Typography
+            style={{
+              fontWeight: 600,
+            }}
+            variant="body1"
+          >
+            {experience && experience.title}
+          </Typography>
+          <Typography variant="body2">
+            {experience && experience.organisation}
+          </Typography>
 
-          <Typography variant="body1">
+          <Typography variant="body2" style={{ color: "#9B9B9B" }}>
             {experience &&
               formatDate(experience.start_date) +
                 " to " +

@@ -836,6 +836,12 @@ const AdminHumanResourcePage = () => {
                   selectedMember.id
                 )
               }
+              style={{
+                margin: "10px 15px",
+                borderColor: selectedMember.is_active ? "#E12424" : "green",
+                color: selectedMember.is_active ? "#E12424" : "green",
+              }}
+              variant="outlined"
             >
               {selectedMember.is_active ? (
                 <div style={{ color: "red" }}>Deactivate</div>
@@ -1036,6 +1042,12 @@ const AdminHumanResourcePage = () => {
                   selectedPartner.id
                 )
               }
+              style={{
+                margin: "10px 15px",
+                borderColor: selectedPartner.is_active ? "#E12424" : "green",
+                color: selectedPartner.is_active ? "#E12424" : "green",
+              }}
+              variant="outlined"
             >
               {selectedPartner.is_active ? (
                 <div style={{ color: "red" }}>Deactivate</div>

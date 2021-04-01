@@ -10,7 +10,13 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Avatar, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  ListItem,
+  Typography,
+  Badge,
+  Popover,
+} from "@material-ui/core";
 import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
@@ -39,6 +45,8 @@ import jwt_decode from "jwt-decode";
 import CourseRelatedAnalytics from "./analytics/CourseRelatedAnalytics";
 import CourseDetailAnalytics from "./analytics/CourseDetailAnalytics";
 import ProjectRelatedAnalysis from "./analytics/ProjectRelatedAnalysis";
+import Notifications from "./notification/NotificationManagement";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,14 +72,14 @@ const useStyles = makeStyles((theme) => ({
   activeLink: {
     width: "100%",
     padding: 10,
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
     "& p": {
       fontWeight: 600,
     },
     "&:hover": {
-      borderLeft: "5px solid #437FC7",
+      borderLeft: "5px solid #164D8F",
     },
   },
   avatar: {
@@ -97,6 +105,26 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     textTransform: "uppercase",
     // color: theme.palette.primary.main,
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: "#000",
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: "#000",
+    height: "30px",
+    width: "30px",
+  },
+  popover: {
+    width: "300px",
+    padding: theme.spacing(1),
   },
 }));
 
@@ -142,16 +170,61 @@ const AdminRoutesPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const memberNavbar = (
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
+
+  const adminNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <div>
+          <Badge badgeContent={1} color="primary">
+            <NotificationsIcon
+              className={
+                notifOpen ? classes.notificationOpen : classes.notification
+              }
+              onClick={handleNotifClick}
+            />
+          </Badge>
+
+          <Popover
+            id={notifid}
+            open={notifOpen}
+            anchorEl={anchorE2}
+            onClose={handleNotifClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <div className={classes.popover}>
+              Notifications
+              <Typography>View All Notification</Typography>
+            </div>
+          </Popover>
+        </div>
+
         <Button
           onClick={() => {
             Service.removeCredentials();
             history.push("/admin/login");
           }}
           variant="contained"
-          color="primary"
+          color="secondary"
+          style={{ textTransform: "capitalize", marginLeft: "30px" }}
         >
           Log Out
         </Button>
@@ -252,6 +325,16 @@ const AdminRoutesPage = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/admin/notifications"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <NotificationsIcon className={classes.listIcon} />
+        <Typography variant="body1">Notification</Typography>
+      </ListItem>
+      {/* <ListItem
+        component={NavLink}
         to="/admin/article"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -259,7 +342,7 @@ const AdminRoutesPage = () => {
       >
         <SubjectIcon className={classes.listIcon} />
         <Typography variant="body1">Articles</Typography>
-      </ListItem>
+      </ListItem> */}
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">
@@ -296,7 +379,7 @@ const AdminRoutesPage = () => {
         loggedIn={loggedIn}
         bgColor="#fff"
         logo={navLogo}
-        navbarItems={memberNavbar}
+        navbarItems={adminNavbar}
       />
       <SideBar head={sidebarHead} list={sidebarList} />
       <main className={classes.content}>
@@ -359,6 +442,12 @@ const AdminRoutesPage = () => {
             sensitive
             path="/admin/analytics/courses/:id"
             render={(match) => <CourseDetailAnalytics match={match} />}
+          />
+          <Route
+            strict
+            sensitive
+            path="/admin/notifications"
+            render={(match) => <Notifications />}
           />
           <Route
             exact

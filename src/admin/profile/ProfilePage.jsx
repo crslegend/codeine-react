@@ -381,7 +381,7 @@ const AdminProfilePage = (props) => {
               <Button
                 disabled={loading}
                 variant="contained"
-                color="primary"
+                color="secondary"
                 className={classes.button}
                 type="submit"
               >
