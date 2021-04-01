@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Chip, Divider, Paper, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Chip,
+  Divider,
+  Paper,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
@@ -12,6 +20,8 @@ import {
   Work,
 } from "@material-ui/icons";
 import { Timeline } from "@material-ui/lab";
+import AdminLogo from "../assets/codeineLogos/C.svg";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,9 +52,36 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  replyAvatar: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+    marginRight: "20px",
+  },
+  resize: {
+    fontSize: 13,
+  },
+  dropzone: {
+    marginTop: "10px",
+    minHeight: "140px",
+    "@global": {
+      ".MuiDropzoneArea-text.MuiTypography-h5": {
+        textTransform: "none",
+        fontSize: "16px",
+      },
+    },
+  },
 }));
 
-const ViewTicket = ({ enquiry }) => {
+const ViewTicket = ({
+  enquiry,
+  user,
+  reply,
+  setReply,
+  file,
+  setFile,
+  userAvatar,
+  replyToTicket,
+}) => {
   const classes = useStyles();
 
   const formatDate = (date) => {
@@ -115,6 +152,84 @@ const ViewTicket = ({ enquiry }) => {
         />
       );
     }
+  };
+
+  const replyDiv = () => {
+    return (
+      <div>
+        <Divider style={{ marginBottom: "15px" }} />
+        <div style={{ display: "flex", width: "100%" }}>
+          {user ? (
+            user === "admin" ? (
+              <Avatar src={AdminLogo} className={classes.replyAvatar} />
+            ) : (
+              <Avatar
+                className={classes.replyAvatar}
+                src={userAvatar && userAvatar}
+              />
+            )
+          ) : null}
+          <div
+            style={{ display: "flex", flexDirection: "column", width: "100%" }}
+          >
+            <label htmlFor="reply">
+              <Typography variant="body2" style={{ fontWeight: 600 }}>
+                Your Response
+              </Typography>
+            </label>
+            <TextField
+              id="reply"
+              variant="outlined"
+              fullWidth
+              margin="dense"
+              placeholder="Enter your response here"
+              multiline
+              rows={4}
+              inputProps={{
+                style: { resize: "vertical" },
+              }}
+              InputProps={{
+                classes: {
+                  input: classes.resize,
+                },
+              }}
+              style={{ backgroundColor: "#fff" }}
+              value={reply ? reply : ""}
+              onChange={(e) => setReply(e.target.value)}
+              autoFocus
+            />
+            <DropzoneAreaBase
+              dropzoneClass={classes.dropzone}
+              dropzoneText="&nbsp;Drag and drop an attachment or click here&nbsp;"
+              filesLimit={1}
+              fileObjects={file}
+              useChipsForPreview={true}
+              maxFileSize={5000000}
+              onAdd={(newFile) => {
+                setFile(newFile);
+              }}
+              onDelete={(deleteFileObj) => {
+                setFile();
+              }}
+              previewGridProps={{
+                item: {
+                  xs: "auto",
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ width: 90, marginLeft: "auto", marginTop: "10px" }}
+              disabled={!reply || reply === ""}
+              onClick={() => replyToTicket()}
+            >
+              Reply
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -318,17 +433,32 @@ const ViewTicket = ({ enquiry }) => {
           >
             ACTIVITY
           </Typography>
-          {enquiry && enquiry.ticket_messages.length < 1 ? (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <LiveHelp fontSize="large" style={{ marginRight: "10px" }} />
-              <Typography variant="body2">
-                Our support officers are reviewing your enquiry and will get
-                back you to very soon.
-              </Typography>
-            </div>
-          ) : (
-            <div></div>
-          )}
+          {(() => {
+            if (user && enquiry) {
+              if (user === "admin") {
+                if (enquiry.ticket_messages.length < 1) {
+                  return replyDiv();
+                }
+              } else {
+                if (enquiry.ticket_messages.length > 1) {
+                  return (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <LiveHelp
+                        fontSize="large"
+                        style={{ marginRight: "10px" }}
+                      />
+                      <Typography variant="body2">
+                        Our support officers are reviewing your enquiry and will
+                        get back you to very soon.
+                      </Typography>
+                    </div>
+                  );
+                } else {
+                  return replyDiv();
+                }
+              }
+            }
+          })()}
         </div>
       </Paper>
     </div>

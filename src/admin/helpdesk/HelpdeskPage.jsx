@@ -84,21 +84,9 @@ const AdminHelpdeskPage = () => {
   const enquiryColumns = [
     { field: "id", headerName: "Ticket ID", width: 350 },
     {
-      field: "ticket_type",
-      headerName: "Type",
-      width: 130,
-      valueFormatter: (params) => capitalizeFirstLetter(params.value[0]),
-    },
-    {
-      field: "timestamp",
-      headerName: "Submitted On",
-      width: 270,
-      valueFormatter: (params) => formatDate(params.value),
-    },
-    {
       field: "ticket_status",
       headerName: "Ticket Status",
-      width: 180,
+      width: 170,
       renderCell: (params) => (
         <div>
           {(() => {
@@ -126,6 +114,18 @@ const AdminHelpdeskPage = () => {
           })()}
         </div>
       ),
+    },
+    {
+      field: "ticket_type",
+      headerName: "Type",
+      width: 130,
+      valueFormatter: (params) => capitalizeFirstLetter(params.value[0]),
+    },
+    {
+      field: "timestamp",
+      headerName: "Submitted On",
+      width: 270,
+      valueFormatter: (params) => formatDate(params.value),
     },
   ];
 
@@ -163,9 +163,7 @@ const AdminHelpdeskPage = () => {
             pageSize={10}
             //checkboxSelection
             disableSelectionOnClick
-            onRowClick={(e) =>
-              history.push(`/admin/contentquality/courses/${e.row.id}`)
-            }
+            onRowClick={(e) => history.push(`/admin/helpdesk/${e.row.id}`)}
           />
         </Grid>
       </Grid>

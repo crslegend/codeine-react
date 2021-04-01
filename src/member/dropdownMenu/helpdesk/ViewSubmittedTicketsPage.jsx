@@ -6,7 +6,7 @@ import MemberNavBar from "../../MemberNavBar.jsx";
 import Cookies from "js-cookie";
 import PageTitle from "../../../components/PageTitle.js";
 import Service from "../../../AxiosService";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import SubmittedTickets from "../../../helpdeskComponents/SubmittedTickets.jsx";
 
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewSubmittedTicketsPage = () => {
   const classes = useStyles();
-  const history = useHistory();
+  // const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
 

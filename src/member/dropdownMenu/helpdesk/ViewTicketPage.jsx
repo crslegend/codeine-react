@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Breadcrumbs, Button, Typography } from "@material-ui/core";
+import { Breadcrumbs, Typography } from "@material-ui/core";
 
 import MemberNavBar from "../../MemberNavBar.jsx";
 import Cookies from "js-cookie";
-import PageTitle from "../../../components/PageTitle.js";
+import jwt_decode from "jwt-decode";
 import Service from "../../../AxiosService";
-import { useHistory, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import ViewTicket from "../../../helpdeskComponents/ViewTicket.jsx";
 
@@ -27,10 +27,21 @@ const ViewTicketPage = () => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [enquiry, setEnquiry] = useState();
+  const [reply, setReply] = useState();
+  const [file, setFile] = useState();
+
+  const [userAvatar, setUserAvatar] = useState();
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          setUserAvatar(res.data.profile_photo);
+        })
+        .catch((err) => {});
     }
   };
 
@@ -49,6 +60,15 @@ const ViewTicketPage = () => {
     getEnquiry();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const replyToTicket = () => {
+    const formData = new FormData();
+
+    Service.client
+      .post(`helpdesk/tickets/${id}/messages`)
+      .then()
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div>
@@ -73,7 +93,16 @@ const ViewTicketPage = () => {
               <Typography variant="body1">View an Enquiry</Typography>
             </Breadcrumbs>
           </div>
-          <ViewTicket enquiry={enquiry} />
+          <ViewTicket
+            enquiry={enquiry}
+            user="member"
+            reply={reply}
+            setReply={setReply}
+            file={file}
+            setFile={setFile}
+            userAvatar={userAvatar}
+            replyToTicket={replyToTicket}
+          />
         </div>
       </div>
     </div>

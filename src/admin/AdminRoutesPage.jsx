@@ -47,6 +47,7 @@ import CourseDetailAnalytics from "./analytics/CourseDetailAnalytics";
 import ProjectRelatedAnalysis from "./analytics/ProjectRelatedAnalysis";
 import Notifications from "./notification/NotificationManagement";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -417,6 +418,12 @@ const AdminRoutesPage = () => {
             render={() => <ViewCourseContent />}
           />
           <Route exact path="/admin/helpdesk" render={() => <HelpdeskPage />} />
+          <Route
+            strict
+            sensitive
+            path="/admin/helpdesk/:id"
+            render={() => <ViewTicketPage />}
+          />
           <Route
             exact
             path="/admin/learnersachievement"

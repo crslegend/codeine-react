@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Breadcrumbs, Button, Typography } from "@material-ui/core";
 
-import PageTitle from "../../components/PageTitle.js";
 import Service from "../../AxiosService";
-import { useHistory, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import ViewTicket from "../../helpdeskComponents/ViewTicket.jsx";
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   backLink: {
@@ -24,6 +25,10 @@ const ViewTicketPage = () => {
   const { id } = useParams();
 
   const [enquiry, setEnquiry] = useState();
+  const [reply, setReply] = useState();
+  const [file, setFile] = useState();
+
+  const [userAvatar, setUserAvatar] = useState();
 
   const getEnquiry = () => {
     Service.client
@@ -35,10 +40,33 @@ const ViewTicketPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const getUserDetails = () => {
+    if (Cookies.get("t1")) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/partners/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res);
+          setUserAvatar(res.data.profile_photo);
+        })
+        .catch((err) => {});
+    }
+  };
+
   useEffect(() => {
     getEnquiry();
+    getUserDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const replyToTicket = () => {
+    const formData = new FormData();
+
+    Service.client
+      .post(`helpdesk/tickets/${id}/messages`)
+      .then()
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div>
@@ -58,7 +86,16 @@ const ViewTicketPage = () => {
         </Link>
         <Typography variant="body1">View an Enquiry</Typography>
       </Breadcrumbs>
-      <ViewTicket enquiry={enquiry} />
+      <ViewTicket
+        enquiry={enquiry}
+        user="partner"
+        reply={reply}
+        setReply={setReply}
+        file={file}
+        setFile={setFile}
+        userAvatar={userAvatar}
+        replyToTicket={replyToTicket}
+      />
     </div>
   );
 };
