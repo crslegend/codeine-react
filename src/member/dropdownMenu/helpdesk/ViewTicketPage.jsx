@@ -8,6 +8,7 @@ import PageTitle from "../../../components/PageTitle.js";
 import Service from "../../../AxiosService";
 import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
+import ViewTicket from "../../../helpdeskComponents/ViewTicket.jsx";
 
 const useStyles = makeStyles((theme) => ({
   backLink: {
@@ -72,6 +73,7 @@ const ViewTicketPage = () => {
               <Typography variant="body1">View an Enquiry</Typography>
             </Breadcrumbs>
           </div>
+          <ViewTicket enquiry={enquiry} />
         </div>
       </div>
     </div>
