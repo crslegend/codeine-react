@@ -82,6 +82,7 @@ const ViewTicket = ({
   userAvatar,
   replyToTicket,
   markTicketAsResolved,
+  reopenTicket,
 }) => {
   const classes = useStyles();
 
@@ -155,10 +156,64 @@ const ViewTicket = ({
     }
   };
 
+  const responseDiv = (message, index) => {
+    return (
+      <div key={index}>
+        <Divider style={{ marginBottom: "15px", marginTop: "15px" }} />
+        <div style={{ display: "flex", width: "100%" }}>
+          {message ? (
+            message.base_user.is_admin ? (
+              <Avatar src={AdminLogo} className={classes.replyAvatar} />
+            ) : message.base_user.profile_photo ? (
+              <Avatar
+                className={classes.replyAvatar}
+                src={message.base_user.profile_photo}
+              />
+            ) : (
+              <Avatar className={classes.replyAvatar}>
+                {message.base_user.first_name.charAt(0)}
+              </Avatar>
+            )
+          ) : null}
+          <div
+            style={{ display: "flex", flexDirection: "column", width: "100%" }}
+          >
+            <Typography
+              variant="body2"
+              style={{ opacity: 0.8, paddingBottom: "10px" }}
+            >
+              {formatDate(message.timestamp)}
+            </Typography>
+            <Typography variant="body2">{message.message}</Typography>
+            {message.file && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <AttachFile fontSize="small" />
+                <Link
+                  className={classes.link}
+                  href={message.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Attachment
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const replyDiv = () => {
     return (
       <div>
-        <Divider style={{ marginBottom: "15px" }} />
+        <Divider style={{ marginBottom: "15px", marginTop: "15px" }} />
         <div style={{ display: "flex", width: "100%" }}>
           {user ? (
             user === "admin" ? (
@@ -245,6 +300,7 @@ const ViewTicket = ({
           enquiry={enquiry}
           renderIssueStatusChip={renderIssueStatusChip}
           formatDateToReturnWithoutTime={formatDateToReturnWithoutTime}
+          user={"admin"}
         />
         <Divider style={{ margin: "15px 0px" }} />
         <div style={{ marginBottom: "20px" }}>
@@ -302,6 +358,7 @@ const ViewTicket = ({
                 <Button
                   variant="outlined"
                   className={classes.adminActionButton}
+                  onClick={() => reopenTicket()}
                 >
                   Reopen Ticket
                 </Button>
@@ -314,6 +371,15 @@ const ViewTicket = ({
               if (user === "admin") {
                 if (enquiry.ticket_messages.length < 1) {
                   return replyDiv();
+                } else {
+                  return (
+                    <div>
+                      {enquiry.ticket_messages.map((message, index) => {
+                        return responseDiv(message, index);
+                      })}
+                      {replyDiv()}
+                    </div>
+                  );
                 }
               } else {
                 if (enquiry.ticket_messages.length < 1) {
@@ -330,7 +396,14 @@ const ViewTicket = ({
                     </div>
                   );
                 } else {
-                  return replyDiv();
+                  return (
+                    <div>
+                      {enquiry.ticket_messages.map((message, index) => {
+                        return responseDiv(message, index);
+                      })}
+                      {replyDiv()}
+                    </div>
+                  );
                 }
               }
             }

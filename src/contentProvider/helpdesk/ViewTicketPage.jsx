@@ -34,7 +34,7 @@ const ViewTicketPage = () => {
     Service.client
       .get(`helpdesk/tickets/${id}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setEnquiry(res.data);
       })
       .catch((err) => console.log(err));
@@ -61,10 +61,20 @@ const ViewTicketPage = () => {
 
   const replyToTicket = () => {
     const formData = new FormData();
+    formData.append("message", reply);
+    formData.append("ticket_id", id);
+    if (file) {
+      formData.append("file", file[0].file);
+    }
 
     Service.client
-      .post(`helpdesk/tickets/${id}/messages`)
-      .then()
+      .post(`helpdesk/tickets/${id}/messages`, formData)
+      .then((res) => {
+        // console.log(res);
+        getEnquiry();
+        setReply();
+        setFile();
+      })
       .catch((err) => console.log(err));
   };
 

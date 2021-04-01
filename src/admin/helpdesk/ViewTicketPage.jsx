@@ -34,16 +34,35 @@ const ViewTicketPage = () => {
 
   const replyToTicket = () => {
     const formData = new FormData();
+    formData.append("message", reply);
+    formData.append("ticket_id", id);
+    if (file) {
+      formData.append("file", file[0].file);
+    }
 
     Service.client
-      .post(`helpdesk/tickets/${id}/messages`)
-      .then()
+      .post(`helpdesk/tickets/${id}/messages`, formData)
+      .then((res) => {
+        // console.log(res);
+        getEnquiry();
+        setReply();
+        setFile();
+      })
       .catch((err) => console.log(err));
   };
 
   const markTicketAsResolved = () => {
     Service.client
       .patch(`helpdesk/tickets/${id}/resolve`)
+      .then((res) => {
+        getEnquiry();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const reopenTicket = () => {
+    Service.client
+      .patch(`helpdesk/tickets/${id}/open`)
       .then((res) => {
         getEnquiry();
       })
@@ -65,6 +84,7 @@ const ViewTicketPage = () => {
           setFile={setFile}
           replyToTicket={replyToTicket}
           markTicketAsResolved={markTicketAsResolved}
+          reopenTicket={reopenTicket}
         />
       </div>
     </div>
