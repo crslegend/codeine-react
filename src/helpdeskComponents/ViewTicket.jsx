@@ -75,6 +75,11 @@ const useStyles = makeStyles((theme) => ({
   link: {
     color: theme.palette.primary.main,
   },
+  adminActionButton: {
+    textTransform: "capitalize",
+    color: "#C74343",
+    border: "1px solid #C74343",
+  },
 }));
 
 const ViewTicket = ({
@@ -225,7 +230,12 @@ const ViewTicket = ({
             <Button
               variant="contained"
               color="primary"
-              style={{ width: 90, marginLeft: "auto", marginTop: "10px" }}
+              style={{
+                width: 90,
+                marginLeft: "auto",
+                marginTop: "10px",
+                textTransform: "capitalize",
+              }}
               disabled={!reply || reply === ""}
               onClick={() => replyToTicket()}
             >
@@ -252,7 +262,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You enquired on an article.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -271,7 +287,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You have issue with one of the enrolled courses.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -290,7 +312,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You have issue with your billing/payment.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -309,7 +337,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You experienced some technical issues on Codeine.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -328,7 +362,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You submitted a general enquiry.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -347,7 +387,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You submitted an enquiry relating to your account.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -367,7 +413,13 @@ const ViewTicket = ({
                       You have issue with one of the consultations that you had
                       previously.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -387,7 +439,13 @@ const ViewTicket = ({
                       You have issue with one of the industry projects that you
                       applied for.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -406,7 +464,13 @@ const ViewTicket = ({
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       You asked about one of your code reviews.
                     </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "5px",
+                      }}
+                    >
                       {renderIssueStatusChip(enquiry.ticket_status)}
                       <Typography variant="body2" style={{ opacity: 0.7 }}>
                         {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -451,12 +515,36 @@ const ViewTicket = ({
           )}
         </div>
         <div className={classes.conversation}>
-          <Typography
-            variant="body2"
-            style={{ opacity: 0.7, paddingBottom: "20px" }}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
           >
-            ACTIVITY
-          </Typography>
+            <Typography variant="body2" style={{ opacity: 0.8 }}>
+              ACTIVITY
+            </Typography>
+            {user === "admin" && enquiry ? (
+              enquiry.ticket_status === "OPEN" ? (
+                <Button
+                  variant="outlined"
+                  className={classes.adminActionButton}
+                >
+                  Mark As Resolve
+                </Button>
+              ) : (
+                <Button
+                  variant="outlined"
+                  className={classes.adminActionButton}
+                >
+                  Reopen Ticket
+                </Button>
+              )
+            ) : null}
+          </div>
+
           {(() => {
             if (user && enquiry) {
               if (user === "admin") {
