@@ -12,11 +12,13 @@ import {
   Divider,
   IconButton,
 } from "@material-ui/core";
-import { Add, Close, Edit, RemoveCircle } from "@material-ui/icons";
+import { Add, Close, Edit, Launch, RemoveCircle } from "@material-ui/icons";
 
 import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
 import QuestionDialog from "./QuestionDialog";
+import { downloadJSON } from "../../../utils";
+import ImportQuestionBankDialog from "./ImportQuestionBankDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,6 +87,14 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "none",
     textDecoration: "underline",
     justifyContent: "flex-end",
+  },
+  exportButton: {
+    width: "fit-content",
+    marginLeft: theme.spacing(2),
+    textTransform: "none",
+    textDecoration: "underline",
+    justifyContent: "flex-end",
+    color: "#676767",
   },
   question: {
     border: "2px solid lightgrey",
@@ -372,15 +382,26 @@ const QuestionBankDetails = ({
         <Typography variant="body2" style={{ fontWeight: 700 }}>
           Questions:
         </Typography>
-        <Button
-          size="small"
-          classes={{ root: classes.addQuestionButton }}
-          startIcon={<Add />}
-          color="primary"
-          onClick={() => setAddQuestionDialog(true)}
-        >
-          Add Question
-        </Button>
+        <div>
+          <Button
+            size="small"
+            classes={{ root: classes.exportButton }}
+            startIcon={<Launch />}
+            href={downloadJSON(selectedQuestionBank)}
+            download={`question-bank-${selectedQuestionBank.id}.json`}
+          >
+            Export Question Bank
+          </Button>
+          <Button
+            size="small"
+            classes={{ root: classes.addQuestionButton }}
+            startIcon={<Add />}
+            color="primary"
+            onClick={() => setAddQuestionDialog(true)}
+          >
+            Add Question
+          </Button>
+        </div>
       </div>
       {selectedQuestionBank &&
         selectedQuestionBank.questions &&
@@ -474,6 +495,9 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
   const [question, setQuestion] = useState();
   const [options, setOptions] = useState([]);
   const [correctAnswer, setCorrectAnswer] = useState();
+
+  //import dialog
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
 
   const [questionNum, setQuestionNum] = useState();
 
@@ -602,10 +626,20 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
                     deleteQuestionBank={deleteQuestionBank}
                   />
                 ))}
+
+              <Button
+                variant="outlined"
+                style={{ textTransform: "none", justifySelf: "flex-end" }}
+                fullWidth
+                color="primary"
+                onClick={() => setImportDialogOpen(true)}
+              >
+                Import .JSON
+              </Button>
             </div>
             <Divider orientation="vertical" flexItem />
             <div className={classes.rightContainer}>
-              <Typography variant="body2" style={{ margin: 16, fontWeight: 700 }}>
+              <Typography variant="body2" style={{ fontWeight: 700, margin: 16 }}>
                 Question Bank Details
               </Typography>
               <QuestionBankDetails
@@ -650,6 +684,18 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
         setSnackbar={setSnackbar}
         questionNum={questionNum}
       />
+
+      <ImportQuestionBankDialog
+        open={importDialogOpen}
+        setOpen={setImportDialogOpen}
+        courseId={courseId}
+        setSbOpen={setSbOpen}
+        snackbar={snackbar}
+        setSnackbar={setSnackbar}
+        setSelectedQuestionBank={setSelectedQuestionBank}
+        setQuestionBanks={setQuestionBanks}
+      />
+
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
     </div>
   );
