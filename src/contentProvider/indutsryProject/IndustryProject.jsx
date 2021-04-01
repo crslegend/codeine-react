@@ -11,14 +11,16 @@ import {
 } from "@material-ui/core";
 import { ToggleButton } from "@material-ui/lab";
 import { Add } from "@material-ui/icons";
-import PageTitle from "../../components/PageTitle";
 import { KeyboardDatePicker } from "@material-ui/pickers";
+import PageTitle from "../../components/PageTitle";
+import Toast from "../../components/Toast.js";
 import { Link, useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
-import { addDays } from "date-fns/esm";
+import { formatISO, addDays } from "date-fns";
+import { format } from "date-fns/esm";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -34,12 +36,23 @@ const useStyles = makeStyles((theme) => ({
     // marginBottom: "10px",
     height: 30,
     marginRight: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
 }));
 
 const IndustryProject = () => {
   const classes = useStyles();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const beforeDate = addDays(new Date(), 1);
   const currentDate = addDays(new Date(), 2);
@@ -49,7 +62,7 @@ const IndustryProject = () => {
     description: "",
     start_date: currentDate,
     end_date: afterDate,
-    applicaion_deadline: beforeDate,
+    application_deadline: beforeDate,
   });
 
   const [categories, setCategories] = useState({
@@ -63,19 +76,96 @@ const IndustryProject = () => {
 
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    let neverChooseOne = true;
+    for (const property in categories) {
+      if (categories[property]) {
+        neverChooseOne = false;
+        break;
+      }
+    }
+
+    if (neverChooseOne) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please select at least 1 category",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    const data = {
+      ...industryProject,
+      start_date: formatISO(new Date(industryProject.start_date), {
+        representation: "date",
+      }),
+      end_date: formatISO(new Date(industryProject.end_date), {
+        representation: "date",
+      }),
+      application_deadline: formatISO(
+        new Date(industryProject.application_deadline),
+        { representation: "date" }
+      ),
+      categories: [],
+    };
+
+    for (const property in categories) {
+      if (categories[property]) {
+        data.categories.push(property);
+      }
+    }
+
+    console.log(data);
+
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("start_date", data.start_date);
+    formData.append("end_date", data.end_date);
+    formData.append("application_deadline", data.application_deadline);
+    formData.append("categories", JSON.stringify(data.categories));
+
+    console.log(formData);
+
+    Service.client
+      .post(`/industry-projects`, formData)
+      .then((res) => {
+        setOpen(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "Industry project created successfully!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      //   .then((res) => {
+      //     Service.client.get(`/industry-projects`).then((res) => {
+      //       setIndustryProject(res.data);
+      //     });
+      //   })
+      .catch((err) => console.log(err));
+  };
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleOpen = () => {
-    console.log("this is open");
     setOpen(true);
   };
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.titleSection}>
         <PageTitle title="My Industry Project" />
         <Button
@@ -174,7 +264,7 @@ const IndustryProject = () => {
             variant="inline"
             label="Application Deadline"
             name="application_deadline"
-            value={industryProject.applicaion_deadline}
+            value={industryProject.application_deadline}
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
@@ -259,7 +349,11 @@ const IndustryProject = () => {
           <Button onClick={handleClose} color="primary" variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained">
+          <Button
+            onClick={() => handleSubmit()}
+            color="primary"
+            variant="contained"
+          >
             Create
           </Button>
         </DialogActions>
