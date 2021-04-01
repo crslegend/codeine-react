@@ -251,7 +251,7 @@ const AdminRoutesPage = () => {
         <BrokenImageOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Analytics</Typography>
       </ListItem>
-      <ListItem
+      {/* <ListItem
         component={NavLink}
         to="/admin/article"
         activeClassName={classes.activeLink}
@@ -260,7 +260,7 @@ const AdminRoutesPage = () => {
       >
         <SubjectIcon className={classes.listIcon} />
         <Typography variant="body1">Articles</Typography>
-      </ListItem>
+      </ListItem> */}
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">

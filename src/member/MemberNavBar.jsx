@@ -20,6 +20,14 @@ import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import pricing from "../assets/PricingAsset.png";
+import { Dashboard, Timeline } from "@material-ui/icons";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+import PaymentIcon from "@material-ui/icons/Payment";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -32,11 +40,16 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     cursor: "pointer",
+  },
+  hover: {
     padding: theme.spacing(1),
+    display: "flex",
     "&:hover": {
       backgroundColor: "#f5f5f5",
-      cursor: "pointer",
     },
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
   toprow: {
     display: "flex",
@@ -282,9 +295,9 @@ const MemberNavBar = (props) => {
                 <Typography
                   style={{
                     fontSize: "14px",
-                    color: "#757575",
                     cursor: "pointer",
                   }}
+                  color="primary"
                 >
                   Manage your profile
                 </Typography>
@@ -293,75 +306,116 @@ const MemberNavBar = (props) => {
 
             <Divider style={{ marginBottom: "5px" }} />
 
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/dashboard");
-                // alert("Clicked on Dashboard");
-              }}
-            >
-              Dashboard
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/courses");
-              }}
-            >
-              Courses
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/consultations");
-              }}
-            >
-              Consultations
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/articles");
-              }}
-            >
-              Articles
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
-              }}
-            >
-              Industry Projects
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                //history.push("/");
-                alert("clicked on Helpdesk");
-              }}
-            >
-              Helpdesk
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                history.push("/member/payment");
-              }}
-            >
-              My Payments
-            </Typography>
-            <Typography
-              className={classes.typography}
-              onClick={() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }}
-            >
-              Log Out
-            </Typography>
+            <div className={classes.hover}>
+              <Dashboard className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  history.push("/member/dashboard");
+                  // alert("Clicked on Dashboard");
+                }}
+                className={classes.typography}
+              >
+                Dashboard
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <InsertDriveFileIcon className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  history.push("/member/courses");
+                }}
+                className={classes.typography}
+              >
+                Courses
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <Timeline className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  history.push("/member/consultations");
+                }}
+                className={classes.typography}
+              >
+                Consultations
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <FontAwesomeIcon
+                icon={faNewspaper}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
+              <Typography
+                onClick={() => {
+                  history.push("/member/articles");
+                }}
+                className={classes.typography}
+              >
+                Articles
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <Dashboard className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Industry projects");
+                }}
+                className={classes.typography}
+              >
+                Industry Projects
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <HelpOutlineOutlinedIcon className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  //history.push("/");
+                  alert("clicked on Helpdesk");
+                }}
+                className={classes.typography}
+              >
+                Helpdesk
+              </Typography>
+            </div>
+
+            <div className={classes.hover}>
+              <AccountBalanceWalletIcon className={classes.icon} />
+              <Typography
+                onClick={() => {
+                  history.push("/member/payment");
+                }}
+                className={classes.typography}
+              >
+                My Payments
+              </Typography>
+            </div>
+
+            <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
+
+            <div className={classes.hover}>
+              <ExitToAppIcon
+                className={classes.icon}
+                style={{ color: "#eb0000" }}
+              />
+              <Typography
+                onClick={() => {
+                  Service.removeCredentials();
+                  setLoggedIn(false);
+                  history.push("/");
+                }}
+                className={classes.typography}
+                style={{ color: "#eb0000", fontWeight: "700" }}
+              >
+                Log Out
+              </Typography>
+            </div>
           </div>
         </Popover>
       </ListItem>
