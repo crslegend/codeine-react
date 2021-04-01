@@ -11,8 +11,9 @@ import {
   Button,
   Divider,
   IconButton,
+  Link,
 } from "@material-ui/core";
-import { Add, Close, Edit, RemoveCircle } from "@material-ui/icons";
+import { Add, Close, Edit, Launch, RemoveCircle } from "@material-ui/icons";
 
 import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
@@ -85,6 +86,14 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "none",
     textDecoration: "underline",
     justifyContent: "flex-end",
+  },
+  exportButton: {
+    width: "fit-content",
+    marginLeft: theme.spacing(2),
+    textTransform: "none",
+    textDecoration: "underline",
+    justifyContent: "flex-end",
+    color: "#676767",
   },
   question: {
     border: "2px solid lightgrey",
@@ -372,15 +381,25 @@ const QuestionBankDetails = ({
         <Typography variant="body2" style={{ fontWeight: 700 }}>
           Questions:
         </Typography>
-        <Button
-          size="small"
-          classes={{ root: classes.addQuestionButton }}
-          startIcon={<Add />}
-          color="primary"
-          onClick={() => setAddQuestionDialog(true)}
-        >
-          Add Question
-        </Button>
+        <div>
+          <Button
+            size="small"
+            classes={{ root: classes.exportButton }}
+            startIcon={<Launch />}
+            onClick={() => setAddQuestionDialog(true)}
+          >
+            Export Questions
+          </Button>
+          <Button
+            size="small"
+            classes={{ root: classes.addQuestionButton }}
+            startIcon={<Add />}
+            color="primary"
+            onClick={() => setAddQuestionDialog(true)}
+          >
+            Add Question
+          </Button>
+        </div>
       </div>
       {selectedQuestionBank &&
         selectedQuestionBank.questions &&
@@ -602,10 +621,19 @@ const QuestionBankModal = ({ courseId, closeDialog }) => {
                     deleteQuestionBank={deleteQuestionBank}
                   />
                 ))}
+
+              <Button
+                variant="outlined"
+                style={{ textTransform: "none", justifySelf: "flex-end" }}
+                fullWidth
+                color="primary"
+              >
+                Import .JSON
+              </Button>
             </div>
             <Divider orientation="vertical" flexItem />
             <div className={classes.rightContainer}>
-              <Typography variant="body2" style={{ margin: 16, fontWeight: 700 }}>
+              <Typography variant="body2" style={{ fontWeight: 700 }}>
                 Question Bank Details
               </Typography>
               <QuestionBankDetails
