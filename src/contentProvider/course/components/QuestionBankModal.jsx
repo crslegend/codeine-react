@@ -122,7 +122,7 @@ const MCQ = ({
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         <Typography variant="body2">
           {`Q${index + 1}. `}
-          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
+          <span dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks: {question.mcq.marks}
@@ -187,7 +187,7 @@ const MRQ = ({
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         <Typography variant="body2">
           {`Q${index + 1}. `}
-          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
+          <span dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks: {question.mrq.marks}
@@ -252,7 +252,7 @@ const ShortAnswer = ({
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         <Typography variant="body2">
           {`Q${index + 1}. `}
-          <div dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
+          <span dangerouslySetInnerHTML={{ __html: `${question.title}` }} />
         </Typography>
         <Typography variant="body2" style={{ opacity: 0.7 }}>
           Marks: {question.shortanswer.marks}
