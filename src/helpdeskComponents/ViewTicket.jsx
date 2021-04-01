@@ -365,7 +365,6 @@ const ViewTicket = ({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "20px",
             }}
           >
             <Typography variant="body2" style={{ opacity: 0.8 }}>
