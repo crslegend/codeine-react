@@ -11,13 +11,14 @@ import {
   Button,
   Divider,
   IconButton,
-  Link,
 } from "@material-ui/core";
 import { Add, Close, Edit, Launch, RemoveCircle } from "@material-ui/icons";
 
 import Service from "../../../AxiosService";
 import Toast from "../../../components/Toast";
 import QuestionDialog from "./QuestionDialog";
+import { downloadJSON } from "../../../utils";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -386,9 +387,10 @@ const QuestionBankDetails = ({
             size="small"
             classes={{ root: classes.exportButton }}
             startIcon={<Launch />}
-            onClick={() => setAddQuestionDialog(true)}
+            href={downloadJSON(selectedQuestionBank)}
+            download={`question-bank-${selectedQuestionBank.id}.json`}
           >
-            Export Questions
+            Export Question Bank
           </Button>
           <Button
             size="small"
