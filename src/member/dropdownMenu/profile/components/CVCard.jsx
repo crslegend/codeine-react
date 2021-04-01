@@ -141,6 +141,7 @@ const ExperienceCard = (props) => {
               variant="body2"
               className={classes.typography}
               onClick={() => {
+                setCVDetail(experience);
                 setDeleteDialogState(true);
                 handleClose();
               }}

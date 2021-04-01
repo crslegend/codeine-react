@@ -815,52 +815,50 @@ const Profile = (props) => {
 
         {CVList.map((cv, index) => {
           return (
-            <>
-              <CVCard
-                key={index}
-                experience={cv}
-                setCVDetail={setCVDetail}
-                setCVDialogState={setCVDialogState}
-                setEditingCV={setEditingCV}
-                setDeleteDialogState={setDeleteDialogState}
-                sbOpen={sbOpen}
-                setSbOpen={setSbOpen}
-                setSnackbar={setSnackbar}
-                getProfileDetails={getProfileDetails}
-              />
-              <Dialog
-                open={deleteDialogState}
-                onClose={() => setDeleteDialogState(false)}
-              >
-                <DialogTitle id="alert-dialog-title">
-                  Delete Job experience
-                </DialogTitle>
-                <DialogContent>
-                  Are you sure you want to delete your job experience? You will
-                  no longer be able to retrieve your job experience any longer.
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    onClick={() => setDeleteDialogState(false)}
-                    variant="outlined"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      deleteCV(cv.id);
-                    }}
-                    className={classes.redButton}
-                    variant="contained"
-                  >
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </>
+            <CVCard
+              key={index}
+              experience={cv}
+              setCVDetail={setCVDetail}
+              setCVDialogState={setCVDialogState}
+              setEditingCV={setEditingCV}
+              setDeleteDialogState={setDeleteDialogState}
+              sbOpen={sbOpen}
+              setSbOpen={setSbOpen}
+              setSnackbar={setSnackbar}
+              getProfileDetails={getProfileDetails}
+            />
           );
         })}
       </div>
+
+      <Dialog
+        open={deleteDialogState}
+        onClose={() => setDeleteDialogState(false)}
+      >
+        <DialogTitle id="alert-dialog-title">Delete Job experience</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete your job experience? You will no
+          longer be able to retrieve your job experience any longer.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogState(false)}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              deleteCV(CVDetail.id);
+              setDeleteDialogState(false);
+            }}
+            className={classes.redButton}
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={CVDialogState} onClose={() => setCVDialogState(false)}>
         <DialogTitle id="alert-dialog-title">
