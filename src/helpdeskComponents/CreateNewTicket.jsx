@@ -304,6 +304,7 @@ const CreateNewTicket = ({
                 </div>
               );
             } else if (issueType === "INDUSTRY_PROJECT") {
+            } else if (issueType === "CODE_REVIEWS") {
             }
           })()}
           {issueType && issueType !== "" && (

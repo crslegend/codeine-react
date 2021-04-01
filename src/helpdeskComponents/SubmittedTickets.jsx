@@ -214,6 +214,22 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </div>
                       </div>
                     );
+                  } else if (enquiry.ticket_type[0] === "CODE_REVIEWS") {
+                    return (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Avatar className={classes.avatar}>
+                          <Work />
+                        </Avatar>
+                        <div>
+                          <Typography variant="h6" style={{ fontWeight: 600 }}>
+                            You asked about one of your code reviews.
+                          </Typography>
+                          <Typography variant="body2" style={{ opacity: 0.7 }}>
+                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                          </Typography>
+                        </div>
+                      </div>
+                    );
                   }
                 })()}
               </Paper>
