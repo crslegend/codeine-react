@@ -15,6 +15,7 @@ import {
   ContactSupport,
   CreditCard,
   Description,
+  Help,
   NoteAdd,
   Person,
   Timeline,
@@ -52,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
     width: "200px",
     marginBottom: "20px",
     marginLeft: "auto",
+  },
+  helpIcon: {
+    fontSize: 40,
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -422,7 +427,19 @@ const SubmittedTickets = ({ user, enquiries, filterBy, setFilterBy }) => {
             );
           })
         ) : (
-          <div />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "40px",
+            }}
+          >
+            <Help className={classes.helpIcon} />
+            <Typography variant="h6">
+              No enquiry yet. Click on Contact Us to make an enquiry.
+            </Typography>
+          </div>
         )}
       </div>
     </div>
