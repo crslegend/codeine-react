@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -870,20 +869,6 @@ const CourseCreation = () => {
                               </Typography>
                             </div>
                           )}
-
-                          {/* {coursePicAvatar ? (
-                            <Avatar
-                              className={classes.avatar}
-                              src={coursePicAvatar[0].data}
-                            />
-                          ) : (
-                            <Avatar
-                              className={classes.avatar}
-                              style={{ padding: "10px" }}
-                            >
-                              No Course Logo Yet
-                            </Avatar>
-                          )} */}
                         </div>
                         <div
                           style={{
@@ -984,22 +969,37 @@ const CourseCreation = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div style={{ marginRight: "25px" }}>
+                        <div style={{ width: "25%" }}>
                           {coursePicAvatar ? (
-                            <Avatar
-                              className={classes.avatar}
-                              src={coursePicAvatar[0].data}
-                            />
-                          ) : (
-                            <Avatar
-                              className={classes.avatar}
-                              style={{ padding: "10px" }}
+                            <div
+                              className={classes.coursePicWithoutPlaceholder}
                             >
-                              No Course Logo Yet
-                            </Avatar>
+                              <img
+                                alt="course thumbnail"
+                                src={coursePicAvatar[0].data}
+                                width="100%"
+                                height="100%"
+                                style={{ objectFit: "cover" }}
+                              />
+                            </div>
+                          ) : (
+                            <div className={classes.coursePicPlaceholder}>
+                              <Typography
+                                variant="h5"
+                                style={{ textAlign: "center", color: "#fff" }}
+                              >
+                                No Course Thumbnail
+                              </Typography>
+                            </div>
                           )}
                         </div>
-                        <div style={{ flexDirection: "column" }}>
+                        <div
+                          style={{
+                            flexDirection: "column",
+                            padding: "24px",
+                            width: "75%",
+                          }}
+                        >
                           <Typography
                             variant="h5"
                             style={{
