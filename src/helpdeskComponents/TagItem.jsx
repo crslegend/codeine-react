@@ -16,6 +16,26 @@ const useStyles = makeStyles((theme) => ({
 const TagItem = ({ enquiry, formatDate, user }) => {
   const classes = useStyles();
 
+  const handleRedirectForArticle = (id) => {
+    if (user === "admin") {
+      return `/admin/contentquality/article/${id}`;
+    } else if (user === "member") {
+      return `/article/member/${id}`;
+    } else if (user === "partner") {
+      return `/article/parnter/${id}`;
+    }
+  };
+
+  const handleRedirectForCourse = (id) => {
+    if (user === "admin") {
+      return `/admin/contentquality/courses/${id}`;
+    } else if (user === "member") {
+      return `/courses/${id}`;
+    } else if (user === "partner") {
+      return `/partner/home/content/view/${id}`;
+    }
+  };
+
   return (
     <div style={{ marginBottom: "15px" }}>
       {(() => {
@@ -24,7 +44,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
             return (
               <Link
                 className={classes.link}
-                href={`/admin/contentquality/article/${enquiry.article.id}`}
+                href={handleRedirectForArticle(enquiry.article.id)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -35,7 +55,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
             return (
               <Link
                 className={classes.link}
-                href={`/admin/contentquality/courses/${enquiry.course.id}`}
+                href={handleRedirectForCourse(enquiry.course.id)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

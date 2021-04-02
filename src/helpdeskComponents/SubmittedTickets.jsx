@@ -108,7 +108,10 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You have issue with one of the enrolled courses.
+                            {user === "member" &&
+                              "You have issue with one of your enrolled courses."}
+                            {user === "partner" &&
+                              "You have issue with one of your courses."}
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
                             {formatDateToReturnWithoutTime(enquiry.timestamp)}
@@ -188,8 +191,10 @@ const SubmittedTickets = ({ user, enquiries }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You have issue with one of the consultations that
-                            you had previously.
+                            {user === "partner" &&
+                              "You have issue with one of the past consultations that you have hold."}
+                            {user === "member" &&
+                              "You have issue with one of the past consultations that you have attended."}
                           </Typography>
                           <Typography variant="body2" style={{ opacity: 0.7 }}>
                             {formatDateToReturnWithoutTime(enquiry.timestamp)}

@@ -75,8 +75,10 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user === "admin" ? "User" : "You"} have issue with one of the
-              enrolled courses.
+              {user === "member" &&
+                "You have issue with one of your enrolled courses."}
+              {user === "partner" && "You have issue with one of your courses."}
+              {user === "admin" && "User has issue with one of the courses."}
             </Typography>
             <div
               style={{
@@ -265,9 +267,12 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user === "admin" ? "User" : "You"} have issue with one of the
-              consultations that {user === "admin" ? "user" : "you"} had
-              previously.
+              {user === "admin" &&
+                "User has issue with one of the past consultations."}
+              {user === "partner" &&
+                "You have issue with one of the past consultations that you have hold."}
+              {user === "member" &&
+                "You have issue with one of the past consultations that you have attended."}
             </Typography>
             <div
               style={{
