@@ -38,7 +38,7 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} enquired on an article.
+              {user === "admin" ? "User" : "You"} enquired on an article.
             </Typography>
             <div
               style={{
@@ -52,7 +52,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -75,8 +75,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} have issue with one of the enrolled
-              courses.
+              {user === "admin" ? "User" : "You"} have issue with one of the
+              enrolled courses.
             </Typography>
             <div
               style={{
@@ -90,7 +90,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -113,8 +113,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} have issue with{" "}
-              {user ? "his/her" : "youe"}
+              {user === "admin" ? "User" : "You"} have issue with{" "}
+              {user === "admin" ? "" : "your "}
               billing/payment.
             </Typography>
             <div
@@ -129,7 +129,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -152,8 +152,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} experienced some technical issues on
-              Codeine.
+              {user === "admin" ? "User" : "You"} experienced some technical
+              issues on Codeine.
             </Typography>
             <div
               style={{
@@ -167,7 +167,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -190,7 +190,7 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} submitted a general enquiry.
+              {user === "admin" ? "User" : "You"} submitted a general enquiry.
             </Typography>
             <div
               style={{
@@ -204,7 +204,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -227,8 +227,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} submitted an enquiry relating to{" "}
-              {user ? "his/her" : "your"} account.
+              {user === "admin" ? "User" : "You"} submitted an enquiry relating
+              to {user === "admin" ? "his/her" : "your"} account.
             </Typography>
             <div
               style={{
@@ -242,7 +242,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -265,8 +265,9 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} have issue with one of the consultations
-              that {user ? "user" : "you"} had previously.
+              {user === "admin" ? "User" : "You"} have issue with one of the
+              consultations that {user === "admin" ? "user" : "you"} had
+              previously.
             </Typography>
             <div
               style={{
@@ -280,7 +281,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -303,8 +304,9 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} have issue with one of the industry
-              projects that {user ? "user" : "you"} applied for.
+              {user === "admin" ? "User" : "You"} have issue with one of the
+              industry projects that {user === "admin" ? "user" : "you"} applied
+              for.
             </Typography>
             <div
               style={{
@@ -318,7 +320,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}
@@ -341,8 +343,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user ? "User" : "You"} asked about one of{" "}
-              {user ? "his/her" : "your"} code reviews.
+              {user === "admin" ? "User" : "You"} asked about one of{" "}
+              {user === "admin" ? "his/her" : "your"} code reviews.
             </Typography>
             <div
               style={{
@@ -356,7 +358,7 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
-            {user && (
+            {user === "admin" && (
               <Typography
                 variant="body2"
                 style={{ opacity: 0.7, paddingTop: "10px" }}

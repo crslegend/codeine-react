@@ -14,6 +14,7 @@ import { AttachFile, Block, LiveHelp } from "@material-ui/icons";
 import AdminLogo from "../assets/codeineLogos/C.svg";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import TicketCategory from "./TicketCategory";
+import TagItem from "./TagItem";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -330,6 +331,7 @@ const ViewTicket = ({
         />
         <Divider style={{ margin: "15px 0px" }} />
         <div style={{ marginBottom: "20px" }}>
+          <TagItem enquiry={enquiry} formatDate={formatDate} />
           <Typography
             variant="body2"
             style={{ fontWeight: 600, paddingBottom: "7px" }}
