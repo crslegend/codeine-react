@@ -82,6 +82,14 @@ const TagItem = ({ enquiry, formatDate }) => {
                   enquiry.consultation_slot.partner.last_name}
               </Typography>
             );
+          } else if (enquiry.ticket_type[0] === "ACCOUNT") {
+            return (
+              <Typography variant="body1">
+                <span style={{ fontWeight: 600 }}>Account ID: </span>{" "}
+                {enquiry.base_user.id}
+                <br />
+              </Typography>
+            );
           }
         }
         return null;

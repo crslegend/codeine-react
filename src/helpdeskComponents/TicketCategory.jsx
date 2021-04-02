@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 const TicketCategory = ({
   enquiry,
   renderIssueStatusChip,
-  formatDateToReturnWithoutTime,
+  formatDate,
   user,
 }) => {
   const classes = useStyles();
@@ -49,7 +49,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -87,7 +87,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -126,7 +126,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -164,7 +164,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -201,7 +201,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -239,7 +239,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -278,7 +278,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -317,7 +317,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (
@@ -355,7 +355,7 @@ const TicketCategory = ({
             >
               {renderIssueStatusChip(enquiry.ticket_status)}
               <Typography variant="body2" style={{ opacity: 0.7 }}>
-                {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                {formatDate(enquiry.timestamp)}
               </Typography>
             </div>
             {user === "admin" && (

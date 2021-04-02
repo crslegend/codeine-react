@@ -105,21 +105,21 @@ const ViewTicket = ({
     return "";
   };
 
-  const formatDateToReturnWithoutTime = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+  // const formatDateToReturnWithoutTime = (date) => {
+  //   const options = {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   };
 
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
-      // console.log(newDate);
-      return newDate;
-    }
-    return "";
-  };
+  //   if (date !== null) {
+  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
+  //     // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
+  //     // console.log(newDate);
+  //     return newDate;
+  //   }
+  //   return "";
+  // };
 
   const renderIssueStatusChip = (status) => {
     if (status === "OPEN") {
@@ -326,7 +326,7 @@ const ViewTicket = ({
         <TicketCategory
           enquiry={enquiry}
           renderIssueStatusChip={renderIssueStatusChip}
-          formatDateToReturnWithoutTime={formatDateToReturnWithoutTime}
+          formatDate={formatDate}
           user={user}
         />
         <Divider style={{ margin: "15px 0px" }} />
