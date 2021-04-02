@@ -1,7 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -19,7 +18,7 @@ import {
 } from "@material-ui/core";
 import { Delete, Help } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { ToggleButton } from "@material-ui/lab";
+import { Alert, ToggleButton } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -89,6 +88,7 @@ const CourseDetailsDrawer = ({
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
 
+  let reference = useRef();
   // console.log(courseDetails);
 
   const toggleDrawer = (open) => (event) => {
@@ -142,6 +142,13 @@ const CourseDetailsDrawer = ({
 
   const drawerPage1 = (
     <Fragment>
+      <div style={{ width: "100%", marginBottom: "20px" }}>
+        <Alert severity="info">
+          This course is for{" "}
+          {courseDetails && courseDetails.pro ? "Pro" : "Free"}-Tier members{" "}
+        </Alert>
+      </div>
+
       <div
         style={{
           marginBottom: "10px",
@@ -213,6 +220,30 @@ const CourseDetailsDrawer = ({
             </Avatar>
           )}
         </IconButton> */}
+      </div>
+      <div
+        style={{
+          marginBottom: "10px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={courseDetails && courseDetails.pro}
+              onChange={() =>
+                setCourseDetails({
+                  ...courseDetails,
+                  pro: !courseDetails.pro,
+                })
+              }
+            />
+          }
+          label="Pro-Tier Course"
+          labelPlacement="start"
+        />
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="title">
@@ -344,7 +375,10 @@ const CourseDetailsDrawer = ({
           variant="contained"
           color="primary"
           style={{ float: "right" }}
-          onClick={() => handleNextPage()}
+          onClick={() => {
+            handleNextPage();
+            reference.parentElement.scrollTop = 0;
+          }}
         >
           Next
         </Button>
@@ -354,6 +388,12 @@ const CourseDetailsDrawer = ({
 
   const drawerPage2 = (
     <Fragment>
+      <div style={{ width: "100%", marginBottom: "20px" }}>
+        <Alert severity="info">
+          This course is for{" "}
+          {courseDetails && courseDetails.pro ? "Pro" : "Free"}-Tier members{" "}
+        </Alert>
+      </div>
       <div style={{ marginBottom: "30px" }}>
         <Typography variant="body2" style={{ paddingBottom: "10px" }}>
           Course Language (Choost at least 1)
@@ -609,7 +649,11 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           placeholder="eg. URL of github repository"
-          value={courseDetails && courseDetails.github_repo}
+          value={
+            courseDetails && courseDetails.github_repo
+              ? courseDetails.github_repo
+              : ""
+          }
           onChange={(e) =>
             setCourseDetails({
               ...courseDetails,
@@ -665,24 +709,6 @@ const CourseDetailsDrawer = ({
           inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
-      <div style={{ marginBottom: "30px" }}>
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={courseDetails && courseDetails.pro}
-              onChange={() =>
-                setCourseDetails({
-                  ...courseDetails,
-                  pro: !courseDetails.pro,
-                })
-              }
-            />
-          }
-          label="Course For Pro Members Only"
-          labelPlacement="start"
-        />
-      </div>
       <div
         style={{
           display: "flex",
@@ -713,7 +739,7 @@ const CourseDetailsDrawer = ({
           onClose={toggleDrawer(false)}
           classes={{ paper: classes.drawer }}
         >
-          <div className={classes.insideDrawer}>
+          <div className={classes.insideDrawer} ref={(el) => (reference = el)}>
             {drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}
           </div>
         </Drawer>

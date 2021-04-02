@@ -16,6 +16,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Paper,
   Popover,
   Select,
   Typography,
@@ -102,6 +103,29 @@ const useStyles = makeStyles((theme) => ({
       size: "small",
     },
   },
+  freeOption: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3),
+    width: "140px",
+    backgroundColor: "#c9c9c9",
+    "&:hover": {
+      cursor: "pointer",
+      backgroundColor: "#bfbfbf",
+    },
+  },
+  proOption: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3),
+    width: "140px",
+    backgroundColor: "#164D8F",
+    color: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+      backgroundColor: "#134075",
+    },
+  },
 }));
 
 const ViewAllCourses = () => {
@@ -131,6 +155,8 @@ const ViewAllCourses = () => {
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [unpublishDialog, setUnpublishDialog] = useState(false);
   const [unpublishCourseId, setUnpublishCourseId] = useState();
+
+  const [courseTypeDialog, setCourseTypeDialog] = useState(false);
 
   const getAllCourses = (sort) => {
     let decoded;
@@ -231,8 +257,14 @@ const ViewAllCourses = () => {
     setPage(value);
   };
 
+  const clearLocalStorage = () => {
+    localStorage.removeItem("courseType");
+    localStorage.removeItem("courseId");
+  };
+
   useEffect(() => {
     getAllCourses();
+    clearLocalStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -328,6 +360,11 @@ const ViewAllCourses = () => {
     return true;
   };
 
+  const handleRedirectToCreateCourse = (courseType) => {
+    localStorage.setItem("courseType", courseType);
+    history.push(`/partner/home/content/new`);
+  };
+
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -385,8 +422,7 @@ const ViewAllCourses = () => {
           color="primary"
           startIcon={<Add />}
           className={classes.addButton}
-          component={Link}
-          to="/partner/home/content/new"
+          onClick={() => setCourseTypeDialog(true)}
         >
           Create New Course
         </Button>
@@ -743,6 +779,47 @@ const ViewAllCourses = () => {
             Confirm
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={courseTypeDialog}
+        onClose={() => setCourseTypeDialog(false)}
+        PaperProps={{
+          style: {
+            width: "400px",
+          },
+        }}
+      >
+        <DialogTitle>Who Can Access This New Course?</DialogTitle>
+        <DialogContent
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <Paper
+            className={classes.freeOption}
+            onClick={() => handleRedirectToCreateCourse("free")}
+          >
+            <Typography variant="h3">
+              FREE
+              <br />
+              <span style={{ fontSize: 15 }}>members</span>
+            </Typography>
+          </Paper>
+          <Paper
+            className={classes.proOption}
+            onClick={() => handleRedirectToCreateCourse("pro")}
+          >
+            <Typography variant="h3">
+              PRO
+              <br />
+              <span style={{ fontSize: 15 }}>members</span>
+            </Typography>
+          </Paper>
+        </DialogContent>
       </Dialog>
     </Fragment>
   );
