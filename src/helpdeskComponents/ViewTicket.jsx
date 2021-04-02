@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   conversation: {
     marginLeft: "-32px",
     marginRight: "-32px",
-    backgroundColor: "#dfe9f5",
+    backgroundColor: "#e4edf5",
     height: "100%",
     padding: theme.spacing(4),
     display: "flex",
@@ -326,7 +326,7 @@ const ViewTicket = ({
           enquiry={enquiry}
           renderIssueStatusChip={renderIssueStatusChip}
           formatDateToReturnWithoutTime={formatDateToReturnWithoutTime}
-          user={"admin"}
+          user={user}
         />
         <Divider style={{ margin: "15px 0px" }} />
         <div style={{ marginBottom: "20px" }}>

@@ -25,6 +25,7 @@ const TicketCategory = ({
   enquiry,
   renderIssueStatusChip,
   formatDateToReturnWithoutTime,
+  user,
 }) => {
   const classes = useStyles();
 
@@ -37,7 +38,7 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You enquired on an article.
+              {user ? "User" : "You"} enquired on an article.
             </Typography>
             <div
               style={{
@@ -51,6 +52,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -62,7 +75,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You have issue with one of the enrolled courses.
+              {user ? "User" : "You"} have issue with one of the enrolled
+              courses.
             </Typography>
             <div
               style={{
@@ -76,6 +90,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -87,7 +113,9 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You have issue with your billing/payment.
+              {user ? "User" : "You"} have issue with{" "}
+              {user ? "his/her" : "youe"}
+              billing/payment.
             </Typography>
             <div
               style={{
@@ -101,6 +129,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -112,7 +152,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You experienced some technical issues on Codeine.
+              {user ? "User" : "You"} experienced some technical issues on
+              Codeine.
             </Typography>
             <div
               style={{
@@ -126,6 +167,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -137,7 +190,7 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You submitted a general enquiry.
+              {user ? "User" : "You"} submitted a general enquiry.
             </Typography>
             <div
               style={{
@@ -151,6 +204,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -162,7 +227,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You submitted an enquiry relating to your account.
+              {user ? "User" : "You"} submitted an enquiry relating to{" "}
+              {user ? "his/her" : "your"} account.
             </Typography>
             <div
               style={{
@@ -176,6 +242,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -187,8 +265,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You have issue with one of the consultations that you had
-              previously.
+              {user ? "User" : "You"} have issue with one of the consultations
+              that {user ? "user" : "you"} had previously.
             </Typography>
             <div
               style={{
@@ -202,6 +280,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -213,8 +303,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You have issue with one of the industry projects that you applied
-              for.
+              {user ? "User" : "You"} have issue with one of the industry
+              projects that {user ? "user" : "you"} applied for.
             </Typography>
             <div
               style={{
@@ -228,6 +318,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
@@ -239,7 +341,8 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              You asked about one of your code reviews.
+              {user ? "User" : "You"} asked about one of{" "}
+              {user ? "his/her" : "your"} code reviews.
             </Typography>
             <div
               style={{
@@ -253,6 +356,18 @@ const TicketCategory = ({
                 {formatDateToReturnWithoutTime(enquiry.timestamp)}
               </Typography>
             </div>
+            {user && (
+              <Typography
+                variant="body2"
+                style={{ opacity: 0.7, paddingTop: "10px" }}
+              >
+                Submitted by:{" "}
+                {enquiry.base_user.first_name +
+                  ` ` +
+                  enquiry.base_user.last_name}
+                {enquiry.base_user.member ? " (Member)" : " (Partner)"}
+              </Typography>
+            )}
           </div>
         </div>
       );
