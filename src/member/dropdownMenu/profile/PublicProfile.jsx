@@ -28,6 +28,9 @@ import {
   PolarGrid,
   Tooltip,
   ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  Legend,
 } from "recharts";
 import MemberNavBar from "../../MemberNavBar";
 import Navbar from "../../../components/Navbar";
@@ -135,7 +138,11 @@ const CustomTooltip = ({ payload, active, category }) => {
           borderRadius: "5px",
         }}
       >
-        <Typography variant="subtitle1">{`${payload[0].payload.category} : ${payload[0].value}`}</Typography>
+        <Typography variant="subtitle1">
+          {payload[0].payload.category
+            ? `${payload[0].payload.category} : ${payload[0].value}`
+            : `${payload[0].payload.name} : ${payload[0].value}`}
+        </Typography>
       </div>
     );
   }
@@ -247,72 +254,63 @@ const PublicProfile = (props) => {
   const handleTopLanguages = (statsData) => {
     let list = [];
 
-    if (statsData.JAVA > 0) {
-      list.push({
-        language: "Java",
-        background: "#E57001",
-        font: "#FFFFFF",
-        points: statsData.JAVA,
-      });
-    }
-    if (statsData.CPP > 0) {
-      list.push({
-        language: "C++",
-        background: "#004482",
-        font: "#FFFFFF",
-        points: statsData.CPP,
-      });
-    }
-    if (statsData.CS > 0) {
-      list.push({
-        language: "C#",
-        background: "#6A1577",
-        font: "#FFFFFF",
-        points: statsData.CS,
-      });
-    }
-    if (statsData.CSS > 0) {
-      list.push({
-        language: "CSS",
-        background: "#264DE4",
-        font: "#FFFFFF",
-        points: statsData.CSS,
-      });
-    }
-    if (statsData.HTML > 0) {
-      list.push({
-        language: "HTML",
-        background: "#E44D26",
-        font: "#000000",
-        points: statsData.HTML,
-      });
-    }
-    if (statsData.JS > 0) {
-      list.push({
-        language: "Javascript",
-        background: "#F7DF1E",
-        font: "#000000",
-        points: statsData.JS,
-      });
-    }
-    if (statsData.PY > 0) {
-      list.push({
-        language: "Python",
-        background: "#3675A9",
-        font: "#FED74A",
-        points: statsData.PY,
-      });
-    }
-    if (statsData.RUBY > 0) {
-      list.push({
-        language: "Ruby",
-        background: "#CC0000",
-        font: "#FFFFFF",
-        points: statsData.RUBY,
-      });
-    }
+    list.push({
+      name: "Java",
+      fill: "#E57001",
+      font: "#FFFFFF",
+      points: statsData.JAVA,
+    });
 
-    setLanguageList(list.sort((a, b) => b.points - a.points).slice(0, 3));
+    list.push({
+      name: "C++",
+      fill: "#004482",
+      font: "#FFFFFF",
+      points: statsData.CPP,
+    });
+
+    list.push({
+      name: "C#",
+      fill: "#6A1577",
+      font: "#FFFFFF",
+      points: statsData.CS,
+    });
+
+    list.push({
+      name: "CSS",
+      fill: "#264DE4",
+      font: "#FFFFFF",
+      points: statsData.CSS,
+    });
+
+    list.push({
+      name: "HTML",
+      fill: "#E44D26",
+      font: "#000000",
+      points: statsData.HTML,
+    });
+
+    list.push({
+      name: "Javascript",
+      fill: "#F7DF1E",
+      font: "#000000",
+      points: statsData.JS,
+    });
+
+    list.push({
+      name: "Python",
+      fill: "#3675A9",
+      font: "#FED74A",
+      points: statsData.PY,
+    });
+
+    list.push({
+      name: "Ruby",
+      fill: "#CC0000",
+      font: "#FFFFFF",
+      points: statsData.RUBY,
+    });
+
+    setLanguageList(list);
   };
 
   const getMemberData = () => {
@@ -595,63 +593,39 @@ const PublicProfile = (props) => {
         <Grid item xs={8}>
           <Grid container className={classes.rightContainer}>
             {languageList && languageList.length > 0 ? (
-              <Grid item xs={12} style={{ marginBottom: "60px" }}>
-                <Typography
-                  variant="h5"
-                  style={{ fontWeight: 600, marginBottom: "20px" }}
-                >
-                  Top languages
+              <Grid item xs={12}>
+                <Typography variant="h5" style={{ fontWeight: 600 }}>
+                  Language Proficiencies
                 </Typography>
-                <div style={{ display: "flex" }}>
-                  {languageList &&
-                    languageList.map((language, index) => {
-                      return (
-                        <Card
-                          style={{
-                            color: `${language.font}`,
-                            backgroundColor: `${language.background}`,
-                            padding: "10px 10px",
-                            marginRight: "40px",
-                            width: "260px",
-                            height: "150px",
-                          }}
-                          key={index}
-                          elevation={0}
-                        >
-                          <CardContent
-                            style={{
-                              height: "inherit",
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <div>
-                              <Typography
-                                style={{
-                                  fontWeight: 600,
-                                }}
-                                variant="h2"
-                              >
-                                {language.language}
-                              </Typography>
-                            </div>
-                            <div>
-                              <Typography
-                                style={{
-                                  fontWeight: 600,
-                                  marginBottom: "10px",
-                                }}
-                                variant="h6"
-                              >
-                                {language.points} points
-                              </Typography>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                </div>
+                <RadialBarChart
+                  width={1000}
+                  height={300}
+                  cx="50%"
+                  cy="80%"
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  innerRadius="20%"
+                  outerRadius="150%"
+                  data={languageList && languageList}
+                  startAngle={180}
+                  endAngle={0}
+                >
+                  <RadialBar
+                    minAngle={15}
+                    background
+                    clockWise={true}
+                    dataKey="points"
+                  />
+                  <Legend
+                    iconSize={10}
+                    wrapperStyle={{ top: 45 }}
+                    width={120}
+                    height={160}
+                    layout="vertical"
+                    verticalAlign="top"
+                    align="right"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                </RadialBarChart>
               </Grid>
             ) : (
               ""
