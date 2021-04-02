@@ -26,6 +26,7 @@ import { useHistory, useParams } from "react-router-dom";
 import QuestionBankModal from "./components/QuestionBankModal";
 import validator from "validator";
 import AssessmentCreation from "./components/AssessmentCreation";
+import { Alert } from "@material-ui/lab";
 
 // import jwt_decode from "jwt-decode";
 // import Cookies from "js-cookie";
@@ -839,6 +840,20 @@ const CourseCreation = () => {
               <Fragment>
                 <div className={classes.topSection}>
                   <div style={{ width: "100%" }}>
+                    <div
+                      style={{
+                        maxWidth: "370px",
+                        marginBottom: "10px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
+                    >
+                      <Alert severity="info">
+                        This course is for{" "}
+                        {courseDetails && courseDetails.pro ? "Pro" : "Free"}
+                        -Tier members{" "}
+                      </Alert>
+                    </div>
                     <Paper className={classes.paper}>
                       <div
                         style={{
@@ -950,7 +965,10 @@ const CourseCreation = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => setToNextPage()}
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                    setToNextPage();
+                  }}
                   style={{ float: "right", marginBottom: "20px" }}
                 >
                   Next
@@ -962,6 +980,20 @@ const CourseCreation = () => {
               <Fragment>
                 <div className={classes.topSection}>
                   <div style={{ maxWidth: "100%" }}>
+                    <div
+                      style={{
+                        maxWidth: "370px",
+                        marginBottom: "10px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
+                    >
+                      <Alert severity="info">
+                        This course is for{" "}
+                        {courseDetails && courseDetails.pro ? "Pro" : "Free"}
+                        -Tier members{" "}
+                      </Alert>
+                    </div>
                     <Paper className={classes.paper}>
                       <div
                         style={{
