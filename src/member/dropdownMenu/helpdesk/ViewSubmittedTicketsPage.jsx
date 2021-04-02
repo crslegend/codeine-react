@@ -35,6 +35,7 @@ const ViewSubmittedTicketsPage = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [enquiries, setEnquiries] = useState();
+  const [filterBy, setFilterBy] = useState("");
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -43,13 +44,25 @@ const ViewSubmittedTicketsPage = () => {
   };
 
   const getSubmittedEnquiries = () => {
-    Service.client
-      .get(`helpdesk/tickets`, { params: { is_user: "true" } })
-      .then((res) => {
-        // console.log(res);
-        setEnquiries(res.data);
-      })
-      .catch((err) => console.log(err));
+    if (filterBy === "") {
+      Service.client
+        .get(`helpdesk/tickets`, { params: { is_user: "true" } })
+        .then((res) => {
+          // console.log(res);
+          setEnquiries(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Service.client
+        .get(`helpdesk/tickets`, {
+          params: { is_user: "true", ticket_status: filterBy },
+        })
+        .then((res) => {
+          // console.log(res);
+          setEnquiries(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   useEffect(() => {
@@ -57,6 +70,11 @@ const ViewSubmittedTicketsPage = () => {
     getSubmittedEnquiries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    getSubmittedEnquiries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterBy]);
 
   return (
     <div>
@@ -92,7 +110,12 @@ const ViewSubmittedTicketsPage = () => {
             </Button>
           </div>
           <div style={{ marginTop: "20px" }}>
-            <SubmittedTickets user={"member"} enquiries={enquiries} />
+            <SubmittedTickets
+              user={"member"}
+              enquiries={enquiries}
+              filterBy={filterBy}
+              setFilterBy={setFilterBy}
+            />
           </div>
         </div>
       </div>

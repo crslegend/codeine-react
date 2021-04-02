@@ -1,6 +1,15 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Chip, Paper, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Chip,
+  Paper,
+  Typography,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+} from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
@@ -39,9 +48,14 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(6),
     marginRight: "30px",
   },
+  formControl: {
+    width: "200px",
+    marginBottom: "20px",
+    marginLeft: "auto",
+  },
 }));
 
-const SubmittedTickets = ({ user, enquiries }) => {
+const SubmittedTickets = ({ user, enquiries, filterBy, setFilterBy }) => {
   const classes = useStyles();
   const history = useHistory();
   //   console.log(enquiries);
@@ -113,6 +127,27 @@ const SubmittedTickets = ({ user, enquiries }) => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
+        <FormControl
+          margin="dense"
+          variant="outlined"
+          className={classes.formControl}
+        >
+          <InputLabel>Enquiry Status</InputLabel>
+          <Select
+            label="Enquiry Status"
+            value={filterBy ? filterBy : ""}
+            onChange={(e) => {
+              setFilterBy(e.target.value);
+            }}
+            style={{ backgroundColor: "#fff" }}
+          >
+            <MenuItem value="">
+              <em>Select a status</em>
+            </MenuItem>
+            <MenuItem value="OPEN">Open</MenuItem>
+            <MenuItem value="RESOLVED">Closed</MenuItem>
+          </Select>
+        </FormControl>
         {enquiries && enquiries.length > 0 ? (
           enquiries.map((enquiry, index) => {
             return (
