@@ -331,7 +331,7 @@ const ViewTicket = ({
         />
         <Divider style={{ margin: "15px 0px" }} />
         <div style={{ marginBottom: "20px" }}>
-          <TagItem enquiry={enquiry} formatDate={formatDate} />
+          <TagItem enquiry={enquiry} formatDate={formatDate} user={user} />
           <Typography
             variant="body2"
             style={{ fontWeight: 600, paddingBottom: "7px" }}

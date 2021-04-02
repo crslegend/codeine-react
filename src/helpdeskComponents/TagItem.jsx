@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TagItem = ({ enquiry, formatDate }) => {
+const TagItem = ({ enquiry, formatDate, user }) => {
   const classes = useStyles();
 
   return (
@@ -82,7 +82,12 @@ const TagItem = ({ enquiry, formatDate }) => {
                   enquiry.consultation_slot.partner.last_name}
               </Typography>
             );
-          } else if (enquiry.ticket_type[0] === "ACCOUNT") {
+          } else if (
+            (enquiry.ticket_type[0] === "ACCOUNT" ||
+              enquiry.ticket_type[0] === "GENERAL" ||
+              enquiry.ticket_type[0] === "TECHNICAL") &&
+            user === "admin"
+          ) {
             return (
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Account ID: </span>{" "}
