@@ -454,6 +454,7 @@ const EnrollCourse = () => {
   };
 
   const handleChosenCourseMaterial = (material) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     console.log(material);
     if (
       chosenCourseMaterial &&
