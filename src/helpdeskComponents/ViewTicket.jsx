@@ -125,7 +125,7 @@ const ViewTicket = ({
     if (status === "OPEN") {
       return (
         <Chip
-          label="Open"
+          label="OPEN"
           style={{
             backgroundColor: "#1A8917",
             color: "#fff",
@@ -137,7 +137,7 @@ const ViewTicket = ({
     } else if (status === "PENDING") {
       return (
         <Chip
-          label="Pending"
+          label="PENDING"
           style={{
             backgroundColor: "#f0ae24",
             color: "#000",
@@ -149,7 +149,7 @@ const ViewTicket = ({
     } else if (status === "RESOLVED") {
       return (
         <Chip
-          label="Closed"
+          label="CLOSED"
           style={{
             fontWeight: 600,
             marginRight: "10px",

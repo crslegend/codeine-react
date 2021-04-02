@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Paper, Typography } from "@material-ui/core";
+import { Avatar, Chip, Paper, Typography } from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
@@ -45,6 +45,44 @@ const SubmittedTickets = ({ user, enquiries }) => {
   const classes = useStyles();
   const history = useHistory();
   //   console.log(enquiries);
+
+  const renderIssueStatusChip = (status) => {
+    if (status === "OPEN") {
+      return (
+        <Chip
+          label="OPEN"
+          style={{
+            backgroundColor: "#1A8917",
+            color: "#fff",
+            fontWeight: 600,
+            marginRight: "10px",
+          }}
+        />
+      );
+    } else if (status === "PENDING") {
+      return (
+        <Chip
+          label="PENDING"
+          style={{
+            backgroundColor: "#f0ae24",
+            color: "#000",
+            fontWeight: 600,
+            marginRight: "10px",
+          }}
+        />
+      );
+    } else if (status === "RESOLVED") {
+      return (
+        <Chip
+          label="CLOSED"
+          style={{
+            fontWeight: 600,
+            marginRight: "10px",
+          }}
+        />
+      );
+    }
+  };
 
   const formatDateToReturnWithoutTime = (date) => {
     const options = {
@@ -94,9 +132,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You enquired on an article.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -113,9 +163,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                             {user === "partner" &&
                               "You have issue with one of your courses."}
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -129,9 +191,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You have issue with your billing/payment.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -145,9 +219,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You experienced some technical issues on Codeine.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -161,9 +247,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You submitted a general enquiry.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -177,9 +275,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You submitted an enquiry relating to your account.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -196,9 +306,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                             {user === "member" &&
                               "You have issue with one of the past consultations that you have attended."}
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -213,9 +335,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                             You have issue with one of the industry projects
                             that you applied for.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
@@ -229,9 +363,21 @@ const SubmittedTickets = ({ user, enquiries }) => {
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
                             You asked about one of your code reviews.
                           </Typography>
-                          <Typography variant="body2" style={{ opacity: 0.7 }}>
-                            {formatDateToReturnWithoutTime(enquiry.timestamp)}
-                          </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {renderIssueStatusChip(enquiry.ticket_status)}
+                            <Typography
+                              variant="body2"
+                              style={{ opacity: 0.7 }}
+                            >
+                              {formatDateToReturnWithoutTime(enquiry.timestamp)}
+                            </Typography>
+                          </div>
                         </div>
                       </div>
                     );
