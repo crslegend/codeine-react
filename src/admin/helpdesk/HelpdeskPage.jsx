@@ -118,7 +118,7 @@ const AdminHelpdeskPage = () => {
     {
       field: "ticket_type",
       headerName: "Type",
-      width: 130,
+      width: 180,
       valueFormatter: (params) => capitalizeFirstLetter(params.value[0]),
     },
     {

@@ -292,10 +292,10 @@ const CreateNewTicket = ({
                           return (
                             <MenuItem
                               key={index}
-                              value={consultation.id}
+                              value={consultation.consultation_slot.id}
                               classes={{ root: classes.resize }}
                             >
-                              {consultation.title}
+                              {consultation.consultation_slot.title}
                             </MenuItem>
                           );
                         })}

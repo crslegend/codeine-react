@@ -61,6 +61,27 @@ const TagItem = ({ enquiry, formatDate }) => {
                 {formatDate(enquiry.transaction.timestamp)}
               </Typography>
             );
+          } else if (enquiry.ticket_type[0] === "CONSULTATION") {
+            return (
+              <Typography variant="body1">
+                <span style={{ fontWeight: 600 }}>Consultation ID: </span>{" "}
+                {enquiry.consultation_slot.id}
+                <br />
+                <span style={{ fontWeight: 600 }}>Consultation: </span>
+                {enquiry.consultation_slot.title}
+                <br />
+                <span style={{ fontWeight: 600 }}>Start Time: </span>
+                {formatDate(enquiry.consultation_slot.start_time)}
+                <br />
+                <span style={{ fontWeight: 600 }}>End Time: </span>
+                {formatDate(enquiry.consultation_slot.end_time)}
+                <br />
+                <span style={{ fontWeight: 600 }}>Partner: </span>
+                {enquiry.consultation_slot.partner.first_name +
+                  " " +
+                  enquiry.consultation_slot.partner.last_name}
+              </Typography>
+            );
           }
         }
         return null;

@@ -105,7 +105,7 @@ const CreateNewTicketPage = () => {
       })
       .then((res) => {
         // console.log(res);
-        setIndustryProjects(res.data);
+        setConsultations(res.data);
       })
       .catch((err) => {
         console.log(err);

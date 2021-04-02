@@ -8,9 +8,9 @@ import {
   Description,
   NoteAdd,
   Person,
+  Timeline,
   Work,
 } from "@material-ui/icons";
-import { Timeline } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
