@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import More from "@material-ui/icons/MoreVert";
-import { Typography, Card, CardContent, Popover } from "@material-ui/core";
+import { Typography, Popover } from "@material-ui/core";
 import Service from "../AxiosService";
+import { useHistory } from "react-router";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -32,6 +33,7 @@ const styles = makeStyles((theme) => ({
 
 const NotificationTile = (props) => {
   const classes = styles();
+  const history = useHistory();
   const { notification } = props;
 
   const calculateDateInterval = (timestamp) => {
@@ -90,8 +92,21 @@ const NotificationTile = (props) => {
     });
   };
 
+  const handleNotifClick = (notifId) => {
+    //history.push();
+    Service.client
+      .patch(`/notification-objects/${notifId}/read`)
+      .then((res) => {})
+      .catch();
+    alert("clicked on notif: " + notifId);
+  };
+
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      onClick={() => handleNotifClick(notification.id)}
+    >
+      {/* <img src={notification.photo} alt=""></img> */}
       <div>
         <Typography
           style={{
@@ -106,16 +121,12 @@ const NotificationTile = (props) => {
         </Typography>
       </div>
       <Typography
-        color="primary"
+        color={notification.notification.is_read ? "" : "primary"}
         style={{ fontSize: "14px", fontWeight: "700" }}
       >
         {calculateDateInterval(notification.notification.timestamp)}
       </Typography>
-      {notification.notification.is_read ? (
-        "true"
-      ) : (
-        <span className={classes.circle} />
-      )}
+      {!notification.is_read && <span className={classes.circle} />}
 
       <More onClick={(e) => handleClick(e, notification.id)} />
       <Popover

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
   Avatar,
@@ -13,8 +13,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Checkbox,
-  FormControlLabel,
   InputLabel,
   Select,
   MenuItem,
@@ -26,6 +24,8 @@ import { DataGrid } from "@material-ui/data-grid";
 import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import EditIcon from "../../assets/EditIcon.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -154,11 +154,11 @@ const AdminNotificationPage = () => {
   });
 
   const createNotification = (e) => {
-    var userList = selectedMemberList.concat(selectedPartnerList);
+    var userList;
 
     e.preventDefault();
 
-    if (notificationDetails.title) {
+    if (notificationDetails.title === "") {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -167,7 +167,7 @@ const AdminNotificationPage = () => {
       });
       return;
     }
-    if (notificationDetails.description) {
+    if (notificationDetails.description === "") {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -176,7 +176,7 @@ const AdminNotificationPage = () => {
       });
       return;
     }
-    if (notificationDetails.notification_type) {
+    if (notificationDetails.notification_type === "") {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -185,7 +185,7 @@ const AdminNotificationPage = () => {
       });
       return;
     }
-    if (selectedMemberList && selectedPartnerList) {
+    if (selectedMemberList.length === 0 && selectedPartnerList.length === 0) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -193,6 +193,8 @@ const AdminNotificationPage = () => {
         severity: "error",
       });
       return;
+    } else {
+      userList = selectedMemberList.rowIds.concat(selectedPartnerList.rowIds);
     }
     if (notificationPhoto && notificationPhoto.length === 0) {
       setSbOpen(true);
@@ -210,17 +212,15 @@ const AdminNotificationPage = () => {
     formData.append("title", notificationDetails.title);
     formData.append("description", notificationDetails.description);
     formData.append("notification_type", notificationDetails.notification_type);
-    formData.append("receiver_ids", userList);
+    formData.append("receiver_ids", JSON.stringify(userList));
+    console.log(userList);
 
-    if (notificationPhoto.length > 0) {
+    if (notificationPhoto && notificationPhoto.length > 0) {
       formData.append("photo", notificationPhoto[0].file);
     }
 
     Service.client
-      .post("/notifications", {
-        ...notificationDetails,
-        userList: userList,
-      })
+      .post("/notifications", formData)
       .then(() => {
         setSbOpen(true);
         setSnackbar({
@@ -238,6 +238,7 @@ const AdminNotificationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Member
   const [allMembersList, setAllMemberList] = useState([]);
 
   const memberColumns = [
@@ -336,25 +337,12 @@ const AdminNotificationPage = () => {
     }
   };
 
+  const [selectedMemberList, setSelectedMemberList] = useState({
+    rowIds: [],
+  });
+
   // Partner
   const [allPartnerList, setAllPartnerList] = useState([]);
-  const [selectedPartner, setSelectedPartner] = useState({
-    id: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    is_active: "",
-    date_joined: "",
-    profile_photo: "",
-    partner: {
-      job_title: "",
-      bio: "",
-      organization: {
-        organization_name: "",
-        organization_photo: "",
-      },
-    },
-  });
 
   const partnerColumns = [
     {
@@ -409,6 +397,7 @@ const AdminNotificationPage = () => {
   ];
 
   let partnerRows = allPartnerList;
+
   const [searchValuePartner, setSearchValuePartner] = useState("");
 
   const getPartnerData = () => {
@@ -446,9 +435,9 @@ const AdminNotificationPage = () => {
     }
   };
 
-  const [selectedMemberList, setSelectedMemberList] = useState([]);
-
-  const [selectedPartnerList, setSelectedPartnerList] = useState([]);
+  const [selectedPartnerList, setSelectedPartnerList] = useState({
+    rowIds: [],
+  });
 
   const [notificationPhoto, setNotificationPhoto] = useState();
 
@@ -555,7 +544,7 @@ const AdminNotificationPage = () => {
                   pageSize={10}
                   checkboxSelection
                   onSelectionChange={(newSelection) => {
-                    setSelectedMemberList(newSelection.rows);
+                    setSelectedMemberList(newSelection);
                   }}
                   //disableSelectionOnClick
                   //onRowClick={(e) => handleClickOpenMember(e)}
@@ -597,6 +586,23 @@ const AdminNotificationPage = () => {
             >
               Send notification
             </Button>
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ textTransform: "capitalize", marginTop: "10px" }}
+              onClick={(e) => {
+                console.log("member list");
+                console.log(selectedMemberList.rowIds);
+                console.log("partner list");
+                console.log(selectedPartnerList.rowIds);
+                console.log("combined list");
+                console.log(
+                  selectedPartnerList.rowIds.concat(selectedMemberList.rowIds)
+                );
+              }}
+            >
+              Click console
+            </Button>
           </Grid>
           <Grid item xs={4}>
             <DropzoneAreaBase
@@ -605,7 +611,7 @@ const AdminNotificationPage = () => {
               acceptedFiles={["image/*"]}
               filesLimit={1}
               fileObjects={notificationPhoto}
-              useChipsForPreview={true}
+              //useChipsForPreview={true}
               maxFileSize={5000000}
               onAdd={(newPhoto) => {
                 setNotificationPhoto(newPhoto);

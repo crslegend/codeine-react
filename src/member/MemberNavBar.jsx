@@ -305,6 +305,7 @@ const MemberNavBar = (props) => {
         }}
       >
         <div className={classes.popover}>
+          <Typography variant="body2" style={{color:"#d6d6d6"}}>Received Notifications</Typography>
           {notificationList.map((notification, index) => {
             return <NotifTile key={index} notification={notification} />;
           })}
