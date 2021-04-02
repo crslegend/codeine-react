@@ -297,7 +297,8 @@ const CourseCreation = () => {
     if (neverChooseOne) {
       setSbOpen(true);
       setSnackbar({
-        message: "Please select at least 1 coding language/framework for your course",
+        message:
+          "Please select at least 1 coding language/framework for your course",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -343,7 +344,10 @@ const CourseCreation = () => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("learning_objectives", JSON.stringify(data.learning_objectives));
+    formData.append(
+      "learning_objectives",
+      JSON.stringify(data.learning_objectives)
+    );
     formData.append("requirements", JSON.stringify(data.requirements));
     formData.append("introduction_video_url", data.introduction_video_url);
 
@@ -433,7 +437,10 @@ const CourseCreation = () => {
             introduction_video_url: res.data.introduction_video_url,
             exp_points: res.data.exp_points,
             pro: res.data.pro,
-            github_repo: res.data.github_repo !== "undefined" || !res.data.github_repo ? res.data.github_repo : "",
+            github_repo:
+              res.data.github_repo !== "undefined" || !res.data.github_repo
+                ? res.data.github_repo
+                : "",
             duration: res.data.duration,
           });
           setCourseDetailsCard({
@@ -811,7 +818,7 @@ const CourseCreation = () => {
             return (
               <Fragment>
                 <div className={classes.topSection}>
-                  <div style={{ maxWidth: "100%" }}>
+                  <div style={{ width: "100%" }}>
                     <Paper className={classes.paper}>
                       <div
                         style={{
@@ -821,9 +828,15 @@ const CourseCreation = () => {
                       >
                         <div style={{ marginRight: "25px" }}>
                           {coursePicAvatar ? (
-                            <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
                           ) : (
-                            <Avatar className={classes.avatar} style={{ padding: "10px" }}>
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
                               No Course Logo Yet
                             </Avatar>
                           )}
@@ -839,8 +852,13 @@ const CourseCreation = () => {
                           >
                             {` ${courseDetailsCard && courseDetailsCard.title}`}
                           </Typography>
-                          <Typography variant="body2" style={{ marginRight: "10px" }}>
-                            {` ${courseDetailsCard && courseDetailsCard.description}`}
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
                           </Typography>
                         </div>
                         <div>
@@ -852,7 +870,13 @@ const CourseCreation = () => {
                     </Paper>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <div style={{ margin: "8px" }}>
                     <PageTitle title="Chapters" />
                   </div>
@@ -912,9 +936,15 @@ const CourseCreation = () => {
                       >
                         <div style={{ marginRight: "25px" }}>
                           {coursePicAvatar ? (
-                            <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
+                            <Avatar
+                              className={classes.avatar}
+                              src={coursePicAvatar[0].data}
+                            />
                           ) : (
-                            <Avatar className={classes.avatar} style={{ padding: "10px" }}>
+                            <Avatar
+                              className={classes.avatar}
+                              style={{ padding: "10px" }}
+                            >
                               No Course Logo Yet
                             </Avatar>
                           )}
@@ -930,8 +960,13 @@ const CourseCreation = () => {
                           >
                             {` ${courseDetailsCard && courseDetailsCard.title}`}
                           </Typography>
-                          <Typography variant="body2" style={{ marginRight: "10px" }}>
-                            {` ${courseDetailsCard && courseDetailsCard.description}`}
+                          <Typography
+                            variant="body2"
+                            style={{ marginRight: "10px" }}
+                          >
+                            {` ${
+                              courseDetailsCard && courseDetailsCard.description
+                            }`}
                           </Typography>
                         </div>
                         <div>
@@ -945,7 +980,12 @@ const CourseCreation = () => {
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div
-                    style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", width: "100%" }}
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
                   >
                     <div style={{ margin: "8px" }}>
                       <PageTitle title="Final Quiz" />
@@ -981,8 +1021,19 @@ const CourseCreation = () => {
                   />
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", margin: "8px 0 32px" }}>
-                  <Button variant="contained" color="primary" onClick={() => setPageNum(1)} style={{ float: "right" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    margin: "8px 0 32px",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setPageNum(1)}
+                    style={{ float: "right" }}
+                  >
                     Back
                   </Button>
                   <Button
@@ -1001,7 +1052,9 @@ const CourseCreation = () => {
               <Fragment>
                 <PageTitle title="Visibility of Course" />
                 <label>
-                  <Typography style={{ marginBottom: "10px" }}>Select option below to publish course or not</Typography>
+                  <Typography style={{ marginBottom: "10px" }}>
+                    Select option below to publish course or not
+                  </Typography>
                 </label>
 
                 <RadioGroup
@@ -1020,8 +1073,15 @@ const CourseCreation = () => {
                     label="Save and publish on Codeine"
                   />
                 </RadioGroup>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <Button variant="contained" color="primary" onClick={() => setPageNum(2)} style={{ float: "right" }}>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setPageNum(2)}
+                    style={{ float: "right" }}
+                  >
                     Back
                   </Button>
                   <Button
@@ -1131,7 +1191,12 @@ const CourseCreation = () => {
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" className={classes.dialogButtons} type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.dialogButtons}
+              type="submit"
+            >
               Save
             </Button>
           </DialogActions>
@@ -1148,7 +1213,10 @@ const CourseCreation = () => {
         }}
       >
         <DialogTitle>Contribute to Codeine's Cause!</DialogTitle>
-        <DialogContent>Kindly make a contribution this month if you wish to publish new courses.</DialogContent>
+        <DialogContent>
+          Kindly make a contribution this month if you wish to publish new
+          courses.
+        </DialogContent>
         <DialogActions>
           <Button
             className={classes.dialogButtons}
@@ -1158,7 +1226,10 @@ const CourseCreation = () => {
           >
             Cancel
           </Button>
-          <Button color="primary" onClick={() => history.push(`/partner/home/contributions`)}>
+          <Button
+            color="primary"
+            onClick={() => history.push(`/partner/home/contributions`)}
+          >
             Go To Contributions
           </Button>
         </DialogActions>
@@ -1173,7 +1244,10 @@ const CourseCreation = () => {
           },
         }}
       >
-        <QuestionBankModal courseId={courseId} closeDialog={() => setQuestionBankModalOpen(false)} />
+        <QuestionBankModal
+          courseId={courseId}
+          closeDialog={() => setQuestionBankModalOpen(false)}
+        />
       </Dialog>
     </Fragment>
   );
