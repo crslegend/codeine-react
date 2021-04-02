@@ -8,12 +8,20 @@ import {
   DialogContent,
   TextField,
   Typography,
+  IconButton,
+  Grid,
+  CardMedia,
+  CardContent,
+  Paper, 
 } from "@material-ui/core";
+import { DataGrid } from "@material-ui/data-grid";
+import SearchBar from "material-ui-search-bar";
 import { ToggleButton } from "@material-ui/lab";
-import { Edit } from "@material-ui/icons";
+import { Edit, ArrowBack } from "@material-ui/icons";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import PageTitle from "../../components/PageTitle";
 import Toast from "../../components/Toast.js";
+import Label from "../../member/landing/components/Label";
 import ProjectCard from "./ProjectCard";
 import { Link, useHistory, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
@@ -38,10 +46,39 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 10,
     marginBottom: 10,
   },
+  root: {
+    width: "100%",
+    padding: "10px 10px",
+    marginTop: "30px",
+    border: "1px solid",
+    borderRadius: 0,
+  },
+  cardmedia: {
+    height: "100%",
+    width: "7vw",
+  },
+  titleSection: {
+    // backgroundColor: "#FFF",
+  },
 }));
 
 const IndustryProjectDetails = () => {
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    if (date !== null) {
+      const newDate = new Date(date).toLocaleDateString(undefined, options);
+      return newDate;
+    }
+    return "";
+  };
+
   const classes = useStyles();
+  const history = useHistory();
   const [industryProject, setIndustryProject] = useState();
   const [editIndustryProject, setEditIndustryProject] = useState();
   const { id } = useParams();
@@ -195,204 +232,371 @@ const IndustryProjectDetails = () => {
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      {industryProject ? (
-        <div>
-          <div className={classes.titleSection}>
-            <PageTitle title={industryProject.title} />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Edit />}
-              onClick={handleOpen}
-            >
-              Edit
-            </Button>
-          </div>
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="form-dialog-title"
-            classes={{ paper: classes.dialogPaper }}
+      <div className={classes.mainSection}>
+        <div style={{ marginTop: "20px" }}>
+          <IconButton
+            onClick={() => history.push("/partner/home/industryproject")}
           >
-            <DialogTitle id="form-dialog-title">
-              Edit Industry Project
-            </DialogTitle>
-            <DialogContent>
-              <label htmlFor="title">
-                <Typography variant="body2">Title (Required)</Typography>
-              </label>
-              <TextField
-                id="title"
-                variant="outlined"
-                placeholder="Enter title"
-                margin="dense"
-                fullWidth
-                name="title"
-                value={editIndustryProject && editIndustryProject.title}
-                onChange={(e) =>
-                  setEditIndustryProject({
-                    ...editIndustryProject,
-                    title: e.target.value,
-                  })
-                }
-                required
-              />
-              <label htmlFor="description">
-                <Typography variant="body2">Description (Required)</Typography>
-              </label>
-              <TextField
-                id="description"
-                variant="outlined"
-                placeholder="Enter description"
-                margin="dense"
-                fullWidth
-                multiline
-                rows={8}
-                name="description"
-                value={editIndustryProject && editIndustryProject.description}
-                onChange={(e) =>
-                  setEditIndustryProject({
-                    ...editIndustryProject,
-                    description: e.target.value,
-                  })
-                }
-                required
-              />
-              <KeyboardDatePicker
-                className={classes.dateTimeField}
-                minDate={currentDate}
-                variant="inline"
-                label="Start Date"
-                name="start_date"
-                value={editIndustryProject && editIndustryProject.start_date}
-                onChange={(e) =>
-                  setEditIndustryProject({
-                    ...editIndustryProject,
-                    start_date: e,
-                  })
-                }
-                format="dd/MM/yyyy"
-              />
-              to
-              <KeyboardDatePicker
-                className={classes.dateTimeField}
-                minDate={afterDate}
-                variant="inline"
-                label="End Date"
-                name="end_date"
-                value={editIndustryProject && editIndustryProject.end_date}
-                onChange={(e) =>
-                  setEditIndustryProject({
-                    ...editIndustryProject,
-                    end_date: e,
-                  })
-                }
-                format="dd/MM/yyyy"
-              />
-              <KeyboardDatePicker
-                className={classes.dateTimeField}
-                minDate={beforeDate}
-                variant="inline"
-                label="Application Deadline"
-                name="application_deadline"
-                value={editIndustryProject && editIndustryProject.application_deadline}
-                onChange={(e) =>
-                  setEditIndustryProject({
-                    ...editIndustryProject,
-                    application_deadline: e,
-                  })
-                }
-                format="dd/MM/yyyy"
-              />
-              <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-                Category (Choost at least 1)
-              </Typography>
-              <div>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.SEC}
-                  onChange={() => {
-                    setCategories({ ...categories, SEC: !categories.SEC });
-                  }}
-                  className={`${classes.languageButtons} ${classes.categoryButtons}`}
-                >
-                  Security
-                </ToggleButton>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.DB}
-                  onChange={() => {
-                    setCategories({ ...categories, DB: !categories.DB });
-                  }}
-                  className={`${classes.categoryButtons}`}
-                >
-                  Database Administration
-                </ToggleButton>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.FE}
-                  onChange={() => {
-                    setCategories({ ...categories, FE: !categories.FE });
-                  }}
-                  className={`${classes.languageButtons} ${classes.categoryButtons}`}
-                >
-                  Frontend
-                </ToggleButton>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.BE}
-                  onChange={() => {
-                    setCategories({ ...categories, BE: !categories.BE });
-                  }}
-                  className={`${classes.languageButtons} ${classes.categoryButtons}`}
-                >
-                  Backend
-                </ToggleButton>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.UI}
-                  onChange={() => {
-                    setCategories({ ...categories, UI: !categories.UI });
-                  }}
-                  className={`${classes.languageButtons} ${classes.categoryButtons}`}
-                >
-                  UI/UX
-                </ToggleButton>
-                <ToggleButton
-                  value=""
-                  size="small"
-                  selected={categories && categories.ML}
-                  onChange={() => {
-                    setCategories({ ...categories, ML: !categories.ML });
-                  }}
-                  className={`${classes.categoryButtons}`}
-                >
-                  Machine Learning
-                </ToggleButton>
-              </div>
-            </DialogContent>
-            <DialogActions style={{ marginTop: 40 }}>
-              <Button onClick={handleClose} color="primary" variant="outlined">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => handleSubmit()}
-                color="primary"
-                variant="contained"
-              >
-                Save
-              </Button>
-            </DialogActions>
-          </Dialog>
+            <ArrowBack />
+          </IconButton>
         </div>
-      ) : (
-        <div>Loading....</div>
-      )}
+        {industryProject ? (
+          <div>
+            <div className={classes.titleSection}>
+              <Grid container justify="space-between">
+                <Grid style={{ backgroundColor: "#FFF" }} item xs={1}>
+                  <CardMedia
+                    className={classes.cardmedia}
+                    image={
+                      industryProject.partner.partner.organization
+                        .organization_photo
+                    }
+                    title="Organisation Photo"
+                  ></CardMedia>
+                </Grid>
+                <Grid style={{ backgroundColor: "#FFF" }} item xs={11}>
+                  <CardContent>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography
+                        style={{
+                          fontWeight: 600,
+                        }}
+                        variant="h5"
+                      >
+                        {industryProject && industryProject.title}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Edit />}
+                        onClick={handleOpen}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                    <Typography variant="h6">
+                      {industryProject &&
+                        industryProject.partner.partner.organization
+                          .organization_name}
+                    </Typography>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "5px",
+                      }}
+                    >
+                      {/* <Typography
+                        style={{
+                          color: "#921515",
+                        }}
+                        variant="h6"
+                      >
+                        apply by{" "}
+                        {industryProject && formatDate(industryProject.application_deadline)}
+                      </Typography> */}
+                    </div>
+                  </CardContent>
+                  {/* <PageTitle title={industryProject.title} /> */}
+                </Grid>
+                <Grid
+                  style={{ backgroundColor: "#FFF", marginTop: 20 }}
+                  item
+                  xs={8}
+                >
+                  <Typography>Categories</Typography>
+                  <div style={{ display: "flex" }}>
+                    {industryProject &&
+                      industryProject.categories.map((category) => (
+                        <Label label={category} />
+                      ))}
+                    {console.log(industryProject)}
+                  </div>
+                  <Typography>Description</Typography>
+                  {industryProject && industryProject.description}
+                </Grid>
+                <Grid
+                  style={{ backgroundColor: "#FFF", marginTop: 20 }}
+                  item
+                  xs={3}
+                >
+                  <Typography> Date Listed: </Typography>
+                  {industryProject && formatDate(industryProject.date_listed)}
+                  <Typography> Start Date:</Typography>
+                  {industryProject && formatDate(industryProject.start_date)}
+                  <Typography> End Date:</Typography>
+                  {industryProject && formatDate(industryProject.end_date)}
+                  <Typography>Application Deadline</Typography>
+                  {industryProject &&
+                    formatDate(industryProject.application_deadline)}
+                </Grid>
+              </Grid>
+              <Typography
+                variant="h5"
+                style={{ marginTop:10, marginBottom: "5px", color: "#437FC7" }}
+              >
+                 Applicants
+              </Typography>
+              {/* <Typography
+                variant="body1"
+                style={{ marginBottom: "30px", color: "#000000" }}
+              >
+                Click on the respective applications below to view application
+                details.
+              </Typography> */}
+              <Grid item xs={12} className={classes.searchSection}>
+                <div className={classes.searchBar}>
+                  <SearchBar
+                    placeholder="Search applications..."
+                    // value={searchValue}
+                    // onChange={(newValue) => setSearchValue(newValue)}
+                    // onRequestSearch={handleRequestSearch}
+                    // onCancelSearch={handleCancelSearch}
+                    // classes={{
+                    //   input: classes.input,
+                    // }}
+                  />
+                </div>
+                <div>
+                  {/* <FormControl
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
+                    <Select
+                      label="Filter by"
+                      value={sortMethod}
+                      onChange={(event) => {
+                        onSortChange(event);
+                      }}
+                      style={{ height: 47, backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value="upcoming">
+                        Upcoming Consultations
+                      </MenuItem>
+                      <MenuItem value="past">Past Applications</MenuItem>
+                    </Select>
+                  </FormControl> */}
+                </div>
+              </Grid>
+              <Paper
+                style={{ height: "650px", width: "100%", marginTop: "20px" }}
+              >
+                {/* <DataGrid
+                  className={classes.dataGrid}
+                  rows={applications}
+                  columns={applicationsColumns.map((column) => ({
+                    ...column,
+                  }))}
+                  pageSize={10}
+                  disableSelectionOnClick
+                  onRowClick={(e) => handleClickOpenApplication(e)}
+                /> */}
+              </Paper>
+            </div>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Edit Industry Project
+              </DialogTitle>
+              <DialogContent>
+                <label htmlFor="title">
+                  <Typography variant="body2">Title (Required)</Typography>
+                </label>
+                <TextField
+                  id="title"
+                  variant="outlined"
+                  placeholder="Enter title"
+                  margin="dense"
+                  fullWidth
+                  name="title"
+                  value={editIndustryProject && editIndustryProject.title}
+                  onChange={(e) =>
+                    setEditIndustryProject({
+                      ...editIndustryProject,
+                      title: e.target.value,
+                    })
+                  }
+                  required
+                />
+                <label htmlFor="description">
+                  <Typography variant="body2">
+                    Description (Required)
+                  </Typography>
+                </label>
+                <TextField
+                  id="description"
+                  variant="outlined"
+                  placeholder="Enter description"
+                  margin="dense"
+                  fullWidth
+                  multiline
+                  rows={8}
+                  name="description"
+                  value={editIndustryProject && editIndustryProject.description}
+                  onChange={(e) =>
+                    setEditIndustryProject({
+                      ...editIndustryProject,
+                      description: e.target.value,
+                    })
+                  }
+                  required
+                />
+                <KeyboardDatePicker
+                  className={classes.dateTimeField}
+                  minDate={currentDate}
+                  variant="inline"
+                  label="Start Date"
+                  name="start_date"
+                  value={editIndustryProject && editIndustryProject.start_date}
+                  onChange={(e) =>
+                    setEditIndustryProject({
+                      ...editIndustryProject,
+                      start_date: e,
+                    })
+                  }
+                  format="dd/MM/yyyy"
+                />
+                to
+                <KeyboardDatePicker
+                  className={classes.dateTimeField}
+                  minDate={afterDate}
+                  variant="inline"
+                  label="End Date"
+                  name="end_date"
+                  value={editIndustryProject && editIndustryProject.end_date}
+                  onChange={(e) =>
+                    setEditIndustryProject({
+                      ...editIndustryProject,
+                      end_date: e,
+                    })
+                  }
+                  format="dd/MM/yyyy"
+                />
+                <KeyboardDatePicker
+                  className={classes.dateTimeField}
+                  minDate={beforeDate}
+                  variant="inline"
+                  label="Application Deadline"
+                  name="application_deadline"
+                  value={
+                    editIndustryProject &&
+                    editIndustryProject.application_deadline
+                  }
+                  onChange={(e) =>
+                    setEditIndustryProject({
+                      ...editIndustryProject,
+                      application_deadline: e,
+                    })
+                  }
+                  format="dd/MM/yyyy"
+                />
+                <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+                  Category (Choost at least 1)
+                </Typography>
+                <div>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.SEC}
+                    onChange={() => {
+                      setCategories({ ...categories, SEC: !categories.SEC });
+                    }}
+                    className={`${classes.languageButtons} ${classes.categoryButtons}`}
+                  >
+                    Security
+                  </ToggleButton>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.DB}
+                    onChange={() => {
+                      setCategories({ ...categories, DB: !categories.DB });
+                    }}
+                    className={`${classes.categoryButtons}`}
+                  >
+                    Database Administration
+                  </ToggleButton>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.FE}
+                    onChange={() => {
+                      setCategories({ ...categories, FE: !categories.FE });
+                    }}
+                    className={`${classes.languageButtons} ${classes.categoryButtons}`}
+                  >
+                    Frontend
+                  </ToggleButton>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.BE}
+                    onChange={() => {
+                      setCategories({ ...categories, BE: !categories.BE });
+                    }}
+                    className={`${classes.languageButtons} ${classes.categoryButtons}`}
+                  >
+                    Backend
+                  </ToggleButton>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.UI}
+                    onChange={() => {
+                      setCategories({ ...categories, UI: !categories.UI });
+                    }}
+                    className={`${classes.languageButtons} ${classes.categoryButtons}`}
+                  >
+                    UI/UX
+                  </ToggleButton>
+                  <ToggleButton
+                    value=""
+                    size="small"
+                    selected={categories && categories.ML}
+                    onChange={() => {
+                      setCategories({ ...categories, ML: !categories.ML });
+                    }}
+                    className={`${classes.categoryButtons}`}
+                  >
+                    Machine Learning
+                  </ToggleButton>
+                </div>
+              </DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <Button
+                  onClick={handleClose}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleSubmit()}
+                  color="primary"
+                  variant="contained"
+                >
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+        ) : (
+          <div>Loading....</div>
+        )}
+      </div>
     </Fragment>
   );
 };
