@@ -156,6 +156,7 @@ const PublicProfile = (props) => {
   const history = useHistory();
   const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
@@ -192,6 +193,9 @@ const PublicProfile = (props) => {
           setLoggedIn(true);
           if (res.data.member !== null) {
             setUserType("member");
+            if (userid === id) {
+              setIsOwner(true);
+            }
           } else if (res.data.is_admin) {
             setUserType("admin");
           } else if (res.data.partner !== null) {
@@ -442,6 +446,24 @@ const PublicProfile = (props) => {
 
           <Card elevation={0} className={classes.cardroot}>
             <CardContent>
+              {isOwner && isOwner === true ? (
+                <Button
+                  style={{
+                    float: "right",
+                    textTransform: "capitalize",
+                    marginTop: "-50px",
+                    padding: "8px 8px",
+                  }}
+                  size="small"
+                  color="primary"
+                  variant="contained"
+                >
+                  Edit Profile
+                </Button>
+              ) : (
+                ""
+              )}
+
               <div style={{ display: "flex" }}>
                 <Typography variant="h6" style={{ fontWeight: 600 }}>
                   {member && member.first_name} {member && member.last_name}
