@@ -409,6 +409,7 @@ const CourseCreation = () => {
           setDrawerOpen(false);
           setDrawerPageNum(1);
           localStorage.setItem("courseId", res.data.id);
+          localStorage.removeItem("courseType");
           setCoursePicAvatar();
           getCourse();
           setSbOpen(true);
@@ -586,6 +587,13 @@ const CourseCreation = () => {
           }
         })
         .catch((err) => console.log(err));
+    } else {
+      const courseType = localStorage.getItem("courseType");
+      // console.log(courseType);
+      setCourseDetails({
+        ...courseDetails,
+        pro: courseType === "pro" ? true : false,
+      });
     }
   };
 
