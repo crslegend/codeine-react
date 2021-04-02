@@ -36,7 +36,7 @@ const ViewSubmittedTicketsPage = () => {
     Service.client
       .get(`helpdesk/tickets`, { params: { is_user: "true" } })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setEnquiries(res.data);
       })
       .catch((err) => console.log(err));
