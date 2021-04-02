@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     display: "flex",
     flexDirection: "column",
-    padding: theme.spacing(3),
+    // padding: theme.spacing(3),
     marginBottom: "20px",
     width: "100%",
   },
@@ -68,6 +68,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "2px",
     backgroundColor: "#fff",
     padding: theme.spacing(2),
+  },
+  coursePicPlaceholder: {
+    backgroundColor: "#4a4a4a",
+    height: "160px",
+    width: "100%",
+    padding: theme.spacing(2),
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  coursePicWithoutPlaceholder: {
+    height: "100%",
+    width: "100%",
   },
 }));
 
@@ -826,8 +839,31 @@ const CourseCreation = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div style={{ marginRight: "25px" }}>
+                        <div style={{ width: "25%" }}>
                           {coursePicAvatar ? (
+                            <div
+                              className={classes.coursePicWithoutPlaceholder}
+                            >
+                              <img
+                                alt="course thumbnail"
+                                src={coursePicAvatar[0].data}
+                                width="100%"
+                                height="100%"
+                                style={{ objectFit: "cover" }}
+                              />
+                            </div>
+                          ) : (
+                            <div className={classes.coursePicPlaceholder}>
+                              <Typography
+                                variant="h5"
+                                style={{ textAlign: "center", color: "#fff" }}
+                              >
+                                No Course Thumbnail
+                              </Typography>
+                            </div>
+                          )}
+
+                          {/* {coursePicAvatar ? (
                             <Avatar
                               className={classes.avatar}
                               src={coursePicAvatar[0].data}
@@ -839,9 +875,15 @@ const CourseCreation = () => {
                             >
                               No Course Logo Yet
                             </Avatar>
-                          )}
+                          )} */}
                         </div>
-                        <div style={{ flexDirection: "column" }}>
+                        <div
+                          style={{
+                            flexDirection: "column",
+                            padding: "24px",
+                            width: "75%",
+                          }}
+                        >
                           <Typography
                             variant="h5"
                             style={{
