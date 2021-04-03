@@ -242,6 +242,32 @@ const IndustryProjectDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleDeleteSubmit = () => {
+    const data = {
+      is_available: true
+    }
+
+    Service.client
+      .patch(`/industry-projects/${id}`, { is_available: false })
+      .then((res) => {
+        setOpenDeleteDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "Industry project deleted successfully!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .then((res) => {
+        history.push("/partner/home/industryproject")
+      })
+
+  }
+
   const handleClose = () => {
     setOpenEditDialog(false);
     setOpenDeleteDialog(false);
@@ -472,7 +498,7 @@ const IndustryProjectDetails = () => {
                   Cancel
                 </Button>
                 <Button
-                  // onClick={() => handleDeleteSubmit()}
+                  onClick={() => handleDeleteSubmit()}
                   className={classes.deleteButton}
                   variant="contained"
                 >

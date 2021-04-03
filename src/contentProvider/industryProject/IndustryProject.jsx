@@ -85,6 +85,7 @@ const IndustryProject = () => {
   let queryParams = {
     //   search: searchValue,
     partner_id: decoded.user_id,
+    isAvailable: true
   };
 
   const getAllIndustryProjects = () => {
