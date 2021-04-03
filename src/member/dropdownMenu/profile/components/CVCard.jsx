@@ -56,7 +56,6 @@ const ExperienceCard = (props) => {
     const options = {
       year: "numeric",
       month: "long",
-      day: "numeric",
     };
 
     if (date !== null) {

@@ -32,7 +32,7 @@ import EditIcon from "../../../assets/EditIcon.svg";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+import { DatePicker } from "@material-ui/pickers";
 import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
@@ -279,8 +279,12 @@ const Profile = (props) => {
           setProfileDetails(res.data);
           Service.client
             .get(`/auth/cvs`)
-            .then((res1) => {
-              setCVList(res1.data);
+            .then((res) => {
+              setCVList(
+                res.data.sort((a, b) =>
+                  b.start_date.localeCompare(a.start_date)
+                )
+              );
             })
             .catch();
         })
@@ -431,7 +435,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a Description!",
+        message: "Please enter a Job Description!",
         severity: "error",
       });
       return true;
@@ -440,7 +444,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter an Organisation!",
+        message: "Please enter the Organisation Name!",
         severity: "error",
       });
       return true;
@@ -1217,8 +1221,9 @@ const Profile = (props) => {
                 <label htmlFor="start_date">
                   <Typography variant="body2">Start Date</Typography>
                 </label>
-                <KeyboardDatePicker
-                  format="MM/dd/yyyy"
+                <DatePicker
+                  openTo="year"
+                  views={["year", "month"]}
                   margin="normal"
                   id="start_date"
                   name="start_date"
@@ -1240,8 +1245,9 @@ const Profile = (props) => {
                 <label htmlFor="end_date">
                   <Typography variant="body2">End Date</Typography>
                 </label>
-                <KeyboardDatePicker
-                  format="MM/dd/yyyy"
+                <DatePicker
+                  openTo="year"
+                  views={["year", "month"]}
                   margin="normal"
                   id="end_date"
                   name="end_date"
