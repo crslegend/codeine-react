@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import More from "@material-ui/icons/MoreVert";
-import { Typography, Popover, Grid, Avatar } from "@material-ui/core";
+import More from "@material-ui/icons/MoreHoriz";
+import {
+  Typography,
+  Popover,
+  Grid,
+  Avatar,
+  IconButton,
+} from "@material-ui/core";
 import Service from "../AxiosService";
 import { useHistory } from "react-router";
 
@@ -22,10 +28,16 @@ const styles = makeStyles((theme) => ({
       color: "#000000",
     },
   },
-  circle: {
-    height: "20px",
-    width: "20px",
+  bluecircle: {
+    height: "15px",
+    width: "15px",
     backgroundColor: theme.palette.primary.main,
+    borderRadius: "50%",
+    display: "inline-block",
+  },
+  whitecircle: {
+    height: "15px",
+    width: "15px",
     borderRadius: "50%",
     display: "inline-block",
   },
@@ -34,7 +46,7 @@ const styles = makeStyles((theme) => ({
 const NotificationTile = (props) => {
   const classes = styles();
   const history = useHistory();
-  const { notification } = props;
+  const { notification, getUserNotifications } = props;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -78,9 +90,9 @@ const NotificationTile = (props) => {
     anchorEl: null,
   });
 
-  const handleClick = (event, courseId) => {
+  const handleClick = (event, notifId) => {
     setPopover({
-      popoverId: courseId,
+      popoverId: notifId,
       anchorEl: event.currentTarget,
     });
   };
@@ -90,7 +102,12 @@ const NotificationTile = (props) => {
       popoverId: null,
       anchorEl: null,
     });
+    setShowEditIcon(false);
   };
+
+  const [hoveredNotif, setHoveredNotif] = useState({
+    is_read: true,
+  });
 
   const handleNotifClick = (notifId) => {
     //history.push();
@@ -101,100 +118,149 @@ const NotificationTile = (props) => {
           history.push(
             `/member/helpdesk/tickets/${res.data.notification.ticket.id}`
           );
+        } else if (
+          res.data.notification.notification_type === "GENERAL" ||
+          res.data.notification.notification_type === "ANNOUNCEMENT"
+        ) {
+          history.push(`/viewnotification/${res.data.notification.id}`);
         }
       })
       .catch();
     alert("clicked on notif: " + notifId);
   };
 
+  const [showEditIcon, setShowEditIcon] = useState();
+
+  const markUnread = (notifId) => {
+    Service.client
+      .patch(`/notification-objects/${notifId}/unread`)
+      .then(() => {
+        getUserNotifications();
+      })
+      .catch();
+  };
+
+  const markRead = (notifId) => {
+    Service.client
+      .patch(`/notification-objects/${notifId}/read`)
+      .then(() => {
+        getUserNotifications();
+      })
+      .catch();
+  };
+
   return (
     <div
       className={classes.root}
-      onClick={() => handleNotifClick(notification.id)}
+      onMouseEnter={() => {
+        setShowEditIcon(true);
+        setHoveredNotif(notification);
+      }}
+      onMouseLeave={() => {
+        setShowEditIcon(false);
+      }}
     >
-      <Grid container>
-        <Grid item xs={11}>
-          <div style={{ display: "flex" }}>
-            <Avatar
-              src={notification.notification && notification.notification.photo}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
-            <div style={{ marginLeft: "10px" }}>
-              {notification.is_read ? (
-                <>
-                  <Typography
-                    style={{
-                      fontWeight: 700,
-                      color: "#65676B",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {notification.notification &&
-                      notification.notification.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    style={{
-                      color: "#65676B",
-                      cursor: "pointer",
-                      fontSize: "13px",
-                    }}
-                  >
-                    {notification.notification &&
-                      notification.notification.description}
-                  </Typography>
-                  <Typography
-                    style={{
-                      fontSize: "12px",
-                      color: "#65676B",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {calculateDateInterval(notification.notification.timestamp)}
-                  </Typography>
-                </>
-              ) : (
-                <>
-                  <Typography
-                    style={{
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {notification.notification &&
-                      notification.notification.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    style={{ cursor: "pointer", fontSize: "13px" }}
-                  >
-                    {notification.notification &&
-                      notification.notification.description}
-                  </Typography>
-                  <Typography
-                    color="primary"
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {calculateDateInterval(notification.notification.timestamp)}
-                  </Typography>
-                </>
-              )}
-            </div>
+      <div style={{ display: "flex", position: "relative" }}>
+        <div
+          style={{ display: "flex", width: `calc(100% - 30px)` }}
+          onClick={() => handleNotifClick(notification.id)}
+        >
+          <Avatar
+            src={notification.notification && notification.notification.photo}
+            alt=""
+            style={{ height: "65px", width: "65px" }}
+          ></Avatar>
+          <div style={{ marginLeft: "10px" }}>
+            {notification.is_read ? (
+              <>
+                <Typography
+                  style={{
+                    fontWeight: 700,
+                    color: "#797a7d",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  {notification.notification && notification.notification.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  style={{
+                    color: "#797a7d",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                  }}
+                >
+                  {notification.notification &&
+                    notification.notification.description}
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "12px",
+                    color: "#797a7d",
+                    cursor: "pointer",
+                  }}
+                >
+                  {calculateDateInterval(notification.notification.timestamp)}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography
+                  style={{
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  {notification.notification && notification.notification.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  style={{ cursor: "pointer", fontSize: "13px" }}
+                >
+                  {notification.notification &&
+                    notification.notification.description}
+                </Typography>
+                <Typography
+                  color="primary"
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  {calculateDateInterval(notification.notification.timestamp)}
+                </Typography>
+              </>
+            )}
           </div>
-        </Grid>
-        <Grid item xs={1}>
-          {!notification.is_read && <span className={classes.circle} />}
-        </Grid>
-      </Grid>
+        </div>
 
-      {/* <More onClick={(e) => handleClick(e, notification.id)} /> */}
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            right: "0",
+            marginLeft: "auto",
+          }}
+        >
+          <div>
+            {(showEditIcon || popover.popoverId === notification.id) && (
+              <IconButton onClick={(e) => handleClick(e, notification.id)}>
+                <More />
+              </IconButton>
+            )}
+          </div>
+
+          {!notification.is_read ? (
+            <span className={classes.bluecircle} />
+          ) : (
+            <span className={classes.whitecircle} />
+          )}
+        </div>
+      </div>
+
       <Popover
         open={popover.popoverId === notification.id}
         onClose={handleClose}
@@ -208,6 +274,30 @@ const NotificationTile = (props) => {
           horizontal: "right",
         }}
       >
+        {hoveredNotif.is_read ? (
+          <Typography
+            variant="body2"
+            className={classes.typography}
+            onClick={() => {
+              handleClose();
+              markUnread(notification.id);
+            }}
+          >
+            ✔ Mark as unread
+          </Typography>
+        ) : (
+          <Typography
+            variant="body2"
+            className={classes.typography}
+            onClick={() => {
+              handleClose();
+              markRead(notification.id);
+            }}
+          >
+            ✔ Mark as read
+          </Typography>
+        )}
+
         <Typography
           variant="body2"
           className={classes.typography}
@@ -215,16 +305,7 @@ const NotificationTile = (props) => {
             handleClose();
           }}
         >
-          Edit this reponse
-        </Typography>
-        <Typography
-          variant="body2"
-          className={classes.typography}
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          Delete
+          X Delete Notification
         </Typography>
       </Popover>
     </div>

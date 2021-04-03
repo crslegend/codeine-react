@@ -263,7 +263,13 @@ const MemberNavBar = (props) => {
           </Typography>
 
           {notificationList.slice(0, 20).map((notification, index) => {
-            return <NotifTile key={index} notification={notification} />;
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+              />
+            );
           })}
         </div>
         <div

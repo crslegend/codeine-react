@@ -9,6 +9,8 @@ import {
   ListItem,
   Button,
   Link,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import { useHistory, useLocation } from "react-router";
@@ -17,10 +19,16 @@ import Navbar from "../components/Navbar";
 import PageTitle from "../components/PageTitle";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
+import NotifTile from "../components/NotificationTile";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const styles = makeStyles((theme) => ({
+  root: {
+    width: "50%",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
   notiftile: {
     width: "100%",
     cursor: "pointer",
@@ -43,6 +51,16 @@ const styles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     borderRadius: "50%",
     display: "inline-block",
+  },
+  markallasread: {
+    marginLeft: "auto",
+    marginTop: "30px",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      cursor: "pointer",
+      textDecoration: "underline",
+    },
   },
 }));
 
@@ -179,7 +197,9 @@ const AllNotifications = (props) => {
   const markAllAsRead = () => {
     Service.client
       .patch(`/notification-objects/mark/multiple-read`)
-      .then((res) => {})
+      .then((res) => {
+        setNotificationList(res.data);
+      })
       .catch();
     alert("mark all as read");
   };
@@ -246,104 +266,25 @@ const AllNotifications = (props) => {
         <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       )}
 
-      <div style={{ display: "flex", marginTop: "65px" }}>
-        <PageTitle title="Notifications" />
-        <Typography style={{ marginLeft: "auto" }} onClick={() => {
-          alert("mark all as read");
-          markAllAsRead();
-        }}>
-          ✔ Mark all as read
-        </Typography>
-      </div>
-
-      {notificationList.map((notification, index) => {
-        return (
-          <div key={notification.id} className={classes.notiftile}>
-            <Grid container>
-              <Grid item xs={11}>
-                <div style={{ display: "flex" }}>
-                  <Avatar
-                    src={
-                      notification.notification &&
-                      notification.notification.photo
-                    }
-                    alt=""
-                    style={{ height: "70px", width: "70px" }}
-                  ></Avatar>
-                  <div style={{ marginLeft: "10px" }}>
-                    {notification.is_read ? (
-                      <>
-                        <Typography
-                          style={{
-                            fontWeight: 700,
-                            color: "#65676B",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {notification.notification &&
-                            notification.notification.title}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          style={{ color: "#65676B", cursor: "pointer" }}
-                        >
-                          {notification.notification &&
-                            notification.notification.description}
-                        </Typography>
-                        <Typography
-                          style={{
-                            fontSize: "12px",
-                            color: "#65676B",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {calculateDateInterval(
-                            notification.notification.timestamp
-                          )}
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <Typography
-                          style={{
-                            fontWeight: 700,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {notification.notification &&
-                            notification.notification.title}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          style={{ cursor: "pointer" }}
-                        >
-                          {notification.notification &&
-                            notification.notification.description}
-                        </Typography>
-                        <Typography
-                          color="primary"
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {calculateDateInterval(
-                            notification.notification.timestamp
-                          )}
-                        </Typography>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={1}>
-                {!notification.is_read && <span className={classes.circle} />}
-              </Grid>
-            </Grid>
+      <Card style={{ marginTop: "80px" }}>
+        <CardContent>
+          <div style={{ display: "flex" }}>
+            <PageTitle title="Notifications" />
+            <Typography
+              className={classes.markallasread}
+              onClick={() => {
+                alert("mark all as read");
+                markAllAsRead();
+              }}
+            >
+              ✔ Mark all as read
+            </Typography>
           </div>
-        );
-      })}
+          {notificationList.map((notification, index) => {
+            return <NotifTile key={index} notification={notification} />;
+          })}
+        </CardContent>
+      </Card>
 
       {/* <More onClick={(e) => handleClick(e, notification.id)} /> */}
       {/* <Popover
