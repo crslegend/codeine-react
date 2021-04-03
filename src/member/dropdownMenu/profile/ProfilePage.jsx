@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import {
   Button,
   CircularProgress,
-  Paper,
   TextField,
   Typography,
   Avatar,
@@ -21,11 +21,14 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  Tabs,
+  Tab,
+  Box,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { Mood, Lock, Close } from "@material-ui/icons";
+import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import CloseIcon from "@material-ui/icons/Close";
 import Toast from "../../../components/Toast.js";
 import validator from "validator";
 import EditIcon from "../../../assets/EditIcon.svg";
@@ -37,6 +40,18 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: "transparent",
+    display: "flex",
+    height: 224,
+  },
+  indicator: {
+    backgroundColor: "transparent",
+  },
+  selected: {
+    backgroundColor: "#FFFFFF",
+  },
   dropzone: {
     "@global": {
       ".MuiDropzoneArea-text.MuiTypography-h5": {
@@ -47,8 +62,9 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     height: "100%",
-    padding: theme.spacing(3),
-    width: "100%",
+    paddingTop: theme.spacing(3),
+    width: "1200px",
+    margin: "0 auto",
   },
   avatar: {
     fontSize: "80px",
@@ -100,7 +116,48 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  profileLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
+  },
 }));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `vertical-tab-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`,
+  };
+}
 
 const SmallAvatar = withStyles((theme) => ({
   root: {
@@ -124,6 +181,12 @@ const Profile = (props) => {
     },
     autoHideDuration: 3000,
   });
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const [dialogopen, setDialogOpen] = useState(false);
   const [sortMethod, setSortMethod] = useState("");
@@ -511,22 +574,68 @@ const Profile = (props) => {
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
         <div style={{ width: "80%", margin: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <PageTitle title="Profile Details" />
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                marginLeft: "auto",
-                height: 35,
-                textTransform: "capitalize",
-              }}
-              onClick={() => {
-                history.push("/member/profile/changepassword");
-              }}
+          <Typography
+            variant="h2"
+            style={{ fontWeight: "bold", marginBottom: "20px" }}
+          >
+            Settings for{" "}
+            <Link
+              className={classes.profileLink}
+              onClick={() =>
+                history.push(`/member/profile/${profileDetails.id}`)
+              }
             >
-              Change Password
-            </Button>
+              {profileDetails && profileDetails.first_name}{" "}
+              {profileDetails && profileDetails.last_name}
+            </Link>
+          </Typography>
+
+          <div className={classes.root}>
+            <Tabs
+              orientation="vertical"
+              variant="scrollable"
+              value={value}
+              onChange={handleChange}
+              classes={{
+                indicator: classes.indicator,
+              }}
+              aria-label="Vertical tabs"
+            >
+              <Tab
+                style={{
+                  textTransform: "none",
+                }}
+                classes={{
+                  selected: classes.selected,
+                }}
+                label={
+                  <div>
+                    <Mood style={{ verticalAlign: "middle" }} /> Profile
+                  </div>
+                }
+                {...a11yProps(0)}
+              />
+              <Tab
+                style={{
+                  textTransform: "none",
+                }}
+                classes={{
+                  selected: classes.selected,
+                }}
+                label={
+                  <div>
+                    <Lock style={{ verticalAlign: "middle" }} /> Account
+                  </div>
+                }
+                {...a11yProps(1)}
+              />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              Item One
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              Item Two
+            </TabPanel>
           </div>
 
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
@@ -999,7 +1108,7 @@ const Profile = (props) => {
               setUploadOpen(false);
             }}
           >
-            <CloseIcon />
+            <Close />
           </IconButton>
         </DialogTitle>
 

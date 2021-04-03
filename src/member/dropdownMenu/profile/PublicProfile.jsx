@@ -157,7 +157,7 @@ const PublicProfile = (props) => {
   const history = useHistory();
   const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isOwner, setIsOwner] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
 
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
@@ -449,6 +449,7 @@ const PublicProfile = (props) => {
             <CardContent>
               {isOwner && isOwner === true ? (
                 <IconButton
+                  onClick={() => history.push("/member/profile")}
                   style={{
                     float: "right",
                     //marginTop: "-50px",
