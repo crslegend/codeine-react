@@ -69,14 +69,17 @@ const useStyles = makeStyles((theme) => ({
       border: `1px solid ${red[500]}`,
       backgroundColor: `${fade(red[500], 0.1)}`,
     },
-    // Disabled styles for outlined button...
-    // NOTE: You need to pass `classes={{disabled: classes.diabled}}` to
-    // the Button component for these styles to work. You also need have
-    // a .disabled class in your style rules.
     "&$disabled": {
       border: `1px solid ${theme.palette.action.disabled}`,
     },
   },
+  deleteButton: {
+    backgroundColor: theme.palette.red.main,
+    color: "white",
+    "&:hover": {
+      backgroundColor: theme.palette.darkred.main,
+    },
+  }
 }));
 
 const IndustryProjectDetails = () => {
@@ -124,7 +127,8 @@ const IndustryProjectDetails = () => {
     ML: false,
   });
 
-  const [open, setOpen] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   let decoded;
   if (Cookies.get("t1")) {
@@ -218,7 +222,7 @@ const IndustryProjectDetails = () => {
     Service.client
       .patch(`/industry-projects/${id}`, formData)
       .then((res) => {
-        setOpen(false);
+        setOpenEditDialog(false);
         setSbOpen(true);
         setSnackbar({
           message: "Industry project updated successfully!",
@@ -239,11 +243,16 @@ const IndustryProjectDetails = () => {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenEditDialog(false);
+    setOpenDeleteDialog(false);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenEditDialog = () => {
+    setOpenEditDialog(true);
+  };
+
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
   };
 
   return (
@@ -291,7 +300,7 @@ const IndustryProjectDetails = () => {
                         variant="contained"
                         color="primary"
                         startIcon={<Edit />}
-                        onClick={handleOpen}
+                        onClick={handleOpenEditDialog}
                       >
                         Edit
                       </Button>
@@ -371,6 +380,7 @@ const IndustryProjectDetails = () => {
                       variant="outlined"
                       className={classes.outlined}
                       classes={{ disabled: classes.disabled }}
+                      onClick={handleOpenDeleteDialog}
                     >
                       Delete
                     </Button>
@@ -444,7 +454,34 @@ const IndustryProjectDetails = () => {
               </Paper>
             </div>
             <Dialog
-              open={open}
+              open={openDeleteDialog}
+              onClose={handleClose}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Delete Industry Project?
+              </DialogTitle>
+              <DialogContent>Are you sure you want to delete this industry project?</DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <Button
+                  onClick={handleClose}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  // onClick={() => handleDeleteSubmit()}
+                  className={classes.deleteButton}
+                  variant="contained"
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={openEditDialog}
               onClose={handleClose}
               aria-labelledby="form-dialog-title"
               classes={{ paper: classes.dialogPaper }}
