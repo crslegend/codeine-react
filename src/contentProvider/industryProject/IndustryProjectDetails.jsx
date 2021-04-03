@@ -12,14 +12,15 @@ import {
   Grid,
   CardMedia,
   CardContent,
-  Paper, 
+  Paper,
 } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import { ToggleButton } from "@material-ui/lab";
 import { Edit, ArrowBack } from "@material-ui/icons";
 import { KeyboardDatePicker } from "@material-ui/pickers";
-import PageTitle from "../../components/PageTitle";
+import red from "@material-ui/core/colors/red";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import Toast from "../../components/Toast.js";
 import Label from "../../member/landing/components/Label";
 import ProjectCard from "./ProjectCard";
@@ -59,6 +60,22 @@ const useStyles = makeStyles((theme) => ({
   },
   titleSection: {
     // backgroundColor: "#FFF",
+  },
+  outlined: {
+    marginTop: 25,
+    border: `1px solid ${fade(red[500], 0.5)}`,
+    color: "red",
+    "&:hover": {
+      border: `1px solid ${red[500]}`,
+      backgroundColor: `${fade(red[500], 0.1)}`,
+    },
+    // Disabled styles for outlined button...
+    // NOTE: You need to pass `classes={{disabled: classes.diabled}}` to
+    // the Button component for these styles to work. You also need have
+    // a .disabled class in your style rules.
+    "&$disabled": {
+      border: `1px solid ${theme.palette.action.disabled}`,
+    },
   },
 }));
 
@@ -290,57 +307,81 @@ const IndustryProjectDetails = () => {
                         justifyContent: "space-between",
                         marginTop: "5px",
                       }}
-                    >
-                      {/* <Typography
-                        style={{
-                          color: "#921515",
-                        }}
-                        variant="h6"
-                      >
-                        apply by{" "}
-                        {industryProject && formatDate(industryProject.application_deadline)}
-                      </Typography> */}
-                    </div>
+                    ></div>
                   </CardContent>
-                  {/* <PageTitle title={industryProject.title} /> */}
                 </Grid>
-                <Grid
-                  style={{ backgroundColor: "#FFF", marginTop: 20 }}
-                  item
-                  xs={8}
+                <div
+                  style={{
+                    width: "61%",
+                    backgroundColor: "#FFF",
+                    marginTop: 20,
+                  }}
                 >
-                  <Typography>Categories</Typography>
-                  <div style={{ display: "flex" }}>
+                  <CardContent>
+                    <Typography style={{ fontWeight: 600 }}>
+                      Categories
+                    </Typography>
+                    <div style={{ display: "flex", marginTop: 5 }}>
+                      {industryProject &&
+                        industryProject.categories.map((category) => (
+                          <Label label={category} />
+                        ))}
+                      {console.log(industryProject)}
+                    </div>
+                    <Typography
+                      style={{
+                        marginTop: 15,
+                        marginBottom: 5,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Description
+                    </Typography>
+                    {industryProject && industryProject.description}
+                  </CardContent>
+                </div>
+                <div
+                  style={{
+                    width: "36%",
+                    backgroundColor: "#FFF",
+                    marginTop: 20,
+                  }}
+                >
+                  <CardContent>
+                    <Typography style={{ fontWeight: 600 }}>
+                      Date Listed:
+                    </Typography>
+                    {industryProject && formatDate(industryProject.date_listed)}
+                    <Typography style={{ fontWeight: 600, marginTop: 15 }}>
+                      Start Date:
+                    </Typography>
+                    {industryProject && formatDate(industryProject.start_date)}
+                    <Typography style={{ fontWeight: 600, marginTop: 15 }}>
+                      End Date:
+                    </Typography>
+                    {industryProject && formatDate(industryProject.end_date)}
+                    <Typography style={{ fontWeight: 600, marginTop: 15 }}>
+                      Application Deadline:
+                    </Typography>
                     {industryProject &&
-                      industryProject.categories.map((category) => (
-                        <Label label={category} />
-                      ))}
-                    {console.log(industryProject)}
-                  </div>
-                  <Typography>Description</Typography>
-                  {industryProject && industryProject.description}
-                </Grid>
-                <Grid
-                  style={{ backgroundColor: "#FFF", marginTop: 20 }}
-                  item
-                  xs={3}
-                >
-                  <Typography> Date Listed: </Typography>
-                  {industryProject && formatDate(industryProject.date_listed)}
-                  <Typography> Start Date:</Typography>
-                  {industryProject && formatDate(industryProject.start_date)}
-                  <Typography> End Date:</Typography>
-                  {industryProject && formatDate(industryProject.end_date)}
-                  <Typography>Application Deadline</Typography>
-                  {industryProject &&
-                    formatDate(industryProject.application_deadline)}
-                </Grid>
+                      formatDate(industryProject.application_deadline)}
+
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      className={classes.outlined}
+                      classes={{ disabled: classes.disabled }}
+                    >
+                      Delete
+                    </Button>
+                  </CardContent>
+                </div>
               </Grid>
               <Typography
                 variant="h5"
-                style={{ marginTop:10, marginBottom: "5px", color: "#437FC7" }}
+                style={{ marginTop: 10, marginBottom: "5px", color: "#437FC7" }}
               >
-                 Applicants
+                Applicants
               </Typography>
               {/* <Typography
                 variant="body1"
