@@ -96,7 +96,7 @@ const ContributionsPage = () => {
             checkExist = true;
           }
           const obj = {
-            id: res.data[i].id,
+            id: res.data[i].payment_transaction.id,
             payment_amount: res.data[i].payment_transaction.payment_amount,
             payment_type: res.data[i].payment_transaction.payment_type,
             payment_status: res.data[i].payment_transaction.payment_status,

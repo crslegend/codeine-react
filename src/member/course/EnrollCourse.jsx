@@ -454,6 +454,7 @@ const EnrollCourse = () => {
   };
 
   const handleChosenCourseMaterial = (material) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     console.log(material);
     if (
       chosenCourseMaterial &&
@@ -772,6 +773,8 @@ const EnrollCourse = () => {
                           courseId={id}
                           progress={progress}
                           setProgress={setProgress}
+                          canBookConsult={canBookConsult}
+                          course={course}
                         />
                       </div>
                     );

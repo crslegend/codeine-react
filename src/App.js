@@ -14,6 +14,7 @@ import MemberConsultationPage from "./member/dropdownMenu/consultation/Consultat
 import MemberProfilePage from "./member/dropdownMenu/profile/ProfilePage";
 import MemberPasswordPage from "./member/dropdownMenu/password/PasswordPage";
 import MemberPaymentPage from "./member/dropdownMenu/payment/PaymentPage";
+import MemberHelpdeskPage from "./member/dropdownMenu/helpdesk/HelpdeskPage";
 import ContentProviderLanding from "./contentProvider/landingPage/ContentProviderLanding";
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRoutesPage from "./admin/AdminRoutesPage";
@@ -39,6 +40,10 @@ import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
+import Membership from "./member/membership/Membership";
+import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
+import ViewTicketPage from "./member/dropdownMenu/helpdesk/ViewTicketPage";
 
 const App = () => {
   return (
@@ -167,6 +172,37 @@ const App = () => {
         exact
         path="/member/consultations"
         component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk"
+        component={MemberHelpdeskPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk/contact-us"
+        component={CreateNewTicketPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/helpdesk/tickets"
+        component={ViewSubmittedTicketsPage}
+        user="member"
+      />
+      <PrivateRoute
+        strict
+        sensitive
+        path="/member/helpdesk/tickets/:id"
+        component={ViewTicketPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/membership"
+        component={Membership}
         user="member"
       />
       <PrivateRoute
