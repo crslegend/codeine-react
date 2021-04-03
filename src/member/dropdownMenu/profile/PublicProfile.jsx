@@ -5,6 +5,7 @@ import {
   ListItem,
   Card,
   CardContent,
+  IconButton,
   Button,
   Typography,
   Avatar,
@@ -19,7 +20,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@material-ui/core";
-import { LocationOn, Email } from "@material-ui/icons";
+import { LocationOn, Email, Edit } from "@material-ui/icons";
 import {
   Radar,
   RadarChart,
@@ -44,8 +45,8 @@ import ExperienceCard from "./components/ExperienceCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(7),
+    width: "1200px",
+    margin: "0 auto",
     paddingTop: "65px",
   },
   cardroot: {
@@ -156,7 +157,7 @@ const PublicProfile = (props) => {
   const history = useHistory();
   const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState(true);
 
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
@@ -447,19 +448,16 @@ const PublicProfile = (props) => {
           <Card elevation={0} className={classes.cardroot}>
             <CardContent>
               {isOwner && isOwner === true ? (
-                <Button
+                <IconButton
                   style={{
                     float: "right",
-                    textTransform: "capitalize",
-                    marginTop: "-50px",
-                    padding: "8px 8px",
+                    //marginTop: "-50px",
+                    //marginRight: "-20px",
+                    border: "1px solid",
                   }}
-                  size="small"
-                  color="primary"
-                  variant="contained"
                 >
-                  Edit Profile
-                </Button>
+                  <Edit style={{ fontSize: "24px", margin: "-4px" }} />
+                </IconButton>
               ) : (
                 ""
               )}
@@ -620,11 +618,11 @@ const PublicProfile = (props) => {
                   Language Proficiencies
                 </Typography>
                 <RadialBarChart
-                  width={1000}
+                  width={500}
                   height={300}
                   cx="50%"
                   cy="80%"
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                   innerRadius="20%"
                   outerRadius="150%"
                   data={languageList && languageList}
@@ -639,9 +637,9 @@ const PublicProfile = (props) => {
                   />
                   <Legend
                     iconSize={10}
-                    wrapperStyle={{ top: 45 }}
-                    width={120}
-                    height={160}
+                    wrapperStyle={{ top: 45, right: -150 }}
+                    width={110}
+                    height={170}
                     layout="vertical"
                     verticalAlign="top"
                     align="right"
