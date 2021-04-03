@@ -39,6 +39,7 @@ import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
 
 const App = () => {
   return (
@@ -119,6 +120,11 @@ const App = () => {
         strict
         sensitive
         component={BookConsult}
+      />
+      <MemberRoute
+        exact
+        path="/industryprojects"
+        component={ViewAllIndustryProject}
       />
       <LandingPageRoute
         exact
