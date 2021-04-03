@@ -40,6 +40,7 @@ import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
+import ViewIndustryProjectDetails from "./member/industryProject/ViewIndustryProjectDetails";
 
 const App = () => {
   return (
@@ -125,6 +126,13 @@ const App = () => {
         exact
         path="/industryprojects"
         component={ViewAllIndustryProject}
+      />
+      <MemberRoute
+        exact
+        path="/industryprojects/:id"
+        component={ViewIndustryProjectDetails}
+        strict
+        sensitive
       />
       <LandingPageRoute
         exact
