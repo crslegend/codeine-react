@@ -145,7 +145,7 @@ const CourseDetailsDrawer = ({
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <Alert severity="info">
           This course is for{" "}
-          {courseDetails && courseDetails.pro ? "Pro" : "Free"}-Tier members{" "}
+          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
         </Alert>
       </div>
 
@@ -391,7 +391,7 @@ const CourseDetailsDrawer = ({
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <Alert severity="info">
           This course is for{" "}
-          {courseDetails && courseDetails.pro ? "Pro" : "Free"}-Tier members{" "}
+          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
         </Alert>
       </div>
       <div style={{ marginBottom: "30px" }}>

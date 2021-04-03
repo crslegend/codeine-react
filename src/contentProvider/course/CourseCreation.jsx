@@ -82,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
   },
+
+  alert: {
+    maxWidth: "370px",
+    marginBottom: "10px",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
 }));
 
 const CourseCreation = () => {
@@ -840,18 +847,13 @@ const CourseCreation = () => {
               <Fragment>
                 <div className={classes.topSection}>
                   <div style={{ width: "100%" }}>
-                    <div
-                      style={{
-                        maxWidth: "370px",
-                        marginBottom: "10px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                    >
+                    <div className={classes.alert}>
                       <Alert severity="info">
                         This course is for{" "}
-                        {courseDetails && courseDetails.pro ? "Pro" : "Free"}
-                        -Tier members{" "}
+                        {courseDetails && courseDetails.pro
+                          ? "Pro-Tier"
+                          : "all"}{" "}
+                        members.
                       </Alert>
                     </div>
                     <Paper className={classes.paper}>
@@ -980,18 +982,13 @@ const CourseCreation = () => {
               <Fragment>
                 <div className={classes.topSection}>
                   <div style={{ maxWidth: "100%" }}>
-                    <div
-                      style={{
-                        maxWidth: "370px",
-                        marginBottom: "10px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                    >
+                    <div className={classes.alert}>
                       <Alert severity="info">
                         This course is for{" "}
-                        {courseDetails && courseDetails.pro ? "Pro" : "Free"}
-                        -Tier members{" "}
+                        {courseDetails && courseDetails.pro
+                          ? "Pro-Tier"
+                          : "all"}{" "}
+                        members.
                       </Alert>
                     </div>
                     <Paper className={classes.paper}>
