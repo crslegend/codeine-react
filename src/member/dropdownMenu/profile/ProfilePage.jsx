@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
@@ -18,15 +18,11 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormLabel,
-  Select,
-  MenuItem,
-  InputLabel,
   Tabs,
   Tab,
   Box,
 } from "@material-ui/core";
-import { Mood, Lock, Close } from "@material-ui/icons";
+import { Mood, Lock, Work, Add, Close } from "@material-ui/icons";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
@@ -36,7 +32,6 @@ import EditIcon from "../../../assets/EditIcon.svg";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
-import PageTitle from "../../../components/PageTitle";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import CVCard from "./components/CVCard";
 
@@ -64,6 +59,12 @@ const useStyles = makeStyles((theme) => ({
   },
   fieldInput: {
     padding: "12px",
+    fontSize: "14px",
+  },
+  descriptionInput: {
+    padding: "0px 3px",
+    fontSize: "14px",
+    margin: "-10px 0px 5px",
   },
   focused: {
     border: "1px solid #222",
@@ -132,7 +133,6 @@ const useStyles = makeStyles((theme) => ({
   redButton: {
     backgroundColor: theme.palette.red.main,
     color: "white",
-    textTransform: "capitalize",
     "&:hover": {
       backgroundColor: theme.palette.darkred.main,
     },
@@ -160,7 +160,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={0} ml={2} style={{ width: "100%" }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -595,8 +595,8 @@ const Profile = (props) => {
         >
           Settings for{" "}
           <Link
+            to={`/member/profile/${profileDetails.id}`}
             className={classes.profileLink}
-            onClick={() => history.push(`/member/profile/${profileDetails.id}`)}
           >
             {profileDetails && profileDetails.first_name}{" "}
             {profileDetails && profileDetails.last_name}
@@ -640,10 +640,25 @@ const Profile = (props) => {
               }}
               label={
                 <div>
-                  <Lock style={{ verticalAlign: "middle" }} /> Account
+                  <Work style={{ verticalAlign: "middle" }} /> Experience
                 </div>
               }
               {...a11yProps(1)}
+            />
+            <Tab
+              style={{
+                textTransform: "none",
+              }}
+              classes={{
+                selected: classes.selected,
+                wrapper: classes.wrapper,
+              }}
+              label={
+                <div>
+                  <Lock style={{ verticalAlign: "middle" }} /> Account
+                </div>
+              }
+              {...a11yProps(2)}
             />
           </Tabs>
           {/* Profile Tab*/}
@@ -662,12 +677,13 @@ const Profile = (props) => {
                 display: "flex",
                 width: "100%",
                 height: "100px",
-                paddingLeft: "20px",
+                padding: " 0px 20px",
                 alignItems: "center",
+                justifyContent: "space-between",
                 marginBottom: "15px",
               }}
             >
-              <Typography variant="h5">
+              <Typography component={"span"} variant="h5">
                 <b>Tier</b>:{" "}
                 {profileDetails &&
                 profileDetails.member &&
@@ -677,288 +693,384 @@ const Profile = (props) => {
                   <span className={classes.free}>FREE</span>
                 )}
               </Typography>
+
               {profileDetails &&
                 profileDetails.member &&
                 profileDetails.member.membership_tier === "PRO" && (
                   <Button
                     variant="outlined"
                     color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
+                    style={{ height: 30 }}
                     onClick={() => history.push(`/member/payment`)}
                   >
                     Extend Pro-Tier Membership
                   </Button>
                 )}
             </Card>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off"></form>
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                  height: "100%",
+                  padding: "10px 20px",
+                  marginBottom: "15px",
+                }}
+              >
+                <Typography
+                  component={"span"}
+                  variant="h5"
+                  style={{ margin: "10px 0px 30px" }}
+                >
+                  <b>User</b>
+                </Typography>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="#profile_photo"
+                    onClick={(e) => setUploadOpen(true)}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {!profileDetails.profile_photo ? (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        className={classes.avatar}
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar className={classes.avatar}>
+                          {profileDetails.first_name.charAt(0)}
+                        </Avatar>
+                      </Badge>
+                    ) : (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar
+                          alt="Pic"
+                          src={profileDetails.profile_photo}
+                          className={classes.avatar}
+                        />
+                      </Badge>
+                    )}
+                  </a>
+                </div>
+
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="first_name">
+                    <Typography variant="body2">First Name</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="first_name"
+                    name="first_name"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.first_name}
+                    // error={firstNameError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        first_name: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="last_name">
+                    <Typography variant="body2">Last Name</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="last_name"
+                    name="last_name"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.last_name}
+                    // error={lastNameError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        last_name: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="email">
+                    <Typography variant="body2">Email</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="email"
+                    name="email"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.email}
+                    // error={emailError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        email: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="location">
+                    <Typography variant="body2">Location</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="location"
+                    name="location"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.location}
+                    // error={emailError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        location: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="age">
+                    <Typography variant="body2">Age</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="age"
+                    name="age"
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0 },
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.age}
+                    // error={lastNameError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        age: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  <FormControl>
+                    <label htmlFor="gender">
+                      <Typography variant="body2">Gender</Typography>
+                    </label>
+                    <RadioGroup
+                      aria-label="gender"
+                      name="gender"
+                      id="gender"
+                      value={profileDetails.gender}
+                      onChange={(event) =>
+                        setProfileDetails({
+                          ...profileDetails,
+                          gender: event.target.value,
+                        })
+                      }
+                    >
+                      <div style={{ display: "flex" }}>
+                        <FormControlLabel
+                          value="F"
+                          control={<Radio />}
+                          label="Female"
+                        />
+                        <FormControlLabel
+                          value="M"
+                          control={<Radio />}
+                          label="Male"
+                        />
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                </div>
+              </Card>
+
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  type="submit"
+                >
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </Card>
+            </form>
+          </TabPanel>
+
+          {/* Experience Tab*/}
+          <TabPanel
+            style={{
+              width: "100%",
+            }}
+            value={value}
+            index={1}
+          >
             <Card
               elevation={0}
               style={{
                 backgroundColor: " #FFFFFF",
                 border: "1px solid #ECECEC",
+                display: "flex",
                 width: "100%",
-                height: "100%",
-                padding: "10px 20px",
+                height: "100px",
+                padding: " 0px 20px",
+                alignItems: "center",
+                justifyContent: "space-between",
                 marginBottom: "15px",
               }}
             >
-              <Typography variant="h5" style={{ margin: "10px 0px 30px" }}>
-                <b>User</b>
-              </Typography>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <a
-                  href="#profile_photo"
-                  onClick={(e) => setUploadOpen(true)}
-                  style={{ textDecoration: "none" }}
-                >
-                  {!profileDetails.profile_photo ? (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      className={classes.avatar}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar className={classes.avatar}>
-                        {profileDetails.first_name.charAt(0)}
-                      </Avatar>
-                    </Badge>
-                  ) : (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar
-                        alt="Pic"
-                        src={profileDetails.profile_photo}
-                        className={classes.avatar}
-                      />
-                    </Badge>
-                  )}
-                </a>
-              </div>
-
-              <div style={{ marginTop: "20px" }}>
-                <label htmlFor="first_name">
-                  <Typography variant="body2">First Name</Typography>
-                </label>
-                <TextField
-                  margin="dense"
-                  variant="filled"
-                  id="first_name"
-                  name="first_name"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.fieldRoot,
-                      focused: classes.focused,
-                      input: classes.fieldInput,
-                    },
-                  }}
-                  required
-                  fullWidth
-                  value={profileDetails.first_name}
-                  // error={firstNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      first_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div style={{ marginTop: "20px" }}>
-                <label htmlFor="last_name">
-                  <Typography variant="body2">Last Name</Typography>
-                </label>
-                <TextField
-                  margin="dense"
-                  variant="filled"
-                  id="last_name"
-                  name="last_name"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.fieldRoot,
-                      focused: classes.focused,
-                      input: classes.fieldInput,
-                    },
-                  }}
-                  required
-                  fullWidth
-                  value={profileDetails.last_name}
-                  // error={lastNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      last_name: event.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div style={{ marginTop: "20px" }}>
-                <label htmlFor="email">
-                  <Typography variant="body2">Email</Typography>
-                </label>
-                <TextField
-                  margin="dense"
-                  variant="filled"
-                  id="email"
-                  name="email"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.fieldRoot,
-                      focused: classes.focused,
-                      input: classes.fieldInput,
-                    },
-                  }}
-                  required
-                  fullWidth
-                  value={profileDetails.email}
-                  // error={emailError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      email: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div style={{ marginTop: "20px" }}>
-                <label htmlFor="location">
-                  <Typography variant="body2">Location</Typography>
-                </label>
-                <TextField
-                  margin="dense"
-                  variant="filled"
-                  id="location"
-                  name="location"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.fieldRoot,
-                      focused: classes.focused,
-                      input: classes.fieldInput,
-                    },
-                  }}
-                  required
-                  fullWidth
-                  value={profileDetails.location}
-                  // error={emailError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      location: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div style={{ marginTop: "20px" }}>
-                <label htmlFor="age">
-                  <Typography variant="body2">Age</Typography>
-                </label>
-                <TextField
-                  margin="dense"
-                  variant="filled"
-                  id="age"
-                  name="age"
-                  type="number"
-                  InputProps={{
-                    inputProps: { min: 0 },
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.fieldRoot,
-                      focused: classes.focused,
-                      input: classes.fieldInput,
-                    },
-                  }}
-                  required
-                  fullWidth
-                  value={profileDetails.age}
-                  // error={lastNameError}
-                  onChange={(event) =>
-                    setProfileDetails({
-                      ...profileDetails,
-                      age: event.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div style={{ marginTop: "20px" }}>
-                <FormControl component="fieldset">
-                  <label htmlFor="gender">
-                    <Typography variant="body2">Gender</Typography>
-                  </label>
-                  <RadioGroup
-                    aria-label="gender"
-                    name="gender"
-                    id="gender"
-                    value={profileDetails.gender}
-                    onChange={(event) =>
-                      setProfileDetails({
-                        ...profileDetails,
-                        gender: event.target.value,
-                      })
-                    }
-                  >
-                    <div style={{ display: "flex" }}>
-                      <FormControlLabel
-                        value="F"
-                        control={<Radio />}
-                        label="Female"
-                      />
-                      <FormControlLabel
-                        value="M"
-                        control={<Radio />}
-                        label="Male"
-                      />
-                    </div>
-                  </RadioGroup>
-                </FormControl>
-              </div>
-            </Card>
-
-            <Card>
               <Button
-                disabled={loading}
                 variant="contained"
                 color="primary"
-                className={classes.button}
-                type="submit"
+                style={{
+                  marginLeft: "auto",
+                  height: 35,
+                }}
+                onClick={() => {
+                  setCVDetail({
+                    title: "",
+                    description: "",
+                    organisation: "",
+                    start_date: new Date("2018-01-01"),
+                    end_date: new Date("2018-01-01"),
+                  });
+                  setCVDialogState(true);
+                  setEditingCV(false);
+                }}
               >
-                {loading ? (
-                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
-                ) : (
-                  "Save Changes"
-                )}
+                <Add style={{ marginRight: "5px" }} /> Add New Experience
               </Button>
             </Card>
+
+            {CVList && CVList.length > 0 ? (
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                  padding: "20px 20px",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: "700", marginBottom: "20px" }}
+                >
+                  Job Experiences
+                </Typography>
+                {CVList.map((cv, index) => {
+                  return (
+                    <CVCard
+                      key={index}
+                      experience={cv}
+                      setCVDetail={setCVDetail}
+                      setCVDialogState={setCVDialogState}
+                      setEditingCV={setEditingCV}
+                      setDeleteDialogState={setDeleteDialogState}
+                      sbOpen={sbOpen}
+                      setSbOpen={setSbOpen}
+                      setSnackbar={setSnackbar}
+                      getProfileDetails={getProfileDetails}
+                    />
+                  );
+                })}
+              </Card>
+            ) : (
+              ""
+            )}
           </TabPanel>
 
           {/* Account Tab*/}
@@ -967,71 +1079,20 @@ const Profile = (props) => {
               width: "100%",
             }}
             value={value}
-            index={1}
+            index={2}
           >
             Item Two
           </TabPanel>
         </div>
       </div>
 
-      <div style={{ width: "80%", margin: "auto", marginTop: "820px" }}>
-        <div style={{ display: "flex" }}>
-          <Typography
-            variant="h3"
-            style={{ fontWeight: "700", marginBottom: "20px" }}
-          >
-            Job Experiences
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              marginLeft: "auto",
-              height: 35,
-              textTransform: "capitalize",
-            }}
-            onClick={() => {
-              setCVDetail({
-                title: "",
-                description: "",
-                organisation: "",
-                start_date: new Date("2000-01-01"),
-                end_date: new Date("2000-01-01"),
-              });
-              setCVDialogState(true);
-              setEditingCV(false);
-            }}
-          >
-            + Add Job Experience
-          </Button>
-        </div>
-
-        {CVList.map((cv, index) => {
-          return (
-            <CVCard
-              key={index}
-              experience={cv}
-              setCVDetail={setCVDetail}
-              setCVDialogState={setCVDialogState}
-              setEditingCV={setEditingCV}
-              setDeleteDialogState={setDeleteDialogState}
-              sbOpen={sbOpen}
-              setSbOpen={setSbOpen}
-              setSnackbar={setSnackbar}
-              getProfileDetails={getProfileDetails}
-            />
-          );
-        })}
-      </div>
-
       <Dialog
         open={deleteDialogState}
         onClose={() => setDeleteDialogState(false)}
       >
-        <DialogTitle id="alert-dialog-title">Delete Job experience</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Job Experience</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete your job experience? You will no
-          longer be able to retrieve your job experience any longer.
+          Are you sure you want to delete this job experience?
         </DialogContent>
         <DialogActions>
           <Button
@@ -1055,16 +1116,28 @@ const Profile = (props) => {
 
       <Dialog open={CVDialogState} onClose={() => setCVDialogState(false)}>
         <DialogTitle id="alert-dialog-title">
-          {editingCV ? "Edit CV" : "New Job Experience"}
+          {editingCV ? "Edit Job Experience" : "New Job Experience"}
         </DialogTitle>
         <DialogContent>
           <div>
             <div>
+              <label htmlFor="title">
+                <Typography variant="body2">Job Title</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="title"
-                label="Job Title"
                 name="title"
+                autoComplete="off"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.fieldInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.title}
@@ -1077,14 +1150,25 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div>
+            <div style={{ marginTop: "20px" }}>
+              <label htmlFor="description">
+                <Typography variant="body2">Job Description</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="description"
-                label="Description"
                 name="description"
                 multiline
                 rows={4}
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.descriptionInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.description}
@@ -1097,12 +1181,24 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div>
+            <div style={{ marginTop: "20px" }}>
+              <label htmlFor="organisation">
+                <Typography variant="body2">Organisation Name</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="organisation"
-                label="Organisation"
                 name="organisation"
+                autoComplete="off"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.fieldInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.organisation}
@@ -1115,42 +1211,52 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div style={{ display: "flex" }}>
-              <KeyboardDatePicker
-                format="MM/dd/yyyy"
-                margin="normal"
-                id="start_date"
-                name="start_date"
-                label="Start Date"
-                value={CVDetail.start_date}
-                onChange={(event) =>
-                  setCVDetail({
-                    ...CVDetail,
-                    start_date: event,
-                  })
-                }
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-                style={{ marginRight: "20px" }}
-              />
-              <KeyboardDatePicker
-                format="MM/dd/yyyy"
-                margin="normal"
-                id="end_date"
-                name="end_date"
-                label="End Date"
-                value={CVDetail.end_date}
-                onChange={(event) => {
-                  setCVDetail({
-                    ...CVDetail,
-                    end_date: event,
-                  });
-                }}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
+
+            <div style={{ display: "flex", marginTop: "20px" }}>
+              <div>
+                <label htmlFor="start_date">
+                  <Typography variant="body2">Start Date</Typography>
+                </label>
+                <KeyboardDatePicker
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="start_date"
+                  name="start_date"
+                  value={CVDetail.start_date}
+                  onChange={(event) =>
+                    setCVDetail({
+                      ...CVDetail,
+                      start_date: event,
+                    })
+                  }
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  style={{ marginRight: "20px" }}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="end_date">
+                  <Typography variant="body2">End Date</Typography>
+                </label>
+                <KeyboardDatePicker
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="end_date"
+                  name="end_date"
+                  value={CVDetail.end_date}
+                  onChange={(event) => {
+                    setCVDetail({
+                      ...CVDetail,
+                      end_date: event,
+                    });
+                  }}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </DialogContent>
@@ -1159,16 +1265,18 @@ const Profile = (props) => {
             <Button
               variant="contained"
               color="primary"
+              style={{ marginRight: "16px", marginBottom: "16px" }}
               onClick={(e) => {
                 updateCV(e);
               }}
             >
-              Save Changes
+              Save
             </Button>
           ) : (
             <Button
               variant="contained"
               color="primary"
+              style={{ marginRight: "16px", marginBottom: "16px" }}
               onClick={(e) => {
                 submitCV(e);
               }}
