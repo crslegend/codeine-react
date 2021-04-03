@@ -773,6 +773,8 @@ const EnrollCourse = () => {
                           courseId={id}
                           progress={progress}
                           setProgress={setProgress}
+                          canBookConsult={canBookConsult}
+                          course={course}
                         />
                       </div>
                     );
