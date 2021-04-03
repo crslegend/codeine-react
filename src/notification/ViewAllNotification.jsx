@@ -284,6 +284,7 @@ const AllNotifications = (props) => {
                 key={index}
                 notification={notification}
                 getUserNotifications={getUserNotifications}
+                userType={userType}
               />
             );
           })}

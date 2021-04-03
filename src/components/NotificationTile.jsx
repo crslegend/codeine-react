@@ -46,7 +46,7 @@ const styles = makeStyles((theme) => ({
 const NotificationTile = (props) => {
   const classes = styles();
   const history = useHistory();
-  const { notification, getUserNotifications } = props;
+  const { notification, getUserNotifications, userType } = props;
 
   const calculateDateInterval = (timestamp) => {
     const dateBefore = new Date(timestamp);
@@ -115,14 +115,30 @@ const NotificationTile = (props) => {
       .patch(`/notification-objects/${notifId}/read`)
       .then((res) => {
         if (res.data.notification.notification_type === "HELPDESK") {
-          history.push(
-            `/member/helpdesk/tickets/${res.data.notification.ticket.id}`
-          );
+          if (userType === "member") {
+            history.push(
+              `/member/helpdesk/tickets/${res.data.notification.ticket.id}`
+            );
+          } else if (userType === "partner") {
+            history.push(
+              `/partner/home/helpdesk/tickets/${res.data.notification.ticket.id}`
+            );
+          }
         } else if (
           res.data.notification.notification_type === "GENERAL" ||
           res.data.notification.notification_type === "ANNOUNCEMENT"
         ) {
-          history.push(`/viewnotification/${res.data.notification.id}`);
+          if (userType === "member") {
+            history.push(
+              `/member/viewnotification/${res.data.notification.id}`
+            );
+          } else if (userType === "partner") {
+            history.push(
+              `/partner/viewnotification/${res.data.notification.id}`
+            );
+          } else if (userType === "admin") {
+            history.push(`/admin/viewnotification/${res.data.notification.id}`);
+          }
         }
       })
       .catch();
@@ -143,6 +159,15 @@ const NotificationTile = (props) => {
   const markRead = (notifId) => {
     Service.client
       .patch(`/notification-objects/${notifId}/read`)
+      .then(() => {
+        getUserNotifications();
+      })
+      .catch();
+  };
+
+  const deleteNotif = (notifId) => {
+    Service.client
+      .delete(`/notification-objects/${notifId}`)
       .then(() => {
         getUserNotifications();
       })
@@ -302,7 +327,7 @@ const NotificationTile = (props) => {
           variant="body2"
           className={classes.typography}
           onClick={() => {
-            handleClose();
+            deleteNotif(notification.id);
           }}
         >
           X Delete Notification

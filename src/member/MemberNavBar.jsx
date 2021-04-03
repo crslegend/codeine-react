@@ -268,6 +268,7 @@ const MemberNavBar = (props) => {
                 key={index}
                 notification={notification}
                 getUserNotifications={getUserNotifications}
+                userType="member"
               />
             );
           })}
