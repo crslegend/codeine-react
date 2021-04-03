@@ -339,14 +339,10 @@ const CommentsSection = ({ materialId, user }) => {
 
   const handleProfileLink = (reviewMember) => {
     const decoded = jwt_decode(Cookies.get("t1"));
-    if (reviewMember.id === (decoded && decoded.user_id)) {
-      // console.log("hello");
-      return "/member/profile";
-    } else {
-      if (reviewMember.member.membership_tier === "PRO") {
-        // console.log("hell");
-        return `/member/profile/${reviewMember.id}`;
-      }
+
+    if (reviewMember.member.membership_tier === "PRO") {
+      // console.log("hell");
+      return `/member/profile/${reviewMember.id}`;
     }
   };
 

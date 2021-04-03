@@ -254,8 +254,8 @@ const Profile = (props) => {
     title: "",
     description: "",
     organisation: "",
-    start_date: new Date("2000-01-01"),
-    end_date: new Date("2000-01-01"),
+    start_date: new Date("2018-01-01"),
+    end_date: new Date("2018-01-01"),
   });
 
   const [CVList, setCVList] = useState([]);
@@ -503,15 +503,15 @@ const Profile = (props) => {
           setSbOpen(true);
           setSnackbar({
             ...snackbar,
-            message: "Job experience created successfully!",
+            message: "Job Experience successfully created!",
             severity: "success",
           });
           setCVDetail({
             title: "",
             description: "",
             organisation: "",
-            start_date: new Date("2000-01-01"),
-            end_date: new Date("2000-01-01"),
+            start_date: new Date("2018-01-01"),
+            end_date: new Date("2018-01-01"),
           });
           setCVDialogState(false);
         })
@@ -549,15 +549,15 @@ const Profile = (props) => {
           setSbOpen(true);
           setSnackbar({
             ...snackbar,
-            message: "Job experience updated successfully!",
+            message: "Job Experience successfully updated!",
             severity: "success",
           });
           setCVDetail({
             title: "",
             description: "",
             organisation: "",
-            start_date: new Date("2000-01-01"),
-            end_date: new Date("2000-01-01"),
+            start_date: new Date("2018-01-01"),
+            end_date: new Date("2018-01-01"),
           });
           setCVDialogState(false);
         })
@@ -573,15 +573,15 @@ const Profile = (props) => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Job experience deleted successfully!",
+          message: "Job Experience successfully deleted!",
           severity: "success",
         });
         setCVDetail({
           title: "",
           description: "",
           organisation: "",
-          start_date: new Date("2000-01-01"),
-          end_date: new Date("2000-01-01"),
+          start_date: new Date("2018-01-01"),
+          end_date: new Date("2018-01-01"),
         });
         setCVDialogState(false);
       })
