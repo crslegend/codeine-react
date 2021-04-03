@@ -196,12 +196,11 @@ const AllNotifications = (props) => {
 
   const markAllAsRead = () => {
     Service.client
-      .patch(`/notification-objects/mark/multiple-read`)
+      .patch(`/notification-objects/mark/all-read`)
       .then((res) => {
         setNotificationList(res.data);
       })
       .catch();
-    alert("mark all as read");
   };
 
   const navLogo = (
@@ -273,7 +272,6 @@ const AllNotifications = (props) => {
             <Typography
               className={classes.markallasread}
               onClick={() => {
-                alert("mark all as read");
                 markAllAsRead();
               }}
             >
@@ -281,7 +279,13 @@ const AllNotifications = (props) => {
             </Typography>
           </div>
           {notificationList.map((notification, index) => {
-            return <NotifTile key={index} notification={notification} />;
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+              />
+            );
           })}
         </CardContent>
       </Card>
