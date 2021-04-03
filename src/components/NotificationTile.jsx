@@ -96,7 +96,13 @@ const NotificationTile = (props) => {
     //history.push();
     Service.client
       .patch(`/notification-objects/${notifId}/read`)
-      .then((res) => {})
+      .then((res) => {
+        if (res.data.notification.notification_type === "HELPDESK") {
+          history.push(
+            `/member/helpdesk/tickets/${res.data.notification.ticket.id}`
+          );
+        }
+      })
       .catch();
     alert("clicked on notif: " + notifId);
   };
@@ -112,7 +118,7 @@ const NotificationTile = (props) => {
             <Avatar
               src={notification.notification && notification.notification.photo}
               alt=""
-              style={{ height: "70px", width: "70px" }}
+              style={{ height: "65px", width: "65px" }}
             ></Avatar>
             <div style={{ marginLeft: "10px" }}>
               {notification.is_read ? (
@@ -122,6 +128,7 @@ const NotificationTile = (props) => {
                       fontWeight: 700,
                       color: "#65676B",
                       cursor: "pointer",
+                      fontSize: "14px",
                     }}
                   >
                     {notification.notification &&
@@ -129,7 +136,11 @@ const NotificationTile = (props) => {
                   </Typography>
                   <Typography
                     variant="body1"
-                    style={{ color: "#65676B", cursor: "pointer" }}
+                    style={{
+                      color: "#65676B",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
                   >
                     {notification.notification &&
                       notification.notification.description}
@@ -150,12 +161,16 @@ const NotificationTile = (props) => {
                     style={{
                       fontWeight: 700,
                       cursor: "pointer",
+                      fontSize: "14px",
                     }}
                   >
                     {notification.notification &&
                       notification.notification.title}
                   </Typography>
-                  <Typography variant="body1" style={{ cursor: "pointer" }}>
+                  <Typography
+                    variant="body1"
+                    style={{ cursor: "pointer", fontSize: "13px" }}
+                  >
                     {notification.notification &&
                       notification.notification.description}
                   </Typography>

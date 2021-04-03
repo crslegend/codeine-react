@@ -76,7 +76,6 @@ const useStyles = makeStyles((theme) => ({
   },
   viewallnotif: {
     textAlign: "center",
-    marginTop: "10px",
     cursor: "pointer",
     color: theme.palette.primary.main,
     "&:hover": {
@@ -248,23 +247,34 @@ const MemberNavBar = (props) => {
           vertical: "top",
           horizontal: "right",
         }}
+        style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
           <Typography
             style={{
-              fontWeight: "700",
+              fontWeight: "800",
               fontSize: "25px",
               marginLeft: "10px",
               marginBottom: "10px",
+              marginTop: "10px",
             }}
           >
             Notifications
           </Typography>
 
-          {notificationList.map((notification, index) => {
+          {notificationList.slice(0, 20).map((notification, index) => {
             return <NotifTile key={index} notification={notification} />;
           })}
-
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
           <Typography
             className={classes.viewallnotif}
             onClick={() => {
