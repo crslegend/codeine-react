@@ -234,9 +234,9 @@ const TopPicks = () => {
           {/* Projects Tab */}
           <TabPanel value={value} index={3}>
             <div
-              style={{
-                display: "flex",
-              }}
+              // style={{
+              //   display: "flex",
+              // }}
             >
               {projects &&
                 projects.map((project) => (
