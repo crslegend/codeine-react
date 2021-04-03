@@ -56,6 +56,22 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     alignItems: "flex-start",
   },
+  fieldRoot: {
+    backgroundColor: "#ECECEC",
+    borderBottomLeftRadius: "5px",
+    borderBottomRightRadius: "5px",
+    padding: "auto 0",
+  },
+  fieldInput: {
+    padding: "12px",
+  },
+  focused: {
+    border: "1px solid #222",
+    boxShadow: "2px 3px 0px #222",
+    backgroundColor: "#FFFFFF",
+    borderBottomLeftRadius: "5px",
+    borderBottomRightRadius: "5px",
+  },
   dropzone: {
     "@global": {
       ".MuiDropzoneArea-text.MuiTypography-h5": {
@@ -83,7 +99,8 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   button: {
-    marginTop: "20px",
+    margin: "20px",
+    width: "96%",
   },
   cvcontainer: {
     border: "solid black 1px",
@@ -232,11 +249,6 @@ const Profile = (props) => {
 
   const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [countryList] = useState([
-    { name: "America" },
-    { name: "China" },
-    { name: "Singapore" },
-  ]);
 
   const [CVDetail, setCVDetail] = useState({
     title: "",
@@ -686,11 +698,11 @@ const Profile = (props) => {
                 border: "1px solid #ECECEC",
                 width: "100%",
                 height: "100%",
-                padding: "0 20px",
+                padding: "10px 20px",
                 marginBottom: "15px",
               }}
             >
-              <Typography variant="h5" style={{ margin: "20px 0px 30px" }}>
+              <Typography variant="h5" style={{ margin: "10px 0px 30px" }}>
                 <b>User</b>
               </Typography>
               <div
@@ -750,12 +762,23 @@ const Profile = (props) => {
                 </a>
               </div>
 
-              <div>
+              <div style={{ marginTop: "20px" }}>
+                <label htmlFor="first_name">
+                  <Typography variant="body2">First Name</Typography>
+                </label>
                 <TextField
-                  margin="normal"
+                  margin="dense"
+                  variant="filled"
                   id="first_name"
-                  label="First Name"
                   name="first_name"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    },
+                  }}
                   required
                   fullWidth
                   value={profileDetails.first_name}
@@ -768,12 +791,23 @@ const Profile = (props) => {
                   }
                 />
               </div>
-              <div>
+              <div style={{ marginTop: "20px" }}>
+                <label htmlFor="last_name">
+                  <Typography variant="body2">Last Name</Typography>
+                </label>
                 <TextField
-                  margin="normal"
+                  margin="dense"
+                  variant="filled"
                   id="last_name"
-                  label="Last Name"
                   name="last_name"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    },
+                  }}
                   required
                   fullWidth
                   value={profileDetails.last_name}
@@ -787,13 +821,23 @@ const Profile = (props) => {
                 />
               </div>
 
-              <div>
+              <div style={{ marginTop: "20px" }}>
+                <label htmlFor="email">
+                  <Typography variant="body2">Email</Typography>
+                </label>
                 <TextField
-                  margin="normal"
+                  margin="dense"
+                  variant="filled"
                   id="email"
-                  label="Email"
                   name="email"
-                  autoComplete="email"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    },
+                  }}
                   required
                   fullWidth
                   value={profileDetails.email}
@@ -806,6 +850,114 @@ const Profile = (props) => {
                   }
                 />
               </div>
+              <div style={{ marginTop: "20px" }}>
+                <label htmlFor="location">
+                  <Typography variant="body2">Location</Typography>
+                </label>
+                <TextField
+                  margin="dense"
+                  variant="filled"
+                  id="location"
+                  name="location"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    },
+                  }}
+                  required
+                  fullWidth
+                  value={profileDetails.location}
+                  // error={emailError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      location: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                <label htmlFor="age">
+                  <Typography variant="body2">Age</Typography>
+                </label>
+                <TextField
+                  margin="dense"
+                  variant="filled"
+                  id="age"
+                  name="age"
+                  type="number"
+                  InputProps={{
+                    inputProps: { min: 0 },
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    },
+                  }}
+                  required
+                  fullWidth
+                  value={profileDetails.age}
+                  // error={lastNameError}
+                  onChange={(event) =>
+                    setProfileDetails({
+                      ...profileDetails,
+                      age: event.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                <FormControl component="fieldset">
+                  <label htmlFor="gender">
+                    <Typography variant="body2">Gender</Typography>
+                  </label>
+                  <RadioGroup
+                    aria-label="gender"
+                    name="gender"
+                    id="gender"
+                    value={profileDetails.gender}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        gender: event.target.value,
+                      })
+                    }
+                  >
+                    <div style={{ display: "flex" }}>
+                      <FormControlLabel
+                        value="F"
+                        control={<Radio />}
+                        label="Female"
+                      />
+                      <FormControlLabel
+                        value="M"
+                        control={<Radio />}
+                        label="Male"
+                      />
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            </Card>
+
+            <Card>
+              <Button
+                disabled={loading}
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                type="submit"
+              >
+                {loading ? (
+                  <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </Card>
           </TabPanel>
 
@@ -822,7 +974,7 @@ const Profile = (props) => {
         </div>
       </div>
 
-      <div style={{ width: "80%", margin: "auto", marginTop: "420px" }}>
+      <div style={{ width: "80%", margin: "auto", marginTop: "820px" }}>
         <div style={{ display: "flex" }}>
           <Typography
             variant="h3"
