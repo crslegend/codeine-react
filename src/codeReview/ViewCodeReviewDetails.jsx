@@ -34,7 +34,7 @@ import "react-quill/dist/quill.bubble.css";
 import "react-quill/dist/quill.snow.css";
 // import { AnchorBase, InlineAnchor, Sidenote } from "sidenotes";
 // import TextSelector from "text-selection-react";
-// import store from "../redux/store";
+// import store from "../redux/Store";
 // import {
 //   deselectSidenote,
 //   repositionSidenotes,

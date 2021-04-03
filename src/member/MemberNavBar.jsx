@@ -10,31 +10,21 @@ import {
   Popover,
   Button,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
   Badge,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import pricing from "../assets/PricingAsset.png";
 import { Dashboard, Timeline } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-import PaymentIcon from "@material-ui/icons/Payment";
+
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotifTile from "../components/NotificationTile";
-
-import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY);
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -107,8 +97,6 @@ const MemberNavBar = (props) => {
     email: "Member panel",
     profile_photo: "",
   });
-  const [upgradeToProDialog, setUpgradeToProDialog] = useState(false);
-  const [month, setMonth] = useState(1);
 
   const getUserDetails = () => {
     if (Cookies.get("t1")) {
@@ -171,64 +159,6 @@ const MemberNavBar = (props) => {
 
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
-
-  const handleStripePaymentGateway = async (
-    amount,
-    email,
-    userId,
-    numOfMonths,
-    transactionId
-  ) => {
-    // Get Stripe.js instance
-    const stripe = await stripePromise;
-
-    const data = {
-      total_price: amount * numOfMonths,
-      email: email,
-      description:
-        numOfMonths && numOfMonths === 1
-          ? `Pro-Tier for 1 Month`
-          : `Pro-Tier for ${numOfMonths} Months`,
-      mId: userId,
-      numOfMonths: numOfMonths,
-      transaction: transactionId,
-    };
-
-    axios
-      .post("/create-checkout-session-upgrade-pro", data)
-      .then((res) => {
-        // console.log(res);
-        stripe.redirectToCheckout({
-          sessionId: res.data.id,
-        });
-      })
-      .catch((err) => console.log(err.response));
-  };
-
-  const handlePayment = () => {
-    // console.log(user);
-
-    const data = {
-      subscription_fee: "5.99",
-      payment_type: "Credit Card",
-      month_duration: parseInt(month),
-    };
-    // console.log(data);
-    Service.client
-      .post(`/auth/membership-subscriptions`, data)
-      .then((res) => {
-        // console.log(res);
-
-        handleStripePaymentGateway(
-          5.99,
-          user.email,
-          user.id,
-          month,
-          res.data.id
-        );
-      })
-      .catch((err) => console.log(err));
-  };
 
   const navLogo = (
     <Fragment>
@@ -357,7 +287,7 @@ const MemberNavBar = (props) => {
             variant="outlined"
             color="primary"
             style={{ textTransform: "none" }}
-            onClick={() => setUpgradeToProDialog(true)}
+            onClick={() => history.push(`/member/membership`)}
           >
             Upgrade
           </Button>
@@ -493,7 +423,7 @@ const MemberNavBar = (props) => {
               className={classes.hover}
               onClick={() => {
                 //history.push("/");
-                alert("clicked on Helpdesk");
+                history.push("/member/helpdesk");
               }}
             >
               <HelpOutlineOutlinedIcon className={classes.icon} />
@@ -543,59 +473,6 @@ const MemberNavBar = (props) => {
         navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar}
         bgColor="#fff"
       />
-      <Dialog
-        open={upgradeToProDialog}
-        onClose={() => setUpgradeToProDialog(false)}
-        PaperProps={{
-          style: {
-            width: "600px",
-          },
-        }}
-      >
-        <DialogTitle>Upgrade To Pro-Tier</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6" style={{ paddingBottom: "20px" }}>
-            Price per month: <span style={{ color: "#437FC7" }}>$5.99</span>
-          </Typography>
-          <img width="100%" alt="pricing" src={pricing}></img>
-          <label htmlFor="month">
-            <Typography variant="body1" style={{ marginTop: "20px" }}>
-              Enter number of months for Pro-Tier
-            </Typography>
-          </label>
-          <TextField
-            id="month"
-            variant="outlined"
-            placeholder="Enter number of months"
-            type="number"
-            required
-            fullWidth
-            margin="dense"
-            value={month && month}
-            onChange={(e) => setMonth(e.target.value)}
-            InputProps={{
-              inputProps: { min: 1 },
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setUpgradeToProDialog(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handlePayment()}
-          >
-            Proceed To Pay
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Fragment>
   );
 };

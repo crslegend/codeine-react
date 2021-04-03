@@ -1,9 +1,18 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 // import { makeStyles } from "@material-ui/core/styles";
-import { Button, Paper, Typography } from "@material-ui/core";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  Typography,
+} from "@material-ui/core";
 import MCQ from "./Mcq";
 import MRQ from "./Mrq";
 import ShortAnswer from "./ShortAnswer";
+import { Link } from "react-router-dom";
 // import Service from "../../../AxiosService";
 
 // const styles = makeStyles((theme) => ({
@@ -27,22 +36,12 @@ const TakeQuiz = ({
   courseId,
   progress,
   setProgress,
+  canBookConsult,
+  course,
 }) => {
   // const classes = styles();
-  console.log(resultObj);
 
-  // const [pageNum, setPageNum] = useState(-1);
-  // const [resultObj, setResultObj] = useState();
-
-  // const handleCreateQuizResult = () => {
-  //   Service.client
-  //     .post(`/quiz/${quiz.id}/results`)
-  //     .then((res) => {
-  //       console.log(res);
-  //       setResultObj(res.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
+  const [consultDialog, setConsultDialog] = useState(false);
 
   const handleRetryQuiz = () => {
     handleCreateQuizResult(quiz && quiz.id);
@@ -105,6 +104,7 @@ const TakeQuiz = ({
                     courseId={courseId}
                     progress={progress}
                     setProgress={setProgress}
+                    setConsultDialog={setConsultDialog}
                   />
                 );
               } else if (question.mrq) {
@@ -124,6 +124,7 @@ const TakeQuiz = ({
                     courseId={courseId}
                     progress={progress}
                     setProgress={setProgress}
+                    setConsultDialog={setConsultDialog}
                   />
                 );
               } else if (question.shortanswer) {
@@ -143,6 +144,7 @@ const TakeQuiz = ({
                     courseId={courseId}
                     progress={progress}
                     setProgress={setProgress}
+                    setConsultDialog={setConsultDialog}
                   />
                 );
               } else {
@@ -210,6 +212,69 @@ const TakeQuiz = ({
           )}
         </Paper>
       ) : null}
+      <Dialog open={consultDialog} onClose={() => setConsultDialog(false)}>
+        <DialogTitle>Need Additional Help?</DialogTitle>
+        <DialogContent>
+          {!canBookConsult ? (
+            <div>
+              <Typography variant="body2">
+                Book a consultation with the course instructor to clarify your
+                doubts now!
+              </Typography>
+            </div>
+          ) : (
+            <div>
+              <Typography variant="body2">
+                Upgrade to <span style={{ fontWeight: 600 }}>Pro-Tier</span> now
+                to get unlimited access to consultation with the course
+                instructor! Alternatively, you can head over to the comments
+                section to post your questions.
+              </Typography>
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          {!canBookConsult ? (
+            <div>
+              <Button
+                variant="contained"
+                onClick={() => setConsultDialog(false)}
+              >
+                I'm Alright
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                component={Link}
+                to={`/courses/enroll/consultation/${
+                  course && course.partner.id
+                }`}
+                style={{ marginLeft: "10px" }}
+              >
+                Book A Consultation
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <Button
+                variant="contained"
+                onClick={() => setConsultDialog(false)}
+              >
+                I'm Alright
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                component={Link}
+                to={`/member/membership`}
+                style={{ marginLeft: "10px" }}
+              >
+                Upgrade to Pro-Tier
+              </Button>
+            </div>
+          )}
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
