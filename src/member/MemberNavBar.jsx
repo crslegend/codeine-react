@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
     width: "300px",
     padding: theme.spacing(1),
   },
+  notifpopover: {
+    width: "400px",
+    padding: theme.spacing(1),
+  },
   typography: {
     cursor: "pointer",
   },
@@ -70,15 +74,26 @@ const useStyles = makeStyles((theme) => ({
     height: "30px",
     width: "30px",
     "&:hover": {
-      color: "#000",
+      color: theme.palette.primary.main,
       cursor: "pointer",
     },
   },
   notificationOpen: {
     cursor: "pointer",
-    color: "#000",
+    color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
+  },
+  viewallnotif: {
+    textAlign: "center",
+    marginTop: "10px",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -281,7 +296,7 @@ const MemberNavBar = (props) => {
 
   const notifBell = (
     <div>
-      <Badge badgeContent={notificationList.length} color="primary">
+      <Badge badgeContent={notificationList.lenth} color="primary">
         <NotificationsIcon
           className={
             notifOpen ? classes.notificationOpen : classes.notification
@@ -304,13 +319,30 @@ const MemberNavBar = (props) => {
           horizontal: "right",
         }}
       >
-        <div className={classes.popover}>
-          <Typography variant="body2" style={{color:"#d6d6d6"}}>Received Notifications</Typography>
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "700",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
           {notificationList.map((notification, index) => {
             return <NotifTile key={index} notification={notification} />;
           })}
-          <Typography style={{ textAlign: "center" }}>
-            View All Notification
+
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/member/notifications");
+            }}
+          >
+            View all
           </Typography>
         </div>
       </Popover>

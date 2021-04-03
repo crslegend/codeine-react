@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import More from "@material-ui/icons/MoreVert";
-import { Typography, Popover } from "@material-ui/core";
+import { Typography, Popover, Grid, Avatar } from "@material-ui/core";
 import Service from "../AxiosService";
 import { useHistory } from "react-router";
 
@@ -106,29 +106,80 @@ const NotificationTile = (props) => {
       className={classes.root}
       onClick={() => handleNotifClick(notification.id)}
     >
-      {/* <img src={notification.photo} alt=""></img> */}
-      <div>
-        <Typography
-          style={{
-            fontWeight: 700,
-          }}
-          variant="body1"
-        >
-          {notification.notification && notification.notification.title}
-        </Typography>
-        <Typography variant="body1">
-          {notification.notification && notification.notification.description}
-        </Typography>
-      </div>
-      <Typography
-        color={notification.notification.is_read ? "" : "primary"}
-        style={{ fontSize: "14px", fontWeight: "700" }}
-      >
-        {calculateDateInterval(notification.notification.timestamp)}
-      </Typography>
-      {!notification.is_read && <span className={classes.circle} />}
+      <Grid container>
+        <Grid item xs={11}>
+          <div style={{ display: "flex" }}>
+            <Avatar
+              src={notification.notification && notification.notification.photo}
+              alt=""
+              style={{ height: "70px", width: "70px" }}
+            ></Avatar>
+            <div style={{ marginLeft: "10px" }}>
+              {notification.is_read ? (
+                <>
+                  <Typography
+                    style={{
+                      fontWeight: 700,
+                      color: "#65676B",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {notification.notification &&
+                      notification.notification.title}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{ color: "#65676B", cursor: "pointer" }}
+                  >
+                    {notification.notification &&
+                      notification.notification.description}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "12px",
+                      color: "#65676B",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {calculateDateInterval(notification.notification.timestamp)}
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <Typography
+                    style={{
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {notification.notification &&
+                      notification.notification.title}
+                  </Typography>
+                  <Typography variant="body1" style={{ cursor: "pointer" }}>
+                    {notification.notification &&
+                      notification.notification.description}
+                  </Typography>
+                  <Typography
+                    color="primary"
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {calculateDateInterval(notification.notification.timestamp)}
+                  </Typography>
+                </>
+              )}
+            </div>
+          </div>
+        </Grid>
+        <Grid item xs={1}>
+          {!notification.is_read && <span className={classes.circle} />}
+        </Grid>
+      </Grid>
 
-      <More onClick={(e) => handleClick(e, notification.id)} />
+      {/* <More onClick={(e) => handleClick(e, notification.id)} /> */}
       <Popover
         open={popover.popoverId === notification.id}
         onClose={handleClose}
