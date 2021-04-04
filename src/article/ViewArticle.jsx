@@ -60,10 +60,10 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     padding: theme.spacing(1),
-    color: "#5c5c5c",
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
   },
   chip: {
@@ -94,6 +94,9 @@ const useStyles = makeStyles((theme) => ({
     width: "60%",
     marginLeft: "auto",
     marginRight: "auto",
+  },
+  pop: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -493,7 +496,7 @@ const ViewArticle = (props) => {
                 horizontal: "right",
               }}
             >
-              <div style={{ padding: "5px" }}>
+              <div className={classes.pop}>
                 {user &&
                   articleDetails.user &&
                   checkIfOwnerOfComment(articleDetails.user.id) && (
@@ -521,13 +524,16 @@ const ViewArticle = (props) => {
                       </Typography>
                     </>
                   )}
-                <Typography
-                  variant="body2"
-                  className={classes.typography}
-                  onClick={handleFlagClickOpen}
-                >
-                  Flag Article
-                </Typography>
+                {articleDetails.user &&
+                  !checkIfOwnerOfComment(articleDetails.user.id) && (
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={handleFlagClickOpen}
+                    >
+                      Flag Article
+                    </Typography>
+                  )}
               </div>
             </Popover>
           </div>

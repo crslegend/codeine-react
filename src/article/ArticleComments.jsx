@@ -80,11 +80,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   typography: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
+  },
+  pop: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -547,7 +551,7 @@ const ArticleComment = (props) => {
     }
   };
 
-  const childComment = (commentid, reply) => {
+  const childComment = (commentid, reply, index, repliesLength) => {
     return (
       <>
         <div className={classes.childcommentheader} style={{ display: "flex" }}>
@@ -581,7 +585,10 @@ const ArticleComment = (props) => {
           >
             {reply && reply.user && checkIfOwnerOfComment(reply.user.id) && (
               <div>
-                <Menu onClick={(e) => handleClick(e, reply.id)} />
+                <Menu
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => handleClick(e, reply.id)}
+                />
                 <Popover
                   open={popover.popoverId === reply.id}
                   onClose={handleClose}
@@ -595,24 +602,26 @@ const ArticleComment = (props) => {
                     horizontal: "right",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      openEditReplyTextField(commentid, reply.id, true);
-                    }}
-                  >
-                    Edit this response
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      handleDeleteComment(commentid, reply.id, "reply");
-                    }}
-                  >
-                    Delete
-                  </Typography>
+                  <div className={classes.pop}>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        openEditReplyTextField(commentid, reply.id, true);
+                      }}
+                    >
+                      Edit this response
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        handleDeleteComment(commentid, reply.id, "reply");
+                      }}
+                    >
+                      Delete
+                    </Typography>
+                  </div>
                 </Popover>
               </div>
             )}
@@ -630,7 +639,12 @@ const ArticleComment = (props) => {
                   value={reply.editValue}
                   multiline
                   rows={4}
-                  rowsMax={7}
+                  inputProps={{ style: { resize: "vertical" } }}
+                  InputProps={{
+                    classes: {
+                      input: classes.resize,
+                    },
+                  }}
                   placeholder="What are your thoughts..."
                   //error={firstNameError}
                   onChange={(event) =>
@@ -718,10 +732,11 @@ const ArticleComment = (props) => {
             {reply.likes}
           </Typography>
         </div>
-
-        <div className={classes.childcommentdivider}>
-          <Divider />
-        </div>
+        {index + 1 !== repliesLength && (
+          <div className={classes.childcommentdivider}>
+            <Divider />
+          </div>
+        )}
       </>
     );
   };
@@ -770,7 +785,12 @@ const ArticleComment = (props) => {
                 value={comment.comment}
                 multiline
                 rows={4}
-                rowsMax={7}
+                inputProps={{ style: { resize: "vertical" } }}
+                InputProps={{
+                  classes: {
+                    input: classes.resize,
+                  },
+                }}
                 placeholder="What are your thoughts..."
                 //error={firstNameError}
                 onChange={(event) =>
@@ -837,6 +857,7 @@ const ArticleComment = (props) => {
                               }}
                             >
                               <Menu
+                                style={{ cursor: "pointer" }}
                                 onClick={(e) => handleClick(e, comment.id)}
                               />
                               <Popover
@@ -852,28 +873,30 @@ const ArticleComment = (props) => {
                                   horizontal: "right",
                                 }}
                               >
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    openEditTextField(comment.id, true);
-                                  }}
-                                >
-                                  Edit this reponse
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    handleDeleteComment(
-                                      comment.id,
-                                      -1,
-                                      "parent"
-                                    );
-                                  }}
-                                >
-                                  Delete
-                                </Typography>
+                                <div className={classes.pop}>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      openEditTextField(comment.id, true);
+                                    }}
+                                  >
+                                    Edit this reponse
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      handleDeleteComment(
+                                        comment.id,
+                                        -1,
+                                        "parent"
+                                      );
+                                    }}
+                                  >
+                                    Delete
+                                  </Typography>
+                                </div>
                               </Popover>
                             </div>
                           )}
@@ -896,7 +919,12 @@ const ArticleComment = (props) => {
                                 value={comment.editValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
                                 placeholder="What are your thoughts..."
                                 //error={firstNameError}
                                 onChange={(event) =>
@@ -1077,7 +1105,12 @@ const ArticleComment = (props) => {
                                 value={comment.editReplyValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
                                 placeholder={
                                   "Replying to " +
                                   comment.user.first_name +
@@ -1139,7 +1172,12 @@ const ArticleComment = (props) => {
                           comment.replies.map((reply, replyIndex) => {
                             return (
                               <div key={`reply` + replyIndex}>
-                                {childComment(comment.id, reply)}
+                                {childComment(
+                                  comment.id,
+                                  reply,
+                                  replyIndex,
+                                  comment.replies.length
+                                )}
                               </div>
                             );
                           })}
