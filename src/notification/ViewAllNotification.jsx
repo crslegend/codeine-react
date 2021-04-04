@@ -267,7 +267,11 @@ const AllNotifications = (props) => {
       //onClick={() => handleNotifClick(notification.id)}
     >
       {userType === "member" && (
-        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        <MemberNavBar
+          loggedIn={loggedIn}
+          setLoggedIn={setLoggedIn}
+          viewAllNotif={true}
+        />
       )}
       {(userType === "partner" || userType === "admin") && (
         <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
@@ -286,18 +290,17 @@ const AllNotifications = (props) => {
               ✔ Mark all as read
             </Typography>
           </div>
-          {notificationList.length !== 0 ? (
-            notificationList.map((notification, index) => {
-              return (
-                <NotifTile
-                  key={index}
-                  notification={notification}
-                  getUserNotifications={getUserNotifications}
-                  userType={userType}
-                />
-              );
-            })
-          ) : (
+          {notificationList.map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType={userType}
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <img src={ZeroNotif} alt="" />
               <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
