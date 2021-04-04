@@ -247,22 +247,14 @@ const ViewCourseDetails = () => {
   };
 
   const handleProfileLink = (reviewMember) => {
-    if (reviewMember.id === (decoded && decoded.user_id)) {
-      // console.log("hello");
-      return "/member/profile";
-    } else {
-      if (reviewMember.member.membership_tier === "PRO") {
-        // console.log("hell");
-        return `/member/profile/${reviewMember.id}`;
-      }
+    if (reviewMember.member.membership_tier === "PRO") {
+      // console.log("hell");
+      return `/member/profile/${reviewMember.id}`;
     }
   };
 
   const toRenderProfileLinkOrNot = (reviewMember) => {
-    if (
-      reviewMember.id === (decoded && decoded.user_id) ||
-      reviewMember.member.membership_tier === "PRO"
-    ) {
+    if (reviewMember.member.membership_tier === "PRO") {
       return true;
     }
     return false;
