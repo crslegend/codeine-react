@@ -49,7 +49,17 @@ const TrendingArticle = (props) => {
                   : article.user.profile_photo
               }
               alt=""
-              style={{ height: "18px", width: "18px", marginRight: "5px" }}
+              style={{
+                height: "18px",
+                width: "18px",
+                marginRight: "5px",
+                border:
+                  article.user &&
+                  article.user.member &&
+                  article.user.member.membership_tier === "PRO"
+                    ? "3px solid green"
+                    : "",
+              }}
             ></Avatar>
             {article.user.is_admin &&
             article.user.first_name === null &&

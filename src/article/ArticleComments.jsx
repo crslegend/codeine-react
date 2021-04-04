@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   childcommentdivider: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   cardheadername: {
     display: "flex",
@@ -557,7 +557,15 @@ const ArticleComment = (props) => {
         <div className={classes.childcommentheader} style={{ display: "flex" }}>
           {reply.user && (
             <Avatar
-              style={{ marginRight: "15px" }}
+              style={{
+                marginRight: "15px",
+                border:
+                  reply.user &&
+                  reply.user.member &&
+                  reply.user.member.membership_tier === "PRO"
+                    ? "3px solid green"
+                    : "",
+              }}
               src={reply.user.profile_photo}
               alt=""
             />
@@ -771,7 +779,13 @@ const ArticleComment = (props) => {
                 <Avatar
                   src={user && user.profile_photo}
                   alt=""
-                  style={{ marginRight: "15px" }}
+                  style={{
+                    marginRight: "15px",
+                    border:
+                      user.member && user.member.membership_tier === "PRO"
+                        ? "3px solid green"
+                        : "",
+                  }}
                 />
                 <Typography style={{ marginTop: "8px" }}>
                   {user.first_name} {user.last_name}
@@ -836,7 +850,15 @@ const ArticleComment = (props) => {
                     <div className={classes.parentcommentheader}>
                       {comment.user && (
                         <Avatar
-                          style={{ marginRight: "15px" }}
+                          style={{
+                            marginRight: "15px",
+                            border:
+                              comment.user &&
+                              comment.user.member &&
+                              comment.user.member.membership_tier === "PRO"
+                                ? "3px solid green"
+                                : "",
+                          }}
                           src={comment.user.profile_photo}
                           alt=""
                         />

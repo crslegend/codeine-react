@@ -312,77 +312,40 @@ const NotificationDetail = () => {
             ></Avatar>
           )}
 
-          <Avatar
+          <img
             src={notification.notification && notification.notification.photo}
             alt=""
-            style={{ height: "65px", width: "65px" }}
-          ></Avatar>
+            style={{ height: "100px" }}
+          ></img>
 
-          <div style={{ marginLeft: "10px" }}>
-            {notification.is_read ? (
-              <>
-                <Typography
-                  style={{
-                    fontWeight: 700,
-                    color: "#797a7d",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                  }}
-                >
-                  {notification.notification && notification.notification.title}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  style={{
-                    color: "#797a7d",
-                    cursor: "pointer",
-                    fontSize: "13px",
-                  }}
-                >
-                  {notification.notification &&
-                    notification.notification.description}
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: "12px",
-                    color: "#797a7d",
-                    cursor: "pointer",
-                  }}
-                >
-                  {calculateDateInterval(notification.notification.timestamp)}
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography
-                  style={{
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    fontSize: "14px",
-                  }}
-                >
-                  {notification.notification && notification.notification.title}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  style={{ cursor: "pointer", fontSize: "13px" }}
-                >
-                  {notification.notification &&
-                    notification.notification.description}
-                </Typography>
-                <Typography
-                  color="primary"
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                  }}
-                >
-                  {calculateDateInterval(notification.notification.timestamp)}
-                </Typography>
-              </>
-            )}
-          </div>
+          <Typography
+            style={{
+              fontWeight: 700,
+              color: "#797a7d",
+              cursor: "pointer",
+            }}
+          >
+            {notification.notification && notification.notification.title}
+          </Typography>
+
+          <Typography
+            style={{
+              fontSize: "12px",
+              color: "#797a7d",
+              cursor: "pointer",
+            }}
+          >
+            {calculateDateInterval(notification.notification.timestamp)}
+          </Typography>
+          <Typography
+            variant="body1"
+            style={{
+              color: "#797a7d",
+              cursor: "pointer",
+            }}
+          >
+            {notification.notification && notification.notification.description}
+          </Typography>
         </div>
       </div>
 

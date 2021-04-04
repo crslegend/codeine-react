@@ -364,9 +364,9 @@ const MemberNavBar = (props) => {
                   height: "55px",
                   marginRight: "15px",
                   border:
-                    user.member && user.member.membership_tier !== "PRO"
-                      ? ""
-                      : "3px solid green",
+                    user.member && user.member.membership_tier === "PRO"
+                      ? "3px solid green"
+                      : "",
                 }}
               />
               <div

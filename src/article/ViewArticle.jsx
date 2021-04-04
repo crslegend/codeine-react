@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   container: {
-    width: "60%",
+    width: "50%",
     marginLeft: "auto",
     marginRight: "auto",
   },
@@ -324,7 +324,15 @@ const ViewArticle = (props) => {
               <Avatar
                 src={articleDetails.user.profile_photo}
                 alt=""
-                style={{ marginRight: "15px" }}
+                style={{
+                  marginRight: "15px",
+                  border:
+                    articleDetails.user &&
+                    articleDetails.user.member &&
+                    articleDetails.user.member.membership_tier === "PRO"
+                      ? "3px solid green"
+                      : "",
+                }}
               ></Avatar>
             </div>
             <div style={{ flexDirection: "column" }}>
