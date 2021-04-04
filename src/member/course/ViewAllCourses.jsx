@@ -223,7 +223,7 @@ const ViewAllCourses = () => {
       <div className={classes.courses}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
-            all courses
+            All Courses
           </Typography>
         </div>
         <div className={classes.searchSection}>

@@ -278,8 +278,8 @@ const AdminArticleList = (props) => {
       >
         <Tabs
           value={value}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           onChange={handleChange}
           aria-label="simple tabs example"
           classes={{

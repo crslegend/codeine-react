@@ -46,6 +46,9 @@ import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 import IndustryProjectDetails from "./industryProject/IndustryProjectDetails";
+import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
+import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
+import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -153,7 +156,7 @@ const ContentProviderHome = () => {
           }}
         >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
+            Log Out
           </Typography>
         </Button>
       </ListItem>
@@ -475,6 +478,25 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/helpdesk"
               render={() => <Helpdesk />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/helpdesk/contact-us"
+              render={() => <CreateNewTicketPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/helpdesk/tickets"
+              render={() => <ViewSubmittedTicketsPage />}
+              user="partner"
+            />
+            <PrivateRoute
+              strict
+              sensitive
+              path="/partner/home/helpdesk/tickets/:id"
+              render={() => <ViewTicketPage />}
               user="partner"
             />
             <PrivateRoute

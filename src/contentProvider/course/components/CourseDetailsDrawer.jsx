@@ -1,22 +1,24 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   Drawer,
   FormControlLabel,
+  GridList,
+  GridListTile,
+  GridListTileBar,
   IconButton,
   Switch,
   TextField,
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Help } from "@material-ui/icons";
+import { Delete, Help } from "@material-ui/icons";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { ToggleButton } from "@material-ui/lab";
+import { Alert, ToggleButton } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -42,6 +44,22 @@ const useStyles = makeStyles((theme) => ({
   },
   textarea: {
     resize: "both",
+  },
+  dropzone: {
+    width: "100%",
+    minHeight: "150px",
+    "@global": {
+      ".MuiDropzoneArea-text.MuiTypography-h5": {
+        textTransform: "none",
+        fontSize: "14px",
+      },
+    },
+  },
+  gridList: {
+    width: "100%",
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)",
   },
 }));
 
@@ -70,10 +88,14 @@ const CourseDetailsDrawer = ({
   const [coursePicDialog, setCoursePicDialog] = useState(false);
   const [coursePic, setCoursePic] = useState();
 
+  let reference = useRef();
   // console.log(courseDetails);
 
   const toggleDrawer = (open) => (event) => {
-    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
       return;
     }
 
@@ -120,6 +142,13 @@ const CourseDetailsDrawer = ({
 
   const drawerPage1 = (
     <Fragment>
+      <div style={{ width: "100%", marginBottom: "20px" }}>
+        <Alert severity="info">
+          This course is for{" "}
+          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
+        </Alert>
+      </div>
+
       <div
         style={{
           marginBottom: "10px",
@@ -127,7 +156,62 @@ const CourseDetailsDrawer = ({
           justifyContent: "center",
         }}
       >
-        <IconButton onClick={() => setCoursePicDialog(true)}>
+        {coursePicAvatar ? (
+          <GridList className={classes.gridList} cols={1}>
+            <GridListTile>
+              <img
+                alt="thumbnail"
+                src={coursePicAvatar && coursePicAvatar[0].data}
+              />
+              <GridListTileBar
+                classes={{
+                  root: classes.titleBar,
+                }}
+                actionIcon={
+                  <IconButton
+                    onClick={() => {
+                      setCoursePicAvatar();
+                    }}
+                  >
+                    <Delete style={{ color: "#C74343" }} />
+                  </IconButton>
+                }
+              />
+            </GridListTile>
+          </GridList>
+        ) : (
+          <div
+            style={{ display: "flex", flexDirection: "column", width: "100%" }}
+          >
+            <Typography variant="body2" style={{ paddingBottom: "7px" }}>
+              Course Thumbnail
+            </Typography>
+            <DropzoneAreaBase
+              dropzoneClass={classes.dropzone}
+              dropzoneText="Drag and drop an image or click here&nbsp;"
+              acceptedFiles={["image/*"]}
+              filesLimit={1}
+              maxFileSize={5000000}
+              fileObjects={coursePic}
+              onAdd={(newPhoto) => {
+                console.log("onAdd", newPhoto);
+                // setCoursePic(newPhoto);
+                setCoursePicAvatar(newPhoto);
+                // setValidatePhoto(false);
+              }}
+              onDelete={(deletePhotoObj) => {
+                setCoursePic();
+              }}
+              previewGridProps={{
+                item: {
+                  xs: "auto",
+                },
+              }}
+              style={{ minHeight: "100px" }}
+            />
+          </div>
+        )}
+        {/* <IconButton onClick={() => setCoursePicDialog(true)}>
           {coursePicAvatar ? (
             <Avatar className={classes.avatar} src={coursePicAvatar[0].data} />
           ) : (
@@ -135,7 +219,31 @@ const CourseDetailsDrawer = ({
               Upload Course Logo
             </Avatar>
           )}
-        </IconButton>
+        </IconButton> */}
+      </div>
+      <div
+        style={{
+          marginBottom: "10px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={courseDetails && courseDetails.pro}
+              onChange={() =>
+                setCourseDetails({
+                  ...courseDetails,
+                  pro: !courseDetails.pro,
+                })
+              }
+            />
+          }
+          label="Pro-Tier Course"
+          labelPlacement="start"
+        />
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="title">
@@ -170,7 +278,10 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={8}
-          inputProps={{ className: classes.textarea, style: { fontSize: "14px" } }}
+          inputProps={{
+            className: classes.textarea,
+            style: { fontSize: "14px" },
+          }}
           value={courseDetails && courseDetails.description}
           onChange={(e) =>
             setCourseDetails({
@@ -189,7 +300,11 @@ const CourseDetailsDrawer = ({
             </Typography>
           </label>
           <Tooltip
-            title={<Typography variant="body2">Separate the requirements with commas (eg. NodeJS,HTML,CSS)</Typography>}
+            title={
+              <Typography variant="body2">
+                Separate the requirements with commas (eg. NodeJS,HTML,CSS)
+              </Typography>
+            }
           >
             <IconButton disableRipple size="small">
               <Help fontSize="small" color="primary" />
@@ -223,7 +338,8 @@ const CourseDetailsDrawer = ({
           <Tooltip
             title={
               <Typography variant="body2">
-                Separate the objectives with commas (eg. to gain knowledge,to make use of)
+                Separate the objectives with commas (eg. to gain knowledge,to
+                make use of)
               </Typography>
             }
           >
@@ -240,7 +356,10 @@ const CourseDetailsDrawer = ({
           fullWidth
           multiline
           rows={4}
-          inputProps={{ className: classes.textarea, style: { fontSize: "14px" } }}
+          inputProps={{
+            className: classes.textarea,
+            style: { fontSize: "14px" },
+          }}
           value={courseDetails && courseDetails.learning_objectives}
           onChange={(e) =>
             setCourseDetails({
@@ -252,7 +371,15 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div>
-        <Button variant="contained" color="primary" style={{ float: "right" }} onClick={() => handleNextPage()}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ float: "right" }}
+          onClick={() => {
+            handleNextPage();
+            reference.parentElement.scrollTop = 0;
+          }}
+        >
           Next
         </Button>
       </div>
@@ -261,6 +388,12 @@ const CourseDetailsDrawer = ({
 
   const drawerPage2 = (
     <Fragment>
+      <div style={{ width: "100%", marginBottom: "20px" }}>
+        <Alert severity="info">
+          This course is for{" "}
+          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
+        </Alert>
+      </div>
       <div style={{ marginBottom: "30px" }}>
         <Typography variant="body2" style={{ paddingBottom: "10px" }}>
           Course Language (Choost at least 1)
@@ -471,7 +604,9 @@ const CourseDetailsDrawer = ({
       </div>
       <div style={{ marginBottom: "30px" }}>
         <label htmlFor="preview">
-          <Typography variant="body2">Introduction Preview Video URL (Required)</Typography>
+          <Typography variant="body2">
+            Introduction Preview Video URL (Required)
+          </Typography>
         </label>
         <TextField
           id="preview"
@@ -497,7 +632,8 @@ const CourseDetailsDrawer = ({
           <Tooltip
             title={
               <Typography variant="body2">
-                The repository URL will be used for the integrated coding environment.
+                The repository URL will be used for the integrated coding
+                environment.
               </Typography>
             }
           >
@@ -513,7 +649,11 @@ const CourseDetailsDrawer = ({
           margin="dense"
           fullWidth
           placeholder="eg. URL of github repository"
-          value={courseDetails && courseDetails.github_repo}
+          value={
+            courseDetails && courseDetails.github_repo
+              ? courseDetails.github_repo
+              : ""
+          }
           onChange={(e) =>
             setCourseDetails({
               ...courseDetails,
@@ -569,24 +709,6 @@ const CourseDetailsDrawer = ({
           inputProps={{ style: { fontSize: "14px" } }}
         />
       </div>
-      <div style={{ marginBottom: "30px" }}>
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={courseDetails && courseDetails.pro}
-              onChange={() =>
-                setCourseDetails({
-                  ...courseDetails,
-                  pro: !courseDetails.pro,
-                })
-              }
-            />
-          }
-          label="Course For Pro Members Only"
-          labelPlacement="start"
-        />
-      </div>
       <div
         style={{
           display: "flex",
@@ -597,7 +719,11 @@ const CourseDetailsDrawer = ({
         <Button variant="contained" onClick={() => setDrawerPageNum(1)}>
           Back
         </Button>
-        <Button variant="contained" color="primary" onClick={() => handleSaveCourseDetails()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleSaveCourseDetails()}
+        >
           Save
         </Button>
       </div>
@@ -607,8 +733,15 @@ const CourseDetailsDrawer = ({
   return (
     <Fragment>
       <div>
-        <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)} classes={{ paper: classes.drawer }}>
-          <div className={classes.insideDrawer}>{drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}</div>
+        <Drawer
+          anchor="right"
+          open={drawerOpen}
+          onClose={toggleDrawer(false)}
+          classes={{ paper: classes.drawer }}
+        >
+          <div className={classes.insideDrawer} ref={(el) => (reference = el)}>
+            {drawerPageNum && drawerPageNum === 1 ? drawerPage1 : drawerPage2}
+          </div>
         </Drawer>
       </div>
 

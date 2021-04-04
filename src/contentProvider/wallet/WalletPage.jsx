@@ -259,6 +259,8 @@ const WalletPage = () => {
     transactionRows[h].amount =
       allTransactionList[h].payment_transaction.payment_amount;
 
+    transactionRows[h].id = allTransactionList[h].payment_transaction.id;
+
     if (
       allTransactionList[h].payment_transaction.payment_status === "COMPLETED"
     ) {

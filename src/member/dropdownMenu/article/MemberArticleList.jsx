@@ -5,6 +5,10 @@ import MemberNavBar from "../../MemberNavBar";
 import {
   Button,
   Container,
+  Grid,
+  Card,
+  CardActionArea,
+  CardContent,
   Typography,
   Divider,
   AppBar,
@@ -17,12 +21,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Chip,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import parse, { attributesToProps } from "html-react-parser";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Toast from "../../../components/Toast.js";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import Service from "../../../AxiosService";
+import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import PageTitle from "../../../components/PageTitle.js";
 
@@ -62,6 +69,12 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  chip: {
+    marginRight: "10px",
+    marginBottom: "10px",
+    borderRadius: "3px",
+    backgroundColor: "#f2f2f2",
+  },
 }));
 
 function TabPanel(props) {
@@ -100,7 +113,6 @@ function a11yProps(index) {
 const MemberArticleList = (props) => {
   const classes = useStyles();
   const history = useHistory();
-  // const { userType } = props;
 
   // Tabs variable
   const [value, setValue] = useState(0);
@@ -234,10 +246,12 @@ const MemberArticleList = (props) => {
   };
 
   const [articleList, setArticleList] = useState([]);
+  const [allArticles, setAllArticles] = useState([]);
 
   useEffect(() => {
     checkIfLoggedIn();
     getArticles();
+    getAllArticles();
   }, []);
 
   const getArticles = () => {
@@ -270,6 +284,25 @@ const MemberArticleList = (props) => {
       });
   };
 
+  const getAllArticles = () => {
+    const userid = jwt_decode(Service.getJWT()).user_id;
+
+    Service.client
+      .get(`/articles`)
+      .then((res) => {
+        res.data = res.data
+          .filter((item) => item.user.id !== userid)
+          .sort((a, b) => b.date_created - a.date_created)
+          .slice(0, 3);
+        console.log(res.data);
+
+        setAllArticles(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <Container maxWidth="lg">
       <div className={classes.root}>
@@ -282,271 +315,467 @@ const MemberArticleList = (props) => {
             alignItems: "center",
           }}
         >
-          <PageTitle title="Your articles" />
+          <PageTitle title="My Articles" />
 
           <div style={{ marginLeft: "auto" }}>
             <Button
               variant="contained"
               color="primary"
               onClick={() => createNewArticle()}
-              style={{ textTransform: "capitalize" }}
             >
+              <Add style={{ color: "#FFFFFF" }} />
               New Article
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => history.push("/viewarticles")}
-              style={{ textTransform: "capitalize", marginLeft: "15px" }}
-            >
-              View all articles
             </Button>
           </div>
         </div>
+        <Grid container>
+          <Grid item xs={9}>
+            <AppBar
+              position="static"
+              classes={{
+                root: classes.appbar,
+              }}
+            >
+              <Tabs
+                value={value}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleChange}
+                aria-label="simple tabs example"
+                classes={{
+                  root: classes.tabs,
+                }}
+              >
+                <Tab label="Drafts" {...a11yProps(0)} />
+                <Tab label="Published" {...a11yProps(1)} />
+              </Tabs>
+            </AppBar>
 
-        <AppBar
-          position="static"
-          classes={{
-            root: classes.appbar,
-          }}
-        >
-          <Tabs
-            value={value}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={handleChange}
-            aria-label="simple tabs example"
-            classes={{
-              root: classes.tabs,
-            }}
-          >
-            <Tab label="Drafts" {...a11yProps(0)} />
-            <Tab label="Published" {...a11yProps(1)} />
-          </Tabs>
-        </AppBar>
+            <TabPanel value={value} index={0}>
+              {articleList
+                .filter((article) => !article.is_published)
+                .map((article, index) => {
+                  return (
+                    <div key={article.id} className={classes.articlelists}>
+                      <Typography
+                        style={{ fontWeight: "700", cursor: "pointer" }}
+                        onClick={() => {
+                          history.push(`/article/edit/member/${article.id}`);
+                        }}
+                      >
+                        {article.title.length === 0
+                          ? "Untitled article"
+                          : article.title}
+                      </Typography>
+                      <div style={{ display: "flex" }}>
+                        <Typography
+                          style={{ fontSize: "14px", color: "#757575" }}
+                        >
+                          Last edited{" "}
+                          {calculateDateInterval(article.date_edited) +
+                            " ~ " +
+                            article.content.length +
+                            " words so far"}
+                        </Typography>
+                        <ExpandMoreIcon
+                          style={{ color: "#757575" }}
+                          onClick={(e) => handlePopoverOpen(e, article.id)}
+                        />
+                        <Popover
+                          open={popover.popoverId === article.id}
+                          anchorEl={popover.anchorEl}
+                          onClose={handlePopoverClose}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                        >
+                          <div style={{ padding: "5px" }}>
+                            <Typography
+                              variant="body2"
+                              className={classes.typography}
+                              onClick={() => {
+                                history.push(
+                                  `/article/edit/member/${article.id}`
+                                );
+                              }}
+                            >
+                              Edit Draft
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              className={classes.typography}
+                              onClick={() => {
+                                handleDialogOpen(article.id);
+                                handlePopoverClose();
+                              }}
+                            >
+                              Delete Draft
+                            </Typography>
+                          </div>
+                        </Popover>
+                      </div>
 
-        <TabPanel value={value} index={0}>
-          {articleList
-            .filter((article) => !article.is_published)
-            .map((article, index) => {
-              return (
-                <div key={article.id} className={classes.articlelists}>
+                      <div className={classes.divider}>
+                        <Divider />
+                      </div>
+                      <Dialog
+                        open={dialogStatus.dialogId === article.id}
+                        onClose={handleDialogClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogTitle id="alert-dialog-title">
+                          {"Delete Article?"}
+                        </DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete this article?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={handleDialogClose}
+                            variant="outlined"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              deleteArticle(article.id);
+                            }}
+                            variant="contained"
+                            className={classes.redButton}
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                  );
+                })}
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              {articleList
+                .filter((article) => article.is_published)
+                .map((article, index) => {
+                  return (
+                    <div key={article.id} className={classes.articlelists}>
+                      <div style={{ display: "flex" }}>
+                        <div>
+                          <Typography
+                            style={{
+                              fontWeight: "700",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              history.push(`/article/member/${article.id}`);
+                            }}
+                          >
+                            {article.title}
+                          </Typography>
+                        </div>
+                        <div style={{ marginLeft: "auto" }}>
+                          {!article.is_activated && (
+                            <Typography
+                              style={{ fontWeight: "700", color: "red" }}
+                            >
+                              Deactivated
+                            </Typography>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex" }}>
+                        <Typography
+                          style={{ fontSize: "14px", color: "#757575" }}
+                        >
+                          Published {calculateDateInterval(article.date_edited)}
+                        </Typography>
+                        <ExpandMoreIcon
+                          style={{ color: "#757575" }}
+                          onClick={(e) => handlePopoverOpen(e, article.id)}
+                        />
+                        <Popover
+                          open={popover.popoverId === article.id}
+                          anchorEl={popover.anchorEl}
+                          onClose={handlePopoverClose}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                        >
+                          <div style={{ padding: "5px" }}>
+                            <Typography
+                              variant="body2"
+                              className={classes.typography}
+                              onClick={() =>
+                                history.push(
+                                  `/article/edit/member/${article.id}`
+                                )
+                              }
+                            >
+                              Edit article
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              className={classes.typography}
+                              onClick={() => {
+                                unpublishArticle(article.id);
+                                handlePopoverClose();
+                              }}
+                            >
+                              Unpublish Article
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              className={classes.typography}
+                              onClick={() => {
+                                handleDialogOpen(article.id);
+                                handlePopoverClose();
+                              }}
+                            >
+                              Delete
+                            </Typography>
+                          </div>
+                        </Popover>
+                      </div>
+
+                      <div className={classes.divider}>
+                        <Divider />
+                      </div>
+                      <Dialog
+                        open={dialogStatus.dialogId === article.id}
+                        onClose={handleDialogClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogTitle id="alert-dialog-title">
+                          {"Delete Article?"}
+                        </DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete this article?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={handleDialogClose}
+                            variant="outlined"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              deleteArticle(article.id);
+                              handlePopoverClose();
+                            }}
+                            variant="contained"
+                            className={classes.redButton}
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                  );
+                })}
+            </TabPanel>
+          </Grid>
+          <Grid item xs={3}>
+            <Card
+              style={{
+                marginLeft: "20px",
+              }}
+            >
+              <label>
+                <Typography
+                  variant="h6"
+                  style={{
+                    fontWeight: 600,
+                    margin: "20px 0px 20px 15px",
+                    display: "inline-block",
+                  }}
+                >
+                  More from
+                </Typography>
+              </label>
+              <Link style={{ textDecoration: "none" }} to="/viewarticles">
+                <Typography
+                  variant="h6"
+                  color="primary"
+                  display="inline"
+                  style={{ fontWeight: 600, textDecoration: "none" }}
+                >
+                  {" "}
+                  Articles
+                </Typography>
+              </Link>
+              {allArticles && allArticles.length > 0 ? (
+                allArticles.map((article, index) => {
+                  return (
+                    <CardActionArea
+                      onClick={() =>
+                        history.push(`/article/member/${article.id}`)
+                      }
+                      key={index}
+                      style={{ borderTop: "1px solid #F3F3F3" }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="body1"
+                          style={{ marginBottom: "10px" }}
+                        >
+                          {article && article.title}
+                        </Typography>
+                        {article && article.coding_languages.length > 0
+                          ? article.coding_languages.map((language, index) => {
+                              if (language === "PY") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Python"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (language === "JAVA") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Java"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (language === "JS") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Javascript"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (language === "CPP") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="C++"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (language === "CS") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="C#"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (language === "RUBY") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Ruby"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label={language}
+                                    className={classes.chip}
+                                  />
+                                );
+                              }
+                            })
+                          : ""}
+                        {article && article.categories.length > 0
+                          ? article.categories.map((category, index) => {
+                              if (category === "FE") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Frontend"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (category === "BE") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Backend"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (category === "UI") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="UI/UX"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (category === "DB") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Database Administration"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else if (category === "ML") {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Machine Learning"
+                                    className={classes.chip}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <Chip
+                                    key={index}
+                                    label="Security"
+                                    className={classes.chip}
+                                  />
+                                );
+                              }
+                            })
+                          : ""}
+                      </CardContent>
+                    </CardActionArea>
+                  );
+                })
+              ) : (
+                <CardContent
+                  style={{
+                    height: "150px",
+                    borderTop: "1px solid #F3F3F3",
+                  }}
+                >
                   <Typography
-                    style={{ fontWeight: "700", cursor: "pointer" }}
-                    onClick={() => {
-                      history.push(`/article/edit/member/${article.id}`);
+                    variant="body1"
+                    style={{
+                      textAlign: "center",
+                      marginTop: "35px",
+                      color: "#C4C4C4",
                     }}
                   >
-                    {article.title.length === 0
-                      ? "Untitled article"
-                      : article.title}
+                    No recommended articles
                   </Typography>
-                  <div style={{ display: "flex" }}>
-                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
-                      Last edited{" "}
-                      {calculateDateInterval(article.date_edited) +
-                        " ~ " +
-                        article.content.length +
-                        " words so far"}
-                    </Typography>
-                    <ExpandMoreIcon
-                      style={{ color: "#757575" }}
-                      onClick={(e) => handlePopoverOpen(e, article.id)}
-                    />
-                    <Popover
-                      open={popover.popoverId === article.id}
-                      anchorEl={popover.anchorEl}
-                      onClose={handlePopoverClose}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                    >
-                      <div style={{ padding: "5px" }}>
-                        <Typography
-                          variant="body2"
-                          className={classes.typography}
-                          onClick={() => {
-                            history.push(`/article/edit/member/${article.id}`);
-                          }}
-                        >
-                          Edit Draft
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className={classes.typography}
-                          onClick={() => {
-                            handleDialogOpen(article.id);
-                            handlePopoverClose();
-                          }}
-                        >
-                          Delete Draft
-                        </Typography>
-                      </div>
-                    </Popover>
-                  </div>
-
-                  <div className={classes.divider}>
-                    <Divider />
-                  </div>
-                  <Dialog
-                    open={dialogStatus.dialogId === article.id}
-                    onClose={handleDialogClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                  >
-                    <DialogTitle id="alert-dialog-title">
-                      {"Delete Article?"}
-                    </DialogTitle>
-                    <DialogContent>
-                      <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to delete this article?
-                      </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleDialogClose} variant="outlined">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          deleteArticle(article.id);
-                        }}
-                        variant="contained"
-                        className={classes.redButton}
-                      >
-                        Delete
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
-                </div>
-              );
-            })}
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          {articleList
-            .filter((article) => article.is_published)
-            .map((article, index) => {
-              return (
-                <div key={article.id} className={classes.articlelists}>
-                  <div style={{ display: "flex" }}>
-                    <div>
-                      <Typography
-                        style={{
-                          fontWeight: "700",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          history.push(`/article/member/${article.id}`);
-                        }}
-                      >
-                        {article.title}
-                      </Typography>
-                    </div>
-                    <div style={{ marginLeft: "auto" }}>
-                      {!article.is_activated && (
-                        <Typography style={{ fontWeight: "700", color: "red" }}>
-                          Deactivated
-                        </Typography>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex" }}>
-                    <Typography style={{ fontSize: "14px", color: "#757575" }}>
-                      Published {calculateDateInterval(article.date_edited)}
-                    </Typography>
-                    <ExpandMoreIcon
-                      style={{ color: "#757575" }}
-                      onClick={(e) => handlePopoverOpen(e, article.id)}
-                    />
-                    <Popover
-                      open={popover.popoverId === article.id}
-                      anchorEl={popover.anchorEl}
-                      onClose={handlePopoverClose}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                    >
-                      <div style={{ padding: "5px" }}>
-                        <Typography
-                          variant="body2"
-                          className={classes.typography}
-                          onClick={() =>
-                            history.push(`/article/edit/member/${article.id}`)
-                          }
-                        >
-                          Edit article
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className={classes.typography}
-                          onClick={() => {
-                            unpublishArticle(article.id);
-                            handlePopoverClose();
-                          }}
-                        >
-                          Unpublish Article
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className={classes.typography}
-                          onClick={() => {
-                            handleDialogOpen(article.id);
-                            handlePopoverClose();
-                          }}
-                        >
-                          Delete
-                        </Typography>
-                      </div>
-                    </Popover>
-                  </div>
-
-                  <div className={classes.divider}>
-                    <Divider />
-                  </div>
-                  <Dialog
-                    open={dialogStatus.dialogId === article.id}
-                    onClose={handleDialogClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                  >
-                    <DialogTitle id="alert-dialog-title">
-                      {"Delete Article?"}
-                    </DialogTitle>
-                    <DialogContent>
-                      <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to delete this article?
-                      </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleDialogClose} variant="outlined">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          deleteArticle(article.id);
-                          handlePopoverClose();
-                        }}
-                        variant="contained"
-                        className={classes.redButton}
-                      >
-                        Delete
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
-                </div>
-              );
-            })}
-        </TabPanel>
+                </CardContent>
+              )}
+            </Card>
+          </Grid>
+        </Grid>
       </div>
     </Container>
   );

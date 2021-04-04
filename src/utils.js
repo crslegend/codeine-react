@@ -34,3 +34,12 @@ export const calculateDateInterval = (timestamp) => {
   }
   return `${days} days ago`;
 };
+
+export const downloadJSON = (jsonObj) => {
+  let copy = {
+    ...jsonObj,
+    label: jsonObj.label + " (copy)",
+  };
+
+  return "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy));
+};

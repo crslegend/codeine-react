@@ -246,7 +246,7 @@ const AdminPasswordPage = (props) => {
               <Button
                 disabled={loading}
                 variant="contained"
-                color="primary"
+                color="secondary"
                 className={classes.button}
                 type="submit"
               >

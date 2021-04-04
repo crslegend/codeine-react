@@ -97,6 +97,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
     marginBottom: "10px",
   },
+  viewbadge: {
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+      backgroundColor: "transparent",
+    },
+  },
   dialogmedia: {
     height: "100px",
     width: "100px",
@@ -366,10 +373,9 @@ const DashboardPage = () => {
                 </Typography>
 
                 <Button
-                  variant="outlined"
-                  size="small"
+                  size="large"
                   onClick={() => setBadgesDialog(true)}
-                  style={{ textTransform: "none" }}
+                  className={classes.viewbadge}
                 >
                   view all
                 </Button>
