@@ -19,15 +19,20 @@ import { Dashboard, Timeline } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotifTile from "../components/NotificationTile";
+import ZeroNotif from "../assets/ZeroNotif.svg";
 
 const useStyles = makeStyles((theme) => ({
   popover: {
     width: "300px",
+    padding: theme.spacing(1),
+  },
+  notifpopover: {
+    width: "400px",
     padding: theme.spacing(1),
   },
   popoverPaper: {
@@ -64,15 +69,25 @@ const useStyles = makeStyles((theme) => ({
     height: "30px",
     width: "30px",
     "&:hover": {
-      color: "#000",
+      color: theme.palette.primary.main,
       cursor: "pointer",
     },
   },
   notificationOpen: {
     cursor: "pointer",
-    color: "#000",
+    color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
+  },
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -104,8 +119,22 @@ const MemberNavBar = (props) => {
     }
   };
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
     getUserDetails();
+    getUserNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -199,6 +228,92 @@ const MemberNavBar = (props) => {
     </Fragment>
   );
 
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "800",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/member/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
   const loggedInNavBar = (
     <Fragment>
       {user && user.member && user.member.membership_tier !== "PRO" && (
@@ -214,36 +329,7 @@ const MemberNavBar = (props) => {
         </ListItem>
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <div>
-          <Badge badgeContent={1} color="primary">
-            <NotificationsIcon
-              className={
-                notifOpen ? classes.notificationOpen : classes.notification
-              }
-              onClick={handleNotifClick}
-            />
-          </Badge>
-
-          <Popover
-            id={notifid}
-            open={notifOpen}
-            anchorEl={anchorE2}
-            onClose={handleNotifClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <div className={classes.popover}>
-              Notifications
-              <Typography>View All Notification</Typography>
-            </div>
-          </Popover>
-        </div>
+        {notifBell}
         <Avatar
           onClick={handleClick}
           src={user && user.profile_photo}
@@ -253,6 +339,10 @@ const MemberNavBar = (props) => {
             height: "34px",
             cursor: "pointer",
             marginLeft: "30px",
+            border:
+              user.member && user.member.membership_tier !== "PRO"
+                ? ""
+                : "3px solid green",
           }}
         />
         <Popover
@@ -277,7 +367,15 @@ const MemberNavBar = (props) => {
               <Avatar
                 src={user && user.profile_photo}
                 alt=""
-                style={{ width: "55px", height: "55px", marginRight: "15px" }}
+                style={{
+                  width: "55px",
+                  height: "55px",
+                  marginRight: "15px",
+                  border:
+                    user.member && user.member.membership_tier === "PRO"
+                      ? "3px solid green"
+                      : "",
+                }}
               />
               <div
                 style={{

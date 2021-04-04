@@ -231,6 +231,12 @@ const ViewAllArticles = () => {
                           height: "18px",
                           width: "18px",
                           marginRight: "5px",
+                          border:
+                            article.user &&
+                            article.user.member &&
+                            article.user.member.membership_tier === "PRO"
+                              ? "3px solid green"
+                              : "",
                         }}
                       ></Avatar>
 
