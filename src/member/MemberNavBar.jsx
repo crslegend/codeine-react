@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme) => ({
   },
   popoverPaper: {
     marginTop: "10px",
-    boxShadow: "5px 5px 0px #222",
-    border: "2px solid #222",
+    boxShadow: "3px 4px 0px #222",
+    border: "1px solid #222",
   },
   typography: {
     cursor: "pointer",
