@@ -27,6 +27,7 @@ import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -55,6 +56,7 @@ import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
 import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
+import Notification from "./notification/NotificationManagement";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
@@ -400,6 +402,16 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/partner/home/notification"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <NotificationsNoneIcon className={classes.listIcon} />
+        <Typography variant="body1">Notification</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/partner/home/helpdesk"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -601,6 +613,12 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/notification"
+              render={() => <Notification />}
               user="partner"
             />
             <PrivateRoute

@@ -41,6 +41,7 @@ import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import AllNotifications from "./notification/ViewAllNotification";
+import NotificationDetail from "./notification/NotificationDetail";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 import Membership from "./member/membership/Membership";
 import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
@@ -256,6 +257,24 @@ const App = () => {
         exact
         path="/admin/notifications"
         component={AllNotifications}
+        user="admin"
+      />
+      <PrivateRoute
+        exact
+        path="/member/notification/view/:id"
+        component={NotificationDetail}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/partner/notification/view/:id"
+        component={NotificationDetail}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/admin/notification/view/:id"
+        component={NotificationDetail}
         user="admin"
       />
 

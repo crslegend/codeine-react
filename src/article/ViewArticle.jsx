@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  TextField,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
@@ -23,8 +24,10 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
+import FlagDialog from "./FlagArticleDialog";
+import Toast from "../components/Toast";
 import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
 
@@ -87,6 +90,11 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline #437FC7",
     },
   },
+  container: {
+    width: "60%",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -110,6 +118,17 @@ const ViewArticle = (props) => {
       highlight: (text) => hljs.highlightAuto(text).value,
     },
   };
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const formatDate = (date) => {
     const options = {
@@ -259,19 +278,25 @@ const ViewArticle = (props) => {
     }
   };
 
+  const [dialogFlagOpen, setDialogFlagOpen] = useState(false);
+
+  const handleFlagClickOpen = () => {
+    setDialogFlagOpen(true);
+  };
+
+  const handleFlagClickClose = () => {
+    setDialogFlagOpen(false);
+  };
+
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <div className={classes.container}>
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
           aria-label="breadcrumb"
         >
-          <Link
-            className={classes.backLink}
-            onClick={() => {
-              history.push("/viewarticles");
-            }}
-          >
+          <Link className={classes.backLink} to="/viewarticles">
             Articles
           </Link>
           <Typography>{articleDetails.title}</Typography>
@@ -345,6 +370,8 @@ const ViewArticle = (props) => {
               value={articleDetails.content}
               readOnly={true}
               theme={"bubble"}
+              enable={false}
+              onChange={(e) => e}
             />
           </div>
 
@@ -497,7 +524,7 @@ const ViewArticle = (props) => {
                 <Typography
                   variant="body2"
                   className={classes.typography}
-                  onClick={() => alert("Flag Article")}
+                  onClick={handleFlagClickOpen}
                 >
                   Flag Article
                 </Typography>
@@ -506,62 +533,17 @@ const ViewArticle = (props) => {
           </div>
           {/* <Divider style={{ marginTop: "20px" }} /> */}
         </div>
+      </div>
 
-        {/* <div style={{ display: "flex" }}>
-          <div style={{ display: "flex" }}>
-            <Avatar
-              src={articleDetails.user && articleDetails.user.profile_photo}
-              alt=""
-              style={{ width: "60px", height: "60px", marginRight: "15px" }}
-            ></Avatar>
-          </div>
-          <div style={{ flexDirection: "column" }}>
-            <Typography
-              style={{ display: "flex", fontWeight: "550" }}
-              variant="body2"
-            >
-              WRITTEN BY
-            </Typography>
-            <Typography variant="h6" style={{ fontWeight: "600" }}>
-              {articleDetails.user && articleDetails.user.first_name}{" "}
-              {articleDetails.user && articleDetails.user.last_name}
-              {articleDetails.user && articleDetails.user.bio}
-            </Typography>
-          </div>
-        </div> */}
+      <FlagDialog
+        id={id}
+        sbOpen={sbOpen}
+        setSbOpen={setSbOpen}
+        setSnackbar={setSnackbar}
+        dialogFlagOpen={dialogFlagOpen}
+        handleFlagClickClose={handleFlagClickClose}
+      />
 
-        {/* <div style={{ display: "flex" }}>
-          <Language style={{ marginRight: "10px" }} />
-          {articleDetails &&
-            articleDetails.languages &&
-            articleDetails.languages.length > 0 &&
-            articleDetails.languages.map((language, index) => {
-              if (index + 1 !== articleDetails.languages.length) {
-                if (language === "ENG") {
-                  return <Typography key={index}>English, </Typography>;
-                } else if (language === "MAN") {
-                  return <Typography key={index}>中文, </Typography>;
-                } else {
-                  return <Typography key={index}>Français, </Typography>;
-                }
-              } else {
-                if (language === "ENG") {
-                  return <Typography key={index}>English</Typography>;
-                } else if (language === "MAN") {
-                  return <Typography key={index}>中文</Typography>;
-                } else {
-                  return <Typography key={index}>Français</Typography>;
-                }
-              }
-            })}
-        </div> */}
-        {/* <Typography
-          variant="body1"
-          style={{ fontWeight: 600, marginBottom: "10px" }}
-        >
-          Categories this article falls under:
-        </Typography> */}
-      </Container>
       <Dialog
         open={dialogopen}
         onClose={handleDialogClose}

@@ -334,6 +334,10 @@ const MemberNavBar = (props) => {
             height: "34px",
             cursor: "pointer",
             marginLeft: "30px",
+            border:
+              user.member && user.member.membership_tier !== "PRO"
+                ? ""
+                : "3px solid green",
           }}
         />
         <Popover
@@ -355,7 +359,15 @@ const MemberNavBar = (props) => {
               <Avatar
                 src={user && user.profile_photo}
                 alt=""
-                style={{ width: "55px", height: "55px", marginRight: "15px" }}
+                style={{
+                  width: "55px",
+                  height: "55px",
+                  marginRight: "15px",
+                  border:
+                    user.member && user.member.membership_tier !== "PRO"
+                      ? ""
+                      : "3px solid green",
+                }}
               />
               <div
                 style={{

@@ -187,7 +187,10 @@ const AdminNotificationPage = () => {
       });
       return;
     }
-    if (selectedMemberList.length === 0 && selectedPartnerList.length === 0) {
+    if (
+      selectedMemberList.rowIds.length === 0 &&
+      selectedPartnerList.rowIds.length === 0
+    ) {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
@@ -441,11 +444,11 @@ const AdminNotificationPage = () => {
     rowIds: [],
   });
 
-  const [notificationPhoto, setNotificationPhoto] = useState();
+  const [notificationPhoto, setNotificationPhoto] = useState([]);
 
   const getNotificationSent = () => {
-    Service.client.get("/notifications")
-  }
+    Service.client.get("/notifications");
+  };
 
   return (
     <div className={classes.root}>

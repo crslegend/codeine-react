@@ -8,6 +8,10 @@ import {
   Avatar,
   IconButton,
 } from "@material-ui/core";
+import AccountIcon from "../assets/notifIcon/AccountIcon.png";
+import AnnouncementIcon from "../assets/notifIcon/AnnouncementIcon.png";
+import ConsulatationIcon from "../assets/notifIcon/ConsultationIcon.png";
+import PaymentIcon from "../assets/notifIcon/PaymentIcon.svg";
 import Service from "../AxiosService";
 import { useHistory } from "react-router";
 
@@ -134,15 +138,11 @@ const NotificationTile = (props) => {
           res.data.notification.notification_type === "REMINDER"
         ) {
           if (userType === "member") {
-            history.push(
-              `/member/viewnotification/${res.data.notification.id}`
-            );
+            history.push(`/member/notification/view/${res.data.id}`);
           } else if (userType === "partner") {
-            history.push(
-              `/partner/viewnotification/${res.data.notification.id}`
-            );
+            history.push(`/partner/notification/view/${res.data.id}`);
           } else if (userType === "admin") {
-            history.push(`/admin/viewnotification/${res.data.notification.id}`);
+            history.push(`/admin/notification/view/${res.data.id}`);
           }
         }
       })
@@ -194,11 +194,41 @@ const NotificationTile = (props) => {
           style={{ display: "flex", width: `calc(100% - 30px)` }}
           onClick={() => handleNotifClick(notification.id)}
         >
+          {/* {notification.notification.notification_type === "HELPDESK" && (
+            <Avatar
+              src={AccountIcon}
+              alt=""
+              style={{ height: "65px", width: "65px" }}
+            ></Avatar>
+          )}
+          {notification.notification.notification_type === "GENERAL" && (
+            <Avatar
+              src={AnnouncementIcon}
+              alt=""
+              style={{ height: "65px", width: "65px" }}
+            ></Avatar>
+          )}
+          {notification.notification.notification_type === "COURSE" && (
+            <Avatar
+              src={AnnouncementIcon}
+              alt=""
+              style={{ height: "65px", width: "65px" }}
+            ></Avatar>
+          )}
+          {notification.notification.notification_type === "PAYMENT" && (
+            <Avatar
+              src={PaymentIcon}
+              alt=""
+              style={{ height: "65px", width: "65px" }}
+            ></Avatar>
+          )} */}
+
           <Avatar
             src={notification.notification && notification.notification.photo}
             alt=""
             style={{ height: "65px", width: "65px" }}
           ></Avatar>
+
           <div style={{ marginLeft: "10px" }}>
             {notification.is_read ? (
               <>

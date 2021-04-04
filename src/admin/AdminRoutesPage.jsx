@@ -410,7 +410,7 @@ const AdminRoutesPage = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/admin/notifications"
+        to="/admin/notification/manage"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
@@ -537,7 +537,7 @@ const AdminRoutesPage = () => {
           <Route
             strict
             sensitive
-            path="/admin/notifications"
+            path="/admin/notification/manage"
             render={(match) => <Notifications />}
           />
           <Route
