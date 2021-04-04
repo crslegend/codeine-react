@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
   Grid,
+  Badge,
   ListItem,
   Avatar,
   Divider,
@@ -27,7 +28,10 @@ import { useDebounce } from "use-debounce";
 import ReactQuill from "react-quill";
 import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
-// import Cookies from "js-cookie";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotifTile from "../components/NotificationTile";
+import ZeroNotif from "../assets/ZeroNotif.svg";
+import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,6 +68,10 @@ const useStyles = makeStyles((theme) => ({
   },
   popover: {
     width: "300px",
+    padding: theme.spacing(1),
+  },
+  notifpopover: {
+    width: "400px",
     padding: theme.spacing(1),
   },
   typography: {
@@ -115,6 +123,31 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: theme.palette.primary.main,
       textDecoration: "underline #437FC7",
+    },
+  },
+  popoverPaper: {
+    marginTop: "10px",
+    boxShadow: "5px 5px 0px #222",
+    border: "2px solid #222",
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      cursor: "pointer",
+    },
+  },
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
     },
   },
 }));
@@ -234,6 +267,7 @@ const EditArticle = (props) => {
         })
         .catch(() => {});
     }
+    getUserNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -584,15 +618,135 @@ const EditArticle = (props) => {
     </Fragment>
   );
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
+
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={classes.notification}
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "800",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/member/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
   const loggedInNavbar = (
     <Fragment>
       {userType === "member" && (
         <ListItem style={{ whiteSpace: "nowrap" }}>
+          {notifBell}
           <Avatar
             onClick={handleClick}
             src={user && user.profile_photo}
             alt=""
-            style={{ width: "34px", height: "34px", cursor: "pointer" }}
+            style={{
+              width: "34px",
+              height: "34px",
+              cursor: "pointer",
+              marginLeft: "30px",
+              border:
+                user && user.member && user.member.membership_tier !== "PRO"
+                  ? ""
+                  : "3px solid green",
+            }}
           />
           <Popover
             id={popoverid}
@@ -606,6 +760,9 @@ const EditArticle = (props) => {
             transformOrigin={{
               vertical: "top",
               horizontal: "right",
+            }}
+            classes={{
+              paper: classes.popoverPaper,
             }}
           >
             <div className={classes.popover}>

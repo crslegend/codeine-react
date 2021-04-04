@@ -121,13 +121,15 @@ const MemberNavBar = (props) => {
   const [notificationList, setNotificationList] = useState([]);
 
   const getUserNotifications = () => {
-    if (Cookies.get("t1")) {
-      Service.client
-        .get("/notification-objects")
-        .then((res) => {
-          setNotificationList(res.data);
-        })
-        .catch((err) => console.log(err));
+    if (!viewAllNotif) {
+      if (Cookies.get("t1")) {
+        Service.client
+          .get("/notification-objects")
+          .then((res) => {
+            setNotificationList(res.data);
+          })
+          .catch((err) => console.log(err));
+      }
     }
   };
 
