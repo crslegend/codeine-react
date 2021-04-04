@@ -21,8 +21,19 @@ import {
   Tabs,
   Tab,
   Box,
+  InputAdornment,
+  FilledInput,
+  InputLabel,
 } from "@material-ui/core";
-import { Mood, Lock, Work, Add, Close } from "@material-ui/icons";
+import {
+  Mood,
+  Lock,
+  Work,
+  Add,
+  Close,
+  Visibility,
+  VisibilityOff,
+} from "@material-ui/icons";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
@@ -40,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: "transparent",
     display: "flex",
-    height: 224,
+    height: 225,
   },
   indicator: {
     backgroundColor: "transparent",
@@ -145,6 +156,10 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline #437FC7",
     },
   },
+  passwordMargin: {
+    marginTop: "20px",
+    width: "100%",
+  },
 }));
 
 function TabPanel(props) {
@@ -159,7 +174,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={0} ml={2} style={{ width: "100%" }}>
+        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "30px" }}>
           <div>{children}</div>
         </Box>
       )}
@@ -263,6 +278,44 @@ const Profile = (props) => {
   const [editingCV, setEditingCV] = useState(false);
   const [deleteDialogState, setDeleteDialogState] = useState(false);
 
+  const [passwordDetails, setPasswordDetails] = useState({
+    old_password: "",
+    new_password: "",
+    repeat_password: "",
+    showOldPassword: false,
+    showNewPassword: false,
+    showRepeatPassword: false,
+  });
+
+  const handleClickShowOldPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showOldPassword: !passwordDetails.showOldPassword,
+    });
+  };
+
+  const handleClickShowNewPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showNewPassword: !passwordDetails.showNewPassword,
+    });
+  };
+
+  const handleClickShowRepeatPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showRepeatPassword: !passwordDetails.showRepeatPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleChangePassword = (prop) => (event) => {
+    setPasswordDetails({ ...passwordDetails, [prop]: event.target.value });
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
     getProfileDetails();
@@ -294,6 +347,69 @@ const Profile = (props) => {
     }
   };
 
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (
+      passwordDetails.new_password === "" ||
+      passwordDetails.repeat_password === "" ||
+      passwordDetails.old_password === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "All fields must be filled",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (passwordDetails.new_password !== passwordDetails.repeat_password) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "The new password and confirmation password do not match",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    Service.client
+      .patch(
+        `/auth/members/${profileDetails.id}/change-password`,
+        passwordDetails
+      )
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Password updated successfully!",
+          severity: "success",
+        });
+        passwordDetails.old_password = "";
+        passwordDetails.new_password = "";
+        passwordDetails.repeat_password = "";
+        passwordDetails.showOldPassword = false;
+        passwordDetails.showNewPassword = false;
+        passwordDetails.showRepeatPassword = false;
+        setLoading(false);
+
+        getProfileDetails();
+      })
+      .catch((err) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Current password is incorrect",
+          severity: "error",
+        });
+        setLoading(false);
+      });
+  };
+
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -314,7 +430,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a valid email!",
+        message: "Please enter a valid email",
         severity: "error",
       });
       return;
@@ -323,7 +439,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a first name!",
+        message: "Please enter a first name",
         severity: "error",
       });
       return;
@@ -332,7 +448,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a last name!",
+        message: "Please enter a last name",
         severity: "error",
       });
       return;
@@ -379,7 +495,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please upload an image!",
+        message: "Please upload an image",
         severity: "error",
       });
       return;
@@ -426,7 +542,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a Job Title!",
+        message: "Please enter a Job Title",
         severity: "error",
       });
       return true;
@@ -435,7 +551,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a Job Description!",
+        message: "Please enter a Job Description",
         severity: "error",
       });
       return true;
@@ -444,7 +560,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter the Organisation Name!",
+        message: "Please enter the Organisation Name",
         severity: "error",
       });
       return true;
@@ -453,7 +569,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter the Start Date!",
+        message: "Please enter the start date",
         severity: "error",
       });
       return true;
@@ -462,7 +578,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter the End Date!",
+        message: "Please enter the end date",
         severity: "error",
       });
       return true;
@@ -471,7 +587,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "End date cannot be earlier than start date!",
+        message: "End date cannot be earlier than start date",
         severity: "error",
       });
       return true;
@@ -595,7 +711,7 @@ const Profile = (props) => {
       <div style={{ marginTop: "65px" }}>
         <Typography
           variant="h2"
-          style={{ fontWeight: "bold", marginBottom: "20px" }}
+          style={{ fontWeight: "bold", marginBottom: "25px" }}
         >
           Settings for{" "}
           <Link
@@ -718,7 +834,6 @@ const Profile = (props) => {
                   backgroundColor: " #FFFFFF",
                   border: "1px solid #ECECEC",
                   width: "100%",
-                  height: "100%",
                   padding: "10px 20px",
                   marginBottom: "15px",
                 }}
@@ -1002,43 +1117,44 @@ const Profile = (props) => {
             value={value}
             index={1}
           >
-            <Card
-              elevation={0}
-              style={{
-                backgroundColor: " #FFFFFF",
-                border: "1px solid #ECECEC",
-                display: "flex",
-                width: "100%",
-                height: "100px",
-                padding: " 0px 20px",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "15px",
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
+            {CVList && CVList.length === 0 ? (
+              <Card
+                elevation={0}
                 style={{
-                  marginLeft: "auto",
-                  height: 35,
-                }}
-                onClick={() => {
-                  setCVDetail({
-                    title: "",
-                    description: "",
-                    organisation: "",
-                    start_date: new Date("2018-01-01"),
-                    end_date: new Date("2018-01-01"),
-                  });
-                  setCVDialogState(true);
-                  setEditingCV(false);
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  display: "flex",
+                  width: "100%",
+                  height: "100px",
+                  padding: " 0px 20px",
+                  alignItems: "center",
+                  marginBottom: "15px",
                 }}
               >
-                <Add style={{ marginRight: "5px" }} /> Add New Experience
-              </Button>
-            </Card>
-
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{
+                    height: 35,
+                  }}
+                  onClick={() => {
+                    setCVDetail({
+                      title: "",
+                      description: "",
+                      organisation: "",
+                      start_date: new Date("2018-01-01"),
+                      end_date: new Date("2018-01-01"),
+                    });
+                    setCVDialogState(true);
+                    setEditingCV(false);
+                  }}
+                >
+                  <Add style={{ marginRight: "5px" }} /> Add New Experience
+                </Button>
+              </Card>
+            ) : (
+              ""
+            )}
             {CVList && CVList.length > 0 ? (
               <Card
                 elevation={0}
@@ -1046,15 +1162,43 @@ const Profile = (props) => {
                   backgroundColor: " #FFFFFF",
                   border: "1px solid #ECECEC",
                   width: "100%",
-                  padding: "20px 20px",
+                  padding: "20px 20px 0px",
+                  marginBottom: "15px",
                 }}
               >
-                <Typography
-                  variant="h5"
-                  style={{ fontWeight: "700", marginBottom: "20px" }}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "25px",
+                  }}
                 >
-                  Job Experiences
-                </Typography>
+                  <Typography variant="h5" style={{ fontWeight: "700" }}>
+                    Job Experiences
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      height: 35,
+                    }}
+                    onClick={() => {
+                      setCVDetail({
+                        title: "",
+                        description: "",
+                        organisation: "",
+                        start_date: new Date("2018-01-01"),
+                        end_date: new Date("2018-01-01"),
+                      });
+                      setCVDialogState(true);
+                      setEditingCV(false);
+                    }}
+                  >
+                    <Add style={{ marginRight: "5px" }} /> Add New Experience
+                  </Button>
+                </div>
+
                 {CVList.map((cv, index) => {
                   return (
                     <CVCard
@@ -1085,7 +1229,153 @@ const Profile = (props) => {
             value={value}
             index={2}
           >
-            Item Two
+            <Card
+              elevation={0}
+              style={{
+                backgroundColor: " #FFFFFF",
+                border: "1px solid #ECECEC",
+                width: "100%",
+                padding: "20px 20px 0px",
+                marginBottom: "15px",
+              }}
+            >
+              <Typography
+                variant="h5"
+                style={{ fontWeight: "700", marginBottom: "5px" }}
+              >
+                Set New Password
+              </Typography>
+
+              <form onSubmit={handlePasswordSubmit} noValidate>
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="old_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      Current Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="old_password"
+                    margin="dense"
+                    disableUnderline={true}
+                    type={passwordDetails.showOldPassword ? "text" : "password"}
+                    value={passwordDetails.old_password}
+                    onChange={handleChangePassword("old_password")}
+                    required
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowOldPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showOldPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="new_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      New Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="new_password"
+                    margin="dense"
+                    disableUnderline={true}
+                    type={passwordDetails.showNewPassword ? "text" : "password"}
+                    value={passwordDetails.new_password}
+                    onChange={handleChangePassword("new_password")}
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowNewPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showNewPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="repeat_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      Confirm New Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="repeat_password"
+                    type={
+                      passwordDetails.showRepeatPassword ? "text" : "password"
+                    }
+                    margin="dense"
+                    disableUnderline={true}
+                    value={passwordDetails.repeat_password}
+                    onChange={handleChangePassword("repeat_password")}
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowRepeatPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showRepeatPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  style={{ margin: "20px 0px" }}
+                >
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                  ) : (
+                    "Set New Password"
+                  )}
+                </Button>
+              </form>
+            </Card>
           </TabPanel>
         </div>
       </div>

@@ -122,7 +122,7 @@ const ExperienceCard = (props) => {
                   style={{
                     fontSize: "20px",
                     margin: "auto 0px",
-                    marginRight: "5px",
+                    marginRight: "8px",
                   }}
                 />
                 <Typography
@@ -145,7 +145,7 @@ const ExperienceCard = (props) => {
                   style={{
                     fontSize: "20px",
                     margin: "auto 0px",
-                    marginRight: "5px",
+                    marginRight: "8px",
                   }}
                 />
                 <Typography
