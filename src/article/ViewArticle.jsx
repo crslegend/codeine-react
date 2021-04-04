@@ -27,6 +27,7 @@ import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
 import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
+import "./quill.css";
 
 hljs.configure({
   languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],

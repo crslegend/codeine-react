@@ -29,6 +29,7 @@ import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
 // import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import "./quill.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
