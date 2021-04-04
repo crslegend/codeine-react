@@ -850,6 +850,7 @@ const PublicProfile = (props) => {
                 <div key={index} className={classes.badgeDetail}>
                   <CardMedia
                     className={classes.cardmedia}
+                    style={{ margin: "auto 15px auto 0" }}
                     image={badge.achievement.badge}
                   />
                   <div style={{ display: "flex", flexDirection: "column" }}>
