@@ -33,6 +33,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
+import ZeroNotif from "../assets/ZeroNotif.svg";
 import NotifTile from "../components/NotificationTile";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
@@ -247,6 +248,14 @@ const ContentProviderHome = () => {
               />
             );
           })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -261,7 +270,7 @@ const ContentProviderHome = () => {
             className={classes.viewallnotif}
             onClick={() => {
               //alert("clicked on view all notifications");
-              history.push("/member/notifications");
+              history.push("/partner/notifications");
             }}
           >
             View all

@@ -54,8 +54,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 220,
+    minWidth: "220px",
+  },
+  padding: {
+    paddingRight: theme.spacing(3),
   },
 }));
 
@@ -441,6 +443,10 @@ const AdminNotificationPage = () => {
 
   const [notificationPhoto, setNotificationPhoto] = useState();
 
+  const getNotificationSent = () => {
+    Service.client.get("/notifications")
+  }
+
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -470,7 +476,7 @@ const AdminNotificationPage = () => {
 
       <TabPanel value={value} index={0}>
         <Grid container>
-          <Grid item xs={8}>
+          <Grid item xs={8} className={classes.padding}>
             <TextField
               margin="normal"
               id="title"
@@ -505,13 +511,10 @@ const AdminNotificationPage = () => {
                 })
               }
             />
-            <div className={classes.formControl}>
-              <InputLabel id="demo-simple-select-label">
-                Notification Type
-              </InputLabel>
+            <div style={{ marginTop: "20px" }}>
+              <InputLabel>Notification Type</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                className={classes.formControl}
                 value={notificationDetails.notification_type}
                 onChange={(event) =>
                   setNotificationDetails({
@@ -524,7 +527,7 @@ const AdminNotificationPage = () => {
                 <MenuItem value={"REMINDER"}>Reminder</MenuItem>
               </Select>
             </div>
-            <Accordion>
+            <Accordion style={{ marginTop: "30px" }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-label="Expand"
@@ -585,23 +588,6 @@ const AdminNotificationPage = () => {
               }}
             >
               Send notification
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              style={{ textTransform: "capitalize", marginTop: "10px" }}
-              onClick={(e) => {
-                console.log("member list");
-                console.log(selectedMemberList.rowIds);
-                console.log("partner list");
-                console.log(selectedPartnerList.rowIds);
-                console.log("combined list");
-                console.log(
-                  selectedPartnerList.rowIds.concat(selectedMemberList.rowIds)
-                );
-              }}
-            >
-              Click console
             </Button>
           </Grid>
           <Grid item xs={4}>

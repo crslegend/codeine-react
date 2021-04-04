@@ -19,12 +19,12 @@ import { Dashboard, Timeline } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotifTile from "../components/NotificationTile";
+import ZeroNotif from "../assets/ZeroNotif.svg";
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -277,6 +277,14 @@ const MemberNavBar = (props) => {
               />
             );
           })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
         </div>
         <div
           style={{

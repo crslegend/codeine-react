@@ -130,7 +130,8 @@ const NotificationTile = (props) => {
           }
         } else if (
           res.data.notification.notification_type === "GENERAL" ||
-          res.data.notification.notification_type === "ANNOUNCEMENT"
+          res.data.notification.notification_type === "ANNOUNCEMENT" ||
+          res.data.notification.notification_type === "REMINDER"
         ) {
           if (userType === "member") {
             history.push(
@@ -146,7 +147,6 @@ const NotificationTile = (props) => {
         }
       })
       .catch();
-    alert("clicked on notif: " + notifId);
   };
 
   const [showEditIcon, setShowEditIcon] = useState();

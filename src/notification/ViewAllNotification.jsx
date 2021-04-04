@@ -19,7 +19,9 @@ import Navbar from "../components/Navbar";
 import PageTitle from "../components/PageTitle";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
+import ZeroNotif from "../assets/ZeroNotif.svg";
 import NotifTile from "../components/NotificationTile";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import Cookies, { set } from "js-cookie";
 import jwt_decode from "jwt-decode";
 
@@ -61,6 +63,11 @@ const styles = makeStyles((theme) => ({
       cursor: "pointer",
       textDecoration: "underline",
     },
+  },
+  notificationOpen: {
+    color: theme.palette.primary.main,
+    height: "30px",
+    width: "30px",
   },
 }));
 
@@ -195,37 +202,47 @@ const AllNotifications = (props) => {
   };
 
   const navLogo = (
-    <Fragment>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <Link
-          to="/"
-          style={{
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            paddingLeft: "10px",
-            marginRight: "35px",
-            width: 100,
-          }}
-        >
-          {userType === "partner" && (
-            <img src={partnerLogo} width="120%" alt="codeine logo" />
-          )}
-          {userType === "admin" && (
-            <img src={adminLogo} width="120%" alt="codeine logo" />
-          )}
-        </Link>
-      </div>
-    </Fragment>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <Link
+        to="/"
+        style={{
+          paddingTop: "10px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+          marginRight: "35px",
+          width: 100,
+        }}
+      >
+        {userType === "partner" && (
+          <img
+            src={partnerLogo}
+            width="120%"
+            alt="codeine logo"
+            onClick={() => history.push("/partner")}
+          />
+        )}
+        {userType === "admin" && (
+          <img
+            src={adminLogo}
+            width="120%"
+            alt="codeine logo"
+            onClick={() => history.push("/admin")}
+          />
+        )}
+      </Link>
+    </div>
   );
 
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        <NotificationsIcon className={classes.notificationOpen} />
         <Button
           variant="contained"
           color="primary"
           style={{
             textTransform: "capitalize",
+            marginLeft: "30px",
           }}
           onClick={() => {
             Service.removeCredentials();
@@ -269,16 +286,25 @@ const AllNotifications = (props) => {
               ✔ Mark all as read
             </Typography>
           </div>
-          {notificationList.map((notification, index) => {
-            return (
-              <NotifTile
-                key={index}
-                notification={notification}
-                getUserNotifications={getUserNotifications}
-                userType={userType}
-              />
-            );
-          })}
+          {notificationList.length !== 0 ? (
+            notificationList.map((notification, index) => {
+              return (
+                <NotifTile
+                  key={index}
+                  notification={notification}
+                  getUserNotifications={getUserNotifications}
+                  userType={userType}
+                />
+              );
+            })
+          ) : (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
         </CardContent>
       </Card>
 
