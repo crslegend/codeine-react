@@ -254,10 +254,7 @@ const ViewCourseDetails = () => {
   };
 
   const toRenderProfileLinkOrNot = (reviewMember) => {
-    if (
-      reviewMember.id === (decoded && decoded.user_id) ||
-      reviewMember.member.membership_tier === "PRO"
-    ) {
+    if (reviewMember.member.membership_tier === "PRO") {
       return true;
     }
     return false;

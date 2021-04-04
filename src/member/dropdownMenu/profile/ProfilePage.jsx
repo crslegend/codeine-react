@@ -118,6 +118,16 @@ const useStyles = makeStyles((theme) => ({
     border: "solid black 1px",
     padding: theme.spacing(2),
   },
+  proLabel: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "2px",
+    padding: "2px 4px",
+    letterSpacing: "0.5px",
+    borderRadius: "2px",
+    width: "30px",
+    fontSize: 10,
+  },
   pro: {
     backgroundColor: theme.palette.primary.main,
     color: "#FFFFFF",
@@ -132,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "  #F7DF1E",
     color: "#000",
     marginLeft: "8px",
-    padding: "0px 3px",
+    padding: "0px 4px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
@@ -711,16 +721,30 @@ const Profile = (props) => {
       <div style={{ marginTop: "65px" }}>
         <Typography
           variant="h2"
-          style={{ fontWeight: "bold", marginBottom: "25px" }}
+          style={{ fontWeight: "bold", marginBottom: "25px", display: "flex" }}
         >
-          Settings for{" "}
-          <Link
-            to={`/member/profile/${profileDetails.id}`}
-            className={classes.profileLink}
-          >
-            {profileDetails && profileDetails.first_name}{" "}
-            {profileDetails && profileDetails.last_name}
-          </Link>
+          Settings for&nbsp;
+          {profileDetails.member &&
+          profileDetails.member.membership_tier === "PRO" ? (
+            <Link
+              to={`/member/profile/${profileDetails.id}`}
+              className={classes.profileLink}
+            >
+              {profileDetails && profileDetails.first_name}{" "}
+              {profileDetails && profileDetails.last_name}
+            </Link>
+          ) : (
+            <Typography
+              variant="h2"
+              style={{
+                fontWeight: "bold",
+                marginBottom: "25px",
+              }}
+            >
+              {profileDetails && profileDetails.first_name}{" "}
+              {profileDetails && profileDetails.last_name}
+            </Typography>
+          )}
         </Typography>
 
         <div className={classes.root}>
@@ -754,13 +778,18 @@ const Profile = (props) => {
               style={{
                 textTransform: "none",
               }}
+              disabled={
+                profileDetails.member &&
+                profileDetails.member.membership_tier !== "PRO"
+              }
               classes={{
                 selected: classes.selected,
                 wrapper: classes.wrapper,
               }}
               label={
                 <div>
-                  <Work style={{ verticalAlign: "middle" }} /> Experience
+                  <Work style={{ verticalAlign: "middle" }} /> Experience{" "}
+                  <span className={classes.proLabel}>PRO</span>
                 </div>
               }
               {...a11yProps(1)}
