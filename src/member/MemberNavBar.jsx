@@ -74,7 +74,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   notificationOpen: {
-    cursor: "pointer",
     color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
@@ -93,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MemberNavBar = (props) => {
   const classes = useStyles();
-  const { loggedIn, setLoggedIn } = props;
+  const { loggedIn, setLoggedIn, viewAllNotif } = props;
   const history = useHistory();
 
   const [user, setUser] = useState({
@@ -230,19 +229,21 @@ const MemberNavBar = (props) => {
 
   const notifBell = (
     <div>
-      <Badge
-        badgeContent={
-          notificationList.length > 0 ? notificationList[0].num_unread : 0
-        }
-        color="primary"
-      >
-        <NotificationsIcon
-          className={
-            notifOpen ? classes.notificationOpen : classes.notification
+      {!viewAllNotif ? (
+        <Badge
+          badgeContent={
+            notificationList.length > 0 ? notificationList[0].num_unread : 0
           }
-          onClick={handleNotifClick}
-        />
-      </Badge>
+          color="primary"
+        >
+          <NotificationsIcon
+            className={classes.notification}
+            onClick={handleNotifClick}
+          />
+        </Badge>
+      ) : (
+        <NotificationsIcon className={classes.notificationOpen} />
+      )}
 
       <Popover
         id={notifid}
