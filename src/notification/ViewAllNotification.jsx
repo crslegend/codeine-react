@@ -20,7 +20,7 @@ import PageTitle from "../components/PageTitle";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
 import NotifTile from "../components/NotificationTile";
-import Cookies from "js-cookie";
+import Cookies, { set } from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const styles = makeStyles((theme) => ({
@@ -183,15 +183,6 @@ const AllNotifications = (props) => {
         })
         .catch((err) => console.log(err));
     }
-  };
-
-  const handleNotifClick = (notifId) => {
-    //history.push();
-    Service.client
-      .patch(`/notification-objects/${notifId}/read`)
-      .then((res) => {})
-      .catch();
-    alert("clicked on notif: " + notifId);
   };
 
   const markAllAsRead = () => {

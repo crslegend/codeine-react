@@ -225,7 +225,12 @@ const MemberNavBar = (props) => {
 
   const notifBell = (
     <div>
-      <Badge badgeContent={notificationList.lenth} color="primary">
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
         <NotificationsIcon
           className={
             notifOpen ? classes.notificationOpen : classes.notification

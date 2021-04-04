@@ -22,10 +22,11 @@ const styles = makeStyles((theme) => ({
     },
   },
   typography: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
   },
   bluecircle: {
@@ -40,6 +41,9 @@ const styles = makeStyles((theme) => ({
     width: "15px",
     borderRadius: "50%",
     display: "inline-block",
+  },
+  pop: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -299,39 +303,41 @@ const NotificationTile = (props) => {
           horizontal: "right",
         }}
       >
-        {hoveredNotif.is_read ? (
-          <Typography
-            variant="body2"
-            className={classes.typography}
-            onClick={() => {
-              handleClose();
-              markUnread(notification.id);
-            }}
-          >
-            ✔ Mark as unread
-          </Typography>
-        ) : (
-          <Typography
-            variant="body2"
-            className={classes.typography}
-            onClick={() => {
-              handleClose();
-              markRead(notification.id);
-            }}
-          >
-            ✔ Mark as read
-          </Typography>
-        )}
+        <div className={classes.pop}>
+          {hoveredNotif.is_read ? (
+            <Typography
+              variant="body2"
+              className={classes.typography}
+              onClick={() => {
+                handleClose();
+                markUnread(notification.id);
+              }}
+            >
+              ✔ Mark as unread
+            </Typography>
+          ) : (
+            <Typography
+              variant="body2"
+              className={classes.typography}
+              onClick={() => {
+                handleClose();
+                markRead(notification.id);
+              }}
+            >
+              ✔ Mark as read
+            </Typography>
+          )}
 
-        <Typography
-          variant="body2"
-          className={classes.typography}
-          onClick={() => {
-            deleteNotif(notification.id);
-          }}
-        >
-          X Delete Notification
-        </Typography>
+          <Typography
+            variant="body2"
+            className={classes.typography}
+            onClick={() => {
+              deleteNotif(notification.id);
+            }}
+          >
+            X Delete Notification
+          </Typography>
+        </div>
       </Popover>
     </div>
   );
