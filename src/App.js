@@ -42,6 +42,7 @@ import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
 import ViewIndustryProjectDetails from "./member/industryProject/ViewIndustryProjectDetails";
+import IndustryProjectPage from "./member/dropdownMenu/industryProject/IndustryProjectPage";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 import Membership from "./member/membership/Membership";
 import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
@@ -186,6 +187,12 @@ const App = () => {
         exact
         path="/member/consultations"
         component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/industryprojects"
+        component={IndustryProjectPage}
         user="member"
       />
       <PrivateRoute

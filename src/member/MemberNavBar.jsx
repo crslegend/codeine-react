@@ -361,8 +361,8 @@ const MemberNavBar = (props) => {
             <div
               className={classes.hover}
               onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
+                history.push("/member/industryprojects");
+                // alert("clicked on Industry projects");
               }}
             >
               <Work className={classes.icon} />
