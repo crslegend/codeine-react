@@ -1,30 +1,39 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import More from "@material-ui/icons/MoreVert";
-import { Typography, Card, CardContent, Popover } from "@material-ui/core";
+import { MoreVert, Edit, Delete } from "@material-ui/icons";
+import {
+  Typography,
+  Card,
+  CardContent,
+  Popover,
+  Divider,
+} from "@material-ui/core";
 import Service from "../../../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    height: "130px",
     marginBottom: "30px",
     border: "1px solid #C4C4C4",
     borderRadius: 0,
   },
   title: {
-    display: "flex",
-    justifyContent: "space-between",
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFFFFF",
     margin: "-20px -20px 5px",
-    padding: "8px 20px",
+    padding: "20px 20px",
   },
   typography: {
-    padding: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    width: "80px",
     cursor: "pointer",
+    color: "#474747",
+  },
+  menu: {
+    display: "flex",
+    paddingLeft: "20px",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#ECECEC",
     },
   },
 }));
@@ -47,7 +56,6 @@ const ExperienceCard = (props) => {
     const options = {
       year: "numeric",
       month: "long",
-      day: "numeric",
     };
 
     if (date !== null) {
@@ -86,69 +94,90 @@ const ExperienceCard = (props) => {
         }}
       >
         <div className={classes.title}>
-          <div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Typography
               style={{
-                fontWeight: 700,
+                fontWeight: 600,
               }}
               variant="body1"
             >
-              {experience && experience.organisation}
-            </Typography>
-            <Typography variant="body1">
               {experience && experience.title}
             </Typography>
+            <MoreVert onClick={(e) => handleClick(e, experience.id)} />
+            <Popover
+              open={popover.popoverId === experience.id}
+              onClose={handleClose}
+              anchorEl={popover.anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <div className={classes.menu}>
+                <Edit
+                  style={{
+                    fontSize: "20px",
+                    margin: "auto 0px",
+                    marginRight: "8px",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  className={classes.typography}
+                  onClick={() => {
+                    setCVDetail(experience);
+                    setCVDialogState(true);
+                    setEditingCV(true);
+                    handleClose();
+                  }}
+                >
+                  Edit
+                </Typography>
+              </div>
+
+              <Divider />
+              <div className={classes.menu}>
+                <Delete
+                  style={{
+                    fontSize: "20px",
+                    margin: "auto 0px",
+                    marginRight: "8px",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  className={classes.typography}
+                  onClick={() => {
+                    setCVDetail(experience);
+                    setDeleteDialogState(true);
+                    handleClose();
+                  }}
+                >
+                  Delete
+                </Typography>
+              </div>
+            </Popover>
           </div>
-          <Typography variant="body1">
+
+          <Typography variant="body2">
+            {experience && experience.organisation}
+          </Typography>
+
+          <Typography variant="body2" style={{ color: "#9B9B9B" }}>
             {experience &&
               formatDate(experience.start_date) +
                 " to " +
                 formatDate(experience.end_date)}
           </Typography>
         </div>
-
         <div>
           <Typography variant="body2">
             {experience && experience.description}
           </Typography>
-          <More onClick={(e) => handleClick(e, experience.id)} />
-          <Popover
-            open={popover.popoverId === experience.id}
-            onClose={handleClose}
-            anchorEl={popover.anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <Typography
-              variant="body2"
-              className={classes.typography}
-              onClick={() => {
-                setCVDetail(experience);
-                setCVDialogState(true);
-                setEditingCV(true);
-                handleClose();
-              }}
-            >
-              Edit this reponse
-            </Typography>
-            <Typography
-              variant="body2"
-              className={classes.typography}
-              onClick={() => {
-                setCVDetail(experience);
-                setDeleteDialogState(true);
-                handleClose();
-              }}
-            >
-              Delete
-            </Typography>
-          </Popover>
         </div>
       </CardContent>
     </Card>

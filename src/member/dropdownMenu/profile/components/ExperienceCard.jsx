@@ -11,7 +11,7 @@ const styles = makeStyles((theme) => ({
   },
   title: {
     margin: "-20px -20px 5px",
-    padding: "8px 20px",
+    padding: "20px 20px",
   },
 }));
 
@@ -23,7 +23,6 @@ const ExperienceCard = (props) => {
     const options = {
       year: "numeric",
       month: "long",
-      day: "numeric",
     };
 
     if (date !== null) {
