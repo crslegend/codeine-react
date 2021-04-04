@@ -21,7 +21,6 @@ import jwt_decode from "jwt-decode";
 import Toast from "../../components/Toast.js";
 import Label from "../landing/components/Label";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
@@ -91,8 +90,8 @@ const ViewIndustryProjectDetails = () => {
     ML: false,
   });
 
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openApplyDialog, setOpenApplyDialog] = useState(false);
+  const [onlyForProDialog, setOnlyForProDialog] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -125,34 +124,38 @@ const ViewIndustryProjectDetails = () => {
   }, []);
 
   const handleSubmit = () => {
-    Service.client
-      .patch(`/industry-projects/${id}/applications`)
-      .then((res) => {
-        setOpenDeleteDialog(false);
-        setSbOpen(true);
-        setSnackbar({
-          message: "You have successfully applied!",
-          severity: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "center",
-          },
-          autoHideDuration: 3000,
-        });
-      });
+    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+      // to check whether member applying is pro-tier
+      if (res.data.member.membership_tier !== "FREE") {
+        Service.client
+          .post(`/industry-projects/${id}/applications`)
+          .then((res) => {
+            setOpenApplyDialog(false);
+            setSbOpen(true);
+            setSnackbar({
+              message: "You have successfully applied!",
+              severity: "success",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+          })
+          .catch((err) => console.log(err));
+      } else {
+        setOnlyForProDialog(true);
+      }
+    });
   };
 
   const handleClose = () => {
-    setOpenEditDialog(false);
-    setOpenDeleteDialog(false);
+    setOpenApplyDialog(false);
+    setOnlyForProDialog(false);
   };
 
-  const handleOpenEditDialog = () => {
-    setOpenEditDialog(true);
-  };
-
-  const handleOpenDeleteDialog = () => {
-    setOpenDeleteDialog(true);
+  const handleOpenApplyDialog = () => {
+    setOpenApplyDialog(true);
   };
 
   return (
@@ -209,7 +212,7 @@ const ViewIndustryProjectDetails = () => {
                       <Button
                         variant="contained"
                         color="primary"
-                        // onClick={handleOpen}
+                        onClick={handleOpenApplyDialog}
                       >
                         Apply
                       </Button>
@@ -283,16 +286,6 @@ const ViewIndustryProjectDetails = () => {
                     </Typography>
                     {industryProject &&
                       formatDate(industryProject.application_deadline)}
-
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      className={classes.outlined}
-                      classes={{ disabled: classes.disabled }}
-                      onClick={handleOpenDeleteDialog}
-                    >
-                      Delete
-                    </Button>
                   </CardContent>
                 </div>
               </Grid>
@@ -304,8 +297,8 @@ const ViewIndustryProjectDetails = () => {
       </div>
 
       <Dialog
-        // open={onlyForProDialog}
-        // onClose={() => setOnlyForProDialog(false)}
+        open={onlyForProDialog}
+        onClose={() => setOnlyForProDialog(false)}
         PaperProps={{
           style: {
             width: "500px",
@@ -316,9 +309,9 @@ const ViewIndustryProjectDetails = () => {
         <DialogActions>
           <Button
             variant="contained"
-            // onClick={() => {
-            //   setOnlyForProDialog(false);
-            // }}
+            onClick={() => {
+              setOnlyForProDialog(false);
+            }}
           >
             Stay as Free-Tier
           </Button>
@@ -337,25 +330,25 @@ const ViewIndustryProjectDetails = () => {
 
       <Footer />
       <Dialog
-        // open={unenrollDialog}
-        // onClose={() => setUnenrollDialog(false)}
+        open={openApplyDialog}
+        onClose={handleClose}
         PaperProps={{
           style: {
             width: "400px",
           },
         }}
       >
-        <DialogTitle>Unenroll from this course?</DialogTitle>
+        <DialogTitle>Apply</DialogTitle>
         <DialogContent>
-          You will not be able to access the course contents after unenrollment.
+          You are applying for this industry project.
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             className={classes.dialogButtons}
-            // onClick={() => {
-            //   setUnenrollDialog(false);
-            // }}
+            onClick={() => {
+              setOpenApplyDialog(false);
+            }}
           >
             Cancel
           </Button>
@@ -363,10 +356,9 @@ const ViewIndustryProjectDetails = () => {
             variant="contained"
             color="primary"
             className={classes.dialogButtons}
-            // onClick={() => {
-            //   // to call unenroll endpoint
-            //   handleUnenrollment();
-            // }}
+            onClick={() => {
+              handleSubmit();
+            }}
           >
             Confirm
           </Button>
