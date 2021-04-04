@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
     width: "300px",
     padding: theme.spacing(1),
   },
+  popoverPaper: {
+    marginTop: "10px",
+    boxShadow: "5px 5px 0px #222",
+    border: "2px solid #222",
+  },
   typography: {
     cursor: "pointer",
   },
@@ -253,6 +258,9 @@ const MemberNavBar = (props) => {
         <Popover
           id={id}
           open={open}
+          classes={{
+            paper: classes.popoverPaper,
+          }}
           anchorEl={anchorEl}
           onClose={handleClose}
           anchorOrigin={{

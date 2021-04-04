@@ -26,7 +26,6 @@ const MCQ = ({
   courseId,
   progress,
   setProgress,
-  setConsultDialog,
 }) => {
   // const classes = styles();
   console.log(question);
@@ -84,13 +83,6 @@ const MCQ = ({
             console.log(res);
             setResultObj(res.data);
             setPageNum(index + 1);
-
-            if (!res.data.passed) {
-              setTimeout(() => {
-                setConsultDialog(true);
-              }, 1500);
-              return;
-            }
 
             if (
               res.data.passed &&

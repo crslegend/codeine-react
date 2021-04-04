@@ -1,9 +1,10 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import {
   Button,
+  Card,
   CircularProgress,
-  Paper,
   TextField,
   Typography,
   Avatar,
@@ -17,26 +18,72 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormLabel,
-  Select,
-  MenuItem,
+  Tabs,
+  Tab,
+  Box,
+  InputAdornment,
+  FilledInput,
   InputLabel,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import {
+  Mood,
+  Lock,
+  Work,
+  Add,
+  Close,
+  Visibility,
+  VisibilityOff,
+} from "@material-ui/icons";
+import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import CloseIcon from "@material-ui/icons/Close";
 import Toast from "../../../components/Toast.js";
 import validator from "validator";
 import EditIcon from "../../../assets/EditIcon.svg";
 import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
-import PageTitle from "../../../components/PageTitle";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+import { DatePicker } from "@material-ui/pickers";
 import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: "transparent",
+    display: "flex",
+    height: 225,
+  },
+  indicator: {
+    backgroundColor: "transparent",
+  },
+  selected: {
+    backgroundColor: "#FFFFFF",
+  },
+  wrapper: {
+    alignItems: "flex-start",
+  },
+  fieldRoot: {
+    backgroundColor: "#ECECEC",
+    borderBottomLeftRadius: "5px",
+    borderBottomRightRadius: "5px",
+    padding: "auto 0",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  descriptionInput: {
+    padding: "0px 3px",
+    fontSize: "14px",
+    margin: "-10px 0px 5px",
+  },
+  focused: {
+    border: "1px solid #222",
+    boxShadow: "2px 3px 0px #222",
+    backgroundColor: "#FFFFFF",
+    borderBottomLeftRadius: "5px",
+    borderBottomRightRadius: "5px",
+  },
   dropzone: {
     "@global": {
       ".MuiDropzoneArea-text.MuiTypography-h5": {
@@ -47,13 +94,14 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     height: "100%",
-    padding: theme.spacing(3),
-    width: "100%",
+    paddingTop: theme.spacing(3),
+    width: "1200px",
+    margin: "0 auto",
   },
   avatar: {
     fontSize: "80px",
-    width: "150px",
-    height: "150px",
+    width: "120px",
+    height: "120px",
   },
   heading: {
     height: "70px",
@@ -63,11 +111,22 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   button: {
-    marginTop: "20px",
+    margin: "20px",
+    width: "96%",
   },
   cvcontainer: {
     border: "solid black 1px",
     padding: theme.spacing(2),
+  },
+  proLabel: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    marginLeft: "2px",
+    padding: "2px 4px",
+    letterSpacing: "0.5px",
+    borderRadius: "2px",
+    width: "30px",
+    fontSize: 10,
   },
   pro: {
     backgroundColor: theme.palette.primary.main,
@@ -83,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "  #F7DF1E",
     color: "#000",
     marginLeft: "8px",
-    padding: "0px 3px",
+    padding: "0px 4px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
@@ -95,12 +154,56 @@ const useStyles = makeStyles((theme) => ({
   redButton: {
     backgroundColor: theme.palette.red.main,
     color: "white",
-    textTransform: "capitalize",
     "&:hover": {
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  profileLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
+  },
+  passwordMargin: {
+    marginTop: "20px",
+    width: "100%",
+  },
 }));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "30px" }}>
+          <div>{children}</div>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `vertical-tab-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`,
+  };
+}
 
 const SmallAvatar = withStyles((theme) => ({
   root: {
@@ -124,6 +227,12 @@ const Profile = (props) => {
     },
     autoHideDuration: 3000,
   });
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const [dialogopen, setDialogOpen] = useState(false);
   const [sortMethod, setSortMethod] = useState("");
@@ -165,24 +274,57 @@ const Profile = (props) => {
 
   const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [countryList] = useState([
-    { name: "America" },
-    { name: "China" },
-    { name: "Singapore" },
-  ]);
 
   const [CVDetail, setCVDetail] = useState({
     title: "",
     description: "",
     organisation: "",
-    start_date: new Date("2000-01-01"),
-    end_date: new Date("2000-01-01"),
+    start_date: new Date("2018-01-01"),
+    end_date: new Date("2018-01-01"),
   });
 
   const [CVList, setCVList] = useState([]);
   const [CVDialogState, setCVDialogState] = useState(false);
   const [editingCV, setEditingCV] = useState(false);
   const [deleteDialogState, setDeleteDialogState] = useState(false);
+
+  const [passwordDetails, setPasswordDetails] = useState({
+    old_password: "",
+    new_password: "",
+    repeat_password: "",
+    showOldPassword: false,
+    showNewPassword: false,
+    showRepeatPassword: false,
+  });
+
+  const handleClickShowOldPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showOldPassword: !passwordDetails.showOldPassword,
+    });
+  };
+
+  const handleClickShowNewPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showNewPassword: !passwordDetails.showNewPassword,
+    });
+  };
+
+  const handleClickShowRepeatPassword = () => {
+    setPasswordDetails({
+      ...passwordDetails,
+      showRepeatPassword: !passwordDetails.showRepeatPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleChangePassword = (prop) => (event) => {
+    setPasswordDetails({ ...passwordDetails, [prop]: event.target.value });
+  };
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -200,8 +342,12 @@ const Profile = (props) => {
           setProfileDetails(res.data);
           Service.client
             .get(`/auth/cvs`)
-            .then((res1) => {
-              setCVList(res1.data);
+            .then((res) => {
+              setCVList(
+                res.data.sort((a, b) =>
+                  b.start_date.localeCompare(a.start_date)
+                )
+              );
             })
             .catch();
         })
@@ -209,6 +355,69 @@ const Profile = (props) => {
           setProfileDetails();
         });
     }
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (
+      passwordDetails.new_password === "" ||
+      passwordDetails.repeat_password === "" ||
+      passwordDetails.old_password === ""
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "All fields must be filled",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (passwordDetails.new_password !== passwordDetails.repeat_password) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "The new password and confirmation password do not match",
+        severity: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    Service.client
+      .patch(
+        `/auth/members/${profileDetails.id}/change-password`,
+        passwordDetails
+      )
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Password updated successfully!",
+          severity: "success",
+        });
+        passwordDetails.old_password = "";
+        passwordDetails.new_password = "";
+        passwordDetails.repeat_password = "";
+        passwordDetails.showOldPassword = false;
+        passwordDetails.showNewPassword = false;
+        passwordDetails.showRepeatPassword = false;
+        setLoading(false);
+
+        getProfileDetails();
+      })
+      .catch((err) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Current password is incorrect",
+          severity: "error",
+        });
+        setLoading(false);
+      });
   };
 
   const formatDate = (date) => {
@@ -231,7 +440,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a valid email!",
+        message: "Please enter a valid email",
         severity: "error",
       });
       return;
@@ -240,7 +449,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a first name!",
+        message: "Please enter a first name",
         severity: "error",
       });
       return;
@@ -249,7 +458,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a last name!",
+        message: "Please enter a last name",
         severity: "error",
       });
       return;
@@ -296,7 +505,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please upload an image!",
+        message: "Please upload an image",
         severity: "error",
       });
       return;
@@ -343,7 +552,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a Job Title!",
+        message: "Please enter a Job Title",
         severity: "error",
       });
       return true;
@@ -352,7 +561,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter a Description!",
+        message: "Please enter a Job Description",
         severity: "error",
       });
       return true;
@@ -361,7 +570,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter an Organisation!",
+        message: "Please enter the Organisation Name",
         severity: "error",
       });
       return true;
@@ -370,7 +579,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter the Start Date!",
+        message: "Please enter the start date",
         severity: "error",
       });
       return true;
@@ -379,7 +588,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please enter the End Date!",
+        message: "Please enter the end date",
         severity: "error",
       });
       return true;
@@ -388,7 +597,7 @@ const Profile = (props) => {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "End date cannot be earlier than start date!",
+        message: "End date cannot be earlier than start date",
         severity: "error",
       });
       return true;
@@ -420,15 +629,15 @@ const Profile = (props) => {
           setSbOpen(true);
           setSnackbar({
             ...snackbar,
-            message: "Job experience created successfully!",
+            message: "Job Experience successfully created!",
             severity: "success",
           });
           setCVDetail({
             title: "",
             description: "",
             organisation: "",
-            start_date: new Date("2000-01-01"),
-            end_date: new Date("2000-01-01"),
+            start_date: new Date("2018-01-01"),
+            end_date: new Date("2018-01-01"),
           });
           setCVDialogState(false);
         })
@@ -466,15 +675,15 @@ const Profile = (props) => {
           setSbOpen(true);
           setSnackbar({
             ...snackbar,
-            message: "Job experience updated successfully!",
+            message: "Job Experience successfully updated!",
             severity: "success",
           });
           setCVDetail({
             title: "",
             description: "",
             organisation: "",
-            start_date: new Date("2000-01-01"),
-            end_date: new Date("2000-01-01"),
+            start_date: new Date("2018-01-01"),
+            end_date: new Date("2018-01-01"),
           });
           setCVDialogState(false);
         })
@@ -490,15 +699,15 @@ const Profile = (props) => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Job experience deleted successfully!",
+          message: "Job Experience successfully deleted!",
           severity: "success",
         });
         setCVDetail({
           title: "",
           description: "",
           organisation: "",
-          start_date: new Date("2000-01-01"),
-          end_date: new Date("2000-01-01"),
+          start_date: new Date("2018-01-01"),
+          end_date: new Date("2018-01-01"),
         });
         setCVDialogState(false);
       })
@@ -510,36 +719,121 @@ const Profile = (props) => {
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
-        <div style={{ width: "80%", margin: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <PageTitle title="Profile Details" />
-            <Button
-              variant="contained"
-              color="primary"
+        <Typography
+          variant="h2"
+          style={{ fontWeight: "bold", marginBottom: "25px", display: "flex" }}
+        >
+          Settings for&nbsp;
+          {profileDetails.member &&
+          profileDetails.member.membership_tier === "PRO" ? (
+            <Link
+              to={`/member/profile/${profileDetails.id}`}
+              className={classes.profileLink}
+            >
+              {profileDetails && profileDetails.first_name}{" "}
+              {profileDetails && profileDetails.last_name}
+            </Link>
+          ) : (
+            <Typography
+              variant="h2"
               style={{
-                marginLeft: "auto",
-                height: 35,
-                textTransform: "capitalize",
-              }}
-              onClick={() => {
-                history.push("/member/profile/changepassword");
+                fontWeight: "bold",
+                marginBottom: "25px",
               }}
             >
-              Change Password
-            </Button>
-          </div>
+              {profileDetails && profileDetails.first_name}{" "}
+              {profileDetails && profileDetails.last_name}
+            </Typography>
+          )}
+        </Typography>
 
-          <form onSubmit={handleSubmit} noValidate autoComplete="off">
-            <div
+        <div className={classes.root}>
+          <Tabs
+            orientation="vertical"
+            variant="scrollable"
+            value={value}
+            onChange={handleChange}
+            classes={{
+              indicator: classes.indicator,
+            }}
+            style={{ width: "22%" }}
+            aria-label="Vertical tabs"
+          >
+            <Tab
               style={{
+                textTransform: "none",
+              }}
+              classes={{
+                selected: classes.selected,
+                wrapper: classes.wrapper,
+              }}
+              label={
+                <div>
+                  <Mood style={{ verticalAlign: "middle" }} /> Profile
+                </div>
+              }
+              {...a11yProps(0)}
+            />
+            <Tab
+              style={{
+                textTransform: "none",
+              }}
+              disabled={
+                profileDetails.member &&
+                profileDetails.member.membership_tier !== "PRO"
+              }
+              classes={{
+                selected: classes.selected,
+                wrapper: classes.wrapper,
+              }}
+              label={
+                <div>
+                  <Work style={{ verticalAlign: "middle" }} /> Experience{" "}
+                  <span className={classes.proLabel}>PRO</span>
+                </div>
+              }
+              {...a11yProps(1)}
+            />
+            <Tab
+              style={{
+                textTransform: "none",
+              }}
+              classes={{
+                selected: classes.selected,
+                wrapper: classes.wrapper,
+              }}
+              label={
+                <div>
+                  <Lock style={{ verticalAlign: "middle" }} /> Account
+                </div>
+              }
+              {...a11yProps(2)}
+            />
+          </Tabs>
+          {/* Profile Tab*/}
+          <TabPanel
+            style={{
+              width: "100%",
+            }}
+            value={value}
+            index={0}
+          >
+            <Card
+              elevation={0}
+              style={{
+                backgroundColor: " #FFFFFF",
+                border: "1px solid #ECECEC",
                 display: "flex",
-                width: "78%",
-                marginLeft: "auto",
+                width: "100%",
+                height: "100px",
+                padding: " 0px 20px",
                 alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "15px",
               }}
             >
-              <Typography variant="h6">
-                Tier:{" "}
+              <Typography component={"span"} variant="h5">
+                <b>Tier</b>:{" "}
                 {profileDetails &&
                 profileDetails.member &&
                 profileDetails.member.membership_tier === "PRO" ? (
@@ -548,80 +842,112 @@ const Profile = (props) => {
                   <span className={classes.free}>FREE</span>
                 )}
               </Typography>
+
               {profileDetails &&
                 profileDetails.member &&
                 profileDetails.member.membership_tier === "PRO" && (
                   <Button
                     variant="outlined"
                     color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
+                    style={{ height: 30 }}
                     onClick={() => history.push(`/member/payment`)}
                   >
                     Extend Pro-Tier Membership
                   </Button>
                 )}
-            </div>
-            <div
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <div style={{ width: "20%", marginLeft: "30px" }}>
-                <br />
-                <a
-                  href="#profile_photo"
-                  onClick={(e) => setUploadOpen(true)}
-                  style={{ textDecoration: "none" }}
+            </Card>
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                  padding: "10px 20px",
+                  marginBottom: "15px",
+                }}
+              >
+                <Typography
+                  component={"span"}
+                  variant="h5"
+                  style={{ margin: "10px 0px 30px" }}
                 >
-                  {!profileDetails.profile_photo ? (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      className={classes.avatar}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar className={classes.avatar}>
-                        {profileDetails.first_name.charAt(0)}
-                      </Avatar>
-                    </Badge>
-                  ) : (
-                    <Badge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      badgeContent={
-                        <SmallAvatar
-                          alt=""
-                          src={EditIcon}
-                          style={{ backgroundColor: "#d1d1d1" }}
-                        />
-                      }
-                    >
-                      <Avatar
-                        alt="Pic"
-                        src={profileDetails.profile_photo}
+                  <b>User</b>
+                </Typography>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="#profile_photo"
+                    onClick={(e) => setUploadOpen(true)}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {!profileDetails.profile_photo ? (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
                         className={classes.avatar}
-                      />
-                    </Badge>
-                  )}
-                </a>
-              </div>
-              <div style={{ width: "70%" }}>
-                <div>
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar className={classes.avatar}>
+                          {profileDetails.first_name.charAt(0)}
+                        </Avatar>
+                      </Badge>
+                    ) : (
+                      <Badge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        badgeContent={
+                          <SmallAvatar
+                            alt=""
+                            src={EditIcon}
+                            style={{ backgroundColor: "#d1d1d1" }}
+                          />
+                        }
+                      >
+                        <Avatar
+                          alt="Pic"
+                          src={profileDetails.profile_photo}
+                          className={classes.avatar}
+                        />
+                      </Badge>
+                    )}
+                  </a>
+                </div>
+
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="first_name">
+                    <Typography variant="body2">First Name</Typography>
+                  </label>
                   <TextField
-                    margin="normal"
+                    margin="dense"
+                    variant="filled"
                     id="first_name"
-                    label="First Name"
                     name="first_name"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
                     required
                     fullWidth
                     value={profileDetails.first_name}
@@ -634,12 +960,23 @@ const Profile = (props) => {
                     }
                   />
                 </div>
-                <div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="last_name">
+                    <Typography variant="body2">Last Name</Typography>
+                  </label>
                   <TextField
-                    margin="normal"
+                    margin="dense"
+                    variant="filled"
                     id="last_name"
-                    label="Last Name"
                     name="last_name"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
                     required
                     fullWidth
                     value={profileDetails.last_name}
@@ -653,13 +990,23 @@ const Profile = (props) => {
                   />
                 </div>
 
-                <div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="email">
+                    <Typography variant="body2">Email</Typography>
+                  </label>
                   <TextField
-                    margin="normal"
+                    margin="dense"
+                    variant="filled"
                     id="email"
-                    label="Email"
                     name="email"
-                    autoComplete="email"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
                     required
                     fullWidth
                     value={profileDetails.email}
@@ -672,13 +1019,54 @@ const Profile = (props) => {
                     }
                   />
                 </div>
-
-                <div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="location">
+                    <Typography variant="body2">Location</Typography>
+                  </label>
                   <TextField
-                    margin="normal"
+                    margin="dense"
+                    variant="filled"
+                    id="location"
+                    name="location"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.location}
+                    // error={emailError}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        location: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="age">
+                    <Typography variant="body2">Age</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
                     id="age"
-                    label="Age"
                     name="age"
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0 },
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
                     required
                     fullWidth
                     value={profileDetails.age}
@@ -691,36 +1079,15 @@ const Profile = (props) => {
                     }
                   />
                 </div>
-
                 <div style={{ marginTop: "20px" }}>
-                  <FormControl className={classes.formControl}>
-                    <InputLabel style={{ top: -4 }}>Country</InputLabel>
-                    <Select
-                      label="Sort By"
-                      value={sortMethod}
-                      onChange={(event) => {
-                        onSortChange(event);
-                      }}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-
-                      {countryList.map((country) => (
-                        <MenuItem key={country.name} value={country.name}>
-                          {country.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-
-                <div style={{ marginTop: "20px" }}>
-                  <FormControl component="fieldset">
-                    <FormLabel component="legend">Gender</FormLabel>
+                  <FormControl>
+                    <label htmlFor="gender">
+                      <Typography variant="body2">Gender</Typography>
+                    </label>
                     <RadioGroup
                       aria-label="gender"
-                      name="gender1"
+                      name="gender"
+                      id="gender"
                       value={profileDetails.gender}
                       onChange={(event) =>
                         setProfileDetails({
@@ -744,23 +1111,16 @@ const Profile = (props) => {
                     </RadioGroup>
                   </FormControl>
                 </div>
+              </Card>
 
-                <div>
-                  <TextField
-                    margin="normal"
-                    id="date_joined"
-                    label="Date Joined"
-                    name="date_joined"
-                    autoComplete="date_joined"
-                    required
-                    fullWidth
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    value={formatDate(profileDetails.date_joined)}
-                  />
-                </div>
-
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                }}
+              >
                 <Button
                   disabled={loading}
                   variant="contained"
@@ -774,71 +1134,288 @@ const Profile = (props) => {
                     "Save Changes"
                   )}
                 </Button>
-              </div>
-              <div style={{ width: "10%" }} />
-            </div>
-          </form>
-        </div>
-      </div>
+              </Card>
+            </form>
+          </TabPanel>
 
-      <div style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
-        <div style={{ display: "flex" }}>
-          <Typography
-            variant="h3"
-            style={{ fontWeight: "700", marginBottom: "20px" }}
-          >
-            Job Experiences
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
+          {/* Experience Tab*/}
+          <TabPanel
             style={{
-              marginLeft: "auto",
-              height: 35,
-              textTransform: "capitalize",
+              width: "100%",
             }}
-            onClick={() => {
-              setCVDetail({
-                title: "",
-                description: "",
-                organisation: "",
-                start_date: new Date("2000-01-01"),
-                end_date: new Date("2000-01-01"),
-              });
-              setCVDialogState(true);
-              setEditingCV(false);
-            }}
+            value={value}
+            index={1}
           >
-            + Add Job Experience
-          </Button>
-        </div>
+            {CVList && CVList.length === 0 ? (
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  display: "flex",
+                  width: "100%",
+                  height: "100px",
+                  padding: " 0px 20px",
+                  alignItems: "center",
+                  marginBottom: "15px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{
+                    height: 35,
+                  }}
+                  onClick={() => {
+                    setCVDetail({
+                      title: "",
+                      description: "",
+                      organisation: "",
+                      start_date: new Date("2018-01-01"),
+                      end_date: new Date("2018-01-01"),
+                    });
+                    setCVDialogState(true);
+                    setEditingCV(false);
+                  }}
+                >
+                  <Add style={{ marginRight: "5px" }} /> Add New Experience
+                </Button>
+              </Card>
+            ) : (
+              ""
+            )}
+            {CVList && CVList.length > 0 ? (
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                  padding: "20px 20px 0px",
+                  marginBottom: "15px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "25px",
+                  }}
+                >
+                  <Typography variant="h5" style={{ fontWeight: "700" }}>
+                    Job Experiences
+                  </Typography>
 
-        {CVList.map((cv, index) => {
-          return (
-            <CVCard
-              key={index}
-              experience={cv}
-              setCVDetail={setCVDetail}
-              setCVDialogState={setCVDialogState}
-              setEditingCV={setEditingCV}
-              setDeleteDialogState={setDeleteDialogState}
-              sbOpen={sbOpen}
-              setSbOpen={setSbOpen}
-              setSnackbar={setSnackbar}
-              getProfileDetails={getProfileDetails}
-            />
-          );
-        })}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      height: 35,
+                    }}
+                    onClick={() => {
+                      setCVDetail({
+                        title: "",
+                        description: "",
+                        organisation: "",
+                        start_date: new Date("2018-01-01"),
+                        end_date: new Date("2018-01-01"),
+                      });
+                      setCVDialogState(true);
+                      setEditingCV(false);
+                    }}
+                  >
+                    <Add style={{ marginRight: "5px" }} /> Add New Experience
+                  </Button>
+                </div>
+
+                {CVList.map((cv, index) => {
+                  return (
+                    <CVCard
+                      key={index}
+                      experience={cv}
+                      setCVDetail={setCVDetail}
+                      setCVDialogState={setCVDialogState}
+                      setEditingCV={setEditingCV}
+                      setDeleteDialogState={setDeleteDialogState}
+                      sbOpen={sbOpen}
+                      setSbOpen={setSbOpen}
+                      setSnackbar={setSnackbar}
+                      getProfileDetails={getProfileDetails}
+                    />
+                  );
+                })}
+              </Card>
+            ) : (
+              ""
+            )}
+          </TabPanel>
+
+          {/* Account Tab*/}
+          <TabPanel
+            style={{
+              width: "100%",
+            }}
+            value={value}
+            index={2}
+          >
+            <Card
+              elevation={0}
+              style={{
+                backgroundColor: " #FFFFFF",
+                border: "1px solid #ECECEC",
+                width: "100%",
+                padding: "20px 20px 0px",
+                marginBottom: "15px",
+              }}
+            >
+              <Typography
+                variant="h5"
+                style={{ fontWeight: "700", marginBottom: "5px" }}
+              >
+                Set New Password
+              </Typography>
+
+              <form onSubmit={handlePasswordSubmit} noValidate>
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="old_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      Current Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="old_password"
+                    margin="dense"
+                    disableUnderline={true}
+                    type={passwordDetails.showOldPassword ? "text" : "password"}
+                    value={passwordDetails.old_password}
+                    onChange={handleChangePassword("old_password")}
+                    required
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowOldPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showOldPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="new_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      New Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="new_password"
+                    margin="dense"
+                    disableUnderline={true}
+                    type={passwordDetails.showNewPassword ? "text" : "password"}
+                    value={passwordDetails.new_password}
+                    onChange={handleChangePassword("new_password")}
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowNewPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showNewPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <FormControl className={classes.passwordMargin}>
+                  <label htmlFor="repeat_password">
+                    <Typography variant="body2" style={{ marginBottom: "5px" }}>
+                      Confirm New Password
+                    </Typography>
+                  </label>
+
+                  <FilledInput
+                    id="repeat_password"
+                    type={
+                      passwordDetails.showRepeatPassword ? "text" : "password"
+                    }
+                    margin="dense"
+                    disableUnderline={true}
+                    value={passwordDetails.repeat_password}
+                    onChange={handleChangePassword("repeat_password")}
+                    classes={{
+                      root: classes.fieldRoot,
+                      focused: classes.focused,
+                      input: classes.fieldInput,
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowRepeatPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passwordDetails.showRepeatPassword ? (
+                            <Visibility style={{ margin: "-4px" }} />
+                          ) : (
+                            <VisibilityOff style={{ margin: "-4px" }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  style={{ margin: "20px 0px" }}
+                >
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                  ) : (
+                    "Set New Password"
+                  )}
+                </Button>
+              </form>
+            </Card>
+          </TabPanel>
+        </div>
       </div>
 
       <Dialog
         open={deleteDialogState}
         onClose={() => setDeleteDialogState(false)}
       >
-        <DialogTitle id="alert-dialog-title">Delete Job experience</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Job Experience</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete your job experience? You will no
-          longer be able to retrieve your job experience any longer.
+          Are you sure you want to delete this job experience?
         </DialogContent>
         <DialogActions>
           <Button
@@ -862,16 +1439,28 @@ const Profile = (props) => {
 
       <Dialog open={CVDialogState} onClose={() => setCVDialogState(false)}>
         <DialogTitle id="alert-dialog-title">
-          {editingCV ? "Edit CV" : "New Job Experience"}
+          {editingCV ? "Edit Job Experience" : "New Job Experience"}
         </DialogTitle>
         <DialogContent>
           <div>
             <div>
+              <label htmlFor="title">
+                <Typography variant="body2">Job Title</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="title"
-                label="Job Title"
                 name="title"
+                autoComplete="off"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.fieldInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.title}
@@ -884,14 +1473,25 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div>
+            <div style={{ marginTop: "20px" }}>
+              <label htmlFor="description">
+                <Typography variant="body2">Job Description</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="description"
-                label="Description"
                 name="description"
                 multiline
                 rows={4}
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.descriptionInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.description}
@@ -904,12 +1504,24 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div>
+            <div style={{ marginTop: "20px" }}>
+              <label htmlFor="organisation">
+                <Typography variant="body2">Organisation Name</Typography>
+              </label>
               <TextField
-                margin="normal"
+                margin="dense"
+                variant="filled"
                 id="organisation"
-                label="Organisation"
                 name="organisation"
+                autoComplete="off"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
+                    input: classes.fieldInput,
+                  },
+                }}
                 required
                 fullWidth
                 value={CVDetail.organisation}
@@ -922,42 +1534,54 @@ const Profile = (props) => {
                 }
               />
             </div>
-            <div style={{ display: "flex" }}>
-              <KeyboardDatePicker
-                format="MM/dd/yyyy"
-                margin="normal"
-                id="start_date"
-                name="start_date"
-                label="Start Date"
-                value={CVDetail.start_date}
-                onChange={(event) =>
-                  setCVDetail({
-                    ...CVDetail,
-                    start_date: event,
-                  })
-                }
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-                style={{ marginRight: "20px" }}
-              />
-              <KeyboardDatePicker
-                format="MM/dd/yyyy"
-                margin="normal"
-                id="end_date"
-                name="end_date"
-                label="End Date"
-                value={CVDetail.end_date}
-                onChange={(event) => {
-                  setCVDetail({
-                    ...CVDetail,
-                    end_date: event,
-                  });
-                }}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
+
+            <div style={{ display: "flex", marginTop: "20px" }}>
+              <div>
+                <label htmlFor="start_date">
+                  <Typography variant="body2">Start Date</Typography>
+                </label>
+                <DatePicker
+                  openTo="year"
+                  views={["year", "month"]}
+                  margin="normal"
+                  id="start_date"
+                  name="start_date"
+                  value={CVDetail.start_date}
+                  onChange={(event) =>
+                    setCVDetail({
+                      ...CVDetail,
+                      start_date: event,
+                    })
+                  }
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  style={{ marginRight: "20px" }}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="end_date">
+                  <Typography variant="body2">End Date</Typography>
+                </label>
+                <DatePicker
+                  openTo="year"
+                  views={["year", "month"]}
+                  margin="normal"
+                  id="end_date"
+                  name="end_date"
+                  value={CVDetail.end_date}
+                  onChange={(event) => {
+                    setCVDetail({
+                      ...CVDetail,
+                      end_date: event,
+                    });
+                  }}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </DialogContent>
@@ -966,16 +1590,18 @@ const Profile = (props) => {
             <Button
               variant="contained"
               color="primary"
+              style={{ marginRight: "16px", marginBottom: "16px" }}
               onClick={(e) => {
                 updateCV(e);
               }}
             >
-              Save Changes
+              Save
             </Button>
           ) : (
             <Button
               variant="contained"
               color="primary"
+              style={{ marginRight: "16px", marginBottom: "16px" }}
               onClick={(e) => {
                 submitCV(e);
               }}
@@ -999,7 +1625,7 @@ const Profile = (props) => {
               setUploadOpen(false);
             }}
           >
-            <CloseIcon />
+            <Close />
           </IconButton>
         </DialogTitle>
 
