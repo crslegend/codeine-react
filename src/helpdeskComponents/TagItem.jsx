@@ -36,6 +36,16 @@ const TagItem = ({ enquiry, formatDate, user }) => {
     }
   };
 
+  const handleRedirectForProject = (id) => {
+    if (user === "admin") {
+      // return `/admin/contentquality/courses/${id}`;
+    } else if (user === "member") {
+      return `/industryprojects/${id}`;
+    } else if (user === "partner") {
+      return `/partner/home/industryproject/view/${id}`;
+    }
+  };
+
   return (
     <div style={{ marginBottom: "15px" }}>
       {(() => {
@@ -116,6 +126,19 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.base_user.id}
                 <br />
               </Typography>
+            );
+          } else if (enquiry.ticket_type[0] === "INDUSTRY_PROJECT") {
+            return (
+              <Link
+                className={classes.link}
+                href={handleRedirectForProject(
+                  enquiry.industry_project && enquiry.industry_project.id
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {enquiry.industry_project && enquiry.industry_project.title}
+              </Link>
             );
           }
         }

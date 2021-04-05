@@ -314,9 +314,12 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user === "admin" ? "User" : "You"} have issue with one of the
-              industry projects that {user === "admin" ? "user" : "you"} applied
-              for.
+              {user === "partner" &&
+                "You have issue with one of the industry projects that you listed."}
+              {user === "member" &&
+                "You have issue with one of the industry projects that you applied for."}
+              {user === "admin" &&
+                "User have issue with one of the listed industry projects"}
             </Typography>
             <div
               style={{

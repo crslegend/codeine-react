@@ -378,8 +378,10 @@ const SubmittedTickets = ({ user, enquiries, filterBy, setFilterBy }) => {
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>
-                            You have issue with one of the industry projects
-                            that you applied for.
+                            {user === "partner" &&
+                              "You have issue with one of the industry projects that you listed."}
+                            {user === "member" &&
+                              "You have issue with one of the industry projects that you applied for."}
                           </Typography>
                           <div
                             style={{
