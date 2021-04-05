@@ -121,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   proLabel: {
-    backgroundColor: theme.palette.primary.main,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "2px",
     padding: "2px 4px",
@@ -131,7 +131,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -944,7 +944,7 @@ const Profile = (props) => {
                     style={{ height: 30 }}
                     onClick={() => history.push(`/member/payment`)}
                   >
-                    Extend Pro-Tier Membership
+                    Extend Pro Membership
                   </Button>
                 )}
             </Card>

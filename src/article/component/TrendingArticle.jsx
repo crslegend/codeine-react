@@ -7,6 +7,21 @@ const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 2,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 1,
+  },
 }));
 
 const TrendingArticle = (props) => {
@@ -42,28 +57,29 @@ const TrendingArticle = (props) => {
         </Typography>
         <div style={{ flexDirection: "column" }}>
           <div style={{ display: "flex" }}>
-            <Avatar
-              src={
-                article.user.is_admin && !article.user.profile_photo
-                  ? CLogo
-                  : article.user.profile_photo
+            <div
+              className={
+                article.user && article.user.member && article.user.member.membership_tier === "PRO"
+                  ? classes.proBorderWrapper
+                  : classes.freeBorderWrapper
               }
-              alt=""
               style={{
-                height: "18px",
-                width: "18px",
                 marginRight: "5px",
-                border:
-                  article.user &&
-                  article.user.member &&
-                  article.user.member.membership_tier === "PRO"
-                    ? "3px solid green"
-                    : "",
               }}
-            ></Avatar>
-            {article.user.is_admin &&
-            article.user.first_name === null &&
-            article.user.last_name === null
+            >
+              <div className={classes.innerBorderWrapper}>
+                <Avatar
+                  src={article.user.is_admin && !article.user.profile_photo ? CLogo : article.user.profile_photo}
+                  alt=""
+                  style={{
+                    height: "18px",
+                    width: "18px",
+                  }}
+                />
+              </div>
+            </div>
+
+            {article.user.is_admin && article.user.first_name === null && article.user.last_name === null
               ? "Codeine Admin"
               : article.user.first_name + " " + article.user.last_name}
           </div>
@@ -88,9 +104,7 @@ const TrendingArticle = (props) => {
           >
             {article.title}
           </Typography>
-          <Typography style={{ fontSize: "12px", color: "#757575" }}>
-            {formatDate(article.date_created)}
-          </Typography>
+          <Typography style={{ fontSize: "12px", color: "#757575" }}>{formatDate(article.date_created)}</Typography>
         </div>
       </div>
     </div>

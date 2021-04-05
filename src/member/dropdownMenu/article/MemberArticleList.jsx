@@ -276,8 +276,15 @@ const MemberArticleList = (props) => {
   };
 
   const createNewArticle = () => {
+    const formData = new FormData();
+    formData.append("title", emptyArticle.title);
+    formData.append("content", emptyArticle.content);
+    formData.append("categories", []);
+    formData.append("coding_languages", []);
+    formData.append("languages", []);
+
     Service.client
-      .post(`/articles`, emptyArticle)
+      .post(`/articles`, formData)
       .then((res) => {
         history.push("/article/edit/member/" + res.data.id);
       })

@@ -44,11 +44,13 @@ const TagItem = ({ enquiry, formatDate, user }) => {
             return (
               <Link
                 className={classes.link}
-                href={handleRedirectForArticle(enquiry.article.id)}
+                href={handleRedirectForArticle(
+                  enquiry.article && enquiry.article.id
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {enquiry.article.title}
+                {enquiry.article && enquiry.article.title}
               </Link>
             );
           } else if (enquiry.ticket_type[0] === "COURSE") {

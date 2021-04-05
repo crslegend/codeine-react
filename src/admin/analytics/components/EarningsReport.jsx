@@ -80,7 +80,7 @@ const EarningsReport = ({ earningsReport }) => {
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total amount of earnings from pro-tier members
+                  Total amount of earnings from pro members
                 </Typography>
               }
             >

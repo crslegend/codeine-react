@@ -145,7 +145,10 @@ const CourseDetailsDrawer = ({
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <Alert severity="info">
           This course is for{" "}
-          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
+          <span style={{ fontWeight: 600, fontSize: "16px" }}>
+            {courseDetails && courseDetails.pro ? "PRO " : "ALL "}
+          </span>
+          members.
         </Alert>
       </div>
 
@@ -221,31 +224,7 @@ const CourseDetailsDrawer = ({
           )}
         </IconButton> */}
       </div>
-      <div
-        style={{
-          marginBottom: "10px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={courseDetails && courseDetails.pro}
-              onChange={() =>
-                setCourseDetails({
-                  ...courseDetails,
-                  pro: !courseDetails.pro,
-                })
-              }
-            />
-          }
-          label="Pro-Tier Course"
-          labelPlacement="start"
-        />
-      </div>
-      <div style={{ marginBottom: "30px" }}>
+      <div style={{ marginTop: "10px", marginBottom: "30px" }}>
         <label htmlFor="title">
           <Typography variant="body2">Course Title (Required)</Typography>
         </label>
@@ -370,7 +349,23 @@ const CourseDetailsDrawer = ({
           required
         />
       </div>
-      <div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={courseDetails && courseDetails.pro}
+              onChange={() =>
+                setCourseDetails({
+                  ...courseDetails,
+                  pro: !courseDetails.pro,
+                })
+              }
+            />
+          }
+          label="Pro Course"
+          labelPlacement="start"
+        />
         <Button
           variant="contained"
           color="primary"
@@ -391,7 +386,10 @@ const CourseDetailsDrawer = ({
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <Alert severity="info">
           This course is for{" "}
-          {courseDetails && courseDetails.pro ? "Pro-Tier" : "all"} members.
+          <span style={{ fontWeight: 600, fontSize: "16px" }}>
+            {courseDetails && courseDetails.pro ? "PRO " : "ALL "}
+          </span>
+          members.
         </Alert>
       </div>
       <div style={{ marginBottom: "30px" }}>

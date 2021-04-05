@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
@@ -24,6 +24,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import LazyLoad from "react-lazyload";
 
 import EditIcon from "../../assets/EditIcon.svg";
 
@@ -450,6 +451,8 @@ const AdminNotificationPage = () => {
     Service.client.get("/notifications");
   };
 
+  const [times, setTimes] = useState(0);
+
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -530,7 +533,11 @@ const AdminNotificationPage = () => {
                 <MenuItem value={"REMINDER"}>Reminder</MenuItem>
               </Select>
             </div>
-            <Accordion style={{ marginTop: "30px" }}>
+            <Accordion
+              style={{ marginTop: "30px" }}
+              TransitionProps={{ unmountOnExit: true }}
+              onChange={() => setTimes(times + 1)}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-label="Expand"
@@ -540,24 +547,33 @@ const AdminNotificationPage = () => {
                 <Typography>Select Members</Typography>
               </AccordionSummary>
               <AccordionDetails style={{ height: "500px" }}>
-                <DataGrid
-                  className={classes.dataGrid}
-                  rows={memberRows}
-                  columns={memberColumns.map((column) => ({
-                    ...column,
-                    //disableClickEventBubbling: true,
-                  }))}
-                  pageSize={10}
-                  checkboxSelection
-                  onSelectionChange={(newSelection) => {
-                    setSelectedMemberList(newSelection);
-                  }}
-                  //disableSelectionOnClick
-                  //onRowClick={(e) => handleClickOpenMember(e)}
-                />
+                {useMemo(
+                  () => (
+                    <DataGrid
+                      className={classes.dataGrid}
+                      rows={memberRows}
+                      columns={memberColumns.map((column) => ({
+                        ...column,
+                        //disableClickEventBubbling: true,
+                      }))}
+                      pageSize={10}
+                      checkboxSelection
+                      onSelectionChange={(newSelection) => {
+                        setSelectedMemberList(newSelection);
+                      }}
+                      //disableSelectionOnClick
+                      //onRowClick={(e) => handleClickOpenMember(e)}
+                    />
+                  ),
+                  // eslint-disable-next-line react-hooks/exhaustive-deps
+                  [times]
+                )}
               </AccordionDetails>
             </Accordion>
-            <Accordion>
+            <Accordion
+              TransitionProps={{ unmountOnExit: true }}
+              onChange={() => setTimes(times + 1)}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-label="Expand"
@@ -567,21 +583,28 @@ const AdminNotificationPage = () => {
                 <Typography>Select Partners</Typography>
               </AccordionSummary>
               <AccordionDetails style={{ height: "500px" }}>
-                <DataGrid
-                  className={classes.dataGrid}
-                  rows={partnerRows}
-                  columns={partnerColumns.map((column) => ({
-                    ...column,
-                    //disableClickEventBubbling: true,
-                  }))}
-                  pageSize={10}
-                  checkboxSelection
-                  onSelectionChange={(newSelection) => {
-                    setSelectedPartnerList(newSelection);
-                  }}
-                />
+                {useMemo(
+                  () => (
+                    <DataGrid
+                      className={classes.dataGrid}
+                      rows={partnerRows}
+                      columns={partnerColumns.map((column) => ({
+                        ...column,
+                        //disableClickEventBubbling: true,
+                      }))}
+                      pageSize={10}
+                      checkboxSelection
+                      onSelectionChange={(newSelection) => {
+                        setSelectedPartnerList(newSelection);
+                      }}
+                    />
+                  ),
+                  // eslint-disable-next-line react-hooks/exhaustive-deps
+                  [times]
+                )}
               </AccordionDetails>
             </Accordion>
+
             <Button
               color="secondary"
               variant="contained"

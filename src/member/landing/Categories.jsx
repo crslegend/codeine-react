@@ -138,7 +138,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/industryprojects"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
