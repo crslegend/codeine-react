@@ -68,12 +68,12 @@ const Helpdesk = () => {
         "To change your password, select your avatar icon at the top of the page and click on 'Manage Your Profile' from the dropdown menu to access your profile. At that page, click on 'Change Password' to change your password.",
     },
     {
-      question: "How Do I Upgrade To Pro-Tier Membership?",
-      answer: `To upgrade to Pro-Tier, click on 'Upgrade' at the top of the page. You will be brought to a page where you can see our pricing plan and choose the number of months to be in the Pro-Tier.`,
+      question: "How Do I Upgrade To Pro Membership?",
+      answer: `To upgrade to Pro, click on 'Upgrade' at the top of the page. You will be brought to a page where you can see our pricing plan and choose the number of months to be in the Pro.`,
     },
     {
-      question: "How Do I Extend My Pro-Tier Membership?",
-      answer: `To extend your Pro-Tier membership, select your avatar icon at the top of the page and click on 'My Payments' from the dropdown menu. At that page, click on 'Extend Pro-Tier Membership' to extend your membership.`,
+      question: "How Do I Extend My Pro Membership?",
+      answer: `To extend your Pro membership, select your avatar icon at the top of the page and click on 'My Payments' from the dropdown menu. At that page, click on 'Extend Pro Membership' to extend your membership.`,
     },
     {
       question: "Where Can I Find My Enrolled Courses?",

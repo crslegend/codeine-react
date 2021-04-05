@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Breadcrumbs,
@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
@@ -21,7 +20,7 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
-import Menu from "@material-ui/icons/MoreHoriz";
+import Menu from "@material-ui/icons/MoreVert";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import ReactQuill, { Quill } from "react-quill";
@@ -323,17 +322,34 @@ const ViewArticle = (props) => {
           </Link>
           <Typography>{articleDetails.title}</Typography>
         </Breadcrumbs>
-        <Typography
-          variant="h1"
-          style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          {articleDetails.title}
-        </Typography>
+          <Typography
+            variant="h1"
+            style={{
+              fontWeight: "800",
+              marginBottom: "10px",
+              marginTop: "30px",
+              fontFamily: "Helvetica",
+            }}
+          >
+            {articleDetails.title}
+          </Typography>
+          <Menu
+            onClick={(e) => handleClick(e)}
+            style={{ marginLeft: "auto", cursor: "pointer" }}
+          />
+        </div>
+
         {articleDetails.user && (
           <div
             style={{
               display: "flex",
-              marginRight: "15px",
               alignItems: "right",
               marginBottom: "20px",
               order: 2,
@@ -393,21 +409,7 @@ const ViewArticle = (props) => {
             )}
           </div>
         )}
-
-        <div style={{ fontSize: "20px", marginBottom: "30px" }}>
-          {/* {parse(articleDetails.content, options)} */}
-
-          <div style={{ fontSize: "18px" }}>
-            <ReactQuill
-              modules={modules}
-              value={articleDetails.content}
-              readOnly={true}
-              theme={"bubble"}
-              enable={false}
-              onChange={(e) => e}
-            />
-          </div>
-
+        <div>
           {articleDetails &&
             articleDetails.coding_languages &&
             articleDetails.coding_languages.length > 0 &&
@@ -483,6 +485,27 @@ const ViewArticle = (props) => {
                 );
               }
             })}
+        </div>
+
+        <div style={{ fontSize: "20px", marginBottom: "30px" }}>
+          {/* {parse(articleDetails.content, options)} */}
+          <div style={{ width: "100%" }}>
+            <img
+              alt="thumbnail"
+              src={articleDetails && articleDetails.thumbnail}
+              width="100%"
+            />
+          </div>
+          <div style={{ fontSize: "18px" }}>
+            <ReactQuill
+              modules={modules}
+              value={articleDetails.content}
+              readOnly={true}
+              theme={"bubble"}
+              enable={false}
+              onChange={(e) => e}
+            />
+          </div>
 
           <div
             style={{
@@ -507,12 +530,6 @@ const ViewArticle = (props) => {
             <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
             </Typography>
-            {user && (
-              <Menu
-                onClick={(e) => handleClick(e)}
-                style={{ marginLeft: "auto", cursor: "pointer" }}
-              />
-            )}
 
             <Popover
               id={popoverid}
@@ -532,7 +549,7 @@ const ViewArticle = (props) => {
                 {user &&
                   articleDetails.user &&
                   checkIfOwnerOfComment(articleDetails.user.id) && (
-                    <>
+                    <Fragment>
                       <Typography
                         variant="body2"
                         className={classes.typography}
@@ -554,7 +571,7 @@ const ViewArticle = (props) => {
                       >
                         Delete
                       </Typography>
-                    </>
+                    </Fragment>
                   )}
                 {articleDetails.user &&
                   !checkIfOwnerOfComment(articleDetails.user.id) && (

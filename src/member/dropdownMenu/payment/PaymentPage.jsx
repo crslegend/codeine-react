@@ -174,7 +174,11 @@ const Payment = () => {
     const data = {
       total_price: amount * numOfMonths,
       email: email,
-      description: numOfMonths && numOfMonths === 1 ? `Pro-Tier for 1 Month` : `Pro-Tier for ${numOfMonths} Months`,
+      description:
+        numOfMonths && numOfMonths === 1
+          ? `Pro Membership for 1 Month`
+          : `Pro Membership for ${numOfMonths} Months`,
+
       mId: userId,
       numOfMonths: numOfMonths,
       transaction: transactionId,
@@ -255,7 +259,7 @@ const Payment = () => {
 
   const handleDeleteTransaction = () => {
     Service.client
-      .delete(`/auth/membership-subscriptions/${selectedTransaction.id}`)
+      .delete(`/auth/transactions/${selectedTransaction.id}`)
       .then((res) => {
         // console.log(res);
         setSelectedTransactionDialog(false);
@@ -444,7 +448,7 @@ const Payment = () => {
                     onClick={() => history.push(`/member/membership`)}
                     disabled={existPending}
                   >
-                    Extend Pro-Tier Membership
+                    Extend Pro Membership
                   </Button>
                 ) : (
                   <Button
@@ -454,7 +458,7 @@ const Payment = () => {
                     onClick={() => history.push(`/member/membership`)}
                     disabled={existPending}
                   >
-                    Upgrade To Pro-Tier
+                    Upgrade To Pro
                   </Button>
                 )}
               </div>
@@ -474,8 +478,11 @@ const Payment = () => {
                 {latestTransactionForPro ? latestTransactionForPro.payment_transaction.payment_type : "-"}
               </span>
             </Typography>
-            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
-              Pro-Tier Membership Expires On:{" "}
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
+              Pro Membership Expires On:{" "}
               <span style={{ fontWeight: 500 }}>
                 {latestTransactionForPro ? formatDateToReturnWithoutTime(latestTransactionForPro.expiry_date) : "-"}
               </span>

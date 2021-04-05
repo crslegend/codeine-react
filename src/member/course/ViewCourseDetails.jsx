@@ -955,7 +955,7 @@ const ViewCourseDetails = () => {
           },
         }}
       >
-        <DialogTitle>This course is only for pro-tier members</DialogTitle>
+        <DialogTitle>This course is only for pro members</DialogTitle>
         <DialogActions>
           <Button
             variant="contained"
@@ -973,7 +973,7 @@ const ViewCourseDetails = () => {
               history.push(`/member/payment`);
             }}
           >
-            Upgrade to Pro-Tier
+            Upgrade to Pro Membership
           </Button>
         </DialogActions>
       </Dialog>
