@@ -80,6 +80,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
+  completed: {
+    marginTop: 10,
+  }
 }));
 
 const IndustryProjectDetails = () => {
@@ -492,6 +495,15 @@ const IndustryProjectDetails = () => {
                       onClick={handleOpenDeleteDialog}
                     >
                       Delete
+                    </Button>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.completed}
+                      onClick={handleOpenDeleteDialog}
+                    >
+                      Mark as Completed
                     </Button>
                   </CardContent>
                 </div>
