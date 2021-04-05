@@ -280,7 +280,7 @@ const Payment = () => {
 
   const handleDeleteTransaction = () => {
     Service.client
-      .delete(`/auth/membership-subscriptions/${selectedTransaction.id}`)
+      .delete(`/auth/transactions/${selectedTransaction.id}`)
       .then((res) => {
         // console.log(res);
         setSelectedTransactionDialog(false);
