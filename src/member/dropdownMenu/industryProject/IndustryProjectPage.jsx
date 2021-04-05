@@ -9,7 +9,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import Footer from "../../landing/Footer";
 import SearchBar from "material-ui-search-bar";
 import Toast from "../../../components/Toast";
 import PageTitle from "../../../components/PageTitle";
@@ -91,21 +90,6 @@ const styles = makeStyles((theme) => ({
     // marginRight: theme.spacing(9),
     width: "250px",
     maxHeight: 50,
-  },
-  inputLabel: {
-    top: "-5",
-    color: "#E3E3E3",
-    "&.Mui-focused": {
-      color: "#fff",
-    },
-  },
-  dataGrid: {
-    backgroundColor: "#fff",
-    "@global": {
-      ".MuiDataGrid-row": {
-        cursor: "pointer",
-      },
-    },
   },
 }));
 
@@ -244,6 +228,7 @@ const IndustryProject = () => {
                 .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                 .map((application, index) => (
                   <ApplicationCard
+                    getAllApplications={() => getAllApplications()}
                     key={application.id}
                     application={application}
                   />
