@@ -178,8 +178,7 @@ const IndustryProjectDetails = () => {
               res.data.industry_project_applications[i].member.first_name +
               " " +
               res.data.industry_project_applications[i].member.last_name,
-            last_name:
-              res.data.industry_project_applications[i].member.last_name,
+            member_id: res.data.industry_project_applications[i].member.id,
             date_created:
               res.data.industry_project_applications[i].date_created,
             is_completed: res.data.is_completed,
@@ -352,7 +351,18 @@ const IndustryProjectDetails = () => {
       width: 70,
       renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
     },
-    { field: "name", headerName: "Name", flex: 1 },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <a href={`/member/profile/${params.row.member_id}`}>
+            {params.row.name}
+          </a>
+        );
+      },
+    },
     {
       field: "is_accepted",
       headerName: "Accepted",
