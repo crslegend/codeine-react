@@ -14,8 +14,10 @@ import {
   CardContent,
   Paper,
   Avatar,
+  Chip,
 } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
+import green from "@material-ui/core/colors/green";
 import SearchBar from "material-ui-search-bar";
 import { ToggleButton } from "@material-ui/lab";
 import { Edit, ArrowBack } from "@material-ui/icons";
@@ -82,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
   completed: {
     marginTop: 10,
-  }
+  },
 }));
 
 const IndustryProjectDetails = () => {
@@ -132,6 +134,7 @@ const IndustryProjectDetails = () => {
 
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
 
   let decoded;
   if (Cookies.get("t1")) {
@@ -302,6 +305,25 @@ const IndustryProjectDetails = () => {
       });
   };
 
+  const handleCompleteSubmit = () => {
+    Service.client
+      .patch(`/industry-projects/${id}`, { is_completed: true })
+      .then((res) => {
+        setOpenCompleteDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "Industry project is marked as completed!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleClose = () => {
     setOpenEditDialog(false);
     setOpenDeleteDialog(false);
@@ -408,14 +430,21 @@ const IndustryProjectDetails = () => {
                       >
                         {industryProject && industryProject.title}
                       </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<Edit />}
-                        onClick={handleOpenEditDialog}
-                      >
-                        Edit
-                      </Button>
+                      {industryProject && industryProject.is_completed ? (
+                        <Chip
+                          label="Completed"
+                          style={{ backgroundColor: green[600], color: "#FFF" }}
+                        />
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<Edit />}
+                          onClick={handleOpenEditDialog}
+                        >
+                          Edit
+                        </Button>
+                      )}
                     </div>
                     <Typography variant="h6">
                       {industryProject &&
@@ -493,6 +522,7 @@ const IndustryProjectDetails = () => {
                       className={classes.outlined}
                       classes={{ disabled: classes.disabled }}
                       onClick={handleOpenDeleteDialog}
+                      disabled={industryProject.is_completed}
                     >
                       Delete
                     </Button>
@@ -501,7 +531,8 @@ const IndustryProjectDetails = () => {
                       variant="contained"
                       color="primary"
                       className={classes.completed}
-                      onClick={handleOpenDeleteDialog}
+                      onClick={() => setOpenCompleteDialog(true)}
+                      disabled={industryProject.is_completed}
                     >
                       Mark as Completed
                     </Button>
@@ -574,6 +605,38 @@ const IndustryProjectDetails = () => {
                 />
               </Paper>
             </div>
+            <Dialog
+              open={openCompleteDialog}
+              onClose={() => setOpenCompleteDialog(false)}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Mark Industry Project as Complete?
+              </DialogTitle>
+              <DialogContent>
+                By marking this industry project as complete, you will not be
+                able to make further edits or delete this industry project.{" "}
+                <br />
+                <span>Are you sure?</span>
+              </DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <Button
+                  onClick={() => setOpenCompleteDialog(false)}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleCompleteSubmit()}
+                  color="primary"
+                  variant="contained"
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
             <Dialog
               open={openDeleteDialog}
               onClose={handleClose}
