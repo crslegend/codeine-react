@@ -135,6 +135,10 @@ const IndustryProjectDetails = () => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState();
+  const [openApplicantDialog, setOpenApplicantDialog] = useState(false);
+  const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
 
   let decoded;
   if (Cookies.get("t1")) {
@@ -149,7 +153,7 @@ const IndustryProjectDetails = () => {
   const [allApplicantList, setAllApplicantList] = useState([]);
   let applicantsRows = allApplicantList;
 
-  const getlndustryProject = () => {
+  const getIndustryProject = () => {
     Service.client
       .get(`/industry-projects/${id}`)
       .then((res) => {
@@ -197,7 +201,7 @@ const IndustryProjectDetails = () => {
   };
 
   useEffect(() => {
-    getlndustryProject();
+    getIndustryProject();
   }, []);
 
   const handleSubmit = () => {
@@ -280,10 +284,6 @@ const IndustryProjectDetails = () => {
   };
 
   const handleDeleteSubmit = () => {
-    const data = {
-      is_available: true,
-    };
-
     Service.client
       .patch(`/industry-projects/${id}`, { is_available: false })
       .then((res) => {
@@ -342,6 +342,57 @@ const IndustryProjectDetails = () => {
     } else {
       return "No";
     }
+  };
+
+  const handleClickOpenApplication = (e) => {
+    setSelectedApplicant(e.row);
+    setOpenApplicantDialog(true);
+  };
+
+  const handleAcceptSubmit = (application_id) => {
+    Service.client
+      .patch(`/industry-projects/${id}/applications/${application_id}`, {
+        is_accepted: true,
+      })
+      .then((res) => {
+        setOpenAcceptDialog(false);
+        setOpenApplicantDialog(false);
+        getIndustryProject();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Applicant has been accepted!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleRejectSubmit = (application_id) => {
+    Service.client
+      .patch(`/industry-projects/${id}/applications/${application_id}`, {
+        is_rejected: true,
+      })
+      .then((res) => {
+        setOpenApplicantDialog(false);
+        setOpenRejectDialog(false);
+        getIndustryProject();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Applicant has been rejected!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => console.log(err));
   };
 
   const applicationsColumns = [
@@ -611,10 +662,125 @@ const IndustryProjectDetails = () => {
                   }))}
                   pageSize={10}
                   disableSelectionOnClick
-                  // onRowClick={(e) => handleClickOpenApplication(e)}
+                  onRowClick={(e) => handleClickOpenApplication(e)}
                 />
               </Paper>
             </div>
+            <Dialog
+              open={openRejectDialog}
+              onClose={() => setOpenRejectDialog(false)}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Reject Applicant?
+              </DialogTitle>
+              <DialogContent>
+                By rejecting this applicant, you will not be able to accept this
+                applicant in the future.
+                <br />
+                <span>Are you sure?</span>
+              </DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <Button
+                  onClick={() => setOpenRejectDialog(false)}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleRejectSubmit(selectedApplicant.id)}
+                  color="primary"
+                  variant="outlined"
+                  className={classes.deleteButton}
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={openAcceptDialog}
+              onClose={() => setOpenAcceptDialog(false)}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Accept Applicant?
+              </DialogTitle>
+              <DialogContent>
+                By accepting this applicant, you will not be able to reject this
+                applicant in the future.
+                <br />
+                <span>Are you sure?</span>
+              </DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <Button
+                  onClick={() => setOpenAcceptDialog(false)}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleAcceptSubmit(selectedApplicant.id)}
+                  color="primary"
+                  variant="contained"
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={openApplicantDialog}
+              onClose={() => setOpenApplicantDialog(false)}
+              aria-labelledby="form-dialog-title"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogTitle id="form-dialog-title">
+                Applicant's Status
+              </DialogTitle>
+              <DialogContent>
+                Do you wish to either accept or reject the applicant?
+              </DialogContent>
+              <DialogActions style={{ marginTop: 40 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                    flex: 1,
+                    marginLeft: "16px",
+                    marginRight: "16px",
+                  }}
+                  className={classes.threeButton}
+                >
+                  <Button
+                    onClick={() => setOpenApplicantDialog(false)}
+                    color="primary"
+                    variant="outlined"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => setOpenAcceptDialog(true)}
+                    color="primary"
+                    variant="contained"
+                    style={{ width: "30%" }}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    onClick={() => setOpenRejectDialog(true)}
+                    variant="outlined"
+                    className={classes.deleteButton}
+                    style={{ width: "30%" }}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </DialogActions>
+            </Dialog>
             <Dialog
               open={openCompleteDialog}
               onClose={() => setOpenCompleteDialog(false)}
