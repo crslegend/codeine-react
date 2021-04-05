@@ -15,7 +15,7 @@ import {
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import { Dashboard, Timeline } from "@material-ui/icons";
+import { Dashboard, Timeline, Work } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
@@ -468,7 +468,7 @@ const MemberNavBar = (props) => {
                 alert("clicked on Industry projects");
               }}
             >
-              <Dashboard className={classes.icon} />
+              <Work className={classes.icon} />
               <Typography className={classes.typography}>
                 Industry Projects
               </Typography>
