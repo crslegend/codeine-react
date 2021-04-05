@@ -119,7 +119,9 @@ const NotificationDetail = () => {
 
   const getNotification = () => {
     Service.client
-      .get(`/notification-objects/${id}`)
+      .get(`/notification-objects/${id}`, {
+        timeout: 200000,
+      })
       .then((res) => {
         // console.log(res);
         setNotification(res.data);

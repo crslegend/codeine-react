@@ -124,7 +124,9 @@ const MemberNavBar = (props) => {
     if (!viewAllNotif) {
       if (Cookies.get("t1")) {
         Service.client
-          .get("/notification-objects")
+          .get("/notification-objects", {
+            timeout: 20000,
+          })
           .then((res) => {
             setNotificationList(res.data);
           })

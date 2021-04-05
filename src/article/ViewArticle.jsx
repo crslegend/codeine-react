@@ -160,11 +160,13 @@ const ViewArticle = (props) => {
   };
 
   const checkIfOwnerOfComment = (userId) => {
-    const decoded = jwt_decode(Cookies.get("t1"));
-    if (decoded.user_id === userId) {
-      return true;
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      if (decoded.user_id === userId) {
+        return true;
+      }
+      return false;
     }
-    return false;
   };
 
   const getArticleDetails = () => {
@@ -485,10 +487,12 @@ const ViewArticle = (props) => {
             <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
             </Typography>
-            <Menu
-              onClick={(e) => handleClick(e)}
-              style={{ marginLeft: "auto", cursor: "pointer" }}
-            />
+            {user && (
+              <Menu
+                onClick={(e) => handleClick(e)}
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+            )}
 
             <Popover
               id={popoverid}
