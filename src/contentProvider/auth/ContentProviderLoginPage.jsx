@@ -89,7 +89,7 @@ const ContentProviderLoginPage = () => {
     Service.client
       .post("/api/token/", loginDetails)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
 
         if (res.data.user.partner) {
           Service.storeCredentials(res.data);
@@ -107,6 +107,14 @@ const ContentProviderLoginPage = () => {
           //   severity: "error",
           // });
           // return;
+        } else if (res.data.user.is_admin) {
+          setLoading(false);
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "This user is not a registered partner. Please try again!",
+            severity: "error",
+          });
         }
       })
       .catch((err) => {
