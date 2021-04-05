@@ -209,6 +209,8 @@ const CodeReviewDetails = () => {
                     language={code.coding_languages[0]}
                     selectedLine={selectedLine}
                     setSelectedLine={setSelectedLine}
+                    loggedIn={loggedIn}
+                    getCodeReviewComments={getCodeReviewComments}
                   />
                 ))}
           </div>
