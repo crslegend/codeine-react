@@ -2,24 +2,16 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
-// import logo from "../assets/CodeineLogos/Member.svg";
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
-// import PageTitle from "../components/PageTitle";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
 import { Add, Favorite, Forum, People, Person } from "@material-ui/icons";
-// import { ToggleButton } from "@material-ui/lab";
 import Toast from "../components/Toast.js";
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
 import AddSnippetDialog from "./components/AddSnippetDialog";
-// import AceEditor from "react-ace";
-// import "ace-builds/src-noconflict/mode-javascript";
-// import "ace-builds/src-noconflict/theme-monokai";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -341,10 +333,7 @@ const ViewAllCodeReviews = () => {
               return (
                 <Paper key={index} className={classes.codeReview}>
                   <div>
-                    <LinkMui
-                      className={classes.linkMui}
-                      onClick={() => history.push(`/codereview/${code.id}`)}
-                    >
+                    <LinkMui className={classes.linkMui} onClick={() => history.push(`/codereview/${code.id}`)}>
                       {code.title}
                     </LinkMui>
                   </div>
@@ -357,21 +346,13 @@ const ViewAllCodeReviews = () => {
                         } else if (category === "BE") {
                           return resuableChip("Backend", index, "#A0DD8B");
                         } else if (category === "DB") {
-                          return resuableChip(
-                            "Database Administration",
-                            index,
-                            "#8B95DD"
-                          );
+                          return resuableChip("Database Administration", index, "#8B95DD");
                         } else if (category === "SEC") {
                           return resuableChip("Security", index, "#DDB28B");
                         } else if (category === "UI") {
                           return resuableChip("UI/UX", index, "#DDD58B");
                         } else if (category === "ML") {
-                          return resuableChip(
-                            "Machine Learning",
-                            index,
-                            "#8BD8DD"
-                          );
+                          return resuableChip("Machine Learning", index, "#8BD8DD");
                         } else {
                           return null;
                         }
@@ -380,12 +361,7 @@ const ViewAllCodeReviews = () => {
                       code.coding_languages.length > 0 &&
                       code.coding_languages.map((language, index) => {
                         if (language === "PY") {
-                          return resuableChip(
-                            "Python",
-                            index,
-                            "#3675A9",
-                            "#fff"
-                          );
+                          return resuableChip("Python", index, "#3675A9", "#fff");
                         } else if (language === "JAVA") {
                           return resuableChip("Java", index, "#E57001", "#fff");
                         } else if (language === "JS") {
@@ -418,26 +394,17 @@ const ViewAllCodeReviews = () => {
                     >
                       <div>
                         {code.user.profile_photo && code.user.profile_photo ? (
-                          <Avatar
-                            style={{ marginRight: "15px" }}
-                            src={code.user && code.user.profile_photo}
-                          />
+                          <Avatar style={{ marginRight: "15px" }} src={code.user && code.user.profile_photo} />
                         ) : (
-                          <Avatar style={{ marginRight: "15px" }}>
-                            {code.user && code.user.first_name.charAt(0)}
-                          </Avatar>
+                          <Avatar style={{ marginRight: "15px" }}>{code.user && code.user.first_name.charAt(0)}</Avatar>
                         )}
                       </div>
                       <div style={{ flexDirection: "column" }}>
                         <LinkMui className={classes.linkMui1}>
-                          {`${code && code.user.first_name} ${
-                            code && code.user.last_name
-                          }`}
+                          {`${code && code.user.first_name} ${code && code.user.last_name}`}
                         </LinkMui>
                         <Typography variant="body2" style={{ opacity: 0.8 }}>
-                          {` asked ${
-                            code && calculateDateInterval(code.timestamp)
-                          }`}
+                          {` asked ${code && calculateDateInterval(code.timestamp)}`}
                         </Typography>
                       </div>
                     </div>
@@ -448,9 +415,7 @@ const ViewAllCodeReviews = () => {
           ) : (
             <div style={{ textAlign: "center" }}>
               <Forum fontSize="large" />
-              <Typography variant="h2">
-                No Code Snippets for Review Yet
-              </Typography>
+              <Typography variant="h2">No Code Snippets for Review Yet</Typography>
             </div>
           )}
         </div>
