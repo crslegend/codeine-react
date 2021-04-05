@@ -569,6 +569,19 @@ const EditArticle = (props) => {
   };
 
   const saveAndPublishArticle = () => {
+    if (!thumbnail) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a thumbnail for your article!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
     if (!validateArticle()) {
       let data = {
         ...articleDetails,
