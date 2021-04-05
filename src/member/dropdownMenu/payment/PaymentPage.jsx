@@ -190,8 +190,8 @@ const Payment = () => {
       email: email,
       description:
         numOfMonths && numOfMonths === 1
-          ? `Pro-Tier for 1 Month`
-          : `Pro-Tier for ${numOfMonths} Months`,
+          ? `Pro Membership for 1 Month`
+          : `Pro Membership for ${numOfMonths} Months`,
       mId: userId,
       numOfMonths: numOfMonths,
       transaction: transactionId,
@@ -478,7 +478,7 @@ const Payment = () => {
                     onClick={() => history.push(`/member/membership`)}
                     disabled={existPending}
                   >
-                    Extend Pro-Tier Membership
+                    Extend Pro Membership
                   </Button>
                 ) : (
                   <Button
@@ -488,7 +488,7 @@ const Payment = () => {
                     onClick={() => history.push(`/member/membership`)}
                     disabled={existPending}
                   >
-                    Upgrade To Pro-Tier
+                    Upgrade To Pro
                   </Button>
                 )}
               </div>
@@ -522,7 +522,7 @@ const Payment = () => {
               variant="h6"
               style={{ fontWeight: 600, paddingBottom: "5px" }}
             >
-              Pro-Tier Membership Expires On:{" "}
+              Pro Membership Expires On:{" "}
               <span style={{ fontWeight: 500 }}>
                 {latestTransactionForPro
                   ? formatDateToReturnWithoutTime(
