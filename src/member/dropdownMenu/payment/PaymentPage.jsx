@@ -86,9 +86,7 @@ const Payment = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [selectedTransaction, setSelectedTransaction] = useState();
-  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(
-    false
-  );
+  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(false);
   const [existPending, setExistPending] = useState(false);
 
   const checkIfLoggedIn = () => {
@@ -131,11 +129,7 @@ const Payment = () => {
             month_duration: res.data[i].month_duration,
           };
           arr.push(obj);
-          if (
-            res.data[i].payment_transaction.payment_status ===
-              "PENDING_COMPLETION" &&
-            !pendingCheck
-          ) {
+          if (res.data[i].payment_transaction.payment_status === "PENDING_COMPLETION" && !pendingCheck) {
             pendingCheck = true;
           }
         }
@@ -160,9 +154,7 @@ const Payment = () => {
             // check = false;
             setLatestTransactionForPro(res.data);
           }
-        } else if (
-          res.data.payment_transaction.payment_status === "PENDING_COMPLETION"
-        ) {
+        } else if (res.data.payment_transaction.payment_status === "PENDING_COMPLETION") {
           setExistPending(true);
         }
       })
@@ -175,13 +167,7 @@ const Payment = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setAllTransactions]);
 
-  const handleStripePaymentGateway = async (
-    amount,
-    email,
-    userId,
-    numOfMonths,
-    transactionId
-  ) => {
+  const handleStripePaymentGateway = async (amount, email, userId, numOfMonths, transactionId) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
@@ -192,6 +178,7 @@ const Payment = () => {
         numOfMonths && numOfMonths === 1
           ? `Pro Membership for 1 Month`
           : `Pro Membership for ${numOfMonths} Months`,
+
       mId: userId,
       numOfMonths: numOfMonths,
       transaction: transactionId,
@@ -255,9 +242,7 @@ const Payment = () => {
   const handleContinueTransaction = () => {
     const decoded = jwt_decode(Cookies.get("t1"));
     const month_duration = selectedTransaction.month_duration;
-    const amountToPay =
-      parseFloat(selectedTransaction.payment_amount) /
-      selectedTransaction.month_duration;
+    const amountToPay = parseFloat(selectedTransaction.payment_amount) / selectedTransaction.month_duration;
 
     const cId = selectedTransaction.id;
 
@@ -267,13 +252,7 @@ const Payment = () => {
       .then((res) => {
         const emailAdd = res.data.email;
 
-        handleStripePaymentGateway(
-          amountToPay,
-          emailAdd,
-          decoded.user_id,
-          month_duration,
-          cId
-        );
+        handleStripePaymentGateway(amountToPay, emailAdd, decoded.user_id, month_duration, cId);
       })
       .catch((err) => console.log(err));
   };
@@ -380,8 +359,7 @@ const Payment = () => {
     {
       field: "debit",
       headerName: "Debit",
-      renderCell: (params) =>
-        params.value && <div variant="body2">${params.value}</div>,
+      renderCell: (params) => params.value && <div variant="body2">${params.value}</div>,
       width: 120,
     },
     {
@@ -402,8 +380,7 @@ const Payment = () => {
   for (var h = 0; h < allTransactions.length; h++) {
     transactionRows[h].title = allTransactions[h].consultation_slot.title;
 
-    transactionRows[h].partner =
-      allTransactions[h].consultation_slot.partner_name;
+    transactionRows[h].partner = allTransactions[h].consultation_slot.partner_name;
 
     transactionRows[h].expiry_date = allTransactions[h].expiry_date
       ? formatDateToReturnWithoutTime(allTransactions[h].expiry_date)
@@ -413,20 +390,16 @@ const Payment = () => {
       allTransactions[h].consultation_slot.start_time
     );
 
-    transactionRows[h].date = formatDateToReturnWithoutTime(
-      allTransactions[h].payment_transaction.timestamp
-    );
+    transactionRows[h].date = formatDateToReturnWithoutTime(allTransactions[h].payment_transaction.timestamp);
 
     transactionRows[h].id = allTransactions[h].payment_transaction.id;
 
     if (allTransactions[h].payment_transaction.payment_status === "COMPLETED") {
       transactionRows[h].type = "Payment";
-      transactionRows[h].debit =
-        allTransactions[h].payment_transaction.payment_amount;
+      transactionRows[h].debit = allTransactions[h].payment_transaction.payment_amount;
     } else {
       transactionRows[h].type = "Refund";
-      transactionRows[h].credit =
-        allTransactions[h].payment_transaction.payment_amount;
+      transactionRows[h].credit = allTransactions[h].payment_transaction.payment_amount;
     }
   }
 
@@ -449,24 +422,21 @@ const Payment = () => {
                 marginBottom: "20px",
               }}
             >
-              <Typography
-                variant="h5"
-                style={{ fontWeight: 600, paddingRight: "10px" }}
-              >
+              <Typography variant="h5" style={{ fontWeight: 600, paddingRight: "10px" }}>
                 Current Tier:
               </Typography>
               {latestTransactionForPro ? (
                 <Chip
                   label="PRO"
-                  style={{ backgroundColor: "#437FC7", color: "#fff" }}
+                  style={{
+                    background:
+                      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+                    color: "#fff",
+                  }}
                   size="small"
                 />
               ) : (
-                <Chip
-                  label="FREE"
-                  style={{ backgroundColor: "#F7DF1E", color: "#000" }}
-                  size="small"
-                />
+                <Chip label="FREE" style={{ background: "rgba(84,84,84,1)", color: "#000" }} size="small" />
               )}
 
               <div style={{ marginLeft: "auto" }}>
@@ -494,28 +464,18 @@ const Payment = () => {
               </div>
             </div>
 
-            <Typography
-              variant="h6"
-              style={{ fontWeight: 600, paddingBottom: "5px" }}
-            >
+            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
               Paid On:{" "}
               <span style={{ fontWeight: 500 }}>
                 {latestTransactionForPro
-                  ? formatDateToReturnWithoutTime(
-                      latestTransactionForPro.payment_transaction.timestamp
-                    )
+                  ? formatDateToReturnWithoutTime(latestTransactionForPro.payment_transaction.timestamp)
                   : "-"}
               </span>
             </Typography>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: 600, paddingBottom: "5px" }}
-            >
+            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
               Paid By:{" "}
               <span style={{ fontWeight: 500 }}>
-                {latestTransactionForPro
-                  ? latestTransactionForPro.payment_transaction.payment_type
-                  : "-"}
+                {latestTransactionForPro ? latestTransactionForPro.payment_transaction.payment_type : "-"}
               </span>
             </Typography>
             <Typography
@@ -524,18 +484,11 @@ const Payment = () => {
             >
               Pro Membership Expires On:{" "}
               <span style={{ fontWeight: 500 }}>
-                {latestTransactionForPro
-                  ? formatDateToReturnWithoutTime(
-                      latestTransactionForPro.expiry_date
-                    )
-                  : "-"}
+                {latestTransactionForPro ? formatDateToReturnWithoutTime(latestTransactionForPro.expiry_date) : "-"}
               </span>
             </Typography>
           </Paper>
-          <Typography
-            variant="h5"
-            style={{ fontWeight: "600", paddingBottom: "10px" }}
-          >
+          <Typography variant="h5" style={{ fontWeight: "600", paddingBottom: "10px" }}>
             Membership Transactions
           </Typography>
           <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
@@ -549,10 +502,7 @@ const Payment = () => {
             />
           </div>
 
-          <Typography
-            variant="h5"
-            style={{ fontWeight: "600", paddingBottom: "10px" }}
-          >
+          <Typography variant="h5" style={{ fontWeight: "600", paddingBottom: "10px" }}>
             Consultation Transactions
           </Typography>
           <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
@@ -579,17 +529,12 @@ const Payment = () => {
         maxWidth="sm"
         fullWidth={true}
       >
-        {selectedTransaction &&
-        selectedTransaction &&
-        selectedTransaction.payment_status !== "COMPLETED" ? (
+        {selectedTransaction && selectedTransaction && selectedTransaction.payment_status !== "COMPLETED" ? (
           <Fragment>
             <DialogTitle>Transaction Pending Completion</DialogTitle>
             <DialogContent>This transaction is incomplete.</DialogContent>
             <DialogActions>
-              <Button
-                onClick={() => handleDeleteTransaction()}
-                style={{ backgroundColor: "#C74343", color: "#fff" }}
-              >
+              <Button onClick={() => handleDeleteTransaction()} style={{ backgroundColor: "#C74343", color: "#fff" }}>
                 Delete Transaction
               </Button>
               <Button
@@ -614,17 +559,10 @@ const Payment = () => {
                   marginBottom: "10px",
                 }}
               >
-                <Typography
-                  variant="body1"
-                  style={{ marginRight: "10px", fontWeight: 600 }}
-                >
+                <Typography variant="body1" style={{ marginRight: "10px", fontWeight: 600 }}>
                   Transaction Status:{" "}
                 </Typography>
-                <Chip
-                  label="Completed"
-                  style={{ backgroundColor: "green", color: "#fff" }}
-                  size="small"
-                />
+                <Chip label="Completed" style={{ backgroundColor: "green", color: "#fff" }} size="small" />
               </div>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Transaction ID: </span>
@@ -644,9 +582,7 @@ const Payment = () => {
               </Typography>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Expires On: </span>
-                {formatDateToReturnWithoutTime(
-                  selectedTransaction && selectedTransaction.expiry_date
-                )}
+                {formatDateToReturnWithoutTime(selectedTransaction && selectedTransaction.expiry_date)}
               </Typography>
             </DialogContent>
           </Fragment>

@@ -29,6 +29,21 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "none",
     },
   },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 2,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 1,
+  },
 }));
 
 const ViewAllArticles = () => {
@@ -146,12 +161,8 @@ const ViewAllArticles = () => {
             width: 100,
           }}
         >
-          {userType === "partner" && (
-            <img src={partnerLogo} width="120%" alt="codeine logo" />
-          )}
-          {userType === "admin" && (
-            <img src={adminLogo} width="120%" alt="codeine logo" />
-          )}
+          {userType === "partner" && <img src={partnerLogo} width="120%" alt="codeine logo" />}
+          {userType === "admin" && <img src={adminLogo} width="120%" alt="codeine logo" />}
         </Link>
       </div>
     </Fragment>
@@ -312,43 +323,35 @@ const ViewAllArticles = () => {
         </Grid>
         <Grid item xs={4}>
           <div>
-            <Typography style={{ fontWeight: 700 }}>
-              TRENDING ON CODEINE
-            </Typography>
+            <Typography style={{ fontWeight: 700 }}>TRENDING ON CODEINE</Typography>
 
-            {listOfArticles &&
-              listOfArticles.length > 0 &&
-              listOfArticles[0] && (
-                <TrendingCard
-                  number={"01"}
-                  history={history}
-                  setLoggedIn={setLoggedIn}
-                  article={listOfArticles[0]}
-                  userType={userType}
-                />
-              )}
-            {listOfArticles &&
-              listOfArticles.length > 1 &&
-              listOfArticles[1] && (
-                <TrendingCard
-                  number={"02"}
-                  history={history}
-                  setLoggedIn={setLoggedIn}
-                  article={listOfArticles[1]}
-                  userType={userType}
-                />
-              )}
-            {listOfArticles &&
-              listOfArticles.length > 2 &&
-              listOfArticles[2] && (
-                <TrendingCard
-                  number={"03"}
-                  history={history}
-                  setLoggedIn={setLoggedIn}
-                  article={listOfArticles[2]}
-                  userType={userType}
-                />
-              )}
+            {listOfArticles && listOfArticles.length > 0 && listOfArticles[0] && (
+              <TrendingCard
+                number={"01"}
+                history={history}
+                setLoggedIn={setLoggedIn}
+                article={listOfArticles[0]}
+                userType={userType}
+              />
+            )}
+            {listOfArticles && listOfArticles.length > 1 && listOfArticles[1] && (
+              <TrendingCard
+                number={"02"}
+                history={history}
+                setLoggedIn={setLoggedIn}
+                article={listOfArticles[1]}
+                userType={userType}
+              />
+            )}
+            {listOfArticles && listOfArticles.length > 2 && listOfArticles[2] && (
+              <TrendingCard
+                number={"03"}
+                history={history}
+                setLoggedIn={setLoggedIn}
+                article={listOfArticles[2]}
+                userType={userType}
+              />
+            )}
           </div>
         </Grid>
       </Grid>

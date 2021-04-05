@@ -15,7 +15,7 @@ import {
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import { Dashboard, Timeline } from "@material-ui/icons";
+import { Dashboard, Timeline, Work } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
@@ -88,6 +88,22 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
   },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 3,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
+  },
 }));
 
 const MemberNavBar = (props) => {
@@ -124,7 +140,9 @@ const MemberNavBar = (props) => {
     if (!viewAllNotif) {
       if (Cookies.get("t1")) {
         Service.client
-          .get("/notification-objects")
+          .get("/notification-objects", {
+            timeout: 20000,
+          })
           .then((res) => {
             setNotificationList(res.data);
           })
@@ -333,21 +351,29 @@ const MemberNavBar = (props) => {
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         {notifBell}
-        <Avatar
-          onClick={handleClick}
-          src={user && user.profile_photo}
-          alt=""
+        <div
+          className={
+            user.member && user.member.membership_tier === "PRO"
+              ? classes.proBorderWrapper
+              : classes.freeBorderWrapper
+          }
           style={{
-            width: "34px",
-            height: "34px",
-            cursor: "pointer",
             marginLeft: "30px",
-            border:
-              user.member && user.member.membership_tier !== "PRO"
-                ? ""
-                : "3px solid green",
           }}
-        />
+        >
+          <div className={classes.innerBorderWrapper}>
+            <Avatar
+              onClick={handleClick}
+              src={user && user.profile_photo}
+              alt=""
+              style={{
+                width: "34px",
+                height: "34px",
+                cursor: "pointer",
+              }}
+            />
+          </div>
+        </div>
         <Popover
           id={id}
           open={open}
@@ -367,19 +393,27 @@ const MemberNavBar = (props) => {
         >
           <div className={classes.popover}>
             <div className={classes.toprow}>
-              <Avatar
-                src={user && user.profile_photo}
-                alt=""
+              <div
+                className={
+                  user.member && user.member.membership_tier === "PRO"
+                    ? classes.proBorderWrapper
+                    : classes.freeBorderWrapper
+                }
                 style={{
-                  width: "55px",
-                  height: "55px",
                   marginRight: "15px",
-                  border:
-                    user.member && user.member.membership_tier === "PRO"
-                      ? "3px solid green"
-                      : "",
                 }}
-              />
+              >
+                <div className={classes.innerBorderWrapper}>
+                  <Avatar
+                    src={user && user.profile_photo}
+                    alt=""
+                    style={{
+                      width: "55px",
+                      height: "55px",
+                    }}
+                  />
+                </div>
+              </div>
               <div
                 style={{
                   flexDirection: "column",
@@ -462,11 +496,11 @@ const MemberNavBar = (props) => {
             <div
               className={classes.hover}
               onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
+                history.push("/member/industryprojects");
+                // alert("clicked on Industry projects");
               }}
             >
-              <Dashboard className={classes.icon} />
+              <Work className={classes.icon} />
               <Typography className={classes.typography}>
                 Industry Projects
               </Typography>

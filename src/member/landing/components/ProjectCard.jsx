@@ -9,6 +9,7 @@ import {
   CardActionArea,
 } from "@material-ui/core";
 import Label from "./Label";
+import { Link } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -44,6 +45,11 @@ const ProjectCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
+      <Link
+        style={{ height: "100%" }}
+        to={`/industryprojects/${project && project.id}`}
+        component={CardActionArea}
+      >
       <CardActionArea>
         <Grid container>
           <Grid item xs={1}>
@@ -108,6 +114,7 @@ const ProjectCard = (props) => {
           </Grid>
         </Grid>
       </CardActionArea>
+      </Link>
     </Card>
   );
 };

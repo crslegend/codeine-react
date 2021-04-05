@@ -8,7 +8,6 @@ import {
   Redirect,
   Switch,
   useHistory,
-  Route,
 } from "react-router-dom";
 import PrivateRoute from "../components/routes/PrivateRoute";
 import {
@@ -24,16 +23,21 @@ import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import WorkOutlineIcon from "@material-ui/icons/WorkOutline";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
+import IndustryProject from "./industryProject/IndustryProject";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import NotifTile from "../components/NotificationTile";
 import Consultation from "./consultation/Consultation";
@@ -54,6 +58,7 @@ import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
+import IndustryProjectDetails from "./industryProject/IndustryProjectDetails";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
 import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
 import Notification from "./notification/NotificationManagement";
@@ -367,8 +372,8 @@ const ContentProviderHome = () => {
         className={classes.listItem}
         button
       >
-        <NoteAdd className={classes.listIcon} />
-        <Typography variant="body1">My Courses</Typography>
+        <InsertDriveFileIcon className={classes.listIcon} />
+        <Typography variant="body1">Course</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -378,7 +383,7 @@ const ContentProviderHome = () => {
         button
       >
         <SchoolOutlinedIcon className={classes.listIcon} />
-        <Typography variant="body1">My Students</Typography>
+        <Typography variant="body1">Student</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -397,8 +402,12 @@ const ContentProviderHome = () => {
         className={classes.listItem}
         button
       >
-        <SubjectIcon className={classes.listIcon} />
-        <Typography variant="body1">My Articles</Typography>
+        <FontAwesomeIcon
+          icon={faNewspaper}
+          className={classes.listIcon}
+          style={{ height: "24px", width: "24px" }}
+        />
+        <Typography variant="body1">Article</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -409,6 +418,16 @@ const ContentProviderHome = () => {
       >
         <NotificationsNoneIcon className={classes.listIcon} />
         <Typography variant="body1">Notification</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/industryproject"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <WorkOutlineIcon className={classes.listIcon} />
+        <Typography variant="body1">My Industry Projects</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -617,6 +636,17 @@ const ContentProviderHome = () => {
             />
             <PrivateRoute
               exact
+              path="/partner/home/industryproject"
+              render={() => <IndustryProject />}
+              user="partner"
+            />
+            <PrivateRoute
+              strict
+              sensitive
+              path="/partner/home/industryproject/view/:id"
+              render={() => <IndustryProjectDetails />}
+            />
+            <PrivateRoute
               path="/partner/home/notification"
               render={() => <Notification />}
               user="partner"
