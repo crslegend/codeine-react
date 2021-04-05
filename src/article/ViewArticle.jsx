@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Breadcrumbs,
@@ -388,27 +388,7 @@ const ViewArticle = (props) => {
             )}
           </div>
         )}
-
-        <div style={{ fontSize: "20px", marginBottom: "30px" }}>
-          {/* {parse(articleDetails.content, options)} */}
-          <div style={{ width: "100%" }}>
-            <img
-              alt="thumbnail"
-              src={articleDetails && articleDetails.thumbnail}
-              width="100%"
-            />
-          </div>
-          <div style={{ fontSize: "18px" }}>
-            <ReactQuill
-              modules={modules}
-              value={articleDetails.content}
-              readOnly={true}
-              theme={"bubble"}
-              enable={false}
-              onChange={(e) => e}
-            />
-          </div>
-
+        <div>
           {articleDetails &&
             articleDetails.coding_languages &&
             articleDetails.coding_languages.length > 0 &&
@@ -484,6 +464,27 @@ const ViewArticle = (props) => {
                 );
               }
             })}
+        </div>
+
+        <div style={{ fontSize: "20px", marginBottom: "30px" }}>
+          {/* {parse(articleDetails.content, options)} */}
+          <div style={{ width: "100%" }}>
+            <img
+              alt="thumbnail"
+              src={articleDetails && articleDetails.thumbnail}
+              width="100%"
+            />
+          </div>
+          <div style={{ fontSize: "18px" }}>
+            <ReactQuill
+              modules={modules}
+              value={articleDetails.content}
+              readOnly={true}
+              theme={"bubble"}
+              enable={false}
+              onChange={(e) => e}
+            />
+          </div>
 
           <div
             style={{
@@ -527,7 +528,7 @@ const ViewArticle = (props) => {
                 {user &&
                   articleDetails.user &&
                   checkIfOwnerOfComment(articleDetails.user.id) && (
-                    <>
+                    <Fragment>
                       <Typography
                         variant="body2"
                         className={classes.typography}
@@ -549,7 +550,7 @@ const ViewArticle = (props) => {
                       >
                         Delete
                       </Typography>
-                    </>
+                    </Fragment>
                   )}
                 {articleDetails.user &&
                   !checkIfOwnerOfComment(articleDetails.user.id) && (
