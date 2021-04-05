@@ -43,6 +43,13 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     marginRight: theme.spacing(1),
   },
+  linkMui: {
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "none",
+      color: "#065cc4",
+    },
+  },
 }));
 
 const reusableChip = (label, index, backgroundColor, fontColor) => {
@@ -139,6 +146,8 @@ const CodeReviewDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(user);
+
   return (
     <div className={classes.root}>
       <Navbar
@@ -164,7 +173,7 @@ const CodeReviewDetails = () => {
           />
           <div>
             <Typography variant="h6">
-              <LinkMui className={classes.linkMui}>
+              <LinkMui href={`/member/profile/${code && code.user.id}`} className={classes.linkMui}>
                 {`${code && code.user.first_name} ${code && code.user.last_name}`}
               </LinkMui>
               /{code && code.title}
