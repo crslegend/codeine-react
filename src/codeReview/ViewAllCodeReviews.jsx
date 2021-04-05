@@ -91,16 +91,7 @@ const ViewAllCodeReviews = () => {
 
   const [snippet, setSnippet] = useState("");
   const [snippetTitle, setSnippetTitle] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState({
-    PY: false,
-    JAVA: false,
-    JS: false,
-    CPP: false,
-    CS: false,
-    HTML: false,
-    CSS: false,
-    RUBY: false,
-  });
+  const [codeLanguage, setCodeLanguage] = useState("python");
 
   const [categories, setCategories] = useState({
     SEC: false,
@@ -232,14 +223,6 @@ const ViewAllCodeReviews = () => {
       return;
     }
 
-    neverChooseOne = true;
-    for (const property in codeLanguage) {
-      if (codeLanguage[property]) {
-        neverChooseOne = false;
-        break;
-      }
-    }
-
     if (neverChooseOne) {
       setSbOpen(true);
       setSnackbar({
@@ -257,7 +240,7 @@ const ViewAllCodeReviews = () => {
     let data = {
       title: snippetTitle,
       code: snippet,
-      coding_languages: [],
+      coding_languages: [codeLanguage],
       languages: ["ENG"],
       categories: [],
     };
