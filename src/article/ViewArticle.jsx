@@ -30,6 +30,7 @@ import FlagDialog from "./FlagArticleDialog";
 import Toast from "../components/Toast";
 import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
+import "./quill.css";
 
 hljs.configure({
   languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
