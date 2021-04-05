@@ -315,7 +315,6 @@ const ViewArticle = (props) => {
           <div
             style={{
               display: "flex",
-              marginRight: "15px",
               alignItems: "right",
               marginBottom: "20px",
               order: 2,
@@ -375,7 +374,13 @@ const ViewArticle = (props) => {
 
         <div style={{ fontSize: "20px", marginBottom: "30px" }}>
           {/* {parse(articleDetails.content, options)} */}
-
+          <div style={{ width: "100%" }}>
+            <img
+              alt="thumbnail"
+              src={articleDetails && articleDetails.thumbnail}
+              width="100%"
+            />
+          </div>
           <div style={{ fontSize: "18px" }}>
             <ReactQuill
               modules={modules}
