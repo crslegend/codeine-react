@@ -307,7 +307,12 @@ const ViewArticle = (props) => {
         </Breadcrumbs>
         <Typography
           variant="h1"
-          style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}
+          style={{
+            fontWeight: "800",
+            marginBottom: "10px",
+            marginTop: "30px",
+            fontFamily: "Helvetica",
+          }}
         >
           {articleDetails.title}
         </Typography>
