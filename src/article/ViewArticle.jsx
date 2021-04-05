@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
@@ -21,7 +20,7 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
-import Menu from "@material-ui/icons/MoreHoriz";
+import Menu from "@material-ui/icons/MoreVert";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import ReactQuill, { Quill } from "react-quill";
@@ -305,17 +304,30 @@ const ViewArticle = (props) => {
           </Link>
           <Typography>{articleDetails.title}</Typography>
         </Breadcrumbs>
-        <Typography
-          variant="h1"
+        <div
           style={{
-            fontWeight: "800",
-            marginBottom: "10px",
-            marginTop: "30px",
-            fontFamily: "Helvetica",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          {articleDetails.title}
-        </Typography>
+          <Typography
+            variant="h1"
+            style={{
+              fontWeight: "800",
+              marginBottom: "10px",
+              marginTop: "30px",
+              fontFamily: "Helvetica",
+            }}
+          >
+            {articleDetails.title}
+          </Typography>
+          <Menu
+            onClick={(e) => handleClick(e)}
+            style={{ marginLeft: "auto", cursor: "pointer" }}
+          />
+        </div>
+
         {articleDetails.user && (
           <div
             style={{
@@ -496,10 +508,6 @@ const ViewArticle = (props) => {
             <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
             </Typography>
-            <Menu
-              onClick={(e) => handleClick(e)}
-              style={{ marginLeft: "auto", cursor: "pointer" }}
-            />
 
             <Popover
               id={popoverid}
