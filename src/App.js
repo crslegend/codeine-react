@@ -128,12 +128,12 @@ const App = () => {
         sensitive
         component={BookConsult}
       />
-      <MemberRoute
+      <MemberAndPublicRoute
         exact
         path="/industryprojects"
         component={ViewAllIndustryProject}
       />
-      <MemberRoute
+      <MemberAndPublicRoute
         exact
         path="/industryprojects/:id"
         component={ViewIndustryProjectDetails}
