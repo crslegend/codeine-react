@@ -14,7 +14,7 @@ const styles = makeStyles((theme) => ({
   },
   freeBorderWrapper: {
     borderRadius: 50,
-    background: theme.palette.primary.main,
+    background: "rgba(84,84,84,1)",
     padding: 2,
   },
   innerBorderWrapper: {

@@ -60,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
     color: "#878787",
     height: "30px",
     width: "30px",
-    marginRight: theme.spacing(3),
     "&:hover": {
       color: theme.palette.primary.main,
       cursor: "pointer",
@@ -70,7 +69,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
-    marginRight: theme.spacing(3),
   },
   viewallnotif: {
     textAlign: "center",
@@ -89,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
   freeBorderWrapper: {
     borderRadius: 50,
-    background: theme.palette.primary.main,
+    background: "rgba(84,84,84,1)",
     padding: 3,
   },
   innerBorderWrapper: {
@@ -328,6 +326,9 @@ const MemberNavBar = (props) => {
           className={
             user.member && user.member.membership_tier === "PRO" ? classes.proBorderWrapper : classes.freeBorderWrapper
           }
+          style={{
+            marginLeft: "30px",
+          }}
         >
           <div className={classes.innerBorderWrapper}>
             <Avatar
