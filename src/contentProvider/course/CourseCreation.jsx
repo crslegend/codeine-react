@@ -850,7 +850,9 @@ const CourseCreation = () => {
                     <div className={classes.alert}>
                       <Alert severity="info">
                         This course is for{" "}
-                        {courseDetails && courseDetails.pro ? "Pro" : "all"}{" "}
+                        <span style={{ fontWeight: 600, fontSize: "16px" }}>
+                          {courseDetails && courseDetails.pro ? "PRO " : "ALL "}
+                        </span>
                         members.
                       </Alert>
                     </div>
