@@ -7,7 +7,9 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
+  Chip,
 } from "@material-ui/core";
+import green from "@material-ui/core/colors/green";
 import Label from "../../member/landing/components/Label";
 import { Link, useHistory } from "react-router-dom";
 
@@ -50,70 +52,77 @@ const ProjectCard = (props) => {
         to={`/partner/home/industryproject/view/${project && project.id}`}
         component={CardActionArea}
       >
-      <CardActionArea>
-        <Grid container>
-          <Grid item xs={1}>
-            <CardMedia
-              className={classes.cardmedia}
-              image={project.partner.partner.organization.organization_photo}
-              title="Organisation Photo"
-            ></CardMedia>
-          </Grid>
-          <Grid item xs={11}>
-            <CardContent>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Typography
+        <CardActionArea>
+          <Grid container>
+            <Grid item xs={1}>
+              <CardMedia
+                className={classes.cardmedia}
+                image={project.partner.partner.organization.organization_photo}
+                title="Organisation Photo"
+              ></CardMedia>
+            </Grid>
+            <Grid item xs={11}>
+              <CardContent>
+                <div
                   style={{
-                    fontWeight: 600,
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
-                  variant="h5"
                 >
-                  {project && project.title}
-                </Typography>
+                  <Typography
+                    style={{
+                      fontWeight: 600,
+                    }}
+                    variant="h5"
+                  >
+                    {project && project.title}
+                  </Typography>
+                  <Typography variant="h6" style={{ textAlign: "right" }}>
+                    {project &&
+                      formatDate(project.start_date) +
+                        " to " +
+                        formatDate(project.end_date)}
+                  </Typography>
+                </div>
                 <Typography variant="h6">
                   {project &&
-                    formatDate(project.start_date) +
-                      " to " +
-                      formatDate(project.end_date)}
+                    project.partner.partner.organization.organization_name}
                 </Typography>
-              </div>
-              <Typography variant="h6">
-                {project &&
-                  project.partner.partner.organization.organization_name}
-              </Typography>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "5px",
-                }}
-              >
-                <div style={{ display: "flex" }}>
-                  {project &&
-                    project.categories.map((category) => (
-                      <Label label={category} />
-                    ))}
-                  {console.log(project)}
-                </div>
-
-                <Typography
+                <div
                   style={{
-                    color: "#921515",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "5px",
                   }}
-                  variant="h6"
                 >
-                  apply by {project && formatDate(project.application_deadline)}
-                </Typography>
-              </div>
-            </CardContent>
+                  <div style={{ display: "flex" }}>
+                    {project &&
+                      project.categories.map((category) => (
+                        <Label label={category} />
+                      ))}
+                    {console.log(project)}
+                  </div>
+                  {project && project.is_completed ? (
+                    <Chip
+                      label="Completed"
+                      style={{ backgroundColor: green[600], color: "#FFF" }}
+                    />
+                  ) : (
+                    <Typography
+                      style={{
+                        color: "#921515",
+                      }}
+                      variant="h6"
+                    >
+                      apply by{" "}
+                      {project && formatDate(project.application_deadline)}
+                    </Typography>
+                  )}
+                </div>
+              </CardContent>
+            </Grid>
           </Grid>
-        </Grid>
-      </CardActionArea>
+        </CardActionArea>
       </Link>
     </Card>
   );
