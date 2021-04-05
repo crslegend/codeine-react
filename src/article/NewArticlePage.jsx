@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import { ToggleButton } from "@material-ui/lab";
 import { useDebounce } from "use-debounce";
 import jwt_decode from "jwt-decode";
+import "./quill.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {

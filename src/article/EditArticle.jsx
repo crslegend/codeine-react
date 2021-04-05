@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Breadcrumbs,
@@ -33,6 +33,7 @@ import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import "./quill.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -159,6 +160,8 @@ const EditArticle = (props) => {
   const location = useLocation();
   const userType = location.pathname.split("/", 4)[3];
 
+  let quillRef = React.createRef();
+
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -249,6 +252,10 @@ const EditArticle = (props) => {
   const [content, setContent] = useState("");
 
   useEffect(() => {
+    // if (quillRef && quillRef.current) {
+    //   quillRef.current.focus();
+    // }
+
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
       const memberid = jwt_decode(Service.getJWT()).user_id;
       Service.client
@@ -948,6 +955,9 @@ const EditArticle = (props) => {
           />
 
           <ReactQuill
+            ref={(el) => {
+              quillRef = el;
+            }}
             theme={"snow"}
             value={content}
             modules={editor}
@@ -956,8 +966,9 @@ const EditArticle = (props) => {
             name="content"
             style={{ height: "75vh" }}
             onChange={(event) => {
-              setSaveState(false);
+              // set content first to prevent lose focus
               setContent(event);
+              setSaveState(false);
             }}
             placeholder="Compose an epic..."
           />

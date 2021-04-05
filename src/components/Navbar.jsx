@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     display: "flex",
     flexDirection: "row",
+    padding: "0",
   },
 }));
 
@@ -32,11 +33,7 @@ const Navbar = ({ logo, bgColor, navbarItems, article }) => {
   const classes = useStyles();
 
   return (
-    <AppBar
-      className={classes.appBar}
-      style={{ backgroundColor: `${bgColor}` }}
-      elevation={0}
-    >
+    <AppBar className={classes.appBar} style={{ backgroundColor: `${bgColor}` }} elevation={0}>
       <Toolbar className={classes.toolbar}>
         {logo}
         <List className={classes.list}>{navbarItems}</List>

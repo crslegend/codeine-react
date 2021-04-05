@@ -30,6 +30,7 @@ import FlagDialog from "./FlagArticleDialog";
 import Toast from "../components/Toast";
 import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
+import "./quill.css";
 
 hljs.configure({
   languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
@@ -97,6 +98,22 @@ const useStyles = makeStyles((theme) => ({
   },
   pop: {
     padding: theme.spacing(1),
+  },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
   },
 }));
 
@@ -323,19 +340,22 @@ const ViewArticle = (props) => {
             }}
           >
             <div style={{ display: "flex" }}>
-              <Avatar
-                src={articleDetails.user.profile_photo}
-                alt=""
+              <div
+                className={
+                  articleDetails.user &&
+                  articleDetails.user.member &&
+                  articleDetails.user.member.membership_tier === "PRO"
+                    ? classes.proBorderWrapper
+                    : classes.freeBorderWrapper
+                }
                 style={{
                   marginRight: "15px",
-                  border:
-                    articleDetails.user &&
-                    articleDetails.user.member &&
-                    articleDetails.user.member.membership_tier === "PRO"
-                      ? "3px solid green"
-                      : "",
                 }}
-              ></Avatar>
+              >
+                <div className={classes.innerBorderWrapper}>
+                  <Avatar src={articleDetails.user.profile_photo} alt="" />
+                </div>
+              </div>
             </div>
             <div style={{ flexDirection: "column" }}>
               <Typography
