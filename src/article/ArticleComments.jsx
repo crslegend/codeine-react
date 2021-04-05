@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   childcommentdivider: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   cardheadername: {
     display: "flex",
@@ -80,11 +80,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   typography: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
+  },
+  pop: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -547,13 +551,21 @@ const ArticleComment = (props) => {
     }
   };
 
-  const childComment = (commentid, reply) => {
+  const childComment = (commentid, reply, index, repliesLength) => {
     return (
       <>
         <div className={classes.childcommentheader} style={{ display: "flex" }}>
           {reply.user && (
             <Avatar
-              style={{ marginRight: "15px" }}
+              style={{
+                marginRight: "15px",
+                border:
+                  reply.user &&
+                  reply.user.member &&
+                  reply.user.member.membership_tier === "PRO"
+                    ? "3px solid green"
+                    : "",
+              }}
               src={reply.user.profile_photo}
               alt=""
             />
@@ -581,7 +593,10 @@ const ArticleComment = (props) => {
           >
             {reply && reply.user && checkIfOwnerOfComment(reply.user.id) && (
               <div>
-                <Menu onClick={(e) => handleClick(e, reply.id)} />
+                <Menu
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => handleClick(e, reply.id)}
+                />
                 <Popover
                   open={popover.popoverId === reply.id}
                   onClose={handleClose}
@@ -595,24 +610,26 @@ const ArticleComment = (props) => {
                     horizontal: "right",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      openEditReplyTextField(commentid, reply.id, true);
-                    }}
-                  >
-                    Edit this response
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      handleDeleteComment(commentid, reply.id, "reply");
-                    }}
-                  >
-                    Delete
-                  </Typography>
+                  <div className={classes.pop}>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        openEditReplyTextField(commentid, reply.id, true);
+                      }}
+                    >
+                      Edit this response
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        handleDeleteComment(commentid, reply.id, "reply");
+                      }}
+                    >
+                      Delete
+                    </Typography>
+                  </div>
                 </Popover>
               </div>
             )}
@@ -630,7 +647,12 @@ const ArticleComment = (props) => {
                   value={reply.editValue}
                   multiline
                   rows={4}
-                  rowsMax={7}
+                  inputProps={{ style: { resize: "vertical" } }}
+                  InputProps={{
+                    classes: {
+                      input: classes.resize,
+                    },
+                  }}
                   placeholder="What are your thoughts..."
                   //error={firstNameError}
                   onChange={(event) =>
@@ -718,10 +740,11 @@ const ArticleComment = (props) => {
             {reply.likes}
           </Typography>
         </div>
-
-        <div className={classes.childcommentdivider}>
-          <Divider />
-        </div>
+        {index + 1 !== repliesLength && (
+          <div className={classes.childcommentdivider}>
+            <Divider />
+          </div>
+        )}
       </>
     );
   };
@@ -756,7 +779,13 @@ const ArticleComment = (props) => {
                 <Avatar
                   src={user && user.profile_photo}
                   alt=""
-                  style={{ marginRight: "15px" }}
+                  style={{
+                    marginRight: "15px",
+                    border:
+                      user.member && user.member.membership_tier === "PRO"
+                        ? "3px solid green"
+                        : "",
+                  }}
                 />
                 <Typography style={{ marginTop: "8px" }}>
                   {user.first_name} {user.last_name}
@@ -770,7 +799,12 @@ const ArticleComment = (props) => {
                 value={comment.comment}
                 multiline
                 rows={4}
-                rowsMax={7}
+                inputProps={{ style: { resize: "vertical" } }}
+                InputProps={{
+                  classes: {
+                    input: classes.resize,
+                  },
+                }}
                 placeholder="What are your thoughts..."
                 //error={firstNameError}
                 onChange={(event) =>
@@ -816,7 +850,15 @@ const ArticleComment = (props) => {
                     <div className={classes.parentcommentheader}>
                       {comment.user && (
                         <Avatar
-                          style={{ marginRight: "15px" }}
+                          style={{
+                            marginRight: "15px",
+                            border:
+                              comment.user &&
+                              comment.user.member &&
+                              comment.user.member.membership_tier === "PRO"
+                                ? "3px solid green"
+                                : "",
+                          }}
                           src={comment.user.profile_photo}
                           alt=""
                         />
@@ -837,6 +879,7 @@ const ArticleComment = (props) => {
                               }}
                             >
                               <Menu
+                                style={{ cursor: "pointer" }}
                                 onClick={(e) => handleClick(e, comment.id)}
                               />
                               <Popover
@@ -852,28 +895,30 @@ const ArticleComment = (props) => {
                                   horizontal: "right",
                                 }}
                               >
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    openEditTextField(comment.id, true);
-                                  }}
-                                >
-                                  Edit this reponse
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    handleDeleteComment(
-                                      comment.id,
-                                      -1,
-                                      "parent"
-                                    );
-                                  }}
-                                >
-                                  Delete
-                                </Typography>
+                                <div className={classes.pop}>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      openEditTextField(comment.id, true);
+                                    }}
+                                  >
+                                    Edit this reponse
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      handleDeleteComment(
+                                        comment.id,
+                                        -1,
+                                        "parent"
+                                      );
+                                    }}
+                                  >
+                                    Delete
+                                  </Typography>
+                                </div>
                               </Popover>
                             </div>
                           )}
@@ -896,7 +941,12 @@ const ArticleComment = (props) => {
                                 value={comment.editValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
                                 placeholder="What are your thoughts..."
                                 //error={firstNameError}
                                 onChange={(event) =>
@@ -1077,7 +1127,12 @@ const ArticleComment = (props) => {
                                 value={comment.editReplyValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
                                 placeholder={
                                   "Replying to " +
                                   comment.user.first_name +
@@ -1139,7 +1194,12 @@ const ArticleComment = (props) => {
                           comment.replies.map((reply, replyIndex) => {
                             return (
                               <div key={`reply` + replyIndex}>
-                                {childComment(comment.id, reply)}
+                                {childComment(
+                                  comment.id,
+                                  reply,
+                                  replyIndex,
+                                  comment.replies.length
+                                )}
                               </div>
                             );
                           })}

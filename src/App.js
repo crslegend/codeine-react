@@ -40,6 +40,8 @@ import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import AllNotifications from "./notification/ViewAllNotification";
+import NotificationDetail from "./notification/NotificationDetail";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
 import Membership from "./member/membership/Membership";
 import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
@@ -76,7 +78,6 @@ const App = () => {
         component={ViewArticlePage}
         user="admin"
       />
-
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
       <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
       <PartnerAndPublicRoute
@@ -137,7 +138,6 @@ const App = () => {
         component={MemberRegisterPage}
         user="member"
       />
-
       <PrivateRoute
         exact
         path="/member/dashboard"
@@ -241,6 +241,43 @@ const App = () => {
         component={EditArticlePage}
         user="admin"
       />
+      <PrivateRoute
+        exact
+        path="/member/notifications"
+        component={AllNotifications}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/partner/notifications"
+        component={AllNotifications}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/admin/notifications"
+        component={AllNotifications}
+        user="admin"
+      />
+      <PrivateRoute
+        exact
+        path="/member/notification/view/:id"
+        component={NotificationDetail}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/partner/notification/view/:id"
+        component={NotificationDetail}
+        user="partner"
+      />
+      <PrivateRoute
+        exact
+        path="/admin/notification/view/:id"
+        component={NotificationDetail}
+        user="admin"
+      />
+
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
       <Route exact path="/admin/login" component={AdminLoginPage} />
       <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />

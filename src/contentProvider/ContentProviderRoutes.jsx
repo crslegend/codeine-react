@@ -11,7 +11,14 @@ import {
   Route,
 } from "react-router-dom";
 import PrivateRoute from "../components/routes/PrivateRoute";
-import { Avatar, Button, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  ListItem,
+  Typography,
+  Popover,
+  Badge,
+} from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
@@ -19,12 +26,16 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
+import ZeroNotif from "../assets/ZeroNotif.svg";
+import NotifTile from "../components/NotificationTile";
 import Consultation from "./consultation/Consultation";
 import ViewAllCourses from "./course/ViewAllCourses";
 import CourseCreation from "./course/CourseCreation";
@@ -45,6 +56,7 @@ import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
 import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
+import Notification from "./notification/NotificationManagement";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
@@ -105,6 +117,36 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "uppercase",
     // color: theme.palette.primary.main,
   },
+  notifpopover: {
+    width: "400px",
+    padding: theme.spacing(1),
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    height: "30px",
+    width: "30px",
+  },
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
+  },
 }));
 
 const ContentProviderHome = () => {
@@ -128,6 +170,118 @@ const ContentProviderHome = () => {
     profile_photo: "",
   });
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
+
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "800",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/partner/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
   const loggedInNavbar = (
     <Fragment>
       {/* <ListItem style={{ whiteSpace: "nowrap" }}>
@@ -141,11 +295,13 @@ const ContentProviderHome = () => {
         </a>
       </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        {notifBell}
         <Button
           variant="contained"
           color="primary"
           style={{
             textTransform: "capitalize",
+            marginLeft: "30px",
           }}
           onClick={() => {
             Service.removeCredentials();
@@ -243,6 +399,16 @@ const ContentProviderHome = () => {
       >
         <SubjectIcon className={classes.listIcon} />
         <Typography variant="body1">My Articles</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
+        to="/partner/home/notification"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <NotificationsNoneIcon className={classes.listIcon} />
+        <Typography variant="body1">Notification</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -350,6 +516,7 @@ const ContentProviderHome = () => {
   };
 
   useEffect(() => {
+    getUserNotifications();
     getUserDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -446,6 +613,12 @@ const ContentProviderHome = () => {
               exact
               path="/partner/home/consultation"
               render={() => <Consultation />}
+              user="partner"
+            />
+            <PrivateRoute
+              exact
+              path="/partner/home/notification"
+              render={() => <Notification />}
               user="partner"
             />
             <PrivateRoute

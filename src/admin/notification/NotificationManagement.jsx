@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
   Avatar,
@@ -13,16 +13,19 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Checkbox,
-  FormControlLabel,
   InputLabel,
   Select,
   MenuItem,
+  Grid,
 } from "@material-ui/core";
+import Toast from "../../components/Toast.js";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 import { DataGrid } from "@material-ui/data-grid";
 import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import EditIcon from "../../assets/EditIcon.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,8 +54,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 220,
+    minWidth: "220px",
+  },
+  padding: {
+    paddingRight: theme.spacing(3),
   },
 }));
 
@@ -146,11 +151,81 @@ const AdminNotificationPage = () => {
     title: "",
     description: "",
     notification_type: "",
+    userList: "",
+    photo: "",
   });
 
-  const createNotification = () => {
+  const createNotification = (e) => {
+    var userList;
+
+    e.preventDefault();
+
+    if (notificationDetails.title === "") {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a valid title!",
+        severity: "error",
+      });
+      return;
+    }
+    if (notificationDetails.description === "") {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please enter a valid description!",
+        severity: "error",
+      });
+      return;
+    }
+    if (notificationDetails.notification_type === "") {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please select a valid notification type!",
+        severity: "error",
+      });
+      return;
+    }
+    if (
+      selectedMemberList.rowIds.length === 0 &&
+      selectedPartnerList.rowIds.length === 0
+    ) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please select at least one user to send notification!",
+        severity: "error",
+      });
+      return;
+    } else {
+      userList = selectedMemberList.rowIds.concat(selectedPartnerList.rowIds);
+    }
+    if (notificationPhoto && notificationPhoto.length === 0) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "Please upload an image!",
+        severity: "error",
+      });
+      return;
+    }
+
+    // instantiate form-data
+    const formData = new FormData();
+
+    formData.append("title", notificationDetails.title);
+    formData.append("description", notificationDetails.description);
+    formData.append("notification_type", notificationDetails.notification_type);
+    formData.append("receiver_ids", JSON.stringify(userList));
+    console.log(userList);
+
+    if (notificationPhoto && notificationPhoto.length > 0) {
+      formData.append("photo", notificationPhoto[0].file);
+    }
+
     Service.client
-      .post("/notifications", notificationDetails)
+      .post("/notifications", formData)
       .then(() => {
         setSbOpen(true);
         setSnackbar({
@@ -168,6 +243,7 @@ const AdminNotificationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Member
   const [allMembersList, setAllMemberList] = useState([]);
 
   const memberColumns = [
@@ -266,25 +342,12 @@ const AdminNotificationPage = () => {
     }
   };
 
+  const [selectedMemberList, setSelectedMemberList] = useState({
+    rowIds: [],
+  });
+
   // Partner
   const [allPartnerList, setAllPartnerList] = useState([]);
-  const [selectedPartner, setSelectedPartner] = useState({
-    id: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    is_active: "",
-    date_joined: "",
-    profile_photo: "",
-    partner: {
-      job_title: "",
-      bio: "",
-      organization: {
-        organization_name: "",
-        organization_photo: "",
-      },
-    },
-  });
 
   const partnerColumns = [
     {
@@ -339,6 +402,7 @@ const AdminNotificationPage = () => {
   ];
 
   let partnerRows = allPartnerList;
+
   const [searchValuePartner, setSearchValuePartner] = useState("");
 
   const getPartnerData = () => {
@@ -376,8 +440,20 @@ const AdminNotificationPage = () => {
     }
   };
 
+  const [selectedPartnerList, setSelectedPartnerList] = useState({
+    rowIds: [],
+  });
+
+  const [notificationPhoto, setNotificationPhoto] = useState([]);
+
+  const getNotificationSent = () => {
+    Service.client.get("/notifications");
+  };
+
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+
       <PageTitle title="Notification Management" />
 
       <AppBar
@@ -402,127 +478,144 @@ const AdminNotificationPage = () => {
       </AppBar>
 
       <TabPanel value={value} index={0}>
-        <TextField
-          margin="normal"
-          id="title"
-          label="Title"
-          name="title"
-          required
-          fullWidth
-          value={notificationDetails.title}
-          // error={firstNameError}
-          onChange={(event) =>
-            setNotificationDetails({
-              ...notificationDetails,
-              title: event.target.value,
-            })
-          }
-        />
-
-        <TextField
-          margin="normal"
-          id="description"
-          label="Description"
-          name="description"
-          multiline
-          rows={4}
-          required
-          fullWidth
-          value={notificationDetails.description}
-          // error={firstNameError}
-          onChange={(event) =>
-            setNotificationDetails({
-              ...notificationDetails,
-              description: event.target.value,
-            })
-          }
-        />
-        <div className={classes.formControl}>
-          <InputLabel id="demo-simple-select-label">
-            Notification Type
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={notificationDetails.notification_type}
-            onChange={handleChange}
-          >
-            <MenuItem value={"GENERAL"}>General</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </div>
-
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-label="Expand"
-            aria-controls="additional-actions1-content"
-            id="additional-actions1-header"
-          >
-            <FormControlLabel
-              aria-label="Acknowledge"
-              onClick={(event) => event.stopPropagation()}
-              onFocus={(event) => event.stopPropagation()}
-              control={<Checkbox />}
-              label="Select members"
+        <Grid container>
+          <Grid item xs={8} className={classes.padding}>
+            <TextField
+              margin="normal"
+              id="title"
+              label="Title"
+              name="title"
+              required
+              fullWidth
+              value={notificationDetails.title}
+              // error={firstNameError}
+              onChange={(event) =>
+                setNotificationDetails({
+                  ...notificationDetails,
+                  title: event.target.value,
+                })
+              }
             />
-          </AccordionSummary>
-          <AccordionDetails style={{ height: "500px" }}>
-            <DataGrid
-              className={classes.dataGrid}
-              rows={memberRows}
-              columns={memberColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              //disableSelectionOnClick
-              //onRowClick={(e) => handleClickOpenMember(e)}
+            <TextField
+              margin="normal"
+              id="description"
+              label="Description"
+              name="description"
+              multiline
+              rows={4}
+              required
+              fullWidth
+              value={notificationDetails.description}
+              // error={firstNameError}
+              onChange={(event) =>
+                setNotificationDetails({
+                  ...notificationDetails,
+                  description: event.target.value,
+                })
+              }
             />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-label="Expand"
-            aria-controls="additional-actions2-content"
-            id="additional-actions2-header"
-          >
-            <FormControlLabel
-              aria-label="Acknowledge"
-              onClick={(event) => event.stopPropagation()}
-              onFocus={(event) => event.stopPropagation()}
-              control={<Checkbox />}
-              label="Select Partners"
+            <div style={{ marginTop: "20px" }}>
+              <InputLabel>Notification Type</InputLabel>
+              <Select
+                className={classes.formControl}
+                value={notificationDetails.notification_type}
+                onChange={(event) =>
+                  setNotificationDetails({
+                    ...notificationDetails,
+                    notification_type: event.target.value,
+                  })
+                }
+              >
+                <MenuItem value={"ANNOUNCEMENT"}>Announcement</MenuItem>
+                <MenuItem value={"REMINDER"}>Reminder</MenuItem>
+              </Select>
+            </div>
+            <Accordion style={{ marginTop: "30px" }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-label="Expand"
+                aria-controls="additional-actions1-content"
+                id="additional-actions1-header"
+              >
+                <Typography>Select Members</Typography>
+              </AccordionSummary>
+              <AccordionDetails style={{ height: "500px" }}>
+                <DataGrid
+                  className={classes.dataGrid}
+                  rows={memberRows}
+                  columns={memberColumns.map((column) => ({
+                    ...column,
+                    //disableClickEventBubbling: true,
+                  }))}
+                  pageSize={10}
+                  checkboxSelection
+                  onSelectionChange={(newSelection) => {
+                    setSelectedMemberList(newSelection);
+                  }}
+                  //disableSelectionOnClick
+                  //onRowClick={(e) => handleClickOpenMember(e)}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-label="Expand"
+                aria-controls="additional-actions2-content"
+                id="additional-actions2-header"
+              >
+                <Typography>Select Partners</Typography>
+              </AccordionSummary>
+              <AccordionDetails style={{ height: "500px" }}>
+                <DataGrid
+                  className={classes.dataGrid}
+                  rows={partnerRows}
+                  columns={partnerColumns.map((column) => ({
+                    ...column,
+                    //disableClickEventBubbling: true,
+                  }))}
+                  pageSize={10}
+                  checkboxSelection
+                  onSelectionChange={(newSelection) => {
+                    setSelectedPartnerList(newSelection);
+                  }}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ textTransform: "capitalize", marginTop: "10px" }}
+              onClick={(e) => {
+                createNotification(e);
+              }}
+            >
+              Send notification
+            </Button>
+          </Grid>
+          <Grid item xs={4}>
+            <DropzoneAreaBase
+              dropzoneClass={classes.dropzone}
+              dropzoneText="&nbsp;Drag and drop an image or click here&nbsp;"
+              acceptedFiles={["image/*"]}
+              filesLimit={1}
+              fileObjects={notificationPhoto}
+              //useChipsForPreview={true}
+              maxFileSize={5000000}
+              onAdd={(newPhoto) => {
+                setNotificationPhoto(newPhoto);
+              }}
+              onDelete={(deletePhotoObj) => {
+                setNotificationPhoto();
+              }}
+              previewGridProps={{
+                item: {
+                  xs: "auto",
+                },
+              }}
             />
-          </AccordionSummary>
-          <AccordionDetails style={{ height: "500px" }}>
-            <DataGrid
-              className={classes.dataGrid}
-              rows={partnerRows}
-              columns={partnerColumns.map((column) => ({
-                ...column,
-                //disableClickEventBubbling: true,
-              }))}
-              pageSize={10}
-              checkboxSelection
-              //disableSelectionOnClick
-              //onRowClick={(e) => handleClickOpenPartner(e)}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Button
-          color="secondary"
-          variant="contained"
-          style={{ textTransform: "capitalize" }}
-          onClick={() => {
-            //submitNotification();
-          }}
-        >
-          Send notification
-        </Button>
+          </Grid>
+        </Grid>
       </TabPanel>
 
       <TabPanel value={value} index={1}></TabPanel>
