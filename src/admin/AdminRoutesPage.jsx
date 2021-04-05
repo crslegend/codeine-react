@@ -17,18 +17,19 @@ import {
   Badge,
   Popover,
 } from "@material-ui/core";
+
 import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/codeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import SubjectIcon from "@material-ui/icons/Subject";
 import AdminHumanResourcePage from "./humanResource/HumanResourcePage";
 import ContentQualityPage from "./contentQuality/ContentQualityPage";
 import ContentQualityArticlePage from "./contentQuality/article/ViewArticle";
@@ -41,13 +42,17 @@ import Article from "./article/AdminArticleList";
 import ViewCourseDetail from "./contentQuality/course/ViewCourseDetails";
 import ViewCourseContent from "./contentQuality/course/EnrollCourse";
 import Service from "../AxiosService";
+import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import CourseRelatedAnalytics from "./analytics/CourseRelatedAnalytics";
 import CourseDetailAnalytics from "./analytics/CourseDetailAnalytics";
 import ProjectRelatedAnalysis from "./analytics/ProjectRelatedAnalysis";
 import Notifications from "./notification/NotificationManagement";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
+import NotifTile from "../components/NotificationTile";
+import ZeroNotif from "../assets/ZeroNotif.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -113,18 +118,28 @@ const useStyles = makeStyles((theme) => ({
     height: "30px",
     width: "30px",
     "&:hover": {
-      color: "#000",
+      color: theme.palette.primary.main,
       cursor: "pointer",
     },
   },
   notificationOpen: {
     cursor: "pointer",
-    color: "#000",
+    color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
   },
-  popover: {
-    width: "300px",
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
+  },
+  notifpopover: {
+    width: "400px",
     padding: theme.spacing(1),
   },
 }));
@@ -166,7 +181,21 @@ const AdminRoutesPage = () => {
     }
   };
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
+    getUserNotifications();
     getOwnData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -184,39 +213,96 @@ const AdminRoutesPage = () => {
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
 
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "800",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/admin/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
   const adminNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <div>
-          <Badge badgeContent={1} color="primary">
-            <NotificationsIcon
-              className={
-                notifOpen ? classes.notificationOpen : classes.notification
-              }
-              onClick={handleNotifClick}
-            />
-          </Badge>
-
-          <Popover
-            id={notifid}
-            open={notifOpen}
-            anchorEl={anchorE2}
-            onClose={handleNotifClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <div className={classes.popover}>
-              Notifications
-              <Typography>View All Notification</Typography>
-            </div>
-          </Popover>
-        </div>
+        {notifBell}
 
         <Button
           onClick={() => {
@@ -301,7 +387,7 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <PublicOutlinedIcon className={classes.listIcon} />
+        <HelpOutlineOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
       <ListItem
@@ -326,12 +412,12 @@ const AdminRoutesPage = () => {
       </ListItem>
       <ListItem
         component={NavLink}
-        to="/admin/notifications"
+        to="/admin/notification/manage"
         activeClassName={classes.activeLink}
         className={classes.listItem}
         button
       >
-        <NotificationsIcon className={classes.listIcon} />
+        <NotificationsNoneIcon className={classes.listIcon} />
         <Typography variant="body1">Notification</Typography>
       </ListItem>
       {/* <ListItem
@@ -453,7 +539,7 @@ const AdminRoutesPage = () => {
           <Route
             strict
             sensitive
-            path="/admin/notifications"
+            path="/admin/notification/manage"
             render={(match) => <Notifications />}
           />
           <Route

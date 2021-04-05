@@ -55,10 +55,9 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     padding: theme.spacing(1),
-    color: "#5c5c5c",
     cursor: "pointer",
     "&:hover": {
-      color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
   },
   redButton: {
@@ -74,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "10px",
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
+  },
+  pop: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -394,7 +396,7 @@ const MemberArticleList = (props) => {
                             horizontal: "right",
                           }}
                         >
-                          <div style={{ padding: "5px" }}>
+                          <div className={classes.pop}>
                             <Typography
                               variant="body2"
                               className={classes.typography}

@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   childcommentdivider: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   cardheadername: {
     display: "flex",
@@ -80,11 +80,30 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   typography: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
+  },
+  pop: {
+    padding: theme.spacing(1),
+  },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
   },
 }));
 
@@ -92,13 +111,7 @@ const ArticleComment = (props) => {
   const classes = useStyles();
   const { id } = useParams();
 
-  const {
-    user,
-    articleDetails,
-    setArticleDetails,
-    drawerOpen,
-    setDrawerOpen,
-  } = props;
+  const { user, articleDetails, setArticleDetails, drawerOpen, setDrawerOpen } = props;
 
   //const [anchorEl, setAnchorEl] = useState(null);
 
@@ -122,10 +135,7 @@ const ArticleComment = (props) => {
   };
 
   const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
     setDrawerOpen(false);
@@ -358,8 +368,7 @@ const ArticleComment = (props) => {
         for (let j = 0; j < commentList[i].replies.length; j++) {
           if (commentList[i].replies[j].id === replyid) {
             commentList[i].replies[j].editfield = false;
-            commentList[i].replies[j].comment =
-              commentList[i].replies[j].editValue;
+            commentList[i].replies[j].comment = commentList[i].replies[j].editValue;
             tempcomment = commentList[i].replies[j].editValue;
             break;
           }
@@ -404,9 +413,7 @@ const ArticleComment = (props) => {
           for (let j = 0; j < commentList[i].replies.length; j++) {
             if (commentList[i].replies[j].id === replyid) {
               console.log("reply length: " + newArray[i].replies.length);
-              newArray[i].replies = newArray[i].replies.filter(
-                (item) => item !== newArray[i].replies[j]
-              );
+              newArray[i].replies = newArray[i].replies.filter((item) => item !== newArray[i].replies[j]);
               console.log("reply length: " + newArray[i].replies.length);
               Service.client
                 .delete(`/articles/${id}/comments/${replyid}`)
@@ -547,22 +554,30 @@ const ArticleComment = (props) => {
     }
   };
 
-  const childComment = (commentid, reply) => {
+  const childComment = (commentid, reply, index, repliesLength) => {
     return (
       <>
         <div className={classes.childcommentheader} style={{ display: "flex" }}>
           {reply.user && (
-            <Avatar
-              style={{ marginRight: "15px" }}
-              src={reply.user.profile_photo}
-              alt=""
-            />
+            <div
+              className={
+                reply.user && reply.user.member && reply.user.member.membership_tier === "PRO"
+                  ? classes.proBorderWrapper
+                  : classes.freeBorderWrapper
+              }
+              style={{
+                marginRight: "15px",
+              }}
+            >
+              <div className={classes.innerBorderWrapper}>
+                <Avatar src={reply.user.profile_photo} alt="" />
+              </div>
+            </div>
           )}
           <div style={{ flexDirection: "column", width: "100%" }}>
             <div style={{ display: "flex" }}>
               <Typography variant="body2">
-                {reply.user && reply.user.first_name}{" "}
-                {reply.user && reply.user.last_name}
+                {reply.user && reply.user.first_name} {reply.user && reply.user.last_name}
               </Typography>
             </div>
             <div style={{ display: "flex" }}>
@@ -581,7 +596,7 @@ const ArticleComment = (props) => {
           >
             {reply && reply.user && checkIfOwnerOfComment(reply.user.id) && (
               <div>
-                <Menu onClick={(e) => handleClick(e, reply.id)} />
+                <Menu style={{ cursor: "pointer" }} onClick={(e) => handleClick(e, reply.id)} />
                 <Popover
                   open={popover.popoverId === reply.id}
                   onClose={handleClose}
@@ -595,24 +610,26 @@ const ArticleComment = (props) => {
                     horizontal: "right",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      openEditReplyTextField(commentid, reply.id, true);
-                    }}
-                  >
-                    Edit this response
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.typography}
-                    onClick={() => {
-                      handleDeleteComment(commentid, reply.id, "reply");
-                    }}
-                  >
-                    Delete
-                  </Typography>
+                  <div className={classes.pop}>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        openEditReplyTextField(commentid, reply.id, true);
+                      }}
+                    >
+                      Edit this response
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={() => {
+                        handleDeleteComment(commentid, reply.id, "reply");
+                      }}
+                    >
+                      Delete
+                    </Typography>
+                  </div>
                 </Popover>
               </div>
             )}
@@ -630,16 +647,15 @@ const ArticleComment = (props) => {
                   value={reply.editValue}
                   multiline
                   rows={4}
-                  rowsMax={7}
+                  inputProps={{ style: { resize: "vertical" } }}
+                  InputProps={{
+                    classes: {
+                      input: classes.resize,
+                    },
+                  }}
                   placeholder="What are your thoughts..."
                   //error={firstNameError}
-                  onChange={(event) =>
-                    handleEditReplyTextFieldValue(
-                      commentid,
-                      reply.id,
-                      event.target.value
-                    )
-                  }
+                  onChange={(event) => handleEditReplyTextFieldValue(commentid, reply.id, event.target.value)}
                 />
                 <div
                   style={{
@@ -664,9 +680,7 @@ const ArticleComment = (props) => {
                     variant="contained"
                     color="primary"
                     disabled={reply.comment === "" ? true : false}
-                    onClick={() =>
-                      handleUpdateReplyComment(commentid, reply.id)
-                    }
+                    onClick={() => handleUpdateReplyComment(commentid, reply.id)}
                     style={{
                       order: 2,
                       marginLeft: "auto",
@@ -690,9 +704,7 @@ const ArticleComment = (props) => {
             {reply.comment}
           </Typography>
         )}
-        <div
-          style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-        >
+        <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
           <UseAnimations
             animation={heart}
             size={30}
@@ -700,13 +712,7 @@ const ArticleComment = (props) => {
             wrapperStyle={{
               display: "inline-flex",
             }}
-            onClick={() =>
-              handleLikeUnlikeReplyComment(
-                commentid,
-                reply.id,
-                reply.current_user_liked
-              )
-            }
+            onClick={() => handleLikeUnlikeReplyComment(commentid, reply.id, reply.current_user_liked)}
           />
           <Typography
             variant="body2"
@@ -718,10 +724,11 @@ const ArticleComment = (props) => {
             {reply.likes}
           </Typography>
         </div>
-
-        <div className={classes.childcommentdivider}>
-          <Divider />
-        </div>
+        {index + 1 !== repliesLength && (
+          <div className={classes.childcommentdivider}>
+            <Divider />
+          </div>
+        )}
       </>
     );
   };
@@ -734,17 +741,10 @@ const ArticleComment = (props) => {
       onClose={toggleDrawer(false)}
       classes={{ paper: classes.drawer }}
     >
-      <IconButton
-        aria-label="close"
-        className={classes.closeButton}
-        onClick={toggleDrawer(false)}
-      >
+      <IconButton aria-label="close" className={classes.closeButton} onClick={toggleDrawer(false)}>
         <CloseIcon />
       </IconButton>
-      <Typography
-        variant="h5"
-        style={{ fontWeight: "600", marginBottom: "20px" }}
-      >
+      <Typography variant="h5" style={{ fontWeight: "600", marginBottom: "20px" }}>
         Responses ({articleDetails.top_level_comments.length})
       </Typography>
 
@@ -753,11 +753,20 @@ const ArticleComment = (props) => {
           <CardContent>
             <div>
               <div className={classes.cardheadername}>
-                <Avatar
-                  src={user && user.profile_photo}
-                  alt=""
-                  style={{ marginRight: "15px" }}
-                />
+                <div
+                  className={
+                    user.member && user.member.membership_tier === "PRO"
+                      ? classes.proBorderWrapper
+                      : classes.freeBorderWrapper
+                  }
+                  style={{
+                    marginRight: "15px",
+                  }}
+                >
+                  <div className={classes.innerBorderWrapper}>
+                    <Avatar src={user && user.profile_photo} alt="" />
+                  </div>
+                </div>
                 <Typography style={{ marginTop: "8px" }}>
                   {user.first_name} {user.last_name}
                 </Typography>
@@ -770,7 +779,12 @@ const ArticleComment = (props) => {
                 value={comment.comment}
                 multiline
                 rows={4}
-                rowsMax={7}
+                inputProps={{ style: { resize: "vertical" } }}
+                InputProps={{
+                  classes: {
+                    input: classes.resize,
+                  },
+                }}
                 placeholder="What are your thoughts..."
                 //error={firstNameError}
                 onChange={(event) =>
@@ -815,17 +829,25 @@ const ArticleComment = (props) => {
                   <div key={comment.id} className={classes.parentcommentcard}>
                     <div className={classes.parentcommentheader}>
                       {comment.user && (
-                        <Avatar
-                          style={{ marginRight: "15px" }}
-                          src={comment.user.profile_photo}
-                          alt=""
-                        />
+                        <div
+                          className={
+                            comment.user && comment.user.member && comment.user.member.membership_tier === "PRO"
+                              ? classes.proBorderWrapper
+                              : classes.freeBorderWrapper
+                          }
+                          style={{
+                            marginRight: "15px",
+                          }}
+                        >
+                          <div className={classes.innerBorderWrapper}>
+                            <Avatar src={comment.user.profile_photo} alt="" />
+                          </div>
+                        </div>
                       )}
                       <div style={{ flexDirection: "column", width: "100%" }}>
                         <div style={{ display: "flex" }}>
                           <Typography variant="body2">
-                            {comment.user && comment.user.first_name}{" "}
-                            {comment.user && comment.user.last_name}
+                            {comment.user && comment.user.first_name} {comment.user && comment.user.last_name}
                           </Typography>
                           {comment && checkIfOwnerOfComment(comment.user.id) && (
                             <div
@@ -836,9 +858,7 @@ const ArticleComment = (props) => {
                                 marginLeft: "auto",
                               }}
                             >
-                              <Menu
-                                onClick={(e) => handleClick(e, comment.id)}
-                              />
+                              <Menu style={{ cursor: "pointer" }} onClick={(e) => handleClick(e, comment.id)} />
                               <Popover
                                 open={popover.popoverId === comment.id}
                                 onClose={handleClose}
@@ -852,28 +872,26 @@ const ArticleComment = (props) => {
                                   horizontal: "right",
                                 }}
                               >
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    openEditTextField(comment.id, true);
-                                  }}
-                                >
-                                  Edit this reponse
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  className={classes.typography}
-                                  onClick={() => {
-                                    handleDeleteComment(
-                                      comment.id,
-                                      -1,
-                                      "parent"
-                                    );
-                                  }}
-                                >
-                                  Delete
-                                </Typography>
+                                <div className={classes.pop}>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      openEditTextField(comment.id, true);
+                                    }}
+                                  >
+                                    Edit this reponse
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className={classes.typography}
+                                    onClick={() => {
+                                      handleDeleteComment(comment.id, -1, "parent");
+                                    }}
+                                  >
+                                    Delete
+                                  </Typography>
+                                </div>
                               </Popover>
                             </div>
                           )}
@@ -896,15 +914,15 @@ const ArticleComment = (props) => {
                                 value={comment.editValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
                                 placeholder="What are your thoughts..."
                                 //error={firstNameError}
-                                onChange={(event) =>
-                                  handleEditTextFieldValue(
-                                    comment.id,
-                                    event.target.value
-                                  )
-                                }
+                                onChange={(event) => handleEditTextFieldValue(comment.id, event.target.value)}
                               />
                               <div
                                 style={{
@@ -928,12 +946,8 @@ const ArticleComment = (props) => {
                                 <Button
                                   variant="contained"
                                   color="primary"
-                                  disabled={
-                                    comment.comment === "" ? true : false
-                                  }
-                                  onClick={() =>
-                                    handleUpdateComment(comment.id)
-                                  }
+                                  disabled={comment.comment === "" ? true : false}
+                                  onClick={() => handleUpdateComment(comment.id)}
                                   style={{
                                     order: 2,
                                     marginLeft: "auto",
@@ -971,12 +985,7 @@ const ArticleComment = (props) => {
                           wrapperStyle={{
                             display: "inline-flex",
                           }}
-                          onClick={() =>
-                            handleLikeUnlikeParentComment(
-                              comment.id,
-                              comment.current_user_liked
-                            )
-                          }
+                          onClick={() => handleLikeUnlikeParentComment(comment.id, comment.current_user_liked)}
                         />
                         <Typography
                           variant="body2"
@@ -1008,17 +1017,11 @@ const ArticleComment = (props) => {
                                 }}
                               >
                                 {comment.replies.length === 1 ? (
-                                  <Typography
-                                    variant="body2"
-                                    style={{ cursor: "pointer" }}
-                                  >
+                                  <Typography variant="body2" style={{ cursor: "pointer" }}>
                                     {comment.replies.length} reply
                                   </Typography>
                                 ) : (
-                                  <Typography
-                                    variant="body2"
-                                    style={{ cursor: "pointer" }}
-                                  >
+                                  <Typography variant="body2" style={{ cursor: "pointer" }}>
                                     {comment.replies.length} replies
                                   </Typography>
                                 )}
@@ -1038,10 +1041,7 @@ const ArticleComment = (props) => {
                               openReply(comment.id, false);
                             }}
                           >
-                            <Typography
-                              variant="body2"
-                              style={{ cursor: "pointer" }}
-                            >
+                            <Typography variant="body2" style={{ cursor: "pointer" }}>
                               Hide Replies
                             </Typography>
                           </div>
@@ -1077,20 +1077,15 @@ const ArticleComment = (props) => {
                                 value={comment.editReplyValue}
                                 multiline
                                 rows={4}
-                                rowsMax={7}
-                                placeholder={
-                                  "Replying to " +
-                                  comment.user.first_name +
-                                  " " +
-                                  comment.user.last_name
-                                }
+                                inputProps={{ style: { resize: "vertical" } }}
+                                InputProps={{
+                                  classes: {
+                                    input: classes.resize,
+                                  },
+                                }}
+                                placeholder={"Replying to " + comment.user.first_name + " " + comment.user.last_name}
                                 //error={firstNameError}
-                                onChange={(event) =>
-                                  handleReplyTextFieldValue(
-                                    comment.id,
-                                    event.target.value
-                                  )
-                                }
+                                onChange={(event) => handleReplyTextFieldValue(comment.id, event.target.value)}
                               />
                               <div
                                 style={{
@@ -1118,9 +1113,7 @@ const ArticleComment = (props) => {
                                     marginLeft: "auto",
                                     textTransform: "capitalize",
                                   }}
-                                  disabled={
-                                    comment.replyValue === "" ? true : false
-                                  }
+                                  disabled={comment.replyValue === "" ? true : false}
                                   onClick={() => {
                                     handleReplyComment(comment.id);
                                   }}
@@ -1139,7 +1132,7 @@ const ArticleComment = (props) => {
                           comment.replies.map((reply, replyIndex) => {
                             return (
                               <div key={`reply` + replyIndex}>
-                                {childComment(comment.id, reply)}
+                                {childComment(comment.id, reply, replyIndex, comment.replies.length)}
                               </div>
                             );
                           })}

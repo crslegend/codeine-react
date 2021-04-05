@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  TextField,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
@@ -23,10 +24,13 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreHoriz";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
+import FlagDialog from "./FlagArticleDialog";
+import Toast from "../components/Toast";
 import hljs from "highlight.js";
 import "highlight.js/styles/darcula.css";
+import "./quill.css";
 
 hljs.configure({
   languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
@@ -57,10 +61,10 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     padding: theme.spacing(1),
-    color: "#5c5c5c",
     cursor: "pointer",
     "&:hover": {
       color: "#000000",
+      backgroundColor: "#f5f5f5",
     },
   },
   chip: {
@@ -87,6 +91,30 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline #437FC7",
     },
   },
+  container: {
+    width: "50%",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  pop: {
+    padding: theme.spacing(1),
+  },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -110,6 +138,17 @@ const ViewArticle = (props) => {
       highlight: (text) => hljs.highlightAuto(text).value,
     },
   };
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const formatDate = (date) => {
     const options = {
@@ -138,11 +177,13 @@ const ViewArticle = (props) => {
   };
 
   const checkIfOwnerOfComment = (userId) => {
-    const decoded = jwt_decode(Cookies.get("t1"));
-    if (decoded.user_id === userId) {
-      return true;
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      if (decoded.user_id === userId) {
+        return true;
+      }
+      return false;
     }
-    return false;
   };
 
   const getArticleDetails = () => {
@@ -259,19 +300,25 @@ const ViewArticle = (props) => {
     }
   };
 
+  const [dialogFlagOpen, setDialogFlagOpen] = useState(false);
+
+  const handleFlagClickOpen = () => {
+    setDialogFlagOpen(true);
+  };
+
+  const handleFlagClickClose = () => {
+    setDialogFlagOpen(false);
+  };
+
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+      <div className={classes.container}>
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
           aria-label="breadcrumb"
         >
-          <Link
-            className={classes.backLink}
-            onClick={() => {
-              history.push("/viewarticles");
-            }}
-          >
+          <Link className={classes.backLink} to="/viewarticles">
             Articles
           </Link>
           <Typography>{articleDetails.title}</Typography>
@@ -293,11 +340,22 @@ const ViewArticle = (props) => {
             }}
           >
             <div style={{ display: "flex" }}>
-              <Avatar
-                src={articleDetails.user.profile_photo}
-                alt=""
-                style={{ marginRight: "15px" }}
-              ></Avatar>
+              <div
+                className={
+                  articleDetails.user &&
+                  articleDetails.user.member &&
+                  articleDetails.user.member.membership_tier === "PRO"
+                    ? classes.proBorderWrapper
+                    : classes.freeBorderWrapper
+                }
+                style={{
+                  marginRight: "15px",
+                }}
+              >
+                <div className={classes.innerBorderWrapper}>
+                  <Avatar src={articleDetails.user.profile_photo} alt="" />
+                </div>
+              </div>
             </div>
             <div style={{ flexDirection: "column" }}>
               <Typography
@@ -345,6 +403,8 @@ const ViewArticle = (props) => {
               value={articleDetails.content}
               readOnly={true}
               theme={"bubble"}
+              enable={false}
+              onChange={(e) => e}
             />
           </div>
 
@@ -447,10 +507,12 @@ const ViewArticle = (props) => {
             <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
             </Typography>
-            <Menu
-              onClick={(e) => handleClick(e)}
-              style={{ marginLeft: "auto", cursor: "pointer" }}
-            />
+            {user && (
+              <Menu
+                onClick={(e) => handleClick(e)}
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+            )}
 
             <Popover
               id={popoverid}
@@ -466,7 +528,7 @@ const ViewArticle = (props) => {
                 horizontal: "right",
               }}
             >
-              <div style={{ padding: "5px" }}>
+              <div className={classes.pop}>
                 {user &&
                   articleDetails.user &&
                   checkIfOwnerOfComment(articleDetails.user.id) && (
@@ -494,74 +556,32 @@ const ViewArticle = (props) => {
                       </Typography>
                     </>
                   )}
-                <Typography
-                  variant="body2"
-                  className={classes.typography}
-                  onClick={() => alert("Flag Article")}
-                >
-                  Flag Article
-                </Typography>
+                {articleDetails.user &&
+                  !checkIfOwnerOfComment(articleDetails.user.id) && (
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={handleFlagClickOpen}
+                    >
+                      Flag Article
+                    </Typography>
+                  )}
               </div>
             </Popover>
           </div>
           {/* <Divider style={{ marginTop: "20px" }} /> */}
         </div>
+      </div>
 
-        {/* <div style={{ display: "flex" }}>
-          <div style={{ display: "flex" }}>
-            <Avatar
-              src={articleDetails.user && articleDetails.user.profile_photo}
-              alt=""
-              style={{ width: "60px", height: "60px", marginRight: "15px" }}
-            ></Avatar>
-          </div>
-          <div style={{ flexDirection: "column" }}>
-            <Typography
-              style={{ display: "flex", fontWeight: "550" }}
-              variant="body2"
-            >
-              WRITTEN BY
-            </Typography>
-            <Typography variant="h6" style={{ fontWeight: "600" }}>
-              {articleDetails.user && articleDetails.user.first_name}{" "}
-              {articleDetails.user && articleDetails.user.last_name}
-              {articleDetails.user && articleDetails.user.bio}
-            </Typography>
-          </div>
-        </div> */}
+      <FlagDialog
+        id={id}
+        sbOpen={sbOpen}
+        setSbOpen={setSbOpen}
+        setSnackbar={setSnackbar}
+        dialogFlagOpen={dialogFlagOpen}
+        handleFlagClickClose={handleFlagClickClose}
+      />
 
-        {/* <div style={{ display: "flex" }}>
-          <Language style={{ marginRight: "10px" }} />
-          {articleDetails &&
-            articleDetails.languages &&
-            articleDetails.languages.length > 0 &&
-            articleDetails.languages.map((language, index) => {
-              if (index + 1 !== articleDetails.languages.length) {
-                if (language === "ENG") {
-                  return <Typography key={index}>English, </Typography>;
-                } else if (language === "MAN") {
-                  return <Typography key={index}>中文, </Typography>;
-                } else {
-                  return <Typography key={index}>Français, </Typography>;
-                }
-              } else {
-                if (language === "ENG") {
-                  return <Typography key={index}>English</Typography>;
-                } else if (language === "MAN") {
-                  return <Typography key={index}>中文</Typography>;
-                } else {
-                  return <Typography key={index}>Français</Typography>;
-                }
-              }
-            })}
-        </div> */}
-        {/* <Typography
-          variant="body1"
-          style={{ fontWeight: 600, marginBottom: "10px" }}
-        >
-          Categories this article falls under:
-        </Typography> */}
-      </Container>
       <Dialog
         open={dialogopen}
         onClose={handleDialogClose}
