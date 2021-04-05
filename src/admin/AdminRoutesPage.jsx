@@ -17,18 +17,19 @@ import {
   Badge,
   Popover,
 } from "@material-ui/core";
+
 import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
 import logo from "../assets/codeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import SubjectIcon from "@material-ui/icons/Subject";
 import AdminHumanResourcePage from "./humanResource/HumanResourcePage";
 import ContentQualityPage from "./contentQuality/ContentQualityPage";
 import ContentQualityArticlePage from "./contentQuality/article/ViewArticle";
@@ -48,6 +49,7 @@ import CourseDetailAnalytics from "./analytics/CourseDetailAnalytics";
 import ProjectRelatedAnalysis from "./analytics/ProjectRelatedAnalysis";
 import Notifications from "./notification/NotificationManagement";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
@@ -385,7 +387,7 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <PublicOutlinedIcon className={classes.listIcon} />
+        <HelpOutlineOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
       <ListItem
@@ -415,7 +417,7 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <NotificationsIcon className={classes.listIcon} />
+        <NotificationsNoneIcon className={classes.listIcon} />
         <Typography variant="body1">Notification</Typography>
       </ListItem>
       {/* <ListItem

@@ -8,7 +8,6 @@ import {
   Redirect,
   Switch,
   useHistory,
-  Route,
 } from "react-router-dom";
 import PrivateRoute from "../components/routes/PrivateRoute";
 import {
@@ -25,9 +24,12 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -367,8 +369,8 @@ const ContentProviderHome = () => {
         className={classes.listItem}
         button
       >
-        <NoteAdd className={classes.listIcon} />
-        <Typography variant="body1">My Courses</Typography>
+        <InsertDriveFileIcon className={classes.listIcon} />
+        <Typography variant="body1">Course</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -378,7 +380,7 @@ const ContentProviderHome = () => {
         button
       >
         <SchoolOutlinedIcon className={classes.listIcon} />
-        <Typography variant="body1">My Students</Typography>
+        <Typography variant="body1">Student</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
@@ -397,8 +399,12 @@ const ContentProviderHome = () => {
         className={classes.listItem}
         button
       >
-        <SubjectIcon className={classes.listIcon} />
-        <Typography variant="body1">My Articles</Typography>
+        <FontAwesomeIcon
+          icon={faNewspaper}
+          className={classes.listIcon}
+          style={{ height: "24px", width: "24px" }}
+        />
+        <Typography variant="body1">Article</Typography>
       </ListItem>
       <ListItem
         component={NavLink}

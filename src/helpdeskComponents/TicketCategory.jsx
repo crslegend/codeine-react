@@ -4,13 +4,14 @@ import { Avatar, Typography } from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
-  CreditCard,
-  Description,
-  NoteAdd,
   Person,
   Timeline,
   Work,
 } from "@material-ui/icons";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -34,7 +35,11 @@ const TicketCategory = ({
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <Description />
+            <FontAwesomeIcon
+              icon={faNewspaper}
+              className={classes.icon}
+              style={{ height: "24px", width: "24px" }}
+            />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
@@ -71,7 +76,7 @@ const TicketCategory = ({
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <NoteAdd />
+            <InsertDriveFileIcon />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
@@ -111,7 +116,7 @@ const TicketCategory = ({
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <CreditCard />
+            <AccountBalanceWalletIcon />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
