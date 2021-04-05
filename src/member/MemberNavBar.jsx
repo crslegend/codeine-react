@@ -496,11 +496,11 @@ const MemberNavBar = (props) => {
             <div
               className={classes.hover}
               onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
+                history.push("/member/industryprojects");
+                // alert("clicked on Industry projects");
               }}
             >
-              <Dashboard className={classes.icon} />
+              <Work className={classes.icon} />
               <Typography className={classes.typography}>
                 Industry Projects
               </Typography>

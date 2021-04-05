@@ -40,6 +40,9 @@ import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
 import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
+import ViewIndustryProjectDetails from "./member/industryProject/ViewIndustryProjectDetails";
+import IndustryProjectPage from "./member/dropdownMenu/industryProject/IndustryProjectPage";
 import AllNotifications from "./notification/ViewAllNotification";
 import NotificationDetail from "./notification/NotificationDetail";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
@@ -126,6 +129,18 @@ const App = () => {
         sensitive
         component={BookConsult}
       />
+      <MemberAndPublicRoute
+        exact
+        path="/industryprojects"
+        component={ViewAllIndustryProject}
+      />
+      <MemberAndPublicRoute
+        exact
+        path="/industryprojects/:id"
+        component={ViewIndustryProjectDetails}
+        strict
+        sensitive
+      />
       <LandingPageRoute
         exact
         path="/member/login"
@@ -172,6 +187,12 @@ const App = () => {
         exact
         path="/member/consultations"
         component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/industryprojects"
+        component={IndustryProjectPage}
         user="member"
       />
       <PrivateRoute

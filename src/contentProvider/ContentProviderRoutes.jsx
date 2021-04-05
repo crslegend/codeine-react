@@ -23,6 +23,7 @@ import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
 import PaymentIcon from "@material-ui/icons/Payment";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import WorkOutlineIcon from "@material-ui/icons/WorkOutline";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
@@ -36,6 +37,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 import logo from "../assets/codeineLogos/Partner.svg";
+import IndustryProject from "./industryProject/IndustryProject";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import NotifTile from "../components/NotificationTile";
 import Consultation from "./consultation/Consultation";
@@ -56,6 +58,7 @@ import ReplyToComments from "./course/ReplyToComments";
 import ViewAllQuizzes from "./course/ViewAllQuizzes";
 import CourseDetailAnalytics from "./dashboard/CourseDetailAnalytics";
 import CourseSearchRanking from "./dashboard/CourseSearchRanking";
+import IndustryProjectDetails from "./industryProject/IndustryProjectDetails";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
 import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
 import Notification from "./notification/NotificationManagement";
@@ -418,6 +421,16 @@ const ContentProviderHome = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/partner/home/industryproject"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <WorkOutlineIcon className={classes.listIcon} />
+        <Typography variant="body1">My Industry Projects</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/partner/home/helpdesk"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -623,6 +636,17 @@ const ContentProviderHome = () => {
             />
             <PrivateRoute
               exact
+              path="/partner/home/industryproject"
+              render={() => <IndustryProject />}
+              user="partner"
+            />
+            <PrivateRoute
+              strict
+              sensitive
+              path="/partner/home/industryproject/view/:id"
+              render={() => <IndustryProjectDetails />}
+            />
+            <PrivateRoute
               path="/partner/home/notification"
               render={() => <Notification />}
               user="partner"

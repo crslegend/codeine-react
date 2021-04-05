@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import MemberNavBar from "../../MemberNavBar";
+import MemberNavBar from "../MemberNavBar";
 import {
   FormControl,
   InputLabel,
@@ -9,13 +9,15 @@ import {
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
+import Footer from "../landing/Footer";
+
 import SearchBar from "material-ui-search-bar";
-import Toast from "../../../components/Toast";
-import PageTitle from "../../../components/PageTitle";
-import Service from "../../../AxiosService";
+
+import Service from "../../AxiosService";
 import Cookies from "js-cookie";
+
 import { NoteAdd } from "@material-ui/icons";
-import ApplicationCard from "./ApplicationCard";
+import ProjectCard from "../landing/components/ProjectCard";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -74,48 +76,21 @@ const styles = makeStyles((theme) => ({
       size: "small",
     },
   },
-  heading: {
-    height: "80px",
-    backgroundColor: "#437FC7",
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  cancelButton: {
-    textTransform: "capitalize",
-  },
-  formControl: {
-    margin: "20px 0px",
-    // marginRight: theme.spacing(9),
-    width: "250px",
-    maxHeight: 50,
-  },
 }));
 
-const IndustryProject = () => {
+const ViewAllIndustryProject = () => {
   const classes = styles();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
 
   const [sortMethod, setSortMethod] = useState("");
 
-  const [allApplications, setAllApplications] = useState([]);
+  const [allIndustryProjects, setAllIndustryProjects] = useState([]);
   const itemsPerPage = 10;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
-    Math.ceil(allApplications.length / itemsPerPage)
+    Math.ceil(allIndustryProjects.length / itemsPerPage)
   );
 
   const checkIfLoggedIn = () => {
@@ -124,10 +99,10 @@ const IndustryProject = () => {
     }
   };
 
-  const getAllApplications = (sort) => {
+  const getAllIndustryProjects = (sort) => {
     let queryParams = {
       search: searchValue,
-      isAvailable: true,
+      isAvailable: true
     };
     //console.log(sort);
 
@@ -148,22 +123,23 @@ const IndustryProject = () => {
     }
 
     Service.client
-      .get(`/industry-projects/applications/member`)
+      .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
         // console.log(res);
-        setAllApplications(res.data);
+        setAllIndustryProjects(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
   };
+  //console.log(allIndustryProjects);
 
   const onSortChange = (e) => {
     setSortMethod(e.target.value);
-    getAllApplications(e.target.value);
+    getAllIndustryProjects(e.target.value);
   };
 
   const handleRequestSearch = () => {
-    getAllApplications();
+    getAllIndustryProjects();
   };
 
   const handleCancelSearch = () => {
@@ -176,32 +152,42 @@ const IndustryProject = () => {
 
   useEffect(() => {
     checkIfLoggedIn();
-    getAllApplications();
+    getAllIndustryProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (searchValue === "") {
-      getAllApplications();
+      getAllIndustryProjects();
     } // eslint-disable-next-line
   }, [searchValue]);
 
   return (
-    <Fragment>
-      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
+    <div className={classes.root}>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <div style={{ paddingTop: "65px" }}>
-        <div style={{ width: "80%", margin: "auto" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <PageTitle title="My Applications" />
+      <div className={classes.industryProjects}>
+        <div className={classes.title}>
+          <Typography variant="h2" className={classes.heading}>
+            all industry projects
+          </Typography>
+        </div>
+        <div className={classes.searchSection}>
+          <div className={classes.searchBar}>
+            <SearchBar
+              placeholder="Search for Industry Projects"
+              value={searchValue}
+              onChange={(newValue) => setSearchValue(newValue)}
+              onCancelSearch={handleCancelSearch}
+              onRequestSearch={handleRequestSearch}
+              // className={classes.searchBar}
+              classes={{
+                input: classes.input,
+              }}
+            />
+          </div>
+          <div>
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
+              <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
@@ -222,51 +208,51 @@ const IndustryProject = () => {
               </Select>
             </FormControl>
           </div>
-          <div>
-            {allApplications && allApplications.length > 0 ? (
-              allApplications
-                .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                .map((application, index) => (
-                  <ApplicationCard
-                    getAllApplications={() => getAllApplications()}
-                    key={application.id}
-                    application={application}
-                  />
-                ))
-            ) : (
-              <div
-                style={{
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  textAlign: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <NoteAdd fontSize="large" />
-                <Typography variant="h5">No Industry Project Found</Typography>
-              </div>
-            )}
-          </div>
-          <div className={classes.paginationSection}>
-            {allApplications && allApplications.length > 0 && (
-              <Pagination
-                count={noOfPages}
-                page={page}
-                onChange={handlePageChange}
-                defaultPage={1}
-                color="primary"
-                size="medium"
-                showFirstButton
-                showLastButton
-                className={classes.pagination}
-              />
-            )}
-          </div>
+        </div>
+        <div>
+          {allIndustryProjects && allIndustryProjects.length > 0 ? (
+            allIndustryProjects
+              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+              .map((industryProject, index) => (
+                <ProjectCard
+                  key={industryProject.id}
+                  project={industryProject}
+                />
+              ))
+          ) : (
+            <div
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <NoteAdd fontSize="large" />
+              <Typography variant="h5">No Industry Project Found</Typography>
+            </div>
+          )}
+        </div>
+        <div className={classes.paginationSection}>
+          {allIndustryProjects && allIndustryProjects.length > 0 && (
+            <Pagination
+              count={noOfPages}
+              page={page}
+              onChange={handlePageChange}
+              defaultPage={1}
+              color="primary"
+              size="medium"
+              showFirstButton
+              showLastButton
+              className={classes.pagination}
+            />
+          )}
         </div>
       </div>
-    </Fragment>
+      <Footer />
+    </div>
   );
 };
 
-export default IndustryProject;
+export default ViewAllIndustryProject;
