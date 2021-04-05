@@ -3,15 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import logo from "../assets/codeineLogos/Member.svg";
-import {
-  Avatar,
-  ListItem,
-  Typography,
-  Popover,
-  Button,
-  Divider,
-  Badge,
-} from "@material-ui/core";
+import { Avatar, ListItem, Typography, Popover, Button, Divider, Badge } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -68,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#878787",
     height: "30px",
     width: "30px",
+    marginRight: theme.spacing(3),
     "&:hover": {
       color: theme.palette.primary.main,
       cursor: "pointer",
@@ -77,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     height: "30px",
     width: "30px",
+    marginRight: theme.spacing(3),
   },
   viewallnotif: {
     textAlign: "center",
@@ -87,6 +81,21 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
       color: theme.palette.primary.main,
     },
+  },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: theme.palette.primary.main,
+    padding: 3,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
   },
 }));
 
@@ -184,12 +193,7 @@ const MemberNavBar = (props) => {
   const loggedOutNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="outlined"
-          component={Link}
-          to="/partner"
-          style={{ textTransform: "capitalize" }}
-        >
+        <Button variant="outlined" component={Link} to="/partner" style={{ textTransform: "capitalize" }}>
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Teach on Codeine
           </Typography>
@@ -203,10 +207,7 @@ const MemberNavBar = (props) => {
           style={{ textTransform: "capitalize" }}
           color="primary"
         >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
+          <Typography variant="h6" style={{ fontSize: "15px", color: "#437FC7" }}>
             Log In
           </Typography>
         </Button>
@@ -232,16 +233,8 @@ const MemberNavBar = (props) => {
   const notifBell = (
     <div>
       {!viewAllNotif ? (
-        <Badge
-          badgeContent={
-            notificationList.length > 0 ? notificationList[0].num_unread : 0
-          }
-          color="primary"
-        >
-          <NotificationsIcon
-            className={classes.notification}
-            onClick={handleNotifClick}
-          />
+        <Badge badgeContent={notificationList.length > 0 ? notificationList[0].num_unread : 0} color="primary">
+          <NotificationsIcon className={classes.notification} onClick={handleNotifClick} />
         </Badge>
       ) : (
         <NotificationsIcon className={classes.notificationOpen} />
@@ -288,9 +281,7 @@ const MemberNavBar = (props) => {
           {notificationList.length === 0 && (
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <img src={ZeroNotif} alt="" />
-              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
-                All caught up!
-              </Typography>
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>All caught up!</Typography>
             </div>
           )}
         </div>
@@ -333,21 +324,24 @@ const MemberNavBar = (props) => {
       )}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         {notifBell}
-        <Avatar
-          onClick={handleClick}
-          src={user && user.profile_photo}
-          alt=""
-          style={{
-            width: "34px",
-            height: "34px",
-            cursor: "pointer",
-            marginLeft: "30px",
-            border:
-              user.member && user.member.membership_tier !== "PRO"
-                ? ""
-                : "3px solid green",
-          }}
-        />
+        <div
+          className={
+            user.member && user.member.membership_tier === "PRO" ? classes.proBorderWrapper : classes.freeBorderWrapper
+          }
+        >
+          <div className={classes.innerBorderWrapper}>
+            <Avatar
+              onClick={handleClick}
+              src={user && user.profile_photo}
+              alt=""
+              style={{
+                width: "34px",
+                height: "34px",
+                cursor: "pointer",
+              }}
+            />
+          </div>
+        </div>
         <Popover
           id={id}
           open={open}
@@ -367,19 +361,27 @@ const MemberNavBar = (props) => {
         >
           <div className={classes.popover}>
             <div className={classes.toprow}>
-              <Avatar
-                src={user && user.profile_photo}
-                alt=""
+              <div
+                className={
+                  user.member && user.member.membership_tier === "PRO"
+                    ? classes.proBorderWrapper
+                    : classes.freeBorderWrapper
+                }
                 style={{
-                  width: "55px",
-                  height: "55px",
                   marginRight: "15px",
-                  border:
-                    user.member && user.member.membership_tier === "PRO"
-                      ? "3px solid green"
-                      : "",
                 }}
-              />
+              >
+                <div className={classes.innerBorderWrapper}>
+                  <Avatar
+                    src={user && user.profile_photo}
+                    alt=""
+                    style={{
+                      width: "55px",
+                      height: "55px",
+                    }}
+                  />
+                </div>
+              </div>
               <div
                 style={{
                   flexDirection: "column",
@@ -440,9 +442,7 @@ const MemberNavBar = (props) => {
               }}
             >
               <Timeline className={classes.icon} />
-              <Typography className={classes.typography}>
-                Consultations
-              </Typography>
+              <Typography className={classes.typography}>Consultations</Typography>
             </div>
 
             <div
@@ -451,11 +451,7 @@ const MemberNavBar = (props) => {
                 history.push("/member/articles");
               }}
             >
-              <FontAwesomeIcon
-                icon={faNewspaper}
-                className={classes.icon}
-                style={{ height: "24px", width: "24px" }}
-              />
+              <FontAwesomeIcon icon={faNewspaper} className={classes.icon} style={{ height: "24px", width: "24px" }} />
               <Typography className={classes.typography}>Articles</Typography>
             </div>
 
@@ -467,9 +463,7 @@ const MemberNavBar = (props) => {
               }}
             >
               <Dashboard className={classes.icon} />
-              <Typography className={classes.typography}>
-                Industry Projects
-              </Typography>
+              <Typography className={classes.typography}>Industry Projects</Typography>
             </div>
 
             <div
@@ -490,9 +484,7 @@ const MemberNavBar = (props) => {
               }}
             >
               <AccountBalanceWalletIcon className={classes.icon} />
-              <Typography className={classes.typography}>
-                My Payments
-              </Typography>
+              <Typography className={classes.typography}>My Payments</Typography>
             </div>
 
             <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
@@ -506,10 +498,7 @@ const MemberNavBar = (props) => {
               }}
             >
               <ExitToAppIcon className={classes.icon} />
-              <Typography
-                className={classes.typography}
-                style={{ fontWeight: "700" }}
-              >
+              <Typography className={classes.typography} style={{ fontWeight: "700" }}>
                 Log Out
               </Typography>
             </div>
@@ -521,11 +510,7 @@ const MemberNavBar = (props) => {
 
   return (
     <Fragment>
-      <Navbar
-        logo={navLogo}
-        navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar}
-        bgColor="#fff"
-      />
+      <Navbar logo={navLogo} navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar} bgColor="#fff" />
     </Fragment>
   );
 };

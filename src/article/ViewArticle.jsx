@@ -99,6 +99,21 @@ const useStyles = makeStyles((theme) => ({
   pop: {
     padding: theme.spacing(1),
   },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: theme.palette.primary.main,
+    padding: 2,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
+  },
 }));
 
 const ViewArticle = (props) => {
@@ -106,15 +121,7 @@ const ViewArticle = (props) => {
   const { id } = useParams();
   const history = useHistory();
 
-  const {
-    user,
-    articleDetails,
-    setArticleDetails,
-    setDrawerOpen,
-    openIDE,
-    setOpenIDE,
-    userType,
-  } = props;
+  const { user, articleDetails, setArticleDetails, setDrawerOpen, openIDE, setOpenIDE, userType } = props;
 
   const modules = {
     toolbar: [[{ size: ["18px"] }]],
@@ -296,19 +303,13 @@ const ViewArticle = (props) => {
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.container}>
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="small" />}
-          aria-label="breadcrumb"
-        >
+        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
           <Link className={classes.backLink} to="/viewarticles">
             Articles
           </Link>
           <Typography>{articleDetails.title}</Typography>
         </Breadcrumbs>
-        <Typography
-          variant="h1"
-          style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}
-        >
+        <Typography variant="h1" style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}>
           {articleDetails.title}
         </Typography>
         {articleDetails.user && (
@@ -322,37 +323,30 @@ const ViewArticle = (props) => {
             }}
           >
             <div style={{ display: "flex" }}>
-              <Avatar
-                src={articleDetails.user.profile_photo}
-                alt=""
+              <div
+                className={
+                  articleDetails.user &&
+                  articleDetails.user.member &&
+                  articleDetails.user.member.membership_tier === "PRO"
+                    ? classes.proBorderWrapper
+                    : classes.freeBorderWrapper
+                }
                 style={{
                   marginRight: "15px",
-                  border:
-                    articleDetails.user &&
-                    articleDetails.user.member &&
-                    articleDetails.user.member.membership_tier === "PRO"
-                      ? "3px solid green"
-                      : "",
                 }}
-              ></Avatar>
+              >
+                <div className={classes.innerBorderWrapper}>
+                  <Avatar src={articleDetails.user.profile_photo} alt="" />
+                </div>
+              </div>
             </div>
             <div style={{ flexDirection: "column" }}>
-              <Typography
-                style={{ display: "flex", fontWeight: "550" }}
-                variant="body2"
-              >
-                {articleDetails.user.first_name +
-                  " " +
-                  articleDetails.user.last_name}
+              <Typography style={{ display: "flex", fontWeight: "550" }} variant="body2">
+                {articleDetails.user.first_name + " " + articleDetails.user.last_name}
               </Typography>
-              <Typography variant="body2">
-                {formatDate(articleDetails.date_created)}
-              </Typography>
+              <Typography variant="body2">{formatDate(articleDetails.date_created)}</Typography>
             </div>
-            {((userType === "member" &&
-              user &&
-              user.member &&
-              user.member.membership_tier !== "FREE") ||
+            {((userType === "member" && user && user.member && user.member.membership_tier !== "FREE") ||
               userType === "partner" ||
               userType === "admin") && (
               <div style={{ marginLeft: "auto" }}>
@@ -392,35 +386,19 @@ const ViewArticle = (props) => {
             articleDetails.coding_languages.length > 0 &&
             articleDetails.coding_languages.map((language, index) => {
               if (language === "PY") {
-                return (
-                  <Chip key={index} label="Python" className={classes.chip} />
-                );
+                return <Chip key={index} label="Python" className={classes.chip} />;
               } else if (language === "JAVA") {
-                return (
-                  <Chip key={index} label="Java" className={classes.chip} />
-                );
+                return <Chip key={index} label="Java" className={classes.chip} />;
               } else if (language === "JS") {
-                return (
-                  <Chip
-                    key={index}
-                    label="Javascript"
-                    className={classes.chip}
-                  />
-                );
+                return <Chip key={index} label="Javascript" className={classes.chip} />;
               } else if (language === "CPP") {
-                return (
-                  <Chip key={index} label="C++" className={classes.chip} />
-                );
+                return <Chip key={index} label="C++" className={classes.chip} />;
               } else if (language === "CS") {
                 return <Chip key={index} label="C#" className={classes.chip} />;
               } else if (language === "RUBY") {
-                return (
-                  <Chip key={index} label="Ruby" className={classes.chip} />
-                );
+                return <Chip key={index} label="Ruby" className={classes.chip} />;
               } else {
-                return (
-                  <Chip key={index} label={language} className={classes.chip} />
-                );
+                return <Chip key={index} label={language} className={classes.chip} />;
               }
             })}
 
@@ -429,37 +407,17 @@ const ViewArticle = (props) => {
             articleDetails.categories.length > 0 &&
             articleDetails.categories.map((category, index) => {
               if (category === "FE") {
-                return (
-                  <Chip key={index} label="Frontend" className={classes.chip} />
-                );
+                return <Chip key={index} label="Frontend" className={classes.chip} />;
               } else if (category === "BE") {
-                return (
-                  <Chip key={index} label="Backend" className={classes.chip} />
-                );
+                return <Chip key={index} label="Backend" className={classes.chip} />;
               } else if (category === "UI") {
-                return (
-                  <Chip key={index} label="UI/UX" className={classes.chip} />
-                );
+                return <Chip key={index} label="UI/UX" className={classes.chip} />;
               } else if (category === "DB") {
-                return (
-                  <Chip
-                    key={index}
-                    label="Database Administration"
-                    className={classes.chip}
-                  />
-                );
+                return <Chip key={index} label="Database Administration" className={classes.chip} />;
               } else if (category === "ML") {
-                return (
-                  <Chip
-                    key={index}
-                    label="Machine Learning"
-                    className={classes.chip}
-                  />
-                );
+                return <Chip key={index} label="Machine Learning" className={classes.chip} />;
               } else {
-                return (
-                  <Chip key={index} label="Security" className={classes.chip} />
-                );
+                return <Chip key={index} label="Security" className={classes.chip} />;
               }
             })}
 
@@ -476,20 +434,10 @@ const ViewArticle = (props) => {
               onClick={(e) => handleLikeArticle(e)}
               style={{ cursor: "pointer" }}
             />
-            <Typography style={{ marginRight: "15px" }}>
-              {articleDetails.engagements.length}
-            </Typography>
-            <CommentIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => setDrawerOpen(true)}
-            />
-            <Typography style={{ display: "inline-flex" }}>
-              {articleDetails.top_level_comments.length}
-            </Typography>
-            <Menu
-              onClick={(e) => handleClick(e)}
-              style={{ marginLeft: "auto", cursor: "pointer" }}
-            />
+            <Typography style={{ marginRight: "15px" }}>{articleDetails.engagements.length}</Typography>
+            <CommentIcon style={{ cursor: "pointer" }} onClick={() => setDrawerOpen(true)} />
+            <Typography style={{ display: "inline-flex" }}>{articleDetails.top_level_comments.length}</Typography>
+            <Menu onClick={(e) => handleClick(e)} style={{ marginLeft: "auto", cursor: "pointer" }} />
 
             <Popover
               id={popoverid}
@@ -506,43 +454,24 @@ const ViewArticle = (props) => {
               }}
             >
               <div className={classes.pop}>
-                {user &&
-                  articleDetails.user &&
-                  checkIfOwnerOfComment(articleDetails.user.id) && (
-                    <>
-                      <Typography
-                        variant="body2"
-                        className={classes.typography}
-                        onClick={() => clickEditArticle()}
-                      >
-                        Edit article
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        className={classes.typography}
-                        onClick={() => unpublishArticle()}
-                      >
-                        Unpublish
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        className={classes.typography}
-                        onClick={handleClickOpen}
-                      >
-                        Delete
-                      </Typography>
-                    </>
-                  )}
-                {articleDetails.user &&
-                  !checkIfOwnerOfComment(articleDetails.user.id) && (
-                    <Typography
-                      variant="body2"
-                      className={classes.typography}
-                      onClick={handleFlagClickOpen}
-                    >
-                      Flag Article
+                {user && articleDetails.user && checkIfOwnerOfComment(articleDetails.user.id) && (
+                  <>
+                    <Typography variant="body2" className={classes.typography} onClick={() => clickEditArticle()}>
+                      Edit article
                     </Typography>
-                  )}
+                    <Typography variant="body2" className={classes.typography} onClick={() => unpublishArticle()}>
+                      Unpublish
+                    </Typography>
+                    <Typography variant="body2" className={classes.typography} onClick={handleClickOpen}>
+                      Delete
+                    </Typography>
+                  </>
+                )}
+                {articleDetails.user && !checkIfOwnerOfComment(articleDetails.user.id) && (
+                  <Typography variant="body2" className={classes.typography} onClick={handleFlagClickOpen}>
+                    Flag Article
+                  </Typography>
+                )}
               </div>
             </Popover>
           </div>
