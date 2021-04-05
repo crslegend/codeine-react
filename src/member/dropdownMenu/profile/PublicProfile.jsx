@@ -330,6 +330,8 @@ const PublicProfile = (props) => {
       points: statsData.RUBY,
     });
 
+    list = list.sort((a, b) => a.points - b.points);
+
     setLanguageList(list);
   };
 
@@ -477,7 +479,7 @@ const PublicProfile = (props) => {
                       setSnackbar({
                         ...snackbar,
                         message: "Profile link copied!",
-                        severity: "success",
+                        severity: "info",
                       });
                       return true;
                     }}
