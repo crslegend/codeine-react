@@ -427,7 +427,7 @@ const ContentProviderHome = () => {
         button
       >
         <WorkOutlineIcon className={classes.listIcon} />
-        <Typography variant="body1">My Industry Projects</Typography>
+        <Typography variant="body1">Industry Projects</Typography>
       </ListItem>
       <ListItem
         component={NavLink}
