@@ -17,9 +17,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   gutter: {
-    padding: theme.spacing(0.8, 2),
+    padding: theme.spacing(0.8, 1),
     background: "rgba(67, 127, 199, 0.2)",
     color: theme.palette.secondary.main,
+    minWidth: "50px",
+    textAlign: "right",
   },
   codeBody: {
     flexGrow: 1,
