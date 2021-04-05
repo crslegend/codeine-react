@@ -37,6 +37,16 @@ const styles = makeStyles((theme) => ({
   formControl: {
     minWidth: "250px",
   },
+  leftDiv: {
+    width: "70%",
+    paddingRight: theme.spacing(2),
+  },
+  rightDiv: {
+    width: "30%",
+  },
+  dialogContent: {
+    display: "flex",
+  },
 }));
 
 const languageEnumMapping = {
@@ -71,31 +81,146 @@ const AddSnippetDialog = ({
       onClose={() => {
         setAddSnippetDialog(false);
       }}
+      onExited={() => {
+        setSnippet("");
+        setCodeLanguage("java");
+        setCategories({
+          SEC: false,
+          DB: false,
+          FE: false,
+          BE: false,
+          UI: false,
+          ML: false,
+        });
+      }}
       PaperProps={{
         style: {
-          width: "600px",
+          width: "75%",
+          maxWidth: "none",
         },
       }}
     >
       <DialogTitle>New Code Snippet for Review</DialogTitle>
-      <DialogContent>
-        <div style={{ marginBottom: "30px" }}>
-          <label htmlFor="title">
-            <Typography variant="body2">Title</Typography>
-          </label>
-          <TextField
-            id="title"
-            placeholder="Enter Snippet Title"
-            autoComplete="off"
-            variant="outlined"
-            margin="dense"
-            fullWidth
-            value={snippetTitle && snippetTitle}
-            onChange={(e) => {
-              setSnippetTitle(e.target.value);
+      <DialogContent className={classes.dialogContent}>
+        <div className={classes.leftDiv}>
+          <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+            Enter Code Snippet Below
+          </Typography>
+          <AceEditor
+            placeholder="Enter your code here for review"
+            mode={codeLanguage}
+            theme="monokai"
+            value={snippet}
+            onChange={(newValue) => setSnippet(newValue)}
+            name="code-editor"
+            fontSize={14}
+            showPrintMargin={true}
+            showGutter={true}
+            highlightActiveLine={true}
+            width="100%"
+            setOptions={{
+              enableBasicAutocompletion: false,
+              enableLiveAutocompletion: true,
+              enableSnippets: false,
+              showLineNumbers: true,
+              tabSize: 2,
+              newLineMode: "windows",
             }}
-            autoFocus
           />
+        </div>
+        <div className={classes.rightDiv}>
+          <div style={{ marginBottom: "30px" }}>
+            <label htmlFor="title">
+              <Typography variant="body2">Title</Typography>
+            </label>
+            <TextField
+              id="title"
+              placeholder="Enter Snippet Title"
+              autoComplete="off"
+              variant="outlined"
+              margin="dense"
+              fullWidth
+              value={snippetTitle && snippetTitle}
+              onChange={(e) => {
+                setSnippetTitle(e.target.value);
+              }}
+              autoFocus
+            />
+          </div>
+          <div style={{ margin: "30px 0 " }}>
+            <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+              Category (Choose at least 1)
+            </Typography>
+            <div>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.SEC}
+                onChange={() => {
+                  setCategories({ ...categories, SEC: !categories.SEC });
+                }}
+                className={`${classes.languageButtons} ${classes.categoryButtons}`}
+              >
+                Security
+              </ToggleButton>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.DB}
+                onChange={() => {
+                  setCategories({ ...categories, DB: !categories.DB });
+                }}
+                className={`${classes.categoryButtons}`}
+                style={{ marginRight: "15px" }}
+              >
+                Database Administration
+              </ToggleButton>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.FE}
+                onChange={() => {
+                  setCategories({ ...categories, FE: !categories.FE });
+                }}
+                className={`${classes.languageButtons} ${classes.categoryButtons}`}
+              >
+                Frontend
+              </ToggleButton>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.BE}
+                onChange={() => {
+                  setCategories({ ...categories, BE: !categories.BE });
+                }}
+                className={`${classes.languageButtons} ${classes.categoryButtons}`}
+              >
+                Backend
+              </ToggleButton>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.UI}
+                onChange={() => {
+                  setCategories({ ...categories, UI: !categories.UI });
+                }}
+                className={`${classes.languageButtons} ${classes.categoryButtons}`}
+              >
+                UI/UX
+              </ToggleButton>
+              <ToggleButton
+                value=""
+                size="small"
+                selected={categories && categories.ML}
+                onChange={() => {
+                  setCategories({ ...categories, ML: !categories.ML });
+                }}
+                className={`${classes.categoryButtons}`}
+              >
+                Machine Learning
+              </ToggleButton>
+            </div>
+          </div>
           <label htmlFor="language-select">
             <Typography variant="body2" style={{ marginTop: 8 }}>
               Select Coding Language
@@ -123,136 +248,9 @@ const AddSnippetDialog = ({
             </Select>
           </FormControl>
         </div>
-        <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-          Enter Code Snippet Below
-        </Typography>
-        <AceEditor
-          placeholder="Enter your code here for review"
-          mode={codeLanguage}
-          theme="monokai"
-          value={snippet}
-          onChange={(newValue) => setSnippet(newValue)}
-          name="code-editor"
-          fontSize={14}
-          showPrintMargin={true}
-          showGutter={true}
-          highlightActiveLine={true}
-          width="100%"
-          setOptions={{
-            enableBasicAutocompletion: false,
-            enableLiveAutocompletion: true,
-            enableSnippets: false,
-            showLineNumbers: true,
-            tabSize: 2,
-          }}
-        />
-        {/* <ReactQuill
-          value={snippet && snippet}
-          onChange={(value) => setSnippet(value)}
-          modules={editor}
-          format={format}
-        /> */}
-        <div style={{ margin: "30px 0 " }}>
-          <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-            Category (Choost at least 1)
-          </Typography>
-          <div>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.SEC}
-              onChange={() => {
-                setCategories({ ...categories, SEC: !categories.SEC });
-              }}
-              className={`${classes.languageButtons} ${classes.categoryButtons}`}
-            >
-              Security
-            </ToggleButton>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.DB}
-              onChange={() => {
-                setCategories({ ...categories, DB: !categories.DB });
-              }}
-              className={`${classes.categoryButtons}`}
-              style={{ marginRight: "15px" }}
-            >
-              Database Administration
-            </ToggleButton>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.FE}
-              onChange={() => {
-                setCategories({ ...categories, FE: !categories.FE });
-              }}
-              className={`${classes.languageButtons} ${classes.categoryButtons}`}
-            >
-              Frontend
-            </ToggleButton>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.BE}
-              onChange={() => {
-                setCategories({ ...categories, BE: !categories.BE });
-              }}
-              className={`${classes.languageButtons} ${classes.categoryButtons}`}
-            >
-              Backend
-            </ToggleButton>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.UI}
-              onChange={() => {
-                setCategories({ ...categories, UI: !categories.UI });
-              }}
-              className={`${classes.languageButtons} ${classes.categoryButtons}`}
-            >
-              UI/UX
-            </ToggleButton>
-            <ToggleButton
-              value=""
-              size="small"
-              selected={categories && categories.ML}
-              onChange={() => {
-                setCategories({ ...categories, ML: !categories.ML });
-              }}
-              className={`${classes.categoryButtons}`}
-            >
-              Machine Learning
-            </ToggleButton>
-          </div>
-        </div>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setAddSnippetDialog(false);
-            setSnippet("");
-            setCodeLanguage({
-              PY: false,
-              JAVA: false,
-              JS: false,
-              CPP: false,
-              CS: false,
-              HTML: false,
-              CSS: false,
-              RUBY: false,
-            });
-            setCategories({
-              SEC: false,
-              DB: false,
-              FE: false,
-              BE: false,
-              UI: false,
-              ML: false,
-            });
-          }}
-        >
+        <Button variant="contained" onClick={() => setAddSnippetDialog(false)}>
           Cancel
         </Button>
         <Button variant="contained" color="primary" onClick={() => handleAddNewSnippet()}>
