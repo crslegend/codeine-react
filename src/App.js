@@ -38,7 +38,6 @@ import PartnerRoute from "./components/routes/PartnerRoute";
 import MemberRoute from "./components/routes/MemberRoute";
 import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
-import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import AllNotifications from "./notification/ViewAllNotification";
 import NotificationDetail from "./notification/NotificationDetail";
@@ -46,6 +45,7 @@ import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketP
 import Membership from "./member/membership/Membership";
 import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
 import ViewTicketPage from "./member/dropdownMenu/helpdesk/ViewTicketPage";
+import CodeReviewDetails from "./codeReview/CodeReviewDetails";
 
 const App = () => {
   return (
@@ -79,7 +79,7 @@ const App = () => {
         user="admin"
       />
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
-      <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
+      <Route path="/codereview/:id" component={CodeReviewDetails} />
       <PartnerAndPublicRoute
         exact
         path="/partner"
