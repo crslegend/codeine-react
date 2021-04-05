@@ -304,6 +304,50 @@ const CreateNewTicket = ({
                 </div>
               );
             } else if (issueType === "INDUSTRY_PROJECT") {
+              return (
+                <div style={{ marginTop: "20px" }}>
+                  <Typography variant="h6">Projects</Typography>
+                  <FormControl
+                    margin="dense"
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <Select
+                      displayEmpty
+                      value={selectedTagging ? selectedTagging : ""}
+                      onChange={(e) => {
+                        setSelectedTagging(e.target.value);
+                      }}
+                      style={{ backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="" classes={{ root: classes.resize }}>
+                        <em>Select Project</em>
+                      </MenuItem>
+                      {industryProjects &&
+                        industryProjects.length > 0 &&
+                        industryProjects.map((project, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={
+                                user &&
+                                (user === "member"
+                                  ? project.industry_project.id
+                                  : project.id)
+                              }
+                              classes={{ root: classes.resize }}
+                            >
+                              {user &&
+                                (user === "member"
+                                  ? project.industry_project.title
+                                  : project.title)}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </div>
+              );
             } else if (issueType === "CODE_REVIEWS") {
             }
           })()}
