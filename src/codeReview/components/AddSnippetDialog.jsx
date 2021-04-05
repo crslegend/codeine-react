@@ -131,11 +131,11 @@ const AddSnippetDialog = ({
         <div className={classes.rightDiv}>
           <div style={{ marginBottom: "30px" }}>
             <label htmlFor="title">
-              <Typography variant="body2">Title</Typography>
+              <Typography variant="body2">Name</Typography>
             </label>
             <TextField
               id="title"
-              placeholder="Enter Snippet Title"
+              placeholder="Enter Snippet Name"
               autoComplete="off"
               variant="outlined"
               margin="dense"
