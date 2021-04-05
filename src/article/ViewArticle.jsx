@@ -307,6 +307,7 @@ const ViewArticle = (props) => {
   };
 
   const handleFlagClickClose = () => {
+    handleClose();
     setDialogFlagOpen(false);
   };
 

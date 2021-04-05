@@ -150,13 +150,12 @@ const PartnerNotificationPage = () => {
   const [notificationDetails, setNotificationDetails] = useState({
     title: "",
     description: "",
-    notification_type: "",
     userList: "",
     photo: "",
+    courseId: "",
   });
 
   const [coursesCreated, setCoursesCreated] = useState();
-  const [selectedCourse, setSelectedCourse] = useState();
 
   const createNotification = (e) => {
     e.preventDefault();
@@ -179,11 +178,11 @@ const PartnerNotificationPage = () => {
       });
       return;
     }
-    if (notificationDetails.notification_type === "") {
+    if (notificationDetails.courseId === "") {
       setSbOpen(true);
       setSnackbar({
         ...snackbar,
-        message: "Please select a valid notification type!",
+        message: "Please select a course!",
         severity: "error",
       });
       return;
@@ -203,22 +202,43 @@ const PartnerNotificationPage = () => {
 
     formData.append("title", notificationDetails.title);
     formData.append("description", notificationDetails.description);
-    formData.append("notification_type", notificationDetails.notification_type);
-    //formData.append("receiver_ids", JSON.stringify(selectedMemberList.rowIds));
+    formData.append("notification_type", "ANNOUCEMENT");
+    formData.append("course_id", notificationDetails.courseId);
 
     if (notificationPhoto && notificationPhoto.length > 0) {
       formData.append("photo", notificationPhoto[0].file);
     }
 
     Service.client
-      .post("/notifications", formData)
-      .then(() => {
-        setSbOpen(true);
-        setSnackbar({
-          ...snackbar,
-          message: "New Notification created",
-          severity: "success",
-        });
+      .get("/enrolled-members", {
+        params: { courseId: notificationDetails.courseId },
+      })
+      .then((res) => {
+        let memberIdList = [];
+        for (let i = 0; i < res.data.length; i++) {
+          memberIdList[i] = res.data[i].member.id;
+        }
+        formData.append("receiver_ids", JSON.stringify(memberIdList));
+        console.log("memberIdList");
+        console.log(memberIdList);
+        Service.client
+          .post("/notifications", formData)
+          .then(() => {
+            setSbOpen(true);
+            setSnackbar({
+              ...snackbar,
+              message: "New Notification created",
+              severity: "success",
+            });
+            setNotificationDetails({
+              title: "",
+              description: "",
+              userList: "",
+              photo: "",
+              courseId: "",
+            });
+          })
+          .catch();
       })
       .catch();
   };
@@ -271,79 +291,111 @@ const PartnerNotificationPage = () => {
       </AppBar>
 
       <TabPanel value={value} index={0}>
-        <div>
-          <TextField
-            margin="normal"
-            id="title"
-            label="Title"
-            name="title"
-            required
-            fullWidth
-            value={notificationDetails.title}
-            // error={firstNameError}
-            onChange={(event) =>
-              setNotificationDetails({
-                ...notificationDetails,
-                title: event.target.value,
-              })
-            }
-          />
-          <TextField
-            margin="normal"
-            id="description"
-            label="Description"
-            name="description"
-            multiline
-            rows={4}
-            required
-            fullWidth
-            value={notificationDetails.description}
-            // error={firstNameError}
-            onChange={(event) =>
-              setNotificationDetails({
-                ...notificationDetails,
-                description: event.target.value,
-              })
-            }
-          />
+        <Grid container>
+          <Grid item xs={8}>
+            <div>
+              <TextField
+                margin="normal"
+                id="title"
+                label="Title"
+                name="title"
+                required
+                fullWidth
+                value={notificationDetails.title}
+                // error={firstNameError}
+                onChange={(event) =>
+                  setNotificationDetails({
+                    ...notificationDetails,
+                    title: event.target.value,
+                  })
+                }
+              />
+              <TextField
+                margin="normal"
+                id="description"
+                label="Description"
+                name="description"
+                multiline
+                rows={4}
+                required
+                fullWidth
+                value={notificationDetails.description}
+                // error={firstNameError}
+                onChange={(event) =>
+                  setNotificationDetails({
+                    ...notificationDetails,
+                    description: event.target.value,
+                  })
+                }
+              />
 
-          <Select
-            displayEmpty
-            value={selectedCourse}
-            onChange={(e) => {
-              setSelectedCourse(e.target.value);
-            }}
-            style={{ backgroundColor: "#fff" }}
-          >
-            <MenuItem value="" classes={{ root: classes.resize }}>
-              <em>Select Course</em>
-            </MenuItem>
-            {coursesCreated &&
-              coursesCreated.length > 0 &&
-              coursesCreated.map((course, index) => {
-                return (
-                  <MenuItem
-                    key={index}
-                    value={course.id}
-                    classes={{ root: classes.resize }}
-                  >
-                    {course.title}
+              <div>
+                <Select
+                  displayEmpty
+                  value={notificationDetails.courseId}
+                  onChange={(e) => {
+                    setNotificationDetails({
+                      ...notificationDetails,
+                      courseId: e.target.value,
+                    });
+                  }}
+                  style={{ backgroundColor: "#fff" }}
+                  className={classes.formControl}
+                >
+                  <MenuItem value="" classes={{ root: classes.resize }}>
+                    <em>Select Course</em>
                   </MenuItem>
-                );
-              })}
-          </Select>
+                  {coursesCreated &&
+                    coursesCreated.length > 0 &&
+                    coursesCreated.map((course, index) => {
+                      return (
+                        <MenuItem
+                          key={index}
+                          value={course.id}
+                          classes={{ root: classes.resize }}
+                        >
+                          {course.title}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </div>
 
-          <Button
-            color="secondary"
-            variant="contained"
-            style={{ textTransform: "capitalize", marginTop: "10px" }}
-            onClick={(e) => {
-              createNotification(e);
-            }}
-          >
-            Send notification
-          </Button>
-        </div>
+              <Button
+                color="secondary"
+                variant="contained"
+                style={{ textTransform: "capitalize", marginTop: "10px" }}
+                onClick={(e) => {
+                  createNotification(e);
+                }}
+              >
+                Send notification
+              </Button>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            <DropzoneAreaBase
+              dropzoneClass={classes.dropzone}
+              dropzoneText="&nbsp;Drag and drop an image or click here&nbsp;"
+              acceptedFiles={["image/*"]}
+              filesLimit={1}
+              fileObjects={notificationPhoto}
+              //useChipsForPreview={true}
+              maxFileSize={5000000}
+              onAdd={(newPhoto) => {
+                setNotificationPhoto(newPhoto);
+              }}
+              onDelete={(deletePhotoObj) => {
+                setNotificationPhoto();
+              }}
+              previewGridProps={{
+                item: {
+                  xs: "auto",
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
       </TabPanel>
 
       <TabPanel value={value} index={1}></TabPanel>
