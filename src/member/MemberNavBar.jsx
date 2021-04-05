@@ -19,7 +19,6 @@ import { Dashboard, Timeline, Work } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-import Work from "@material-ui/icons/Work";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
