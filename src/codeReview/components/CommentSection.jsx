@@ -7,8 +7,9 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "80vh",
     position: "sticky",
-    top: 65,
+    top: 100,
     left: 0,
+    padding: theme.spacing(2),
   },
 }));
 
