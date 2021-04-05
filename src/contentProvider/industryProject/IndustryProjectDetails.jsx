@@ -13,6 +13,7 @@ import {
   CardMedia,
   CardContent,
   Paper,
+  Avatar,
 } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
@@ -23,7 +24,6 @@ import red from "@material-ui/core/colors/red";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import Toast from "../../components/Toast.js";
 import Label from "../../member/landing/components/Label";
-import ProjectCard from "./ProjectCard";
 import { Link, useHistory, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.darkred.main,
     },
-  }
+  },
 }));
 
 const IndustryProjectDetails = () => {
@@ -140,6 +140,9 @@ const IndustryProjectDetails = () => {
     partner_id: decoded.user_id,
   };
 
+  const [allApplicantList, setAllApplicantList] = useState([]);
+  let applicantsRows = allApplicantList;
+
   const getlndustryProject = () => {
     Service.client
       .get(`/industry-projects/${id}`)
@@ -155,6 +158,35 @@ const IndustryProjectDetails = () => {
           };
         }
         setCategories(newCategories);
+
+        let arr = [];
+        let obj = {};
+        for (
+          let i = 0;
+          i < res.data.industry_project_applications.length;
+          i++
+        ) {
+          obj = {
+            id: res.data.industry_project_applications[i].id,
+            name:
+              res.data.industry_project_applications[i].member.first_name +
+              " " +
+              res.data.industry_project_applications[i].member.last_name,
+            last_name:
+              res.data.industry_project_applications[i].member.last_name,
+            date_created:
+              res.data.industry_project_applications[i].date_created,
+            is_completed: res.data.is_completed,
+            is_accepted: res.data.industry_project_applications[i].is_accepted,
+            is_rejected: res.data.industry_project_applications[i].is_rejected,
+            profile_photo:
+              res.data.industry_project_applications[i].member.profile_photo,
+          };
+          arr.push(obj);
+        }
+
+        setAllApplicantList(arr);
+        applicantsRows = allApplicantList;
       })
       .catch((err) => console.log(err));
   };
@@ -244,8 +276,8 @@ const IndustryProjectDetails = () => {
 
   const handleDeleteSubmit = () => {
     const data = {
-      is_available: true
-    }
+      is_available: true,
+    };
 
     Service.client
       .patch(`/industry-projects/${id}`, { is_available: false })
@@ -263,10 +295,9 @@ const IndustryProjectDetails = () => {
         });
       })
       .then((res) => {
-        history.push("/partner/home/industryproject")
-      })
-
-  }
+        history.push("/partner/home/industryproject");
+      });
+  };
 
   const handleClose = () => {
     setOpenEditDialog(false);
@@ -280,6 +311,58 @@ const IndustryProjectDetails = () => {
   const handleOpenDeleteDialog = () => {
     setOpenDeleteDialog(true);
   };
+
+  const formatStatus = (status) => {
+    if (status) {
+      return "Yes";
+    } else {
+      return "No";
+    }
+  };
+
+  const applicationsColumns = [
+    {
+      field: "profile_photo",
+      headerName: " ",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
+    { field: "name", headerName: "Name", flex: 1 },
+    {
+      field: "is_accepted",
+      headerName: "Accepted",
+      renderCell: (params) => (
+        <div>
+          {params.value ? (
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
+          ) : (
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
+          )}
+        </div>
+      ),
+      flex: 1,
+    },
+    {
+      field: "is_rejected",
+      headerName: "Rejected",
+      renderCell: (params) => (
+        <div>
+          {params.value ? (
+            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
+          ) : (
+            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
+          )}
+        </div>
+      ),
+      flex: 1,
+    },
+    {
+      field: "date_created",
+      headerName: "Date Applied",
+      valueFormatter: (params) => formatDate(params.value),
+      flex: 1,
+    },
+  ];
 
   return (
     <Fragment>
@@ -467,16 +550,16 @@ const IndustryProjectDetails = () => {
               <Paper
                 style={{ height: "650px", width: "100%", marginTop: "20px" }}
               >
-                {/* <DataGrid
+                <DataGrid
                   className={classes.dataGrid}
-                  rows={applications}
+                  rows={applicantsRows}
                   columns={applicationsColumns.map((column) => ({
                     ...column,
                   }))}
                   pageSize={10}
                   disableSelectionOnClick
-                  onRowClick={(e) => handleClickOpenApplication(e)}
-                /> */}
+                  // onRowClick={(e) => handleClickOpenApplication(e)}
+                />
               </Paper>
             </div>
             <Dialog
@@ -488,7 +571,9 @@ const IndustryProjectDetails = () => {
               <DialogTitle id="form-dialog-title">
                 Delete Industry Project?
               </DialogTitle>
-              <DialogContent>Are you sure you want to delete this industry project?</DialogContent>
+              <DialogContent>
+                Are you sure you want to delete this industry project?
+              </DialogContent>
               <DialogActions style={{ marginTop: 40 }}>
                 <Button
                   onClick={handleClose}
