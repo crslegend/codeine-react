@@ -1,9 +1,20 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Divider, Paper, Tab, Tabs, Typography } from "@material-ui/core";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+} from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import SkillSetChart from "./SkillSetChart";
+import ApplicantDemographics from "./ApplicantDemographics";
+import { Info } from "@material-ui/icons";
+import TooltipMui from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   tab: {
@@ -54,7 +65,7 @@ const ProjectTabs = ({
   applicantDemographics,
 }) => {
   const classes = useStyles();
-  // console.log(applicantSkills);
+  // console.log(applicantDemographics);
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1];
@@ -134,15 +145,37 @@ const ProjectTabs = ({
                     <div style={{ marginTop: "20px" }}>
                       <Paper className={classes.paper}>
                         <div
-                          style={{ textAlign: "center", marginBottom: "20px" }}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
                         >
-                          <Typography variant="h6">
-                            Total Views for This Project
-                          </Typography>
-                          <Typography variant="h1" className={classes.numbers}>
-                            {viewerSkills && viewerSkills.unique_member_views}
-                          </Typography>
+                          <div>
+                            <div style={{ display: "flex" }}>
+                              <Typography variant="h6">Total Views</Typography>
+                              <TooltipMui
+                                title={
+                                  <Typography variant="body2">
+                                    Total number of unique views for this
+                                    project
+                                  </Typography>
+                                }
+                              >
+                                <IconButton disableRipple size="small">
+                                  <Info fontSize="small" color="primary" />
+                                </IconButton>
+                              </TooltipMui>
+                            </div>
+                            <Typography
+                              variant="h1"
+                              className={classes.numbers}
+                            >
+                              {viewerSkills && viewerSkills.unique_member_views}
+                            </Typography>
+                          </div>
                         </div>
+
                         <Typography variant="h6" style={{ fontWeight: 600 }}>
                           Average Skills
                         </Typography>
@@ -252,6 +285,9 @@ const ProjectTabs = ({
                         >
                           Applicant Demographics
                         </Typography>
+                        <ApplicantDemographics
+                          memberDemographics={applicantDemographics}
+                        />
                       </Paper>
                     </div>
                   );
