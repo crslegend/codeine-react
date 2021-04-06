@@ -5,6 +5,8 @@ import Service from "../../AxiosService";
 import { IconButton } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
 import ViewTicket from "../../helpdeskComponents/ViewTicket";
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -47,6 +49,16 @@ const ViewTicketPage = () => {
         getEnquiry();
         setReply();
         setFile();
+      })
+      .catch((err) => console.log(err));
+
+    const decoded = jwt_decode(Cookies.get("t1"));
+    Service.client
+      .patch(`helpdesk/tickets/${id}/assign`, {
+        admin_id: decoded.user_id,
+      })
+      .then((res) => {
+        // console.log(res);
       })
       .catch((err) => console.log(err));
   };

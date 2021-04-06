@@ -237,7 +237,7 @@ const CreateNewTicketPage = () => {
       if (!selectedTagging || selectedTagging === "") {
         setSbOpen(true);
         setSnackbar({
-          message: "Please select the specific consultation!",
+          message: "Please select the specific code review!",
           severity: "error",
           anchorOrigin: {
             vertical: "bottom",

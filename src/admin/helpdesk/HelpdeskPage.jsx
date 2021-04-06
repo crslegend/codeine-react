@@ -81,7 +81,7 @@ const AdminHelpdeskPage = () => {
     if (!obj) {
       return "Not Assigned Yet";
     }
-    return "Somebody";
+    return obj.first_name + " " + obj.last_name;
   };
 
   const formatDate = (date) => {
