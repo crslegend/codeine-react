@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Box, Divider, Paper, Tab, Tabs, Typography } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
+import SkillSetChart from "./SkillSetChart";
 
 const useStyles = makeStyles((theme) => ({
   tab: {
@@ -14,6 +15,11 @@ const useStyles = makeStyles((theme) => ({
   tabPanel: {
     minHeight: "200px",
     marginBottom: "20px",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3, 5),
   },
 }));
 
@@ -37,8 +43,15 @@ function TabPanel(props) {
   );
 }
 
-const ProjectTabs = ({ applicantsRows, applicationsColumns }) => {
+const ProjectTabs = ({
+  applicantsRows,
+  applicationsColumns,
+  viewerSkills,
+  applicantSkills,
+  applicantDemographics,
+}) => {
   const classes = useStyles();
+  console.log(viewerSkills);
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1];
@@ -112,6 +125,98 @@ const ProjectTabs = ({ applicantsRows, applicationsColumns }) => {
                         />
                       </Paper>
                     </Fragment>
+                  );
+                } else if (value === 1) {
+                  return (
+                    <div style={{ marginTop: "20px" }}>
+                      <Paper className={classes.paper}>
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          Average Skills
+                        </Typography>
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "20px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              marginRight: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Project Viewers
+                            </Typography>
+                            <SkillSetChart />
+                          </div>
+                          <div
+                            style={{
+                              marginLeft: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Project Applicants
+                            </Typography>
+                            <SkillSetChart />
+                          </div>
+                        </div>
+
+                        <Typography
+                          variant="h6"
+                          style={{ fontWeight: 600, paddingTop: "20px" }}
+                        >
+                          Average Language Proficiencies
+                        </Typography>
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "20px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              marginRight: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Project Viewers
+                            </Typography>
+                            <SkillSetChart />
+                          </div>
+                          <div
+                            style={{
+                              marginLeft: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Project Applicants
+                            </Typography>
+                            <SkillSetChart />
+                          </div>
+                        </div>
+
+                        <Typography
+                          variant="h6"
+                          style={{ fontWeight: 600, paddingTop: "20px" }}
+                        >
+                          Applicant Demographics
+                        </Typography>
+                      </Paper>
+                    </div>
                   );
                 }
               })()}

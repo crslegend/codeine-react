@@ -108,6 +108,10 @@ const IndustryProjectDetails = () => {
   const [editIndustryProject, setEditIndustryProject] = useState();
   const { id } = useParams();
 
+  const [viewerSkills, setViewerSkills] = useState();
+  const [applicantSkills, setApplicantSkills] = useState();
+  const [applicantDemographics, setApplicantDemographics] = useState();
+
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -196,8 +200,40 @@ const IndustryProjectDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const getProjectAnalytics = async () => {
+    Service.client
+      .get(`/analytics/ip-viewer-average-skill`)
+      .then((res) => {
+        // console.log(res);
+
+        const obj = res.data.breakdown_by_industry_project.filter(
+          (project) => project.ip_id === id
+        );
+        // console.log(obj);
+        if (obj.length > 0) {
+          setViewerSkills(obj[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/analytics/ip-applicant-average-skill`)
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/analytics/ip-applicant-demographics`)
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getlndustryProject();
+    getProjectAnalytics();
   }, []);
 
   const handleSubmit = () => {
@@ -566,6 +602,9 @@ const IndustryProjectDetails = () => {
                 <ProjectTabs
                   applicantsRows={applicantsRows}
                   applicationsColumns={applicationsColumns}
+                  viewerSkills={viewerSkills}
+                  applicantSkills={applicantSkills}
+                  applicantDemographics={applicantDemographics}
                 />
               </Grid>
             </div>
