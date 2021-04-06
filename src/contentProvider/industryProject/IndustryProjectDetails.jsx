@@ -220,6 +220,13 @@ const IndustryProjectDetails = () => {
       .get(`/analytics/ip-applicant-average-skill`)
       .then((res) => {
         // console.log(res);
+        const obj = res.data.breakdown_by_industry_project.filter(
+          (project) => project.ip_id === id
+        );
+        // console.log(obj);
+        if (obj.length > 0) {
+          setApplicantSkills(obj[0]);
+        }
       })
       .catch((err) => console.log(err));
 

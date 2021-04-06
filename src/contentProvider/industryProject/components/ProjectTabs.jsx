@@ -21,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     padding: theme.spacing(3, 5),
   },
+  numbers: {
+    color: theme.palette.primary.main,
+  },
 }));
 
 function TabPanel(props) {
@@ -51,7 +54,7 @@ const ProjectTabs = ({
   applicantDemographics,
 }) => {
   const classes = useStyles();
-  console.log(viewerSkills);
+  // console.log(applicantSkills);
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1];
@@ -130,6 +133,16 @@ const ProjectTabs = ({
                   return (
                     <div style={{ marginTop: "20px" }}>
                       <Paper className={classes.paper}>
+                        <div
+                          style={{ textAlign: "center", marginBottom: "20px" }}
+                        >
+                          <Typography variant="h6">
+                            Total Views for This Project
+                          </Typography>
+                          <Typography variant="h1" className={classes.numbers}>
+                            {viewerSkills && viewerSkills.unique_member_views}
+                          </Typography>
+                        </div>
                         <Typography variant="h6" style={{ fontWeight: 600 }}>
                           Average Skills
                         </Typography>
@@ -148,10 +161,16 @@ const ProjectTabs = ({
                               width: "50%",
                             }}
                           >
-                            <Typography variant="body1">
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
                               Project Viewers
                             </Typography>
-                            <SkillSetChart />
+                            <SkillSetChart
+                              data={viewerSkills.average_skill_set}
+                              type="skill"
+                            />
                           </div>
                           <div
                             style={{
@@ -161,10 +180,16 @@ const ProjectTabs = ({
                               width: "50%",
                             }}
                           >
-                            <Typography variant="body1">
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
                               Project Applicants
                             </Typography>
-                            <SkillSetChart />
+                            <SkillSetChart
+                              data={applicantSkills.average_skill_set}
+                              type="skill"
+                            />
                           </div>
                         </div>
 
@@ -189,10 +214,16 @@ const ProjectTabs = ({
                               width: "50%",
                             }}
                           >
-                            <Typography variant="body1">
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
                               Project Viewers
                             </Typography>
-                            <SkillSetChart />
+                            <SkillSetChart
+                              data={viewerSkills.average_skill_set}
+                              type="language"
+                            />
                           </div>
                           <div
                             style={{
@@ -202,10 +233,16 @@ const ProjectTabs = ({
                               width: "50%",
                             }}
                           >
-                            <Typography variant="body1">
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
                               Project Applicants
                             </Typography>
-                            <SkillSetChart />
+                            <SkillSetChart
+                              data={applicantSkills.average_skill_set}
+                              type="language"
+                            />
                           </div>
                         </div>
 
