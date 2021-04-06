@@ -125,7 +125,7 @@ const SkillSetChart = ({ data, type }) => {
 
   return (
     <div>
-      <ResponsiveContainer width="100%" height={380}>
+      <ResponsiveContainer width="100%" height={310}>
         <RadarChart
           width="100%"
           height="100%"
