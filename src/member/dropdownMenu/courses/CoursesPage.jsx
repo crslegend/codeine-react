@@ -53,8 +53,8 @@ const styles = makeStyles((theme) => ({
   },
   cardroot: {
     width: "300px",
-    padding: "10px 10px 0px",
-    marginRight: "50px",
+    padding: "10px 10px 10px",
+    marginRight: "35px",
     border: "1px solid",
     borderRadius: 0,
   },
@@ -468,7 +468,7 @@ const CoursesPage = () => {
                     <Box style={{ height: "10%" }}>
                       <LinearProgress
                         variant="determinate"
-                        style={{ height: "10px" }}
+                        style={{ height: "10px", marginBottom: "2px" }}
                         value={progressArr && parseInt(getProgress(course))}
                       />
                       <div
@@ -477,7 +477,7 @@ const CoursesPage = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <Typography variant="body2">
+                        <Typography variant="subtitle1">
                           {getProgress(course)}% complete
                         </Typography>
                         {getProgress(course) === "100.00" ? (
