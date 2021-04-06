@@ -62,6 +62,17 @@ const AdminHelpdeskPage = () => {
   }, [searchValue]);
 
   const capitalizeFirstLetter = (string) => {
+    // console.log(string);
+    if (string === "INDUSTRY_PROJECT" || string === "CODE_REVIEWS") {
+      const arr = string.split("_");
+      return (
+        arr[0].charAt(0).toUpperCase() +
+        arr[0].slice(1).toLowerCase() +
+        " " +
+        arr[1].charAt(0).toUpperCase() +
+        arr[1].slice(1).toLowerCase()
+      );
+    }
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
@@ -119,7 +130,7 @@ const AdminHelpdeskPage = () => {
       field: "ticket_type",
       headerName: "Type",
       width: 180,
-      valueFormatter: (params) => capitalizeFirstLetter(params.value[0]),
+      valueFormatter: (params) => capitalizeFirstLetter(params.value),
     },
     {
       field: "timestamp",
