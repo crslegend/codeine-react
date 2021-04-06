@@ -7,10 +7,11 @@ import {
   MenuItem,
   Select,
   Typography,
+  Breadcrumbs,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { useParams } from "react-router";
-// import { useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
+import { useLocation } from "react-router";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
@@ -26,6 +27,14 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
   courses: {
     paddingTop: "65px",
@@ -87,8 +96,10 @@ const styles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = styles();
+
+  const history = useHistory();
   const { id } = useParams();
-  // const history = useHistory();
+  const location = useLocation();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -114,12 +125,13 @@ const ViewAllCourses = () => {
     };
     //console.log(sort);
 
-    if (id !== null || id !== undefined) {
+    if ((id !== null || id !== undefined) && location.pathname !== "/courses") {
       queryParams = {
         ...queryParams,
         coding_language: id,
       };
     }
+    console.log(location.pathname);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -234,7 +246,31 @@ const ViewAllCourses = () => {
   return (
     <div className={classes.root}>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      {console.log(location.pathname)}
       <div className={classes.courses}>
+        {id && id ? (
+          <Breadcrumbs
+            style={{ margin: "10px 0px" }}
+            separator="›"
+            aria-label="breadcrumb"
+          >
+            <Link
+              className={classes.backLink}
+              onClick={() => {
+                history.push("/courses");
+                window.location.reload();
+              }}
+            >
+              <Typography style={{ marginRight: "8px" }} variant="body1">
+                All Courses
+              </Typography>
+            </Link>
+            <Typography variant="body1">{handlePageNaming()}</Typography>
+          </Breadcrumbs>
+        ) : (
+          ""
+        )}
+
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
             {handlePageNaming()}
