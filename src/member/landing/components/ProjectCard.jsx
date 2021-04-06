@@ -4,7 +4,7 @@ import {
   Typography,
   Card,
   Grid,
-  CardMedia,
+  Avatar,
   CardContent,
   CardActionArea,
 } from "@material-ui/core";
@@ -22,6 +22,9 @@ const styles = makeStyles((theme) => ({
   cardmedia: {
     height: "100%",
     width: "7vw",
+  },
+  orgavatar: {
+    objectFit: "contain",
   },
 }));
 
@@ -50,70 +53,74 @@ const ProjectCard = (props) => {
         to={`/industryprojects/${project && project.id}`}
         component={CardActionArea}
       >
-      <CardActionArea>
-        <Grid container>
-          <Grid item xs={1}>
-            <CardMedia
-              className={classes.cardmedia}
-              image={project.partner.partner.organization.organization_photo}
-              title="Organisation Photo"
-            ></CardMedia>
-          </Grid>
-          <Grid item xs={11}>
-            <CardContent>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
+        <CardActionArea>
+          <Grid container>
+            <Grid item xs={1}>
+              <Avatar
+                className={classes.cardmedia}
+                src={project.partner.partner.organization.organization_photo}
+                title="Organisation Photo"
+                classes={{
+                  img: classes.orgavatar,
                 }}
-              >
-                <Typography
+              />
+            </Grid>
+            <Grid item xs={11}>
+              <CardContent>
+                <div
                   style={{
-                    fontWeight: 600,
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
-                  variant="h5"
                 >
-                  {project && project.title}
-                </Typography>
+                  <Typography
+                    style={{
+                      fontWeight: 600,
+                    }}
+                    variant="h5"
+                  >
+                    {project && project.title}
+                  </Typography>
+                  <Typography variant="h6">
+                    {project &&
+                      formatDate(project.start_date) +
+                        " to " +
+                        formatDate(project.end_date)}
+                  </Typography>
+                </div>
                 <Typography variant="h6">
                   {project &&
-                    formatDate(project.start_date) +
-                      " to " +
-                      formatDate(project.end_date)}
+                    project.partner.partner.organization.organization_name}
                 </Typography>
-              </div>
-              <Typography variant="h6">
-                {project &&
-                  project.partner.partner.organization.organization_name}
-              </Typography>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "5px",
-                }}
-              >
-                <div style={{ display: "flex" }}>
-                  {project &&
-                    project.categories.map((category) => (
-                      <Label label={category} />
-                    ))}
-                  {console.log(project)}
-                </div>
-
-                <Typography
+                <div
                   style={{
-                    color: "#921515",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "5px",
                   }}
-                  variant="h6"
                 >
-                  apply by {project && formatDate(project.application_deadline)}
-                </Typography>
-              </div>
-            </CardContent>
+                  <div style={{ display: "flex" }}>
+                    {project &&
+                      project.categories.map((category) => (
+                        <Label label={category} />
+                      ))}
+                    {console.log(project)}
+                  </div>
+
+                  <Typography
+                    style={{
+                      color: "#921515",
+                    }}
+                    variant="h6"
+                  >
+                    apply by{" "}
+                    {project && formatDate(project.application_deadline)}
+                  </Typography>
+                </div>
+              </CardContent>
+            </Grid>
           </Grid>
-        </Grid>
-      </CardActionArea>
+        </CardActionArea>
       </Link>
     </Card>
   );

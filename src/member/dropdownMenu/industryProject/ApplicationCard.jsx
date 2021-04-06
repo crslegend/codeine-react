@@ -24,9 +24,6 @@ const styles = makeStyles((theme) => ({
     border: "1px solid",
     borderRadius: 0,
   },
-  cardmedia: {
-    objectFit: "contain",
-  },
   deleteButton: {
     backgroundColor: theme.palette.red.main,
     color: "white",
@@ -34,28 +31,19 @@ const styles = makeStyles((theme) => ({
       backgroundColor: theme.palette.darkred.main,
     },
   },
-  avatar: {
-    fontSize: "80px",
-    width: "150px",
-    height: "150px",
+  cardmedia: {
+    height: "100%",
+    width: "7vw",
+  },
+  orgavatar: {
+    objectFit: "contain",
   },
 }));
 
 const ApplicationCard = (props) => {
   const classes = styles();
-  const { application, getAllApplications } = props;
+  const { application, getAllApplications, setSnackbar, setSbOpen } = props;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
 
   const formatDate = (date) => {
     const options = {
@@ -99,16 +87,8 @@ const ApplicationCard = (props) => {
     <div>
       <Card elevation={0} className={classes.root}>
         <Grid container>
-          <Grid item xs={1.5}>
+          <Grid item xs={1}>
             {application && (
-              //   <CardMedia
-              //     className={classes.cardmedia}
-              //     image={
-              //       application.industry_project.partner.partner.organization
-              //         .organization_photo
-              //     }
-              //     title="Organisation Photo"
-              //   ></CardMedia>
               <Avatar
                 alt="Pic"
                 src={
@@ -116,13 +96,13 @@ const ApplicationCard = (props) => {
                     .organization_photo
                 }
                 classes={{
-                  img: classes.cardmedia,
+                  img: classes.orgavatar,
                 }}
-                className={classes.avatar}
+                className={classes.cardmedia}
               />
             )}
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={11}>
             <CardContent>
               <div
                 style={{
@@ -138,44 +118,19 @@ const ApplicationCard = (props) => {
                 >
                   {application && application.industry_project.title}
                 </Typography>
-                {/* <Button
+                <Button
                   onClick={() => setOpenDeleteDialog(true)}
                   className={classes.deleteButton}
                   variant="contained"
                 >
                   Delete
-                </Button> */}
+                </Button>
               </div>
               <Typography variant="h6">
                 {application &&
                   application.industry_project.partner.partner.organization
                     .organization_name}
               </Typography>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "5px",
-                }}
-              >
-                {/* <div style={{ display: "flex" }}>
-                {application &&
-                  application.industry_project.categories.map((category) => (
-                    <Label label={category} />
-                  ))}
-                {console.log(application)}
-              </div> */}
-
-                {/* <Typography
-                style={{
-                  color: "#921515",
-                }}
-                variant="h6"
-              >
-                apply by{" "} 
-                {application && formatDate(application.industry_project.application_deadline)}
-              </Typography> */}
-              </div>
               <Typography variant="h6">
                 Application submitted{" "}
                 {application && formatDate(application.date_created)}
@@ -186,24 +141,6 @@ const ApplicationCard = (props) => {
                   ? "accepted"
                   : "pending"}
               </Typography>
-            </CardContent>
-          </Grid>
-          <Grid item>
-            <CardContent>
-              <div
-                style={{
-                //   display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <Button
-                  onClick={() => setOpenDeleteDialog(true)}
-                  className={classes.deleteButton}
-                  variant="contained"
-                >
-                  Delete
-                </Button>
-              </div>
             </CardContent>
           </Grid>
         </Grid>

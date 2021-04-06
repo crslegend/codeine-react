@@ -231,6 +231,8 @@ const IndustryProject = () => {
                     getAllApplications={() => getAllApplications()}
                     key={application.id}
                     application={application}
+                    setSbOpen={setSbOpen}
+                    setSnackbar={setSnackbar}
                   />
                 ))
             ) : (
