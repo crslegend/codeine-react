@@ -72,6 +72,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "3px",
     backgroundColor: "#f2f2f2",
   },
+  viewAll: {
+    fontWeight: 600,
+    margin: "25px 15px 20px 0px",
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
 }));
 
 function TabPanel(props) {
@@ -315,7 +324,7 @@ const PartnerArticlesList = (props) => {
         </div>
       </div>
       <Grid container>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <AppBar
             position="static"
             classes={{
@@ -570,35 +579,33 @@ const PartnerArticlesList = (props) => {
               })}
           </TabPanel>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Card
             style={{
               marginLeft: "20px",
             }}
           >
-            <label>
-              <Typography
-                variant="h6"
-                style={{
-                  fontWeight: 600,
-                  margin: "20px 0px 20px 15px",
-                  display: "inline-block",
-                }}
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <label>
+                <Typography
+                  variant="h6"
+                  style={{
+                    fontWeight: 600,
+                    margin: "20px 0px 20px 15px",
+                  }}
+                >
+                  More from Articles
+                </Typography>
+              </label>
+              <Link
+                style={{ textDecoration: "none" }}
+                onClick={() => history.push(`/viewarticles`)}
               >
-                More from
-              </Typography>
-            </label>
-            <Link style={{ textDecoration: "none" }} to="/viewarticles">
-              <Typography
-                variant="h6"
-                color="primary"
-                display="inline"
-                style={{ fontWeight: 600, textDecoration: "none" }}
-              >
-                {" "}
-                Articles
-              </Typography>
-            </Link>
+                <Typography variant="body2" className={classes.viewAll}>
+                  VIEW ALL
+                </Typography>
+              </Link>
+            </div>
             {allArticles && allArticles.length > 0 ? (
               allArticles.map((article, index) => {
                 return (
