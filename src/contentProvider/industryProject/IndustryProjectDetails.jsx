@@ -246,7 +246,7 @@ const IndustryProjectDetails = () => {
   };
 
   useEffect(() => {
-    getlndustryProject();
+    getIndustryProject();
     getProjectAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
