@@ -83,8 +83,6 @@ const CodeReviewDetails = () => {
   const [codeComments, setCodeComments] = useState([]);
   const [selectedLine, setSelectedLine] = useState(1);
 
-  console.log(codeComments);
-
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);

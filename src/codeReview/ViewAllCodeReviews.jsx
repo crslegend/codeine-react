@@ -127,7 +127,7 @@ const ViewAllCodeReviews = () => {
       Service.client
         .get(`/code-reviews/member/`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
@@ -135,7 +135,7 @@ const ViewAllCodeReviews = () => {
       Service.client
         .get(`/code-reviews`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
