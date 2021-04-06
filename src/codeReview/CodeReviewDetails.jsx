@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     padding: theme.spacing(4, 8),
-    width: "90%",
+    width: "100%",
     margin: `${theme.spacing(8)}px auto 0`,
   },
   flex: {
@@ -34,11 +34,11 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   codeContainer: {
-    width: "70%",
+    width: "65%",
     marginRight: theme.spacing(2),
   },
   commentContainer: {
-    width: "30%",
+    width: "35%",
   },
   avatar: {
     marginRight: theme.spacing(1),
@@ -84,9 +84,6 @@ const CodeReviewDetails = () => {
   const [selectedLine, setSelectedLine] = useState(1);
 
   console.log(code);
-  console.log(codeComments);
-  console.log(replyToCommentArr);
-  console.log(selectedLine);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -109,7 +106,7 @@ const CodeReviewDetails = () => {
     Service.client
       .get(`/code-reviews/${id}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setCode(res.data);
       })
       .catch((err) => console.log(err));
@@ -146,8 +143,6 @@ const CodeReviewDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(user);
-
   return (
     <div className={classes.root}>
       <Navbar
@@ -168,8 +163,8 @@ const CodeReviewDetails = () => {
         <div className={classes.flex} style={{ marginBottom: "8px" }}>
           <Avatar
             className={classes.avatar}
-            alt={user ? user.first_name : "Profile photo"}
-            src={user && user.profile_photo}
+            alt={code ? code.user.first_name : "Profile photo"}
+            src={code && code.user.profile_photo}
           />
           <div>
             <Typography variant="h6">
@@ -224,7 +219,7 @@ const CodeReviewDetails = () => {
                 ))}
           </div>
           <div className={classes.commentContainer}>
-            <CommentSection />
+            <CommentSection comments={codeComments} selectedLine={selectedLine} reviewAuthor={code && code.user} />
           </div>
         </div>
       </div>
