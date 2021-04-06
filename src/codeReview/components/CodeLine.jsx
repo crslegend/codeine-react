@@ -5,11 +5,8 @@ import { Button, Card, CardActions, CardContent, IconButton } from "@material-ui
 import { AddCircle } from "@material-ui/icons";
 import hljs from "highlight.js";
 
-import "react-quill/dist/quill.snow.css";
-import "./quill.css";
-import ReactQuill from "react-quill";
-
 import Service from "../../AxiosService";
+import CommentTextArea from "./CommentTextArea";
 
 const useStyles = makeStyles((theme) => ({
   flex: {
@@ -55,31 +52,7 @@ const useStyles = makeStyles((theme) => ({
       transform: "scale(1.2)",
     },
   },
-  cardRoot: {
-    margin: theme.spacing(1, 0),
-  },
-  quill: {
-    minHeight: "100px",
-  },
-  cardActions: {
-    padding: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    paddingTop: 0,
-    justifyContent: "flex-end",
-  },
-  button: {
-    textTransform: "none",
-  },
 }));
-
-const modules = {
-  toolbar: [
-    ["bold", "italic", "underline", "strike", "code-block"],
-    ["link", "image"],
-  ],
-};
-
-const formats = ["bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link"];
 
 const CodeLine = ({ index, code, language, selectedLine, setSelectedLine, loggedIn, getCodeReviewComments }) => {
   const classes = useStyles();
@@ -130,31 +103,12 @@ const CodeLine = ({ index, code, language, selectedLine, setSelectedLine, logged
         </div>
       </div>
       {addComment && (
-        <Card className={classes.cardRoot}>
-          <CardContent>
-            <ReactQuill
-              theme="snow"
-              modules={modules}
-              formats={formats}
-              value={comment}
-              onChange={(content) => setComment(content)}
-            />
-          </CardContent>
-          <CardActions className={classes.cardActions}>
-            <Button className={classes.button} variant="outlined" onClick={() => setAddComment(false)}>
-              Cancel
-            </Button>
-            <Button
-              className={classes.button}
-              variant="contained"
-              color="primary"
-              disabled={comment === ""}
-              onClick={() => createComment()}
-            >
-              Add comment
-            </Button>
-          </CardActions>
-        </Card>
+        <CommentTextArea
+          comment={comment}
+          setComment={setComment}
+          closeCommentTextArea={() => setAddComment(false)}
+          onSubmit={() => createComment()}
+        />
       )}
     </Fragment>
   );

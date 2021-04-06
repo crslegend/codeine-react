@@ -76,14 +76,14 @@ const CodeReviewDetails = () => {
   // navbar states
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   // initializing states
   const [code, setCode] = useState();
   const [codeComments, setCodeComments] = useState([]);
-  const [replyToCommentArr, setReplyToCommentArr] = useState([]);
   const [selectedLine, setSelectedLine] = useState(1);
 
-  console.log(code);
+  console.log(codeComments);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -117,23 +117,10 @@ const CodeReviewDetails = () => {
       .get(`/code-reviews/${id}/comments`)
       .then((res) => {
         // console.log(res.data);
-
-        let parentCommentArr = [];
-        let replyCommentArr = [];
-        for (let i = 0; i < res.data.length; i++) {
-          if (res.data[i].parent_comment) {
-            replyCommentArr.push(res.data[i]);
-          } else {
-            parentCommentArr.push(res.data[i]);
-          }
-        }
-        // setCodeComments([]); // to reset the state of sidenotes
-        parentCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
-        setCodeComments(parentCommentArr);
-        replyCommentArr.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1));
-        setReplyToCommentArr(replyCommentArr);
+        setCodeComments(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .then(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -142,6 +129,10 @@ const CodeReviewDetails = () => {
     getCodeReviewComments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (loading) {
+    return "Loading";
+  }
 
   return (
     <div className={classes.root}>
@@ -174,7 +165,7 @@ const CodeReviewDetails = () => {
               /{code && code.title}
             </Typography>
             <Typography variant="body2" style={{ opacity: 0.8 }}>
-              Created {code && calculateDateInterval(code.timestamp)}
+              submitted {code && calculateDateInterval(code.timestamp)}
             </Typography>
           </div>
         </div>
@@ -219,7 +210,12 @@ const CodeReviewDetails = () => {
                 ))}
           </div>
           <div className={classes.commentContainer}>
-            <CommentSection comments={codeComments} selectedLine={selectedLine} reviewAuthor={code && code.user} />
+            <CommentSection
+              comments={codeComments}
+              selectedLine={selectedLine}
+              reviewAuthor={code && code.user}
+              getCodeReviewComments={getCodeReviewComments}
+            />
           </div>
         </div>
       </div>
