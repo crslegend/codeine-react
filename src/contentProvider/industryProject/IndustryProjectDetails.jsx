@@ -12,13 +12,12 @@ import {
   Grid,
   CardMedia,
   CardContent,
-  Paper,
   Avatar,
   Chip,
 } from "@material-ui/core";
-import { DataGrid } from "@material-ui/data-grid";
+// import { DataGrid } from "@material-ui/data-grid";
 import green from "@material-ui/core/colors/green";
-import SearchBar from "material-ui-search-bar";
+// import SearchBar from "material-ui-search-bar";
 import { ToggleButton } from "@material-ui/lab";
 import { Edit, ArrowBack } from "@material-ui/icons";
 import { KeyboardDatePicker } from "@material-ui/pickers";
@@ -32,6 +31,7 @@ import Cookies from "js-cookie";
 
 import Service from "../../AxiosService";
 import { formatISO, addDays } from "date-fns";
+import ProjectTabs from "./components/ProjectTabs.jsx";
 
 const useStyles = makeStyles((theme) => ({
   titleSection: {
@@ -549,12 +549,12 @@ const IndustryProjectDetails = () => {
                   </CardContent>
                 </div>
               </Grid>
-              <Typography
+              {/* <Typography
                 variant="h5"
                 style={{ marginTop: 10, marginBottom: "5px", color: "#437FC7" }}
               >
                 Applicants
-              </Typography>
+              </Typography> */}
               {/* <Typography
                 variant="body1"
                 style={{ marginBottom: "30px", color: "#000000" }}
@@ -562,58 +562,12 @@ const IndustryProjectDetails = () => {
                 Click on the respective applications below to view application
                 details.
               </Typography> */}
-              <Grid item xs={12} className={classes.searchSection}>
-                <div className={classes.searchBar}>
-                  <SearchBar
-                    placeholder="Search applications..."
-                    // value={searchValue}
-                    // onChange={(newValue) => setSearchValue(newValue)}
-                    // onRequestSearch={handleRequestSearch}
-                    // onCancelSearch={handleCancelSearch}
-                    // classes={{
-                    //   input: classes.input,
-                    // }}
-                  />
-                </div>
-                <div>
-                  {/* <FormControl
-                    variant="outlined"
-                    className={classes.formControl}
-                  >
-                    <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
-                    <Select
-                      label="Filter by"
-                      value={sortMethod}
-                      onChange={(event) => {
-                        onSortChange(event);
-                      }}
-                      style={{ height: 47, backgroundColor: "#fff" }}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value="upcoming">
-                        Upcoming Consultations
-                      </MenuItem>
-                      <MenuItem value="past">Past Applications</MenuItem>
-                    </Select>
-                  </FormControl> */}
-                </div>
-              </Grid>
-              <Paper
-                style={{ height: "650px", width: "100%", marginTop: "20px" }}
-              >
-                <DataGrid
-                  className={classes.dataGrid}
-                  rows={applicantsRows}
-                  columns={applicationsColumns.map((column) => ({
-                    ...column,
-                  }))}
-                  pageSize={10}
-                  disableSelectionOnClick
-                  // onRowClick={(e) => handleClickOpenApplication(e)}
+              <Grid item xs={12} style={{ marginTop: "10px" }}>
+                <ProjectTabs
+                  applicantsRows={applicantsRows}
+                  applicationsColumns={applicationsColumns}
                 />
-              </Paper>
+              </Grid>
             </div>
             <Dialog
               open={openCompleteDialog}
