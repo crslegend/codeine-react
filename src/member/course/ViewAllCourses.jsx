@@ -254,17 +254,11 @@ const ViewAllCourses = () => {
             separator="›"
             aria-label="breadcrumb"
           >
-            <Link
-              className={classes.backLink}
-              onClick={() => {
-                history.push("/courses");
-                window.location.reload();
-              }}
-            >
+            <a className={classes.backLink} href="/courses">
               <Typography style={{ marginRight: "8px" }} variant="body1">
                 All Courses
               </Typography>
-            </Link>
+            </a>
             <Typography variant="body1">{handlePageNaming()}</Typography>
           </Breadcrumbs>
         ) : (
