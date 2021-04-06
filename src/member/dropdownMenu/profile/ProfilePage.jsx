@@ -121,7 +121,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   proLabel: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "2px",
     padding: "2px 4px",
@@ -131,7 +132,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
   },
   pro: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -211,18 +213,6 @@ function a11yProps(index) {
   };
 }
 
-function loadScript(src, position, id) {
-  if (!position) {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.setAttribute("async", "");
-  script.setAttribute("id", id);
-  script.src = src;
-  position.appendChild(script);
-}
-
 const autocompleteService = { current: null };
 
 const SmallAvatar = withStyles((theme) => ({
@@ -299,19 +289,7 @@ const Profile = (props) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
-  const loaded = React.useRef(false);
-
-  if (typeof window !== "undefined" && !loaded.current) {
-    if (!document.querySelector("#google-maps")) {
-      loadScript(
-        "https://maps.googleapis.com/maps/api/js?key=AIzaSyAE5z0wC66Dfis7ho1QVBfPyVIl6Ny3NVw&libraries=places",
-        document.querySelector("head"),
-        "google-maps"
-      );
-    }
-
-    loaded.current = true;
-  }
+  const [loaded, setLoaded] = useState(false);
 
   const [CVDetail, setCVDetail] = useState({
     title: "",
@@ -373,19 +351,30 @@ const Profile = (props) => {
   );
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAE5z0wC66Dfis7ho1QVBfPyVIl6Ny3NVw&libraries=places";
+    script.addEventListener("load", () => setLoaded(true));
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
     let active = true;
 
     if (!autocompleteService.current && window.google) {
       autocompleteService.current = new window.google.maps.places.AutocompleteService();
     }
+
     if (!autocompleteService.current) {
       return undefined;
     }
 
     if (inputValue === "") {
       setOptions(selectedLocation ? [selectedLocation] : []);
-      return undefined;
     }
+   
 
     fetch({ input: inputValue }, (results) => {
       if (active) {
@@ -406,7 +395,7 @@ const Profile = (props) => {
     return () => {
       active = false;
     };
-  }, [selectedLocation, inputValue, fetch]);
+  }, [loaded, selectedLocation, inputValue, fetch]);
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -426,7 +415,7 @@ const Profile = (props) => {
       Service.client
         .get(`/auth/members/${userid}`)
         .then((res) => {
-          console.log(res.data);
+         
           setProfileDetails(res.data);
           setSelectedLocation(res.data.location);
           Service.client
@@ -576,7 +565,7 @@ const Profile = (props) => {
           message: "Profile updated successfully!",
           severity: "success",
         });
-        console.log(res.data);
+       
         setProfileDetails(res.data);
         setLoading(false);
       })
@@ -824,18 +813,17 @@ const Profile = (props) => {
             </Link>
           ) : (
             <div>
-            <Typography
-              variant="h2"
-              style={{
-                fontWeight: "bold",
-                marginBottom: "25px",
-              }}
-            >
-              {profileDetails && profileDetails.first_name}{" "}
-              {profileDetails && profileDetails.last_name}
-            </Typography>
+              <Typography
+                variant="h2"
+                style={{
+                  fontWeight: "bold",
+                  marginBottom: "25px",
+                }}
+              >
+                {profileDetails && profileDetails.first_name}{" "}
+                {profileDetails && profileDetails.last_name}
+              </Typography>
             </div>
-            
           )}
         </Typography>
 
@@ -1263,6 +1251,9 @@ const Profile = (props) => {
                     </div>
                   )}
                   renderOption={(option) => {
+                    if (!option || !option.structured_formatting) {
+                      return;
+                    }
                     const matches =
                       option.structured_formatting.main_text_matched_substrings;
                     const parts = parse(

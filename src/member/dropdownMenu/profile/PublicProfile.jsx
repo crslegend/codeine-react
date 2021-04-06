@@ -339,7 +339,7 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/members/${id}/profile`)
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setMember(res.data.member);
 
         if (dataList.length === 0) {
@@ -360,7 +360,6 @@ const PublicProfile = (props) => {
         setExperiences(
           res.data.cv.sort((a, b) => b.start_date.localeCompare(a.start_date))
         );
-        console.log(dataList);
       })
 
       .catch((err) => console.log(err));
