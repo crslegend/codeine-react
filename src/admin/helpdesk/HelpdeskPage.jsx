@@ -42,7 +42,7 @@ const AdminHelpdeskPage = () => {
       Service.client
         .get(`helpdesk/tickets`, { params: { search: searchValue } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setEnquiries(res.data);
         })
         .catch((err) => console.log(err));
@@ -74,6 +74,14 @@ const AdminHelpdeskPage = () => {
       );
     }
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const displayAssignedAdmin = (obj) => {
+    console.log(obj);
+    if (!obj) {
+      return "Not Assigned Yet";
+    }
+    return "Somebody";
   };
 
   const formatDate = (date) => {
@@ -125,6 +133,12 @@ const AdminHelpdeskPage = () => {
           })()}
         </div>
       ),
+    },
+    {
+      field: "assigned_admin",
+      headerName: "Admin Assigned",
+      width: 180,
+      valueFormatter: (params) => displayAssignedAdmin(params.value),
     },
     {
       field: "ticket_type",
