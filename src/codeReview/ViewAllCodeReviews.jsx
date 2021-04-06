@@ -281,7 +281,7 @@ const ViewAllCodeReviews = () => {
     Service.client
       .post(`/code-reviews`, data)
       .then((res) => {
-        // console.log(res);
+        // console.log(res.data);
         history.push(`/codereview/${res.data.id}`);
       })
       .catch((err) => console.log(err));
