@@ -1,12 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Card,
-  CardContent,
-  Divider,
-  CardActionArea,
-} from "@material-ui/core";
+import { Typography, Card, CardContent, Divider, CardActionArea } from "@material-ui/core";
+import hljs from "highlight.js";
+
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
@@ -18,14 +14,18 @@ const styles = makeStyles((theme) => ({
     borderRadius: 0,
     border: "1px solid",
   },
-  snippets: {
-    fontFamily: "Roboto Mono",
-    textAlign: "center",
-    lineHeight: "30px",
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 3,
+  codePreview: {
+    height: "160px",
+    padding: theme.spacing(1),
+    opacity: 0.7,
     overflow: "hidden",
+  },
+  codeBody: {
+    flexGrow: 1,
+    padding: theme.spacing(0.8, 0),
+    display: "flex",
+    overflow: "hidden",
+    fontSize: "16px",
   },
 }));
 
@@ -35,7 +35,7 @@ const CodeReviewCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea style={{ height: "100%" }}>
+      <CardActionArea style={{ height: "100%" }} href={`/codereview/${codeReview && codeReview.id}`}>
         <CardContent
           style={{
             height: "inherit",
@@ -45,13 +45,27 @@ const CodeReviewCard = (props) => {
           }}
         >
           <div>
-            <Typography variant="body1" className={classes.snippets}>
-              {codeReview && codeReview.code}
-            </Typography>
+            <div className={classes.codePreview}>
+              {codeReview &&
+                codeReview.code
+                  .split("\n")
+                  .slice(0, 6)
+                  .map((line, i) => (
+                    <div key={i} className={classes.codeBody}>
+                      <pre style={{ margin: 0 }}>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: hljs.highlightAuto(line, [codeReview.coding_languages[0]]).value,
+                          }}
+                        />
+                      </pre>
+                    </div>
+                  ))}
+            </div>
             <Divider
               style={{
                 height: "1.5px",
-                margin: "20px 0",
+                margin: "20px 2px",
               }}
             />
 
@@ -71,15 +85,11 @@ const CodeReviewCard = (props) => {
                 fontFamily: "Roboto Mono",
               }}
             >
-              {codeReview.user &&
-                codeReview.user.first_name + " " + codeReview.user.last_name}
+              {codeReview.user && codeReview.user.first_name + " " + codeReview.user.last_name}
             </Typography>
           </div>
           <div style={{ display: "flex", margin: "10px 0" }}>
-            {codeReview &&
-              codeReview.categories.map((category) => (
-                <Label label={category} />
-              ))}
+            {codeReview && codeReview.categories.map((category) => <Label label={category} />)}
           </div>
         </CardContent>
       </CardActionArea>

@@ -108,6 +108,10 @@ const IndustryProjectDetails = () => {
   const [editIndustryProject, setEditIndustryProject] = useState();
   const { id } = useParams();
 
+  const [viewerSkills, setViewerSkills] = useState();
+  const [applicantSkills, setApplicantSkills] = useState();
+  const [applicantDemographics, setApplicantDemographics] = useState();
+
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -149,7 +153,7 @@ const IndustryProjectDetails = () => {
   const [allApplicantList, setAllApplicantList] = useState([]);
   let applicantsRows = allApplicantList;
 
-  const getlndustryProject = () => {
+  const getIndustryProject = () => {
     Service.client
       .get(`/industry-projects/${id}`)
       .then((res) => {
@@ -196,8 +200,55 @@ const IndustryProjectDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const getProjectAnalytics = async () => {
+    Service.client
+      .get(`/analytics/ip-viewer-average-skill`)
+      .then((res) => {
+        // console.log(res);
+
+        const obj = res.data.breakdown_by_industry_project.filter(
+          (project) => project.ip_id === id
+        );
+        // console.log(obj);
+        if (obj.length > 0) {
+          setViewerSkills(obj[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/analytics/ip-applicant-average-skill`)
+      .then((res) => {
+        // console.log(res);
+        const obj = res.data.breakdown_by_industry_project.filter(
+          (project) => project.ip_id === id
+        );
+        // console.log(obj);
+        if (obj.length > 0) {
+          setApplicantSkills(obj[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/analytics/ip-applicant-demographics`)
+      .then((res) => {
+        // console.log(res);
+        const obj = res.data.breakdown_by_industry_project.filter(
+          (project) => project.ip_id === id
+        );
+        // console.log(obj);
+        if (obj.length > 0) {
+          setApplicantDemographics(obj[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
-    getlndustryProject();
+    getIndustryProject();
+    getProjectAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = () => {
@@ -280,10 +331,6 @@ const IndustryProjectDetails = () => {
   };
 
   const handleDeleteSubmit = () => {
-    const data = {
-      is_available: true,
-    };
-
     Service.client
       .patch(`/industry-projects/${id}`, { is_available: false })
       .then((res) => {
@@ -549,23 +596,17 @@ const IndustryProjectDetails = () => {
                   </CardContent>
                 </div>
               </Grid>
-              {/* <Typography
-                variant="h5"
-                style={{ marginTop: 10, marginBottom: "5px", color: "#437FC7" }}
-              >
-                Applicants
-              </Typography> */}
-              {/* <Typography
-                variant="body1"
-                style={{ marginBottom: "30px", color: "#000000" }}
-              >
-                Click on the respective applications below to view application
-                details.
-              </Typography> */}
               <Grid item xs={12} style={{ marginTop: "10px" }}>
                 <ProjectTabs
                   applicantsRows={applicantsRows}
                   applicationsColumns={applicationsColumns}
+                  viewerSkills={viewerSkills}
+                  applicantSkills={applicantSkills}
+                  applicantDemographics={applicantDemographics}
+                  setSnackbar={setSnackbar}
+                  setSbOpen={setSbOpen}
+                  industry_project_id={id}
+                  getIndustryProject={() => getIndustryProject}
                 />
               </Grid>
             </div>

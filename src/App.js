@@ -38,7 +38,7 @@ import PartnerRoute from "./components/routes/PartnerRoute";
 import MemberRoute from "./components/routes/MemberRoute";
 import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
-import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
+import CodeReviewDetails from "./codeReview/CodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
 import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
 import ViewIndustryProjectDetails from "./member/industryProject/ViewIndustryProjectDetails";
@@ -53,59 +53,17 @@ import ViewTicketPage from "./member/dropdownMenu/helpdesk/ViewTicketPage";
 const App = () => {
   return (
     <Switch>
-      <Route
-        strict
-        sensitive
-        path="/article/guest/:id"
-        component={ViewArticlePage}
-      />
+      <Route strict sensitive path="/article/guest/:id" component={ViewArticlePage} />
       <Route strict sensitive path="/viewarticles" component={AllArticlePage} />
-      <PrivateRoute
-        strict
-        sensitive
-        path="/article/member/:id"
-        component={ViewArticlePage}
-        user="member"
-      />
-      <PrivateRoute
-        strict
-        sensitive
-        path="/article/partner/:id"
-        component={ViewArticlePage}
-        user="partner"
-      />
-      <PrivateRoute
-        strict
-        sensitive
-        path="/article/admin/:id"
-        component={ViewArticlePage}
-        user="admin"
-      />
+      <PrivateRoute strict sensitive path="/article/member/:id" component={ViewArticlePage} user="member" />
+      <PrivateRoute strict sensitive path="/article/partner/:id" component={ViewArticlePage} user="partner" />
+      <PrivateRoute strict sensitive path="/article/admin/:id" component={ViewArticlePage} user="admin" />
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
-      <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
-      <PartnerAndPublicRoute
-        exact
-        path="/partner"
-        render={() => <ContentProviderLanding />}
-        user="partner"
-      />
-      <PartnerRoute
-        path="/partner/home"
-        render={() => <ContentProviderHome />}
-        user="partner"
-      />
-      <LandingPageRoute
-        exact
-        path="/partner/login"
-        render={() => <ContentProviderLoginPage />}
-        user="partner"
-      />
-      <LandingPageRoute
-        exact
-        path="/partner/register"
-        render={() => <ContentProviderRegisterPage />}
-        user="partner"
-      />
+      <Route path="/codereview/:id" component={CodeReviewDetails} />
+      <PartnerAndPublicRoute exact path="/partner" render={() => <ContentProviderLanding />} user="partner" />
+      <PartnerRoute path="/partner/home" render={() => <ContentProviderHome />} user="partner" />
+      <LandingPageRoute exact path="/partner/login" render={() => <ContentProviderLoginPage />} user="partner" />
+      <LandingPageRoute exact path="/partner/register" render={() => <ContentProviderRegisterPage />} user="partner" />
       <MemberAndPublicRoute exact path="/" component={MemberLandingPage} />
       <MemberAndPublicRoute exact path="/courses" component={ViewAllCourses} />
       <MemberAndPublicRoute
@@ -308,13 +266,7 @@ const App = () => {
       <AdminRoute path="/admin" component={AdminRoutesPage} user="admin" />
       <Route exact path="/admin/humanresource" component={AdminRoutesPage} />
       <Route path="/payment/success" component={PaymentSuccess} />
-      <Route
-        exact
-        path="/resetPassword/:id"
-        strict
-        sensitive
-        component={ResetPassword}
-      />
+      <Route exact path="/resetPassword/:id" strict sensitive component={ResetPassword} />
       <Route exact path="/member/profile/:id" component={PublicProfile} />
       <Route path="/reset-password" component={NewPassword} />
       <Route exact path="/verify/:id" strict sensitive component={Activation} />
