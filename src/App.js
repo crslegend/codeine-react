@@ -109,6 +109,10 @@ const App = () => {
       <MemberAndPublicRoute exact path="/" component={MemberLandingPage} />
       <MemberAndPublicRoute exact path="/courses" component={ViewAllCourses} />
       <MemberAndPublicRoute
+        path="/courses/language/:id"
+        component={ViewAllCourses}
+      />
+      <MemberAndPublicRoute
         exact
         path="/courses/:id"
         strict
