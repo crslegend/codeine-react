@@ -12,13 +12,12 @@ import {
   Grid,
   CardMedia,
   CardContent,
-  Paper,
   Avatar,
   Chip,
 } from "@material-ui/core";
-import { DataGrid } from "@material-ui/data-grid";
+// import { DataGrid } from "@material-ui/data-grid";
 import green from "@material-ui/core/colors/green";
-import SearchBar from "material-ui-search-bar";
+// import SearchBar from "material-ui-search-bar";
 import { ToggleButton } from "@material-ui/lab";
 import { Edit, ArrowBack } from "@material-ui/icons";
 import { KeyboardDatePicker } from "@material-ui/pickers";
