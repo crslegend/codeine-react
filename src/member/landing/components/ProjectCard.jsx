@@ -106,7 +106,6 @@ const ProjectCard = (props) => {
                       project.categories.map((category) => (
                         <Label label={category} />
                       ))}
-                    {console.log(project)}
                   </div>
 
                   {project && project.is_applied ? (
