@@ -68,6 +68,7 @@ const CreateNewTicketPage = () => {
   const [articles, setArticles] = useState();
   const [consultations, setConsultations] = useState();
   const [industryProjects, setIndustryProjects] = useState();
+  const [codeReviews, setCodeReviews] = useState();
 
   const checkPartnerType = () => {
     if (Cookies.get("t1")) {
@@ -121,6 +122,14 @@ const CreateNewTicketPage = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    Service.client
+      .get(`/code-reviews/user/`)
+      .then((res) => {
+        // console.log(res);
+        setCodeReviews(res.data);
+      })
+      .catch((err) => console.log(err));
 
     if (Cookies.get("t1")) {
       const decoded = jwt_decode(Cookies.get("t1"));
@@ -238,6 +247,21 @@ const CreateNewTicketPage = () => {
         return;
       }
       formData.append("consultation_slot_id", selectedTagging);
+    } else if (issueType === "CODE_REVIEWS") {
+      if (!selectedTagging || selectedTagging === "") {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please select the specific code review!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+      formData.append("code_review_id", selectedTagging);
     }
 
     Service.client
@@ -322,6 +346,7 @@ const CreateNewTicketPage = () => {
           industryProjects={industryProjects}
           transactionId={transactionId}
           setTransactionId={setTransactionId}
+          codeReviews={codeReviews}
         />
       </div>
     </div>

@@ -606,7 +606,7 @@ const IndustryProjectDetails = () => {
                   setSnackbar={setSnackbar}
                   setSbOpen={setSbOpen}
                   industry_project_id={id}
-                  getIndustryProject={() => getIndustryProject}
+                  getIndustryProject={() => getIndustryProject()}
                 />
               </Grid>
             </div>

@@ -117,8 +117,6 @@ const CodeReviewDetails = () => {
   const [codeComments, setCodeComments] = useState([]);
   const [selectedLine, setSelectedLine] = useState(1);
 
-  console.log(code);
-
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -230,9 +228,13 @@ const CodeReviewDetails = () => {
           />
           <div>
             <Typography variant="h6">
-              <LinkMui href={`/member/profile/${code && code.user.id}`} className={classes.linkMui}>
-                {`${code && code.user.first_name} ${code && code.user.last_name}`}
-              </LinkMui>
+              {code.user.member.pro ? (
+                <LinkMui href={`/member/profile/${code && code.user.id}`} className={classes.linkMui}>
+                  {`${code && code.user.first_name} ${code && code.user.last_name}`}
+                </LinkMui>
+              ) : (
+                `${code && code.user.first_name} ${code && code.user.last_name}`
+              )}
               /{code && code.title}
             </Typography>
             <Typography variant="body2" style={{ opacity: 0.8 }}>

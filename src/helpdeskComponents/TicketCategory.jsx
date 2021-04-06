@@ -11,7 +11,7 @@ import {
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -352,7 +352,11 @@ const TicketCategory = ({
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <Work />
+            <FontAwesomeIcon
+              icon={faFileCode}
+              className={classes.icon}
+              style={{ height: "24px", width: "24px" }}
+            />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
