@@ -82,7 +82,11 @@ const styles = makeStyles((theme) => ({
     fontSize: "14px",
   },
   focused: {
-    boxShadow: "2px 2px 0px #437FC7",
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -1318,6 +1322,7 @@ const CommentsSection = ({ materialId, user }) => {
                 root: classes.fieldRoot,
                 focused: classes.focused,
                 input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
               },
             }}
             rows={4}
@@ -1379,6 +1384,7 @@ const CommentsSection = ({ materialId, user }) => {
                 root: classes.fieldRoot,
                 focused: classes.focused,
                 input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
               },
             }}
             value={commentDialogValue && commentDialogValue.comment}
@@ -1442,6 +1448,7 @@ const CommentsSection = ({ materialId, user }) => {
                 root: classes.fieldRoot,
                 focused: classes.focused,
                 input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
               },
             }}
             value={commentDialogValue && commentDialogValue.comment}

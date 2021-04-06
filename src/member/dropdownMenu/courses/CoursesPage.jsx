@@ -111,6 +111,24 @@ const styles = makeStyles((theme) => ({
       backgroundColor: "none",
     },
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    color: "#222",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const CoursesPage = () => {
@@ -576,6 +594,14 @@ const CoursesPage = () => {
                   description: e.target.value,
                 })
               }
+              InputProps={{
+                classes: {
+                  root: classes.fieldRoot,
+                  focused: classes.focused,
+                  input: classes.fieldInput,
+                  notchedOutline: classes.notchedOutline,
+                },
+              }}
               fullWidth
               placeholder="Enter review description"
               multiline

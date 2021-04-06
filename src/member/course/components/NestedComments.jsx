@@ -50,7 +50,15 @@ const styles = makeStyles((theme) => ({
     fontSize: "14px",
   },
   focused: {
-    boxShadow: "2px 2px 0px #437FC7",
+    boxShadow: "2px 2px 0px #222",
+    color: "#222",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -667,6 +675,7 @@ const NestedComments = ({
                 root: classes.fieldRoot,
                 focused: classes.focused,
                 input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
               },
             }}
             value={commentDialogValue && commentDialogValue.comment}
@@ -730,6 +739,7 @@ const NestedComments = ({
                 root: classes.fieldRoot,
                 focused: classes.focused,
                 input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
               },
             }}
             value={commentDialogValue && commentDialogValue.comment}

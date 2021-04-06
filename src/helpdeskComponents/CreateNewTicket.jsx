@@ -27,9 +27,34 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     width: "100%",
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      border: "1px solid #484850",
+      boxShadow: "2px 2px 0px #222",
+      borderRadius: "5px 5px 0 0",
+      backgroundColor: "transparent",
+      borderBottomLeftRadius: "5px",
+      borderBottomRightRadius: "5px",
+    },
   },
   resize: {
     fontSize: 14,
+    padding: "12px",
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
   submit: {
     marginTop: "20px",
@@ -191,7 +216,10 @@ const CreateNewTicket = ({
                     autoFocus
                     InputProps={{
                       classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
                         input: classes.resize,
+                        notchedOutline: classes.notchedOutline,
                       },
                     }}
                     value={transactionId ? transactionId : ""}
@@ -412,7 +440,10 @@ const CreateNewTicket = ({
                 inputProps={{ style: { resize: "vertical" } }}
                 InputProps={{
                   classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
                     input: classes.resize,
+                    notchedOutline: classes.notchedOutline,
                   },
                 }}
                 value={description ? description : ""}

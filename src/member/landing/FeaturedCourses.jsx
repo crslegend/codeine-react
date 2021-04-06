@@ -50,8 +50,8 @@ const FeaturedCourses = () => {
             }}
           >
             {courses &&
-              courses.map((course) => (
-                <CourseCard key={course.id} course={course} />
+              courses.map((course, index) => (
+                <CourseCard key={index} course={course} />
               ))}
           </div>
         </Grid>

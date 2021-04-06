@@ -73,6 +73,20 @@ const useStyles = makeStyles((theme) => ({
     color: "#C74343",
     border: "1px solid #C74343",
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const ViewTicket = ({
@@ -249,7 +263,10 @@ const ViewTicket = ({
               }}
               InputProps={{
                 classes: {
+                  root: classes.fieldRoot,
+                  focused: classes.focused,
                   input: classes.resize,
+                  notchedOutline: classes.notchedOutline,
                 },
               }}
               style={{ backgroundColor: "#fff" }}

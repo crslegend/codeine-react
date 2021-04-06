@@ -5,7 +5,6 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import pricing from "../../assets/PricingAsset.png";
-import pricing1 from "../../assets/PricingAsset1.png";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -78,6 +77,20 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "0px",
     lineHeight: "0px",
     fontWeight: 600,
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -199,11 +212,7 @@ const Membership = () => {
           >
             <div style={{ width: "60%" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img
-                  alt="pricing plan"
-                  src={plan && plan.monthly ? pricing : pricing1}
-                  width="85%"
-                />
+                <img alt="pricing plan" src={pricing} width="100%" />
               </div>
             </div>
             <div style={{ width: "10%" }} />
@@ -274,6 +283,12 @@ const Membership = () => {
                     onChange={(e) => setMonth(e.target.value)}
                     InputProps={{
                       inputProps: { min: 1 },
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                        notchedOutline: classes.notchedOutline,
+                      },
                     }}
                     autoFocus
                   />
