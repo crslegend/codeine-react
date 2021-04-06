@@ -118,9 +118,31 @@ const ViewIndustryProjectDetails = () => {
       .catch((err) => console.log(err));
   };
 
+  const logEventForAnalytics = () => {
+    // ANALYTICS: log user stats when viewing a project listing
+    if (Cookies.get("t1")) {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "view industry project" },
+          {
+            params: {
+              industry_project_id: id,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
     checkIfLoggedIn();
     getlndustryProject();
+    logEventForAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = () => {
