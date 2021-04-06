@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { Typography, Grid, Avatar } from "@material-ui/core";
+import {
+  Typography,
+  Grid,
+  Avatar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import Service from "../../AxiosService";
+import Toast from "../../components/Toast";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -34,6 +44,17 @@ const styles = makeStyles((theme) => ({
 const IndustryProjectPage = () => {
   const classes = styles();
   const history = useHistory();
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const formatDate = (date) => {
     if (!date) {
@@ -192,8 +213,49 @@ const IndustryProjectPage = () => {
     }
   };
 
+  const [selectedIndustryProject, setSelectedIndustryProject] = useState();
+  const [openActivationDialog, setOpenActivationDialog] = useState(false);
+
+  const handleClickOpenIndustryProject = (e) => {
+    setSelectedIndustryProject(e.row);
+    if (e.field === "is_available") {
+      setOpenActivationDialog(true);
+    } else {
+      history.push("/admin/industryproject/" + e.row.id);
+    }
+  };
+
+  const handleActivationSubmit = (industry_project_id, status) => {
+    Service.client
+      .patch(`/industry-projects/${industry_project_id}`, {
+        is_available: !status,
+      })
+      .then((res) => {
+        let msg = "";
+        if (status) {
+          msg = "deactivated";
+        } else {
+          msg = "activated";
+        }
+        setOpenActivationDialog(false);
+        getIndustryProjectData();
+        setSbOpen(true);
+        setSnackbar({
+          message: "Industry project has been " + msg + "!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={classes.root}>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <Typography variant="h3" style={{ fontWeight: 700 }}>
         Industry Project
       </Typography>
@@ -227,9 +289,57 @@ const IndustryProjectPage = () => {
             }))}
             pageSize={6}
             disableSelectionOnClick
+            onCellClick={(e) => handleClickOpenIndustryProject(e)}
           />
         </Grid>
       </Grid>
+      <Dialog
+        open={openActivationDialog}
+        onClose={() => setOpenActivationDialog(false)}
+        aria-labelledby="form-dialog-title"
+        classes={{ paper: classes.dialogPaper }}
+      >
+        {selectedIndustryProject && selectedIndustryProject.is_available ? (
+          <div>
+            <DialogTitle id="form-dialog-title">
+              Deactivate Industry Project?
+            </DialogTitle>
+            <DialogContent>
+              Are you sure you want to deactivate this industry project?
+            </DialogContent>
+          </div>
+        ) : (
+          <div>
+            <DialogTitle id="form-dialog-title">
+              Activate Industry Project?
+            </DialogTitle>
+            <DialogContent>
+              Are you sure you want to activate this industry project?
+            </DialogContent>
+          </div>
+        )}
+        <DialogActions style={{ marginTop: 40 }}>
+          <Button
+            onClick={() => setOpenActivationDialog(false)}
+            color="primary"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() =>
+              handleActivationSubmit(
+                selectedIndustryProject.id,
+                selectedIndustryProject.is_available
+              )
+            }
+            color="primary"
+            variant="contained"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

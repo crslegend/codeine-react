@@ -55,6 +55,7 @@ import ViewTicketPage from "./helpdesk/ViewTicketPage";
 import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import IndustryProjectPage from "./industryProject/IndustryProjectPage";
+import ViewIndustryProjectDetails from "./industryProject/ViewIndustryProjectDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -531,6 +532,11 @@ const AdminRoutesPage = () => {
             exact
             path="/admin/industryproject"
             render={() => <IndustryProjectPage />}
+          />
+          <Route
+            exact
+            path="/admin/industryproject/:id"
+            render={() => <ViewIndustryProjectDetails />}
           />
           <Route
             exact
