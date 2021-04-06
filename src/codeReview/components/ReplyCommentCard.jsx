@@ -81,7 +81,7 @@ const ReplyCommentCard = ({ comment, reviewAuthor, getCodeReviewComments }) => {
       .post(`/code-reviews/${id}/comments`, {
         comment: replyComment,
         code_line_index: comment.code_line_index,
-        parent_comment_id: comment.id,
+        parent_comment_id: comment.parent_comment.id, // no infinite comments... :(
       })
       .then((res) => {
         setReplyComment();
@@ -89,6 +89,7 @@ const ReplyCommentCard = ({ comment, reviewAuthor, getCodeReviewComments }) => {
       })
       .catch((err) => console.log(err));
   };
+  console.log(comment);
 
   const likeComment = () => {
     Service.client

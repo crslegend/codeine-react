@@ -68,6 +68,10 @@ const reusableChip = (label, index, backgroundColor, fontColor) => {
   );
 };
 
+// const getCommentsByLine = () => {
+//   // instantiate array
+// }
+
 const CodeReviewDetails = () => {
   const classes = useStyles();
   const history = useHistory();
@@ -114,8 +118,24 @@ const CodeReviewDetails = () => {
     Service.client
       .get(`/code-reviews/${id}/comments`)
       .then((res) => {
-        // console.log(res.data);
-        setCodeComments(res.data);
+        console.log(res.data);
+
+        const flatComments = res.data.map((comment) => {
+          if (comment.replies.length <= 0) {
+            return comment;
+          }
+
+          const replies = comment.replies.flatMap((reply) =>
+            reply.replies.length > 0 ? [reply, ...reply.replies] : [reply]
+          );
+
+          return {
+            ...comment,
+            replies: replies,
+          };
+        });
+        
+        setCodeComments(flatComments);
       })
       .catch((err) => console.log(err))
       .then(() => setLoading(false));
