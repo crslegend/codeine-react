@@ -4,7 +4,7 @@ import MemberNavBar from "../MemberNavBar";
 import {
   Grid,
   Button,
-  CardMedia,
+  Avatar,
   CardContent,
   Dialog,
   DialogActions,
@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
   cardmedia: {
     height: "100%",
     width: "7vw",
+  },
+  orgavatar: {
+    objectFit: "contain",
   },
 }));
 
@@ -206,14 +209,17 @@ const ViewIndustryProjectDetails = () => {
             <div className={classes.titleSection}>
               <Grid container justify="space-between">
                 <Grid style={{ backgroundColor: "#FFF" }} item xs={1}>
-                  <CardMedia
+                  <Avatar
                     className={classes.cardmedia}
-                    image={
+                    src={
                       industryProject.partner.partner.organization
                         .organization_photo
                     }
                     title="Organisation Photo"
-                  ></CardMedia>
+                    classes={{
+                      img: classes.orgavatar,
+                    }}
+                  />
                 </Grid>
                 <Grid style={{ backgroundColor: "#FFF" }} item xs={11}>
                   <CardContent>
