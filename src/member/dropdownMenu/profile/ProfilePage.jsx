@@ -23,7 +23,7 @@ import {
   Box,
   InputAdornment,
   FilledInput,
-  InputLabel,
+  Grid,
 } from "@material-ui/core";
 import {
   Mood,
@@ -33,7 +33,9 @@ import {
   Close,
   Visibility,
   VisibilityOff,
+  LocationOn,
 } from "@material-ui/icons";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
@@ -44,6 +46,8 @@ import Cookies from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import { DatePicker } from "@material-ui/pickers";
+import parse from "autosuggest-highlight/parse";
+import throttle from "lodash/throttle";
 import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +70,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ECECEC",
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",
-    padding: "auto 0",
   },
   fieldInput: {
     padding: "12px",
@@ -80,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
   focused: {
     border: "1px solid #222",
     boxShadow: "2px 3px 0px #222",
-    backgroundColor: "#FFFFFF",
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",
   },
@@ -119,7 +121,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   proLabel: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "2px",
     padding: "2px 4px",
@@ -129,7 +132,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
   },
   pro: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -170,6 +174,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     width: "100%",
   },
+  location: {
+    color: theme.palette.text.secondary,
+    marginRight: theme.spacing(2),
+  },
 }));
 
 function TabPanel(props) {
@@ -184,7 +192,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "30px" }}>
+        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "100px" }}>
           <div>{children}</div>
         </Box>
       )}
@@ -204,6 +212,8 @@ function a11yProps(index) {
     "aria-controls": `vertical-tabpanel-${index}`,
   };
 }
+
+const autocompleteService = { current: null };
 
 const SmallAvatar = withStyles((theme) => ({
   root: {
@@ -266,6 +276,7 @@ const Profile = (props) => {
     last_name: "",
     age: "",
     location: "",
+    profile_url: "",
     gender: "",
     email: "",
     date_joined: "",
@@ -274,6 +285,11 @@ const Profile = (props) => {
 
   const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
+
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [options, setOptions] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   const [CVDetail, setCVDetail] = useState({
     title: "",
@@ -326,11 +342,72 @@ const Profile = (props) => {
     setPasswordDetails({ ...passwordDetails, [prop]: event.target.value });
   };
 
+  const fetch = React.useMemo(
+    () =>
+      throttle((request, callback) => {
+        autocompleteService.current.getPlacePredictions(request, callback);
+      }, 200),
+    []
+  );
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAE5z0wC66Dfis7ho1QVBfPyVIl6Ny3NVw&libraries=places";
+    script.addEventListener("load", () => setLoaded(true));
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    let active = true;
+
+    if (!autocompleteService.current && window.google) {
+      autocompleteService.current = new window.google.maps.places.AutocompleteService();
+    }
+
+    if (!autocompleteService.current) {
+      return undefined;
+    }
+
+    if (inputValue === "") {
+      setOptions(selectedLocation ? [selectedLocation] : []);
+    }
+   
+
+    fetch({ input: inputValue }, (results) => {
+      if (active) {
+        let newOptions = [];
+
+        if (selectedLocation) {
+          newOptions = [selectedLocation];
+        }
+
+        if (results) {
+          newOptions = [...newOptions, ...results];
+        }
+
+        setOptions(newOptions);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [loaded, selectedLocation, inputValue, fetch]);
+
   useEffect(() => {
     checkIfLoggedIn();
     getProfileDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleKeyDown = (event, callback) => {
+    if (event.key === "Enter" && event.shiftKey === false) {
+      event.preventDefault();
+    }
+  };
 
   const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -338,8 +415,9 @@ const Profile = (props) => {
       Service.client
         .get(`/auth/members/${userid}`)
         .then((res) => {
-          console.log(res.data);
+         
           setProfileDetails(res.data);
+          setSelectedLocation(res.data.location);
           Service.client
             .get(`/auth/cvs`)
             .then((res) => {
@@ -484,10 +562,10 @@ const Profile = (props) => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Profile Updated!",
+          message: "Profile updated successfully!",
           severity: "success",
         });
-        console.log(res.data);
+       
         setProfileDetails(res.data);
         setLoading(false);
       })
@@ -734,16 +812,18 @@ const Profile = (props) => {
               {profileDetails && profileDetails.last_name}
             </Link>
           ) : (
-            <Typography
-              variant="h2"
-              style={{
-                fontWeight: "bold",
-                marginBottom: "25px",
-              }}
-            >
-              {profileDetails && profileDetails.first_name}{" "}
-              {profileDetails && profileDetails.last_name}
-            </Typography>
+            <div>
+              <Typography
+                variant="h2"
+                style={{
+                  fontWeight: "bold",
+                  marginBottom: "25px",
+                }}
+              >
+                {profileDetails && profileDetails.first_name}{" "}
+                {profileDetails && profileDetails.last_name}
+              </Typography>
+            </div>
           )}
         </Typography>
 
@@ -756,7 +836,7 @@ const Profile = (props) => {
             classes={{
               indicator: classes.indicator,
             }}
-            style={{ width: "22%" }}
+            style={{ width: "30%" }}
             aria-label="Vertical tabs"
           >
             <Tab
@@ -826,7 +906,7 @@ const Profile = (props) => {
                 display: "flex",
                 width: "100%",
                 height: "100px",
-                padding: " 0px 20px",
+                padding: " 0px 30px",
                 alignItems: "center",
                 justifyContent: "space-between",
                 marginBottom: "15px",
@@ -852,25 +932,32 @@ const Profile = (props) => {
                     style={{ height: 30 }}
                     onClick={() => history.push(`/member/payment`)}
                   >
-                    Extend Pro-Tier Membership
+                    Extend Pro Membership
                   </Button>
                 )}
             </Card>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={(e) => {
+                handleKeyDown(e, handleSubmit);
+              }}
+              noValidate
+              autoComplete="off"
+            >
               <Card
                 elevation={0}
                 style={{
                   backgroundColor: " #FFFFFF",
                   border: "1px solid #ECECEC",
                   width: "100%",
-                  padding: "10px 20px",
-                  marginBottom: "15px",
+                  padding: "20px 30px",
+                  marginBottom: "30px",
                 }}
               >
                 <Typography
                   component={"span"}
                   variant="h5"
-                  style={{ margin: "10px 0px 30px" }}
+                  style={{ padding: "50px 0px" }}
                 >
                   <b>User</b>
                 </Typography>
@@ -1019,35 +1106,7 @@ const Profile = (props) => {
                     }
                   />
                 </div>
-                <div style={{ marginTop: "20px" }}>
-                  <label htmlFor="location">
-                    <Typography variant="body2">Location</Typography>
-                  </label>
-                  <TextField
-                    margin="dense"
-                    variant="filled"
-                    id="location"
-                    name="location"
-                    InputProps={{
-                      disableUnderline: true,
-                      classes: {
-                        root: classes.fieldRoot,
-                        focused: classes.focused,
-                        input: classes.fieldInput,
-                      },
-                    }}
-                    required
-                    fullWidth
-                    value={profileDetails.location}
-                    // error={emailError}
-                    onChange={(event) =>
-                      setProfileDetails({
-                        ...profileDetails,
-                        location: event.target.value,
-                      })
-                    }
-                  />
-                </div>
+
                 <div style={{ marginTop: "20px" }}>
                   <label htmlFor="age">
                     <Typography variant="body2">Age</Typography>
@@ -1110,6 +1169,151 @@ const Profile = (props) => {
                       </div>
                     </RadioGroup>
                   </FormControl>
+                </div>
+              </Card>
+
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: " #FFFFFF",
+                  border: "1px solid #ECECEC",
+                  width: "100%",
+                  padding: "20px 30px",
+                  marginBottom: "30px",
+                }}
+              >
+                <Typography
+                  component={"span"}
+                  variant="h5"
+                  style={{ padding: "50px 0px" }}
+                >
+                  <b>Basic</b>
+                </Typography>
+
+                <Autocomplete
+                  id="google-map-demo"
+                  getOptionLabel={(option) =>
+                    typeof option === "string" ? option : option.description
+                  }
+                  filterOptions={(x) => x}
+                  options={options}
+                  autoComplete
+                  underlinestyle={{ display: "none" }}
+                  includeInputInList
+                  filterSelectedOptions
+                  value={selectedLocation}
+                  onChange={(event, newValue) => {
+                    setOptions(newValue ? [newValue, ...options] : options);
+                    if (newValue !== null) {
+                      setSelectedLocation(newValue);
+                      setProfileDetails({
+                        ...profileDetails,
+                        location: newValue.description,
+                      });
+                    } else {
+                      setSelectedLocation("");
+                      setProfileDetails({
+                        ...profileDetails,
+                        location: "",
+                      });
+                    }
+                  }}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                  }}
+                  renderInput={(params) => (
+                    <div style={{ marginTop: "20px" }}>
+                      <label htmlFor="location">
+                        <Typography variant="body2">Location</Typography>
+                      </label>
+                      <TextField
+                        {...params}
+                        inputProps={{
+                          ...params.inputProps,
+                          style: {
+                            marginTop: "-10px",
+                            marginBottom: "10px",
+                          },
+                        }}
+                        InputProps={{
+                          ...params.InputProps,
+                          disableUnderline: true,
+                          classes: {
+                            root: classes.fieldRoot,
+                            focused: classes.focused,
+                            input: classes.fieldInput,
+                          },
+                        }}
+                        margin="dense"
+                        variant="filled"
+                        fullWidth
+                      />
+                    </div>
+                  )}
+                  renderOption={(option) => {
+                    if (!option || !option.structured_formatting) {
+                      return;
+                    }
+                    const matches =
+                      option.structured_formatting.main_text_matched_substrings;
+                    const parts = parse(
+                      option.structured_formatting.main_text,
+                      matches.map((match) => [
+                        match.offset,
+                        match.offset + match.length,
+                      ])
+                    );
+
+                    return (
+                      <Grid container alignItems="center">
+                        <Grid item>
+                          <LocationOn className={classes.location} />
+                        </Grid>
+                        <Grid item xs>
+                          {parts.map((part, index) => (
+                            <span
+                              key={index}
+                              style={{ fontWeight: part.highlight ? 700 : 400 }}
+                            >
+                              {part.text}
+                            </span>
+                          ))}
+
+                          <Typography variant="body2" color="textSecondary">
+                            {option.structured_formatting.secondary_text}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    );
+                  }}
+                />
+                <div style={{ marginTop: "20px" }}>
+                  <label htmlFor="url">
+                    <Typography variant="body2">Profile URL</Typography>
+                  </label>
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="url"
+                    name="url"
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    fullWidth
+                    value={profileDetails.profile_url}
+                    onChange={(event) =>
+                      setProfileDetails({
+                        ...profileDetails,
+                        profile_url: event.target.value,
+                      })
+                    }
+                  />
                 </div>
               </Card>
 

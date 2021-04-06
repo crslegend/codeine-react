@@ -7,9 +7,11 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
+  Chip,
 } from "@material-ui/core";
-import Label from "./Label";
-import { Link } from "react-router-dom";
+import green from "@material-ui/core/colors/green";
+import Label from "../../member/landing/components/Label";
+import { Link, useHistory } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -28,6 +30,7 @@ const styles = makeStyles((theme) => ({
 const ProjectCard = (props) => {
   const classes = styles();
   const { project } = props;
+  const history = useHistory();
 
   const formatDate = (date) => {
     const options = {
@@ -45,12 +48,13 @@ const ProjectCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <Link
-        style={{ height: "100%" }}
-        to={`/industryprojects/${project && project.id}`}
-        component={CardActionArea}
+      <CardActionArea
+        onClick={() =>
+          history.push(
+            `/partner/home/industryproject/view/${project && project.id}`
+          )
+        }
       >
-      <CardActionArea>
         <Grid container>
           <Grid item xs={1}>
             <CardMedia
@@ -75,7 +79,7 @@ const ProjectCard = (props) => {
                 >
                   {project && project.title}
                 </Typography>
-                <Typography variant="h6">
+                <Typography variant="h6" style={{ textAlign: "right" }}>
                   {project &&
                     formatDate(project.start_date) +
                       " to " +
@@ -100,21 +104,27 @@ const ProjectCard = (props) => {
                     ))}
                   {console.log(project)}
                 </div>
-
-                <Typography
-                  style={{
-                    color: "#921515",
-                  }}
-                  variant="h6"
-                >
-                  apply by {project && formatDate(project.application_deadline)}
-                </Typography>
+                {project && project.is_completed ? (
+                  <Chip
+                    label="Completed"
+                    style={{ backgroundColor: green[600], color: "#FFF" }}
+                  />
+                ) : (
+                  <Typography
+                    style={{
+                      color: "#921515",
+                    }}
+                    variant="h6"
+                  >
+                    apply by{" "}
+                    {project && formatDate(project.application_deadline)}
+                  </Typography>
+                )}
               </div>
             </CardContent>
           </Grid>
         </Grid>
       </CardActionArea>
-      </Link>
     </Card>
   );
 };

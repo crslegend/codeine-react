@@ -3,11 +3,19 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import logo from "../assets/codeineLogos/Member.svg";
-import { Avatar, ListItem, Typography, Popover, Button, Divider, Badge } from "@material-ui/core";
+import {
+  Avatar,
+  ListItem,
+  Typography,
+  Popover,
+  Button,
+  Divider,
+  Badge,
+} from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import { Dashboard, Timeline } from "@material-ui/icons";
+import { Dashboard, Timeline, Work } from "@material-ui/icons";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
@@ -29,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
   },
   popoverPaper: {
     marginTop: "10px",
-    boxShadow: "5px 5px 0px #222",
-    border: "2px solid #222",
+    boxShadow: "3px 4px 0px #222",
+    border: "1px solid #222",
   },
   typography: {
     cursor: "pointer",
@@ -82,7 +90,8 @@ const useStyles = makeStyles((theme) => ({
   },
   proBorderWrapper: {
     borderRadius: 50,
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     padding: 3,
   },
   freeBorderWrapper: {
@@ -131,7 +140,9 @@ const MemberNavBar = (props) => {
     if (!viewAllNotif) {
       if (Cookies.get("t1")) {
         Service.client
-          .get("/notification-objects")
+          .get("/notification-objects", {
+            timeout: 20000,
+          })
           .then((res) => {
             setNotificationList(res.data);
           })
@@ -191,7 +202,12 @@ const MemberNavBar = (props) => {
   const loggedOutNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button variant="outlined" component={Link} to="/partner" style={{ textTransform: "capitalize" }}>
+        <Button
+          variant="outlined"
+          component={Link}
+          to="/partner"
+          style={{ textTransform: "capitalize" }}
+        >
           <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
             Teach on Codeine
           </Typography>
@@ -205,7 +221,10 @@ const MemberNavBar = (props) => {
           style={{ textTransform: "capitalize" }}
           color="primary"
         >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#437FC7" }}>
+          <Typography
+            variant="h6"
+            style={{ fontSize: "15px", color: "#437FC7" }}
+          >
             Log In
           </Typography>
         </Button>
@@ -231,8 +250,16 @@ const MemberNavBar = (props) => {
   const notifBell = (
     <div>
       {!viewAllNotif ? (
-        <Badge badgeContent={notificationList.length > 0 ? notificationList[0].num_unread : 0} color="primary">
-          <NotificationsIcon className={classes.notification} onClick={handleNotifClick} />
+        <Badge
+          badgeContent={
+            notificationList.length > 0 ? notificationList[0].num_unread : 0
+          }
+          color="primary"
+        >
+          <NotificationsIcon
+            className={classes.notification}
+            onClick={handleNotifClick}
+          />
         </Badge>
       ) : (
         <NotificationsIcon className={classes.notificationOpen} />
@@ -279,7 +306,9 @@ const MemberNavBar = (props) => {
           {notificationList.length === 0 && (
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <img src={ZeroNotif} alt="" />
-              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>All caught up!</Typography>
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
             </div>
           )}
         </div>
@@ -324,7 +353,9 @@ const MemberNavBar = (props) => {
         {notifBell}
         <div
           className={
-            user.member && user.member.membership_tier === "PRO" ? classes.proBorderWrapper : classes.freeBorderWrapper
+            user.member && user.member.membership_tier === "PRO"
+              ? classes.proBorderWrapper
+              : classes.freeBorderWrapper
           }
           style={{
             marginLeft: "30px",
@@ -443,7 +474,9 @@ const MemberNavBar = (props) => {
               }}
             >
               <Timeline className={classes.icon} />
-              <Typography className={classes.typography}>Consultations</Typography>
+              <Typography className={classes.typography}>
+                Consultations
+              </Typography>
             </div>
 
             <div
@@ -452,19 +485,25 @@ const MemberNavBar = (props) => {
                 history.push("/member/articles");
               }}
             >
-              <FontAwesomeIcon icon={faNewspaper} className={classes.icon} style={{ height: "24px", width: "24px" }} />
+              <FontAwesomeIcon
+                icon={faNewspaper}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
               <Typography className={classes.typography}>Articles</Typography>
             </div>
 
             <div
               className={classes.hover}
               onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
+                history.push("/member/industryprojects");
+                // alert("clicked on Industry projects");
               }}
             >
-              <Dashboard className={classes.icon} />
-              <Typography className={classes.typography}>Industry Projects</Typography>
+              <Work className={classes.icon} />
+              <Typography className={classes.typography}>
+                Industry Projects
+              </Typography>
             </div>
 
             <div
@@ -485,7 +524,9 @@ const MemberNavBar = (props) => {
               }}
             >
               <AccountBalanceWalletIcon className={classes.icon} />
-              <Typography className={classes.typography}>My Payments</Typography>
+              <Typography className={classes.typography}>
+                My Payments
+              </Typography>
             </div>
 
             <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
@@ -499,7 +540,10 @@ const MemberNavBar = (props) => {
               }}
             >
               <ExitToAppIcon className={classes.icon} />
-              <Typography className={classes.typography} style={{ fontWeight: "700" }}>
+              <Typography
+                className={classes.typography}
+                style={{ fontWeight: "700" }}
+              >
                 Log Out
               </Typography>
             </div>
@@ -511,7 +555,11 @@ const MemberNavBar = (props) => {
 
   return (
     <Fragment>
-      <Navbar logo={navLogo} navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar} bgColor="#fff" />
+      <Navbar
+        logo={navLogo}
+        navbarItems={loggedIn ? loggedInNavBar : loggedOutNavbar}
+        bgColor="#fff"
+      />
     </Fragment>
   );
 };

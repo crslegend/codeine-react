@@ -83,15 +83,15 @@ const TopPicks = () => {
   };
 
   const getTopProjects = () => {
-    Service.client
-      .get(`/industry-projects`, {
-        params: { isAvailable: "true" },
-      })
-      .then((res) => {
-        res.data = res.data.slice(0, 3);
-        setProjects(res.data);
-      })
-      .catch((err) => console.log(err));
+    // Service.client
+    //   .get(`/industry-projects`, {
+    //     params: { isAvailable: "true" },
+    //   })
+    //   .then((res) => {
+    //     res.data = res.data.slice(0, 3);
+    //     setProjects(res.data);
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
   const getTopCodeReviews = () => {
@@ -234,9 +234,9 @@ const TopPicks = () => {
           {/* Projects Tab */}
           <TabPanel value={value} index={3}>
             <div
-              style={{
-                display: "flex",
-              }}
+              // style={{
+              //   display: "flex",
+              // }}
             >
               {projects &&
                 projects.map((project) => (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Breadcrumbs,
@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
@@ -21,7 +20,7 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import UseAnimations from "react-useanimations";
 import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
-import Menu from "@material-ui/icons/MoreHoriz";
+import Menu from "@material-ui/icons/MoreVert";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import ReactQuill, { Quill } from "react-quill";
@@ -101,7 +100,8 @@ const useStyles = makeStyles((theme) => ({
   },
   proBorderWrapper: {
     borderRadius: 50,
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     padding: 3,
   },
   freeBorderWrapper: {
@@ -121,7 +121,15 @@ const ViewArticle = (props) => {
   const { id } = useParams();
   const history = useHistory();
 
-  const { user, articleDetails, setArticleDetails, setDrawerOpen, openIDE, setOpenIDE, userType } = props;
+  const {
+    user,
+    articleDetails,
+    setArticleDetails,
+    setDrawerOpen,
+    openIDE,
+    setOpenIDE,
+    userType,
+  } = props;
 
   const modules = {
     toolbar: [[{ size: ["18px"] }]],
@@ -168,11 +176,13 @@ const ViewArticle = (props) => {
   };
 
   const checkIfOwnerOfComment = (userId) => {
-    const decoded = jwt_decode(Cookies.get("t1"));
-    if (decoded.user_id === userId) {
-      return true;
+    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      if (decoded.user_id === userId) {
+        return true;
+      }
+      return false;
     }
-    return false;
   };
 
   const getArticleDetails = () => {
@@ -303,20 +313,43 @@ const ViewArticle = (props) => {
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.container}>
-        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+        >
           <Link className={classes.backLink} to="/viewarticles">
             Articles
           </Link>
           <Typography>{articleDetails.title}</Typography>
         </Breadcrumbs>
-        <Typography variant="h1" style={{ fontWeight: "600", marginBottom: "10px", marginTop: "30px" }}>
-          {articleDetails.title}
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            variant="h1"
+            style={{
+              fontWeight: "800",
+              marginBottom: "10px",
+              marginTop: "30px",
+              fontFamily: "Helvetica",
+            }}
+          >
+            {articleDetails.title}
+          </Typography>
+          <Menu
+            onClick={(e) => handleClick(e)}
+            style={{ marginLeft: "auto", cursor: "pointer" }}
+          />
+        </div>
+
         {articleDetails.user && (
           <div
             style={{
               display: "flex",
-              marginRight: "15px",
               alignItems: "right",
               marginBottom: "20px",
               order: 2,
@@ -341,12 +374,22 @@ const ViewArticle = (props) => {
               </div>
             </div>
             <div style={{ flexDirection: "column" }}>
-              <Typography style={{ display: "flex", fontWeight: "550" }} variant="body2">
-                {articleDetails.user.first_name + " " + articleDetails.user.last_name}
+              <Typography
+                style={{ display: "flex", fontWeight: "550" }}
+                variant="body2"
+              >
+                {articleDetails.user.first_name +
+                  " " +
+                  articleDetails.user.last_name}
               </Typography>
-              <Typography variant="body2">{formatDate(articleDetails.date_created)}</Typography>
+              <Typography variant="body2">
+                {formatDate(articleDetails.date_created)}
+              </Typography>
             </div>
-            {((userType === "member" && user && user.member && user.member.membership_tier !== "FREE") ||
+            {((userType === "member" &&
+              user &&
+              user.member &&
+              user.member.membership_tier !== "FREE") ||
               userType === "partner" ||
               userType === "admin") && (
               <div style={{ marginLeft: "auto" }}>
@@ -366,10 +409,93 @@ const ViewArticle = (props) => {
             )}
           </div>
         )}
+        <div>
+          {articleDetails &&
+            articleDetails.coding_languages &&
+            articleDetails.coding_languages.length > 0 &&
+            articleDetails.coding_languages.map((language, index) => {
+              if (language === "PY") {
+                return (
+                  <Chip key={index} label="Python" className={classes.chip} />
+                );
+              } else if (language === "JAVA") {
+                return (
+                  <Chip key={index} label="Java" className={classes.chip} />
+                );
+              } else if (language === "JS") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Javascript"
+                    className={classes.chip}
+                  />
+                );
+              } else if (language === "CPP") {
+                return (
+                  <Chip key={index} label="C++" className={classes.chip} />
+                );
+              } else if (language === "CS") {
+                return <Chip key={index} label="C#" className={classes.chip} />;
+              } else if (language === "RUBY") {
+                return (
+                  <Chip key={index} label="Ruby" className={classes.chip} />
+                );
+              } else {
+                return (
+                  <Chip key={index} label={language} className={classes.chip} />
+                );
+              }
+            })}
+
+          {articleDetails &&
+            articleDetails.categories &&
+            articleDetails.categories.length > 0 &&
+            articleDetails.categories.map((category, index) => {
+              if (category === "FE") {
+                return (
+                  <Chip key={index} label="Frontend" className={classes.chip} />
+                );
+              } else if (category === "BE") {
+                return (
+                  <Chip key={index} label="Backend" className={classes.chip} />
+                );
+              } else if (category === "UI") {
+                return (
+                  <Chip key={index} label="UI/UX" className={classes.chip} />
+                );
+              } else if (category === "DB") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Database Administration"
+                    className={classes.chip}
+                  />
+                );
+              } else if (category === "ML") {
+                return (
+                  <Chip
+                    key={index}
+                    label="Machine Learning"
+                    className={classes.chip}
+                  />
+                );
+              } else {
+                return (
+                  <Chip key={index} label="Security" className={classes.chip} />
+                );
+              }
+            })}
+        </div>
 
         <div style={{ fontSize: "20px", marginBottom: "30px" }}>
           {/* {parse(articleDetails.content, options)} */}
-
+          <div style={{ width: "100%" }}>
+            <img
+              alt="thumbnail"
+              src={articleDetails && articleDetails.thumbnail}
+              width="100%"
+            />
+          </div>
           <div style={{ fontSize: "18px" }}>
             <ReactQuill
               modules={modules}
@@ -380,46 +506,6 @@ const ViewArticle = (props) => {
               onChange={(e) => e}
             />
           </div>
-
-          {articleDetails &&
-            articleDetails.coding_languages &&
-            articleDetails.coding_languages.length > 0 &&
-            articleDetails.coding_languages.map((language, index) => {
-              if (language === "PY") {
-                return <Chip key={index} label="Python" className={classes.chip} />;
-              } else if (language === "JAVA") {
-                return <Chip key={index} label="Java" className={classes.chip} />;
-              } else if (language === "JS") {
-                return <Chip key={index} label="Javascript" className={classes.chip} />;
-              } else if (language === "CPP") {
-                return <Chip key={index} label="C++" className={classes.chip} />;
-              } else if (language === "CS") {
-                return <Chip key={index} label="C#" className={classes.chip} />;
-              } else if (language === "RUBY") {
-                return <Chip key={index} label="Ruby" className={classes.chip} />;
-              } else {
-                return <Chip key={index} label={language} className={classes.chip} />;
-              }
-            })}
-
-          {articleDetails &&
-            articleDetails.categories &&
-            articleDetails.categories.length > 0 &&
-            articleDetails.categories.map((category, index) => {
-              if (category === "FE") {
-                return <Chip key={index} label="Frontend" className={classes.chip} />;
-              } else if (category === "BE") {
-                return <Chip key={index} label="Backend" className={classes.chip} />;
-              } else if (category === "UI") {
-                return <Chip key={index} label="UI/UX" className={classes.chip} />;
-              } else if (category === "DB") {
-                return <Chip key={index} label="Database Administration" className={classes.chip} />;
-              } else if (category === "ML") {
-                return <Chip key={index} label="Machine Learning" className={classes.chip} />;
-              } else {
-                return <Chip key={index} label="Security" className={classes.chip} />;
-              }
-            })}
 
           <div
             style={{
@@ -434,10 +520,16 @@ const ViewArticle = (props) => {
               onClick={(e) => handleLikeArticle(e)}
               style={{ cursor: "pointer" }}
             />
-            <Typography style={{ marginRight: "15px" }}>{articleDetails.engagements.length}</Typography>
-            <CommentIcon style={{ cursor: "pointer" }} onClick={() => setDrawerOpen(true)} />
-            <Typography style={{ display: "inline-flex" }}>{articleDetails.top_level_comments.length}</Typography>
-            <Menu onClick={(e) => handleClick(e)} style={{ marginLeft: "auto", cursor: "pointer" }} />
+            <Typography style={{ marginRight: "15px" }}>
+              {articleDetails.engagements.length}
+            </Typography>
+            <CommentIcon
+              style={{ cursor: "pointer" }}
+              onClick={() => setDrawerOpen(true)}
+            />
+            <Typography style={{ display: "inline-flex" }}>
+              {articleDetails.top_level_comments.length}
+            </Typography>
 
             <Popover
               id={popoverid}
@@ -454,24 +546,43 @@ const ViewArticle = (props) => {
               }}
             >
               <div className={classes.pop}>
-                {user && articleDetails.user && checkIfOwnerOfComment(articleDetails.user.id) && (
-                  <>
-                    <Typography variant="body2" className={classes.typography} onClick={() => clickEditArticle()}>
-                      Edit article
+                {user &&
+                  articleDetails.user &&
+                  checkIfOwnerOfComment(articleDetails.user.id) && (
+                    <Fragment>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={() => clickEditArticle()}
+                      >
+                        Edit article
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={() => unpublishArticle()}
+                      >
+                        Unpublish
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.typography}
+                        onClick={handleClickOpen}
+                      >
+                        Delete
+                      </Typography>
+                    </Fragment>
+                  )}
+                {articleDetails.user &&
+                  !checkIfOwnerOfComment(articleDetails.user.id) && (
+                    <Typography
+                      variant="body2"
+                      className={classes.typography}
+                      onClick={handleFlagClickOpen}
+                    >
+                      Flag Article
                     </Typography>
-                    <Typography variant="body2" className={classes.typography} onClick={() => unpublishArticle()}>
-                      Unpublish
-                    </Typography>
-                    <Typography variant="body2" className={classes.typography} onClick={handleClickOpen}>
-                      Delete
-                    </Typography>
-                  </>
-                )}
-                {articleDetails.user && !checkIfOwnerOfComment(articleDetails.user.id) && (
-                  <Typography variant="body2" className={classes.typography} onClick={handleFlagClickOpen}>
-                    Flag Article
-                  </Typography>
-                )}
+                  )}
               </div>
             </Popover>
           </div>

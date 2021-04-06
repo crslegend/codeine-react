@@ -4,13 +4,14 @@ import { Avatar, Typography } from "@material-ui/core";
 import {
   Computer,
   ContactSupport,
-  CreditCard,
-  Description,
-  NoteAdd,
   Person,
   Timeline,
   Work,
 } from "@material-ui/icons";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -30,11 +31,15 @@ const TicketCategory = ({
   const classes = useStyles();
 
   if (enquiry) {
-    if (enquiry.ticket_type[0] === "ARTICLE") {
+    if (enquiry.ticket_type === "ARTICLE") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <Description />
+            <FontAwesomeIcon
+              icon={faNewspaper}
+              className={classes.icon}
+              style={{ height: "24px", width: "24px" }}
+            />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
@@ -67,11 +72,11 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "COURSE") {
+    } else if (enquiry.ticket_type === "COURSE") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <NoteAdd />
+            <InsertDriveFileIcon />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
@@ -107,11 +112,11 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "PAYMENT") {
+    } else if (enquiry.ticket_type === "PAYMENT") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
-            <CreditCard />
+            <AccountBalanceWalletIcon />
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
@@ -146,7 +151,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "TECHNICAL") {
+    } else if (enquiry.ticket_type === "TECHNICAL") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
@@ -184,7 +189,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "GENERAL") {
+    } else if (enquiry.ticket_type === "GENERAL") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
@@ -221,7 +226,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "ACCOUNT") {
+    } else if (enquiry.ticket_type === "ACCOUNT") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
@@ -259,7 +264,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "CONSULTATION") {
+    } else if (enquiry.ticket_type === "CONSULTATION") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
@@ -301,7 +306,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "INDUSTRY_PROJECT") {
+    } else if (enquiry.ticket_type === "INDUSTRY_PROJECT") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>
@@ -309,9 +314,12 @@ const TicketCategory = ({
           </Avatar>
           <div>
             <Typography variant="body1" style={{ fontWeight: 600 }}>
-              {user === "admin" ? "User" : "You"} have issue with one of the
-              industry projects that {user === "admin" ? "user" : "you"} applied
-              for.
+              {user === "partner" &&
+                "You have issue with one of the industry projects that you listed."}
+              {user === "member" &&
+                "You have issue with one of the industry projects that you applied for."}
+              {user === "admin" &&
+                "User have issue with one of the listed industry projects"}
             </Typography>
             <div
               style={{
@@ -340,7 +348,7 @@ const TicketCategory = ({
           </div>
         </div>
       );
-    } else if (enquiry.ticket_type[0] === "CODE_REVIEWS") {
+    } else if (enquiry.ticket_type === "CODE_REVIEWS") {
       return (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar className={classes.avatar}>

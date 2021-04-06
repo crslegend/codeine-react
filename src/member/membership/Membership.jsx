@@ -127,8 +127,8 @@ const Membership = () => {
       email: email,
       description:
         numOfMonths && numOfMonths === 1
-          ? `Pro-Tier for 1 Month`
-          : `Pro-Tier for ${numOfMonths} Months`,
+          ? `Pro Membership for 1 Month`
+          : `Pro Membership for ${numOfMonths} Months`,
       mId: userId,
       numOfMonths: numOfMonths,
       transaction: transactionId,
@@ -190,7 +190,7 @@ const Membership = () => {
             marginBottom: "20px",
           }}
         >
-          <PageTitle title="Pro-Tier Membership" />
+          <PageTitle title="Pro Membership" />
           <div
             style={{
               width: "100%",
