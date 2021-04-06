@@ -201,7 +201,7 @@ const TopPicks = () => {
             >
               {courses &&
                 courses.map((course, index) => (
-                  <CourseCard key={index} course={course} />
+                  <CourseCard key={course.id} course={course} />
                 ))}
             </div>
           </TabPanel>
