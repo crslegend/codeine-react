@@ -19,10 +19,10 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     fontFamily: "Roboto Mono",
-    fontSize: "64px",
+    fontSize: "62px",
     color: "#CECECE",
-    marginLeft: "1vw",
-    lineHeight: "75px",
+    marginLeft: "0.8vw",
+    lineHeight: "80px",
   },
 }));
 
@@ -68,7 +68,7 @@ const ArticleCard = (props) => {
                   justifyContent: "space-between",
                 }}
               >
-                <Typography variant="h6">
+                <Typography variant="body1">
                   {article.user &&
                     article.user.first_name + " " + article.user.last_name}
                 </Typography>
@@ -77,7 +77,7 @@ const ArticleCard = (props) => {
                 </Typography>
               </div>
               <Typography
-                variant="h5"
+                variant="h6"
                 style={{
                   fontWeight: "600",
                 }}
