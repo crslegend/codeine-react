@@ -42,19 +42,8 @@ const styles = makeStyles((theme) => ({
 
 const ApplicationCard = (props) => {
   const classes = styles();
-  const { application, getAllApplications } = props;
+  const { application, getAllApplications, setSnackbar, setSbOpen } = props;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const [sbOpen, setSbOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "error",
-    anchorOrigin: {
-      vertical: "bottom",
-      horizontal: "center",
-    },
-    autoHideDuration: 3000,
-  });
 
   const formatDate = (date) => {
     const options = {
