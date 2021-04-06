@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton, Paper, Typography } from "@material-ui/core";
+import { IconButton, Typography } from "@material-ui/core";
 import TooltipMui from "@material-ui/core/Tooltip";
 import { Info } from "@material-ui/icons";
 import {

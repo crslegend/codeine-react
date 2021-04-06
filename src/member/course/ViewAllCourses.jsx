@@ -9,15 +9,13 @@ import {
   Typography,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
+import { useParams } from "react-router";
 // import { useHistory } from "react-router-dom";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
-// import PageTitle from "../../components/PageTitle";
-
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
-
 import CourseCard from "../landing/components/CourseCard";
 // import components from "./components/NavbarComponents";
 import { NoteAdd } from "@material-ui/icons";
@@ -89,6 +87,7 @@ const styles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = styles();
+  const { id } = useParams();
   // const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -114,6 +113,13 @@ const ViewAllCourses = () => {
       search: searchValue,
     };
     //console.log(sort);
+
+    if (id !== null || id !== undefined) {
+      queryParams = {
+        ...queryParams,
+        coding_language: id,
+      };
+    }
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -201,21 +207,29 @@ const ViewAllCourses = () => {
     } // eslint-disable-next-line
   }, [searchValue]);
 
-  // const formatDate = (date) => {
-  //   const options = {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   };
-
-  //   if (date !== null) {
-  //     const newDate = new Date(date).toLocaleDateString(undefined, options);
-  //     // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
-  //     // console.log(newDate);
-  //     return newDate;
-  //   }
-  //   return "";
-  // };
+  const handlePageNaming = () => {
+    if (id === null || id === undefined) {
+      return "All Courses";
+    } else {
+      if (id === "PY") {
+        return "Python Courses";
+      } else if (id === "JS") {
+        return "Javascript Courses";
+      } else if (id === "JAVA") {
+        return "Java Courses";
+      } else if (id === "HTML") {
+        return "HTML Courses";
+      } else if (id === "CPP") {
+        return "C++ Courses";
+      } else if (id === "RUBY") {
+        return "Ruby Courses";
+      } else if (id === "CS") {
+        return "C# Courses";
+      } else if (id === "CSS") {
+        return "CSS Courses";
+      }
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -223,7 +237,7 @@ const ViewAllCourses = () => {
       <div className={classes.courses}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
-            All Courses
+            {handlePageNaming()}
           </Typography>
         </div>
         <div className={classes.searchSection}>
