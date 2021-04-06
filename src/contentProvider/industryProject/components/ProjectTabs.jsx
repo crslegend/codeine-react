@@ -1,21 +1,27 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Box,
-  Divider,
-  Paper,
-  Tab,
-  Tabs,
-  Typography,
   Button,
   Dialog,
   DialogActions,
   DialogTitle,
   DialogContent,
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
 } from "@material-ui/core";
 import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
+import SkillSetChart from "./SkillSetChart";
+import ApplicantDemographics from "./ApplicantDemographics";
+import { Info } from "@material-ui/icons";
+import TooltipMui from "@material-ui/core/Tooltip";
 import Service from "../../../AxiosService";
+
 
 const useStyles = makeStyles((theme) => ({
   tab: {
@@ -27,6 +33,14 @@ const useStyles = makeStyles((theme) => ({
   tabPanel: {
     minHeight: "200px",
     marginBottom: "20px",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing(3, 5),
+  },
+  numbers: {
+    color: theme.palette.primary.main,
   },
   deleteButton: {
     backgroundColor: theme.palette.red.main,
@@ -60,12 +74,16 @@ function TabPanel(props) {
 const ProjectTabs = ({
   applicantsRows,
   applicationsColumns,
+  viewerSkills,
+  applicantSkills,
+  applicantDemographics,
   setSbOpen,
   setSnackbar,
   getIndustryProject,
   industry_project_id,
 }) => {
   const classes = useStyles();
+  // console.log(applicantDemographics);
 
   const [value, setValue] = useState(0);
   const tabPanelsArr = [0, 1];
@@ -273,6 +291,157 @@ const ProjectTabs = ({
                         </DialogActions>
                       </Dialog>
                     </Fragment>
+                  );
+                } else if (value === 1) {
+                  return (
+                    <div style={{ marginTop: "20px" }}>
+                      <Paper className={classes.paper}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: "flex" }}>
+                              <Typography variant="h6">Total Views</Typography>
+                              <TooltipMui
+                                title={
+                                  <Typography variant="body2">
+                                    Total number of unique views for this
+                                    project
+                                  </Typography>
+                                }
+                              >
+                                <IconButton disableRipple size="small">
+                                  <Info fontSize="small" color="primary" />
+                                </IconButton>
+                              </TooltipMui>
+                            </div>
+                            <Typography
+                              variant="h1"
+                              className={classes.numbers}
+                            >
+                              {viewerSkills && viewerSkills.unique_member_views}
+                            </Typography>
+                          </div>
+                        </div>
+
+                        <Typography variant="h6" style={{ fontWeight: 600 }}>
+                          Average Skills
+                        </Typography>
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "20px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              marginRight: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
+                              Project Viewers
+                            </Typography>
+                            <SkillSetChart
+                              data={viewerSkills.average_skill_set}
+                              type="skill"
+                            />
+                          </div>
+                          <div
+                            style={{
+                              marginLeft: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
+                              Project Applicants
+                            </Typography>
+                            <SkillSetChart
+                              data={applicantSkills.average_skill_set}
+                              type="skill"
+                            />
+                          </div>
+                        </div>
+
+                        <Typography
+                          variant="h6"
+                          style={{ fontWeight: 600, paddingTop: "20px" }}
+                        >
+                          Average Language Proficiencies
+                        </Typography>
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "20px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              marginRight: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
+                              Project Viewers
+                            </Typography>
+                            <SkillSetChart
+                              data={viewerSkills.average_skill_set}
+                              type="language"
+                            />
+                          </div>
+                          <div
+                            style={{
+                              marginLeft: "5px",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "50%",
+                            }}
+                          >
+                            <Typography
+                              variant="body1"
+                              style={{ textAlign: "center" }}
+                            >
+                              Project Applicants
+                            </Typography>
+                            <SkillSetChart
+                              data={applicantSkills.average_skill_set}
+                              type="language"
+                            />
+                          </div>
+                        </div>
+
+                        <Typography
+                          variant="h6"
+                          style={{ fontWeight: 600, paddingTop: "20px" }}
+                        >
+                          Applicant Demographics
+                        </Typography>
+                        <ApplicantDemographics
+                          memberDemographics={applicantDemographics}
+                        />
+                      </Paper>
+                    </div>
                   );
                 }
               })()}
