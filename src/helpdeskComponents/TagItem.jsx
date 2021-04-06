@@ -50,7 +50,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
     <div style={{ marginBottom: "15px" }}>
       {(() => {
         if (enquiry) {
-          if (enquiry.ticket_type[0] === "ARTICLE") {
+          if (enquiry.ticket_type === "ARTICLE") {
             return (
               <Link
                 className={classes.link}
@@ -63,7 +63,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.article && enquiry.article.title}
               </Link>
             );
-          } else if (enquiry.ticket_type[0] === "COURSE") {
+          } else if (enquiry.ticket_type === "COURSE") {
             return (
               <Link
                 className={classes.link}
@@ -74,7 +74,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.course.title}
               </Link>
             );
-          } else if (enquiry.ticket_type[0] === "PAYMENT") {
+          } else if (enquiry.ticket_type === "PAYMENT") {
             return (
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Transaction ID: </span>{" "}
@@ -93,7 +93,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {formatDate(enquiry.transaction.timestamp)}
               </Typography>
             );
-          } else if (enquiry.ticket_type[0] === "CONSULTATION") {
+          } else if (enquiry.ticket_type === "CONSULTATION") {
             return (
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Consultation ID: </span>{" "}
@@ -115,9 +115,9 @@ const TagItem = ({ enquiry, formatDate, user }) => {
               </Typography>
             );
           } else if (
-            (enquiry.ticket_type[0] === "ACCOUNT" ||
-              enquiry.ticket_type[0] === "GENERAL" ||
-              enquiry.ticket_type[0] === "TECHNICAL") &&
+            (enquiry.ticket_type === "ACCOUNT" ||
+              enquiry.ticket_type === "GENERAL" ||
+              enquiry.ticket_type === "TECHNICAL") &&
             user === "admin"
           ) {
             return (
@@ -127,7 +127,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 <br />
               </Typography>
             );
-          } else if (enquiry.ticket_type[0] === "INDUSTRY_PROJECT") {
+          } else if (enquiry.ticket_type === "INDUSTRY_PROJECT") {
             return (
               <Link
                 className={classes.link}
