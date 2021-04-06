@@ -68,6 +68,7 @@ const CreateNewTicketPage = () => {
   const [articles, setArticles] = useState();
   const [consultations, setConsultations] = useState();
   const [industryProjects, setIndustryProjects] = useState();
+  const [codeReviews, setCodeReviews] = useState();
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -116,6 +117,14 @@ const CreateNewTicketPage = () => {
       .then((res) => {
         // console.log(res);
         setIndustryProjects(res.data);
+      })
+      .catch((err) => console.log(err));
+
+    Service.client
+      .get(`/code-reviews/user/`)
+      .then((res) => {
+        // console.log(res);
+        setCodeReviews(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -310,6 +319,7 @@ const CreateNewTicketPage = () => {
               industryProjects={industryProjects}
               transactionId={transactionId}
               setTransactionId={setTransactionId}
+              codeReviews={codeReviews}
             />
           </div>
         </div>

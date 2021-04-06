@@ -65,6 +65,7 @@ const CreateNewTicket = ({
   setFile,
   transactionId,
   setTransactionId,
+  codeReviews,
 }) => {
   const classes = useStyles();
 
@@ -104,6 +105,9 @@ const CreateNewTicket = ({
       <MenuItem value="CONSULTATION" classes={{ root: classes.resize }}>
         Consultations
       </MenuItem>
+      <MenuItem value="CODE_REVIEWS" classes={{ root: classes.resize }}>
+        Code Reviews
+      </MenuItem>
     </Select>
   );
 
@@ -139,6 +143,9 @@ const CreateNewTicket = ({
       </MenuItem>
       <MenuItem value="CONSULTATION" classes={{ root: classes.resize }}>
         Consultations
+      </MenuItem>
+      <MenuItem value="CODE_REVIEWS" classes={{ root: classes.resize }}>
+        Code Reviews
       </MenuItem>
     </Select>
   );
@@ -349,6 +356,42 @@ const CreateNewTicket = ({
                 </div>
               );
             } else if (issueType === "CODE_REVIEWS") {
+              return (
+                <div style={{ marginTop: "20px" }}>
+                  <Typography variant="h6">Your Posted Code Reviews</Typography>
+                  <FormControl
+                    margin="dense"
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <Select
+                      displayEmpty
+                      value={selectedTagging ? selectedTagging : ""}
+                      onChange={(e) => {
+                        setSelectedTagging(e.target.value);
+                      }}
+                      style={{ backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="" classes={{ root: classes.resize }}>
+                        <em>Select a Code Review</em>
+                      </MenuItem>
+                      {codeReviews &&
+                        codeReviews.length > 0 &&
+                        codeReviews.map((code, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={code.id}
+                              classes={{ root: classes.resize }}
+                            >
+                              {code.title}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </div>
+              );
             }
           })()}
           {issueType && issueType !== "" && (
