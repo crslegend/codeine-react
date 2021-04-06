@@ -1,12 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Card,
-  CardContent,
-  Divider,
-  CardActionArea,
-} from "@material-ui/core";
+import { Typography, Card, CardContent, Divider, CardActionArea } from "@material-ui/core";
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
@@ -35,7 +29,7 @@ const CodeReviewCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea style={{ height: "100%" }}>
+      <CardActionArea style={{ height: "100%" }} href={`/codereview/${codeReview && codeReview.id}`}>
         <CardContent
           style={{
             height: "inherit",
@@ -71,15 +65,11 @@ const CodeReviewCard = (props) => {
                 fontFamily: "Roboto Mono",
               }}
             >
-              {codeReview.user &&
-                codeReview.user.first_name + " " + codeReview.user.last_name}
+              {codeReview.user && codeReview.user.first_name + " " + codeReview.user.last_name}
             </Typography>
           </div>
           <div style={{ display: "flex", margin: "10px 0" }}>
-            {codeReview &&
-              codeReview.categories.map((category) => (
-                <Label label={category} />
-              ))}
+            {codeReview && codeReview.categories.map((category) => <Label label={category} />)}
           </div>
         </CardContent>
       </CardActionArea>
