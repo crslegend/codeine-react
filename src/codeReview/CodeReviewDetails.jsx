@@ -143,7 +143,10 @@ const CodeReviewDetails = () => {
         // console.log(res.data);
         setCode(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        history.push("/codereview");
+      })
+      .then(() => setLoading(false));
   };
 
   const getCodeReviewComments = () => {
@@ -168,8 +171,7 @@ const CodeReviewDetails = () => {
 
         setCodeComments(flatComments);
       })
-      .catch((err) => console.log(err))
-      .then(() => setLoading(false));
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
