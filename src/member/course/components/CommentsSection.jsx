@@ -74,6 +74,16 @@ const styles = makeStyles((theme) => ({
     borderRadius: "9px",
     width: "30px",
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #437FC7",
+  },
 }));
 
 const CommentsSection = ({ materialId, user }) => {
@@ -1303,6 +1313,13 @@ const CommentsSection = ({ materialId, user }) => {
             fullWidth
             placeholder="Your comments here"
             multiline
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+              },
+            }}
             rows={4}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
@@ -1357,6 +1374,13 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your reply here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({
@@ -1413,6 +1437,13 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your comments here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({
