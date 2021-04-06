@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 import { useHistory, useParams } from "react-router";
 import Service from "../../AxiosService";
 import { IconButton } from "@material-ui/core";
@@ -8,10 +8,10 @@ import ViewTicket from "../../helpdeskComponents/ViewTicket";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
-const useStyles = makeStyles((theme) => ({}));
+// const useStyles = makeStyles((theme) => ({}));
 
 const ViewTicketPage = () => {
-  const classes = useStyles();
+  // const classes = useStyles();
   const { id } = useParams();
   const history = useHistory();
 
