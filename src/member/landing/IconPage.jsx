@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Card, Tooltip } from "@material-ui/core";
-import { Link } from "react-router-dom";
 
 import py from "../../assets/icons/PyIcon.png";
 import js from "../../assets/icons/JsIcon.png";
