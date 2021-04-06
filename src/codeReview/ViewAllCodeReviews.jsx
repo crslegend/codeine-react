@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, Favorite, Forum, Grade, People, Person } from "@material-ui/icons";
+import { Add, Forum, Grade, People, Person } from "@material-ui/icons";
 import Toast from "../components/Toast.js";
 import AddSnippetDialog from "./components/AddSnippetDialog";
 
