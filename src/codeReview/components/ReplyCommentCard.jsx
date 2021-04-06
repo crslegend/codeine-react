@@ -117,9 +117,13 @@ const ReplyCommentCard = ({ comment, reviewAuthor, getCodeReviewComments }) => {
           <Avatar alt={comment.user.email} src={comment.user.profile_photo} style={{ width: 32, height: 32 }} />
           <div className={classes.flexItem}>
             <Typography className={classes.commentAuthor} variant="body2">
-              <Link className={classes.link} href={`/member/profile/${comment.user.id}`}>
-                {comment.user.first_name} {comment.user.last_name}
-              </Link>{" "}
+              {comment.user.member.pro ? (
+                <Link className={classes.link} href={`/member/profile/${comment.user.id}`}>
+                  {comment.user.first_name} {comment.user.last_name}
+                </Link>
+              ) : (
+                `${comment.user.first_name} ${comment.user.last_name}`
+              )}{" "}
               <span className={classes.commentTimestamp}>{calculateDateInterval(comment.timestamp)}</span>
             </Typography>
             {reviewAuthor.id === comment.user.id && <Chip className={classes.createIcon} label="OP" />}
