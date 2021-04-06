@@ -149,7 +149,7 @@ const IndustryProjectDetails = () => {
   const [allApplicantList, setAllApplicantList] = useState([]);
   let applicantsRows = allApplicantList;
 
-  const getlndustryProject = () => {
+  const getIndustryProject = () => {
     Service.client
       .get(`/industry-projects/${id}`)
       .then((res) => {
@@ -197,7 +197,7 @@ const IndustryProjectDetails = () => {
   };
 
   useEffect(() => {
-    getlndustryProject();
+    getIndustryProject();
   }, []);
 
   const handleSubmit = () => {
@@ -280,10 +280,6 @@ const IndustryProjectDetails = () => {
   };
 
   const handleDeleteSubmit = () => {
-    const data = {
-      is_available: true,
-    };
-
     Service.client
       .patch(`/industry-projects/${id}`, { is_available: false })
       .then((res) => {
@@ -549,23 +545,14 @@ const IndustryProjectDetails = () => {
                   </CardContent>
                 </div>
               </Grid>
-              {/* <Typography
-                variant="h5"
-                style={{ marginTop: 10, marginBottom: "5px", color: "#437FC7" }}
-              >
-                Applicants
-              </Typography> */}
-              {/* <Typography
-                variant="body1"
-                style={{ marginBottom: "30px", color: "#000000" }}
-              >
-                Click on the respective applications below to view application
-                details.
-              </Typography> */}
               <Grid item xs={12} style={{ marginTop: "10px" }}>
                 <ProjectTabs
                   applicantsRows={applicantsRows}
                   applicationsColumns={applicationsColumns}
+                  setSnackbar={setSnackbar}
+                  setSbOpen={setSbOpen}
+                  industry_project_id={id}
+                  getIndustryProject={() => getIndustryProject}
                 />
               </Grid>
             </div>
