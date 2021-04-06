@@ -125,7 +125,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="py_icon"
                   src={py}
                   style={{
@@ -196,7 +196,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="js_icon"
                   src={js}
                   style={{
@@ -271,7 +271,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="java_icon"
                   src={java}
                   style={{
@@ -345,7 +345,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="ruby_icon"
                   src={ruby}
                   style={{
@@ -417,7 +417,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="c++_icon"
                   src={cplus}
                   style={{
@@ -489,7 +489,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="c#_icon"
                   src={csharp}
                   style={{
@@ -564,7 +564,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="html_icon"
                   src={html}
                   style={{
@@ -635,7 +635,7 @@ const IconPage = () => {
                 }
               >
                 <img
-                  width="80%"
+                  width="70%"
                   alt="css_icon"
                   src={css}
                   style={{
