@@ -214,6 +214,12 @@ const ViewAllCourses = () => {
   }, []);
 
   useEffect(() => {
+    getAllCourses();
+    checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
     if (searchValue === "") {
       getAllCourses();
     } // eslint-disable-next-line
@@ -254,13 +260,7 @@ const ViewAllCourses = () => {
             separator="›"
             aria-label="breadcrumb"
           >
-            <Link
-              className={classes.backLink}
-              onClick={() => {
-                history.push("/courses");
-                window.location.reload();
-              }}
-            >
+            <Link className={classes.backLink} to="/courses">
               <Typography style={{ marginRight: "8px" }} variant="body1">
                 All Courses
               </Typography>
