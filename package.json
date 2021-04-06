@@ -35,7 +35,7 @@
     "material-ui-dropzone": "^3.5.0",
     "material-ui-search-bar": "^1.0.0",
     "react": "^17.0.1",
-    "react-ace": "^9.3.0",
+    "react-ace": "^9.4.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-copy-to-clipboard": "^5.0.3",
     "react-dom": "^17.0.1",
