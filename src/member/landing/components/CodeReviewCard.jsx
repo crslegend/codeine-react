@@ -50,8 +50,8 @@ const CodeReviewCard = (props) => {
                 codeReview.code
                   .split("\n")
                   .slice(0, 6)
-                  .map((line) => (
-                    <div className={classes.codeBody}>
+                  .map((line, i) => (
+                    <div key={i} className={classes.codeBody}>
                       <pre style={{ margin: 0 }}>
                         <div
                           dangerouslySetInnerHTML={{
