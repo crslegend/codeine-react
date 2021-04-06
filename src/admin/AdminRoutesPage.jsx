@@ -27,6 +27,7 @@ import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import WorkOutlinedIcon from "@material-ui/icons/WorkOutline";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -53,6 +54,7 @@ import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
+import IndustryProjectPage from "./industryProject/IndustryProjectPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -402,6 +404,16 @@ const AdminRoutesPage = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/admin/industryproject"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <WorkOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Industry Project</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/admin/analytics"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -514,6 +526,11 @@ const AdminRoutesPage = () => {
             exact
             path="/admin/learnersachievement"
             render={() => <LearnersAchievementPage />}
+          />
+          <Route
+            exact
+            path="/admin/industryproject"
+            render={() => <IndustryProjectPage />}
           />
           <Route
             exact
