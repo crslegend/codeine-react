@@ -245,6 +245,12 @@ const AdminContentQualityPage = () => {
   const [allArticleList, setAllArticleList] = useState([]);
 
   const articleColumns = [
+    {
+      field: "thumbnail",
+      headerName: "-",
+      width: 70,
+      renderCell: (params) => <Avatar src={params.value} alt=""></Avatar>,
+    },
     { field: "title", headerName: "Title", width: 200 },
     {
       field: "date_created",

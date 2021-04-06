@@ -47,8 +47,8 @@ const FAQ = [
     answer: `Yes, it is possible. Codeine is always looking forward to work with different types of organisations around the world to provide education courses or seminars for our members here. Do register with us on a sperate account as an organisation.`,
   },
   {
-    question: "What Is The Difference Between Free-Tier And Pro-Tier Members?",
-    answer: `Pro-Tier members have to pay a monthly subscription fee to have access to Codeine's integrated coding environment and unlimited access to course consultations. Courses that you have created can also be set to be limited to only for Pro-Tier members. The earnings from the subscriptions forms a part of your monthly earnings.`,
+    question: "What Is The Difference Between Free-Tier And Pro Members?",
+    answer: `Pro members have to pay a monthly subscription fee to have access to Codeine's integrated coding environment and unlimited access to course consultations. Courses that you have created can also be set to be limited to only for Pro members. The earnings from the subscriptions forms a part of your monthly earnings.`,
   },
 ];
 

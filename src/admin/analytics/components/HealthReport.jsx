@@ -107,12 +107,12 @@ const HealthReport = ({ platformReport }) => {
         <div className={classes.statsDiv}>
           <div style={{ display: "flex" }}>
             <Typography variant="h6" style={{ paddingRight: "5px" }}>
-              New Pro-Tier Members
+              New Pro Members
             </Typography>
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total number of members who upgraded to pro-tier
+                  Total number of members who upgraded to pro membership
                 </Typography>
               }
             >

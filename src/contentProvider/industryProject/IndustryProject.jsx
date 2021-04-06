@@ -85,7 +85,7 @@ const IndustryProject = () => {
   let queryParams = {
     //   search: searchValue,
     partner_id: decoded.user_id,
-    isAvailable: true
+    isAvailable: true,
   };
 
   const getAllIndustryProjects = () => {
@@ -196,7 +196,7 @@ const IndustryProject = () => {
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <div className={classes.titleSection}>
-        <PageTitle title="My Industry Project" />
+        <PageTitle title="My Industry Projects" />
         <Button
           variant="contained"
           color="primary"
@@ -209,10 +209,7 @@ const IndustryProject = () => {
       <div>
         {allIndustryProjects && allIndustryProjects.length !== 0 ? (
           allIndustryProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-            />
+            <ProjectCard key={project.id} project={project} />
           ))
         ) : (
           <div>No industry projects created yet</div>
@@ -294,7 +291,7 @@ const IndustryProject = () => {
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
-                end_date: e, 
+                end_date: e,
               })
             }
             format="dd/MM/yyyy"
@@ -309,7 +306,7 @@ const IndustryProject = () => {
             onChange={(e) =>
               setIndustryProject({
                 ...industryProject,
-                application_deadline: e, 
+                application_deadline: e,
               })
             }
             format="dd/MM/yyyy"

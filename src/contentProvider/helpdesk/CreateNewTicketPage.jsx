@@ -121,6 +121,17 @@ const CreateNewTicketPage = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    if (Cookies.get("t1")) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/industry-projects`, { params: { partner_id: decoded.user_id } })
+        .then((res) => {
+          // console.log(res);
+          setIndustryProjects(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   useEffect(() => {

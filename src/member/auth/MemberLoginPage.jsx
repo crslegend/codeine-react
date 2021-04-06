@@ -115,6 +115,14 @@ const MemberLoginPage = () => {
           //   severity: "error",
           // });
           // return;
+        } else if (res.data.user.is_admin) {
+          setLoading(false);
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "This user is not a registered member. Please try again!",
+            severity: "error",
+          });
         }
       })
       .catch((err) => {
