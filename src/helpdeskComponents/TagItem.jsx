@@ -48,11 +48,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
   };
 
   const handleRedirectForCodeReview = (id) => {
-    if (user === "admin") {
-      // return `/admin/contentquality/courses/${id}`;
-    } else if (user === "member" || user === "partner") {
-      return `/codereview/${id}`;
-    }
+    return `/codereview/${id}`;
   };
 
   return (
