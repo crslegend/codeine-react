@@ -1,12 +1,8 @@
-import React, { useState, Fragment } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Card, Avatar, Typography, Link, Chip, IconButton } from "@material-ui/core";
-import { Reply } from "@material-ui/icons";
+import { Card, Typography } from "@material-ui/core";
 
-import { calculateDateInterval } from "../../utils.js";
-import CommentTextArea from "./CommentTextArea.jsx";
-import Service from "../../AxiosService";
+import CommentCard from "./CommentCard";
 
 const useStyles = makeStyles((theme) => ({
   cardRoot: {
@@ -84,93 +80,6 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.grey[200]}`,
   },
 }));
-
-const ReplyCommentCard = ({ comment, classes, reviewAuthor }) => {
-  return (
-    <div className={classes.replyCardRoot}>
-      <div className={classes.commentHeader}>
-        <Avatar alt={comment.user.email} src={comment.user.profile_photo} style={{ width: 32, height: 32 }} />
-        <div className={classes.flexItem}>
-          <Typography className={classes.commentAuthor} variant="body2">
-            <Link className={classes.link} href={`/member/profile/${comment.user.id}`}>
-              {comment.user.first_name} {comment.user.last_name}
-            </Link>{" "}
-            <span className={classes.commentTimestamp}>{calculateDateInterval(comment.timestamp)}</span>
-          </Typography>
-          {reviewAuthor.id === comment.user.id && <Chip className={classes.createIcon} label="OP" />}
-        </div>
-      </div>
-      <div className={classes.commentBody} dangerouslySetInnerHTML={{ __html: comment.comment }} />
-    </div>
-  );
-};
-
-const CommentCard = ({ comment, classes, reviewAuthor, getCodeReviewComments }) => {
-  const [replyComment, setReplyComment] = useState();
-  const { id } = useParams();
-
-  const createComment = () => {
-    Service.client
-      .post(`/code-reviews/${id}/comments`, {
-        comment: replyComment,
-        code_line_index: comment.code_line_index,
-        parent_comment_id: comment.id,
-      })
-      .then((res) => {
-        setReplyComment();
-        getCodeReviewComments();
-      })
-      .catch((err) => console.log(err));
-  };
-
-  if (!comment || !comment.user) {
-    return null;
-  }
-
-  return (
-    <Fragment>
-      <div className={classes.commentCardRoot}>
-        <div className={classes.commentHeader}>
-          <Avatar alt={comment.user.email} src={comment.user.profile_photo} style={{ width: 32, height: 32 }} />
-          <div className={classes.flexItem}>
-            <Typography className={classes.commentAuthor} variant="body2">
-              <Link className={classes.link} href={`/member/profile/${comment.user.id}`}>
-                {comment.user.first_name} {comment.user.last_name}
-              </Link>{" "}
-              <span className={classes.commentTimestamp}>{calculateDateInterval(comment.timestamp)}</span>
-            </Typography>
-            {reviewAuthor.id === comment.user.id && <Chip className={classes.createIcon} label="OP" />}
-          </div>
-          <div>
-            <IconButton
-              disableRipple
-              classes={{ root: classes.iconButton }}
-              size="small"
-              onClick={() => setReplyComment(" ")}
-            >
-              <Reply fontSize="inherit" />
-            </IconButton>
-          </div>
-        </div>
-        <div className={classes.commentBody} dangerouslySetInnerHTML={{ __html: comment.comment }} />
-      </div>
-      {replyComment && (
-        <CommentTextArea
-          comment={replyComment}
-          setComment={setReplyComment}
-          closeCommentTextArea={() => setReplyComment()}
-          onSubmit={() => createComment()}
-          header="Reply"
-          reply
-        />
-      )}
-      {comment.replies &&
-        comment.replies.map((reply, i) => (
-          <ReplyCommentCard key={i} comment={reply} classes={classes} reviewAuthor={reviewAuthor} />
-        ))}
-    </Fragment>
-  );
-};
 
 const CommentSection = ({ comments, selectedLine, reviewAuthor, getCodeReviewComments }) => {
   const classes = useStyles();
