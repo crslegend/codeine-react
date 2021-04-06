@@ -36,11 +36,21 @@ const TagItem = ({ enquiry, formatDate, user }) => {
     }
   };
 
+  const handleRedirectForProject = (id) => {
+    if (user === "admin") {
+      // return `/admin/contentquality/courses/${id}`;
+    } else if (user === "member") {
+      return `/industryprojects/${id}`;
+    } else if (user === "partner") {
+      return `/partner/home/industryproject/view/${id}`;
+    }
+  };
+
   return (
     <div style={{ marginBottom: "15px" }}>
       {(() => {
         if (enquiry) {
-          if (enquiry.ticket_type[0] === "ARTICLE") {
+          if (enquiry.ticket_type === "ARTICLE") {
             return (
               <Link
                 className={classes.link}
@@ -53,7 +63,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.article && enquiry.article.title}
               </Link>
             );
-          } else if (enquiry.ticket_type[0] === "COURSE") {
+          } else if (enquiry.ticket_type === "COURSE") {
             return (
               <Link
                 className={classes.link}
@@ -64,7 +74,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.course.title}
               </Link>
             );
-          } else if (enquiry.ticket_type[0] === "PAYMENT") {
+          } else if (enquiry.ticket_type === "PAYMENT") {
             return (
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Transaction ID: </span>{" "}
@@ -83,7 +93,7 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {formatDate(enquiry.transaction.timestamp)}
               </Typography>
             );
-          } else if (enquiry.ticket_type[0] === "CONSULTATION") {
+          } else if (enquiry.ticket_type === "CONSULTATION") {
             return (
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Consultation ID: </span>{" "}
@@ -105,9 +115,9 @@ const TagItem = ({ enquiry, formatDate, user }) => {
               </Typography>
             );
           } else if (
-            (enquiry.ticket_type[0] === "ACCOUNT" ||
-              enquiry.ticket_type[0] === "GENERAL" ||
-              enquiry.ticket_type[0] === "TECHNICAL") &&
+            (enquiry.ticket_type === "ACCOUNT" ||
+              enquiry.ticket_type === "GENERAL" ||
+              enquiry.ticket_type === "TECHNICAL") &&
             user === "admin"
           ) {
             return (
@@ -116,6 +126,19 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 {enquiry.base_user.id}
                 <br />
               </Typography>
+            );
+          } else if (enquiry.ticket_type === "INDUSTRY_PROJECT") {
+            return (
+              <Link
+                className={classes.link}
+                href={handleRedirectForProject(
+                  enquiry.industry_project && enquiry.industry_project.id
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {enquiry.industry_project && enquiry.industry_project.title}
+              </Link>
             );
           }
         }

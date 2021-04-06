@@ -110,6 +110,14 @@ const CreateNewTicketPage = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    Service.client
+      .get(`/industry-projects/applications/member`)
+      .then((res) => {
+        // console.log(res);
+        setIndustryProjects(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
