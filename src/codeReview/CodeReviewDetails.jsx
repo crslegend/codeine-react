@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Chip, Avatar } from "@material-ui/core";
+import { Typography, Chip, Avatar, IconButton } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
@@ -12,6 +12,7 @@ import Navbar from "../components/Navbar";
 import { calculateDateInterval } from "../utils.js";
 import CommentSection from "./components/CommentSection";
 import CodeLine from "./components/CodeLine";
+import { Grade, GradeOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
   flex: {
     display: "flex",
     alignItems: "center",
+  },
+  flexItem: {
+    flexGrow: 1,
   },
   container: {
     display: "flex",
@@ -48,6 +52,32 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       textDecoration: "none",
       color: "#065cc4",
+    },
+  },
+  iconButton: {
+    padding: theme.spacing(0.5),
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.grey[400],
+    borderRadius: "10px",
+    border: `1px solid ${theme.palette.grey[400]}`,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      border: `1px solid ${theme.palette.primary.main}`,
+      background: "transparent",
+    },
+  },
+  activeIconButton: {
+    padding: theme.spacing(0.5),
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.yellow.main,
+    borderRadius: "10px",
+    border: `1px solid ${theme.palette.yellow.main}`,
+    "&:hover": {
+      color: theme.palette.orange.main,
+      border: `1px solid ${theme.palette.orange.main}`,
+      background: "transparent",
     },
   },
 }));
@@ -87,6 +117,8 @@ const CodeReviewDetails = () => {
   const [codeComments, setCodeComments] = useState([]);
   const [selectedLine, setSelectedLine] = useState(1);
 
+  console.log(code);
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -118,8 +150,7 @@ const CodeReviewDetails = () => {
     Service.client
       .get(`/code-reviews/${id}/comments`)
       .then((res) => {
-        console.log(res.data);
-
+        // console.log(res.data);
         const flatComments = res.data.map((comment) => {
           if (comment.replies.length <= 0) {
             return comment;
@@ -134,7 +165,7 @@ const CodeReviewDetails = () => {
             replies: replies,
           };
         });
-        
+
         setCodeComments(flatComments);
       })
       .catch((err) => console.log(err))
@@ -148,8 +179,28 @@ const CodeReviewDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const likeCodeReview = () => {
+    Service.client
+      .post(`/code-reviews/${code.id}/engagements`)
+      .then((res) => {
+        // console.log(res.data);
+        setCode(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const unlikeCodeReview = () => {
+    Service.client
+      .delete(`/code-reviews/${code.id}/engagements`)
+      .then((res) => {
+        console.log(res.data);
+        setCode(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   if (loading) {
-    return "Loading";
+    return "Loading...";
   }
 
   return (
@@ -185,6 +236,17 @@ const CodeReviewDetails = () => {
             <Typography variant="body2" style={{ opacity: 0.8 }}>
               submitted {code && calculateDateInterval(code.timestamp)}
             </Typography>
+          </div>
+          <div className={classes.flex} style={{ margin: "8px 32px" }}>
+            <IconButton
+              disableRipple
+              classes={{ root: code && code.current_user_liked ? classes.activeIconButton : classes.iconButton }}
+              size="small"
+              onClick={() => (code && code.current_user_liked ? unlikeCodeReview() : likeCodeReview())}
+            >
+              {code.current_user_liked ? <Grade /> : <GradeOutlined />}
+              <span style={{ fontSize: "14px", margin: "0 8px" }}>Likes: {code.likes}</span>
+            </IconButton>
           </div>
         </div>
         <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>

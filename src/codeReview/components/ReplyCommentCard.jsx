@@ -89,7 +89,6 @@ const ReplyCommentCard = ({ comment, reviewAuthor, getCodeReviewComments }) => {
       })
       .catch((err) => console.log(err));
   };
-  console.log(comment);
 
   const likeComment = () => {
     Service.client
