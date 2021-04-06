@@ -5,7 +5,6 @@ import Service from "../../AxiosService";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import pricing from "../../assets/PricingAsset.png";
-import pricing1 from "../../assets/PricingAsset1.png";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -199,11 +198,7 @@ const Membership = () => {
           >
             <div style={{ width: "60%" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img
-                  alt="pricing plan"
-                  src={plan && plan.monthly ? pricing : pricing1}
-                  width="85%"
-                />
+                <img alt="pricing plan" src={pricing} width="100%" />
               </div>
             </div>
             <div style={{ width: "10%" }} />

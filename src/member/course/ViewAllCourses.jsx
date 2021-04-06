@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MemberNavBar from "../MemberNavBar";
 import {
@@ -7,10 +7,12 @@ import {
   MenuItem,
   Select,
   Typography,
+  Breadcrumbs,
+  CircularProgress,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { useParams } from "react-router";
-// import { useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
+import { useLocation } from "react-router";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
@@ -26,6 +28,14 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     fontDisplay: "swap",
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
   },
   courses: {
     paddingTop: "65px",
@@ -87,8 +97,10 @@ const styles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = styles();
+
+  const history = useHistory();
   const { id } = useParams();
-  // const history = useHistory();
+  const location = useLocation();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -102,6 +114,8 @@ const ViewAllCourses = () => {
     Math.ceil(allCourses.length / itemsPerPage)
   );
 
+  const [loading, setLoading] = useState(true);
+
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -114,12 +128,13 @@ const ViewAllCourses = () => {
     };
     //console.log(sort);
 
-    if (id !== null || id !== undefined) {
+    if ((id !== null || id !== undefined) && location.pathname !== "/courses") {
       queryParams = {
         ...queryParams,
         coding_language: id,
       };
     }
+    // console.log(id);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -155,6 +170,7 @@ const ViewAllCourses = () => {
       .get(`/courses`, { params: { ...queryParams } })
       .then((res) => {
         // console.log(res);
+        setLoading(false);
         setAllCourses(res.data.results);
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
@@ -202,6 +218,13 @@ const ViewAllCourses = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
+    getAllCourses();
+    checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
     if (searchValue === "") {
       getAllCourses();
     } // eslint-disable-next-line
@@ -235,6 +258,23 @@ const ViewAllCourses = () => {
     <div className={classes.root}>
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div className={classes.courses}>
+        {id && id ? (
+          <Breadcrumbs
+            style={{ margin: "10px 0px" }}
+            separator="›"
+            aria-label="breadcrumb"
+          >
+            <Link className={classes.backLink} to="/courses">
+              <Typography style={{ marginRight: "8px" }} variant="body1">
+                All Courses
+              </Typography>
+            </Link>
+            <Typography variant="body1">{handlePageNaming()}</Typography>
+          </Breadcrumbs>
+        ) : (
+          ""
+        )}
+
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
             {handlePageNaming()}
@@ -280,15 +320,28 @@ const ViewAllCourses = () => {
             </FormControl>
           </div>
         </div>
-        <div className={classes.cards}>
-          {allCourses && allCourses.length > 0 ? (
-            allCourses
-              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-              .map((course, index) => (
-                <CourseCard key={course.id} course={course} />
-              ))
-          ) : (
-            /*{
+        {loading ? (
+          <div
+            style={{
+              marginTop: "50px",
+              display: "flex",
+              justifyContent: "center",
+              wdith: "100%",
+            }}
+          >
+            <CircularProgress />
+          </div>
+        ) : (
+          <Fragment>
+            <div className={classes.cards}>
+              {allCourses && allCourses.length > 0 ? (
+                allCourses
+                  .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                  .map((course, index) => (
+                    <CourseCard key={course.id} course={course} />
+                  ))
+              ) : (
+                /*{
                   return (
                   <Card key={index} className={classes.cardRoot}>
                     <CardActionArea
@@ -353,35 +406,37 @@ const ViewAllCourses = () => {
                             );
                 
                 }*/
-            <div
-              style={{
-                display: "block",
-                marginLeft: "auto",
-                marginRight: "auto",
-                textAlign: "center",
-                marginTop: "20px",
-              }}
-            >
-              <NoteAdd fontSize="large" />
-              <Typography variant="h5">No Courses Found</Typography>
+                <div
+                  style={{
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    textAlign: "center",
+                    marginTop: "20px",
+                  }}
+                >
+                  <NoteAdd fontSize="large" />
+                  <Typography variant="h5">No Courses Found</Typography>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className={classes.paginationSection}>
-          {allCourses && allCourses.length > 0 && (
-            <Pagination
-              count={noOfPages}
-              page={page}
-              onChange={handlePageChange}
-              defaultPage={1}
-              color="primary"
-              size="medium"
-              showFirstButton
-              showLastButton
-              className={classes.pagination}
-            />
-          )}
-        </div>
+            <div className={classes.paginationSection}>
+              {allCourses && allCourses.length > 0 && (
+                <Pagination
+                  count={noOfPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  defaultPage={1}
+                  color="primary"
+                  size="medium"
+                  showFirstButton
+                  showLastButton
+                  className={classes.pagination}
+                />
+              )}
+            </div>
+          </Fragment>
+        )}
       </div>
       <Footer />
     </div>
