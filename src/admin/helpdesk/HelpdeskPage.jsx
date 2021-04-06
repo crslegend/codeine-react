@@ -42,7 +42,7 @@ const AdminHelpdeskPage = () => {
       Service.client
         .get(`helpdesk/tickets`, { params: { search: searchValue } })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setEnquiries(res.data);
         })
         .catch((err) => console.log(err));
@@ -62,7 +62,26 @@ const AdminHelpdeskPage = () => {
   }, [searchValue]);
 
   const capitalizeFirstLetter = (string) => {
+    // console.log(string);
+    if (string === "INDUSTRY_PROJECT" || string === "CODE_REVIEWS") {
+      const arr = string.split("_");
+      return (
+        arr[0].charAt(0).toUpperCase() +
+        arr[0].slice(1).toLowerCase() +
+        " " +
+        arr[1].charAt(0).toUpperCase() +
+        arr[1].slice(1).toLowerCase()
+      );
+    }
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const displayAssignedAdmin = (obj) => {
+    console.log(obj);
+    if (!obj) {
+      return "Not Assigned Yet";
+    }
+    return obj.first_name + " " + obj.last_name;
   };
 
   const formatDate = (date) => {
@@ -116,10 +135,16 @@ const AdminHelpdeskPage = () => {
       ),
     },
     {
+      field: "assigned_admin",
+      headerName: "Admin Assigned",
+      width: 180,
+      valueFormatter: (params) => displayAssignedAdmin(params.value),
+    },
+    {
       field: "ticket_type",
       headerName: "Type",
       width: 180,
-      valueFormatter: (params) => capitalizeFirstLetter(params.value[0]),
+      valueFormatter: (params) => capitalizeFirstLetter(params.value),
     },
     {
       field: "timestamp",

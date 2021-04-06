@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TagItem = ({ enquiry, formatDate, user }) => {
   const classes = useStyles();
+  // console.log(enquiry);
 
   const handleRedirectForArticle = (id) => {
     if (user === "admin") {
@@ -44,6 +45,10 @@ const TagItem = ({ enquiry, formatDate, user }) => {
     } else if (user === "partner") {
       return `/partner/home/industryproject/view/${id}`;
     }
+  };
+
+  const handleRedirectForCodeReview = (id) => {
+    return `/codereview/${id}`;
   };
 
   return (
@@ -138,6 +143,19 @@ const TagItem = ({ enquiry, formatDate, user }) => {
                 rel="noopener noreferrer"
               >
                 {enquiry.industry_project && enquiry.industry_project.title}
+              </Link>
+            );
+          } else if (enquiry.ticket_type === "CODE_REVIEWS") {
+            return (
+              <Link
+                className={classes.link}
+                href={handleRedirectForCodeReview(
+                  enquiry.code_review && enquiry.code_review.id
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {enquiry.code_review && enquiry.code_review.title}
               </Link>
             );
           }

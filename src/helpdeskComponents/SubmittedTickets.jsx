@@ -21,7 +21,7 @@ import {
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
@@ -404,7 +404,11 @@ const SubmittedTickets = ({ user, enquiries, filterBy, setFilterBy }) => {
                     return (
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Avatar className={classes.avatar}>
-                          <Work />
+                          <FontAwesomeIcon
+                            icon={faFileCode}
+                            className={classes.icon}
+                            style={{ height: "24px", width: "24px" }}
+                          />
                         </Avatar>
                         <div>
                           <Typography variant="h6" style={{ fontWeight: 600 }}>

@@ -233,6 +233,21 @@ const CreateNewTicketPage = () => {
         return;
       }
       formData.append("consultation_slot_id", selectedTagging);
+    } else if (issueType === "CODE_REVIEWS") {
+      if (!selectedTagging || selectedTagging === "") {
+        setSbOpen(true);
+        setSnackbar({
+          message: "Please select the specific code review!",
+          severity: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+      formData.append("code_review_id", selectedTagging);
     }
 
     Service.client
