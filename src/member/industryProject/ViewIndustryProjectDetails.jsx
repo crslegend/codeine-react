@@ -12,7 +12,9 @@ import {
   DialogTitle,
   Breadcrumbs,
   Typography,
+  Chip,
 } from "@material-ui/core";
+import green from "@material-ui/core/colors/green";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
 import Service from "../../AxiosService";
@@ -237,13 +239,20 @@ const ViewIndustryProjectDetails = () => {
                       >
                         {industryProject && industryProject.title}
                       </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleOpenApplyDialog}
-                      >
-                        Apply
-                      </Button>
+                      {industryProject && industryProject.is_applied ? (
+                        <Chip
+                          label="Applied"
+                          style={{ backgroundColor: green[600], color: "#FFF" }}
+                        />
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleOpenApplyDialog}
+                        >
+                          Apply
+                        </Button>
+                      )}
                     </div>
                     <Typography variant="h6">
                       {industryProject &&
