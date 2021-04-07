@@ -125,6 +125,9 @@ const ViewAllIndustryProject = () => {
     Service.client
       .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
+        if (sort === undefined || sort === "") {
+          res.data.sort((a, b) => b.date_listed.localeCompare(a.date_listed));
+        }
         setAllIndustryProjects(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
@@ -197,12 +200,8 @@ const ViewAllIndustryProject = () => {
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value="date_listed">
-                  Date Listed (Most Recent)
-                </MenuItem>
-                <MenuItem value="-date_listed">
-                  Date Listed (Least Recent)
-                </MenuItem>
+                <MenuItem value="date_listed">Oldest First</MenuItem>
+                <MenuItem value="-date_listed">Newest First</MenuItem>
               </Select>
             </FormControl>
           </div>
