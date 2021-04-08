@@ -7,7 +7,9 @@ import {
   Avatar,
   CardContent,
   CardActionArea,
+  Chip,
 } from "@material-ui/core";
+import green from "@material-ui/core/colors/green";
 import Label from "./Label";
 import { Link } from "react-router-dom";
 
@@ -104,18 +106,24 @@ const ProjectCard = (props) => {
                       project.categories.map((category) => (
                         <Label label={category} />
                       ))}
-                    {console.log(project)}
                   </div>
 
-                  <Typography
-                    style={{
-                      color: "#921515",
-                    }}
-                    variant="h6"
-                  >
-                    apply by{" "}
-                    {project && formatDate(project.application_deadline)}
-                  </Typography>
+                  {project && project.is_applied ? (
+                    <Chip
+                      label="Applied"
+                      style={{ backgroundColor: green[600], color: "#FFF" }}
+                    />
+                  ) : (
+                    <Typography
+                      style={{
+                        color: "#921515",
+                      }}
+                      variant="h6"
+                    >
+                      apply by{" "}
+                      {project && formatDate(project.application_deadline)}
+                    </Typography>
+                  )}
                 </div>
               </CardContent>
             </Grid>

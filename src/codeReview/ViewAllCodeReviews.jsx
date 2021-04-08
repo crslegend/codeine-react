@@ -178,7 +178,7 @@ const ViewAllCodeReviews = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const resuableChip = (label, index, backgroundColor, fontColor) => {
+  const reusableChip = (label, index, backgroundColor, fontColor) => {
     return (
       <Chip
         key={index}
@@ -392,21 +392,21 @@ const ViewAllCodeReviews = () => {
                         code.categories.length > 0 &&
                         code.categories.map((category, index) => {
                           if (category === "FE") {
-                            return resuableChip("Frontend", index, "#DD8B8B");
+                            return reusableChip("Frontend", index, "#DD8B8B");
                           } else if (category === "BE") {
-                            return resuableChip("Backend", index, "#A0DD8B");
+                            return reusableChip("Backend", index, "#A0DD8B");
                           } else if (category === "DB") {
-                            return resuableChip(
+                            return reusableChip(
                               "Database Administration",
                               index,
                               "#8B95DD"
                             );
                           } else if (category === "SEC") {
-                            return resuableChip("Security", index, "#DDB28B");
+                            return reusableChip("Security", index, "#DDB28B");
                           } else if (category === "UI") {
-                            return resuableChip("UI/UX", index, "#DDD58B");
+                            return reusableChip("UI/UX", index, "#DDD58B");
                           } else if (category === "ML") {
-                            return resuableChip(
+                            return reusableChip(
                               "Machine Learning",
                               index,
                               "#8BD8DD"
@@ -419,41 +419,41 @@ const ViewAllCodeReviews = () => {
                         code.coding_languages.length > 0 &&
                         code.coding_languages.map((language, index) => {
                           if (language === "PY") {
-                            return resuableChip(
+                            return reusableChip(
                               "Python",
                               index,
                               "#3675A9",
                               "#fff"
                             );
                           } else if (language === "JAVA") {
-                            return resuableChip(
+                            return reusableChip(
                               "Java",
                               index,
                               "#E57001",
                               "#fff"
                             );
                           } else if (language === "JS") {
-                            return resuableChip("Javascript", index, "#F7DF1E");
+                            return reusableChip("Javascript", index, "#F7DF1E");
                           } else if (language === "RUBY") {
-                            return resuableChip("Ruby", index, "#CC0000");
+                            return reusableChip("Ruby", index, "#CC0000");
                           } else if (language === "CPP") {
-                            return resuableChip(
+                            return reusableChip(
                               "C++",
                               index,
                               "#004482",
                               "#fff"
                             );
                           } else if (language === "CS") {
-                            return resuableChip("C#", index, "#6A1577", "#fff");
+                            return reusableChip("C#", index, "#6A1577", "#fff");
                           } else if (language === "HTML") {
-                            return resuableChip(
+                            return reusableChip(
                               "HTML",
                               index,
                               "#E44D26",
                               "#fff"
                             );
                           } else if (language === "CSS") {
-                            return resuableChip(
+                            return reusableChip(
                               "CSS",
                               index,
                               "#264DE4",

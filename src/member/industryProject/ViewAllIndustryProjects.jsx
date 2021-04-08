@@ -87,7 +87,7 @@ const ViewAllIndustryProject = () => {
   const [sortMethod, setSortMethod] = useState("");
 
   const [allIndustryProjects, setAllIndustryProjects] = useState([]);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allIndustryProjects.length / itemsPerPage)
@@ -102,19 +102,19 @@ const ViewAllIndustryProject = () => {
   const getAllIndustryProjects = (sort) => {
     let queryParams = {
       search: searchValue,
-      isAvailable: true
+      isAvailable: true,
+      isCompleted: false,
     };
-    //console.log(sort);
 
     if (sort !== undefined) {
-      if (sort === "published_date" || sort === "-published_date") {
+      if (sort === "date_listed" || sort === "-date_listed") {
         queryParams = {
           ...queryParams,
           sortDate: sort,
         };
       }
     } else {
-      if (sortMethod === "published_date" || sortMethod === "-published_date") {
+      if (sortMethod === "date_listed" || sortMethod === "-date_listed") {
         queryParams = {
           ...queryParams,
           sortDate: sortMethod,
@@ -125,13 +125,14 @@ const ViewAllIndustryProject = () => {
     Service.client
       .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
-        // console.log(res);
+        if (sort === undefined || sort === "") {
+          res.data.sort((a, b) => b.date_listed.localeCompare(a.date_listed));
+        }
         setAllIndustryProjects(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
   };
-  //console.log(allIndustryProjects);
 
   const onSortChange = (e) => {
     setSortMethod(e.target.value);
@@ -199,12 +200,8 @@ const ViewAllIndustryProject = () => {
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value="-published_date">
-                  Published Date (Most Recent)
-                </MenuItem>
-                <MenuItem value="published_date">
-                  Published Date (Least Recent)
-                </MenuItem>
+                <MenuItem value="date_listed">Oldest First</MenuItem>
+                <MenuItem value="-date_listed">Newest First</MenuItem>
               </Select>
             </FormControl>
           </div>
