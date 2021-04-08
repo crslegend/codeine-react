@@ -8,11 +8,14 @@ import jwt_decode from "jwt-decode";
 
 import Service from "../AxiosService";
 import components from "./components/NavbarComponents";
+import PartnerLoggedInNavbar from "./components/NavbarComponents";
 import Navbar from "../components/Navbar";
 import { calculateDateInterval } from "../utils.js";
 import CommentSection from "./components/CommentSection";
 import CodeLine from "./components/CodeLine";
 import { Grade, GradeOutlined } from "@material-ui/icons";
+import MemberNavBar from "../member/MemberNavBar";
+import PartnerNavbar from "../components/PartnerNavbar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -126,7 +129,12 @@ const CodeReviewDetails = () => {
         .get(`/auth/members/${decoded.user_id}`)
         .then((res) => {
           // console.log(res.data);
-          setUser(res.data);
+          if (res.data.member) {
+            setUser("member");
+          } else if (res.data.partner) {
+            setUser("partner");
+          }
+          // setUser(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -205,19 +213,19 @@ const CodeReviewDetails = () => {
 
   return (
     <div className={classes.root}>
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }, user && user)
-            : components.memberNavbar
-        }
-      />
+      {user === "member" && (
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+      {user === "partner" && (
+        <PartnerNavbar />
+      )}
+      {!loggedIn && (
+        <Navbar
+          logo={components.navLogo}
+          bgColor="#fff"
+          navbarItems={components.loggedOutNavbar}
+        />
+      )}
       <div className={classes.content}>
         {/* <Typography variant="h2">{code && code.title}</Typography> */}
         <div className={classes.flex} style={{ marginBottom: "8px" }}>
@@ -229,8 +237,13 @@ const CodeReviewDetails = () => {
           <div>
             <Typography variant="h6">
               {code.user.member.pro ? (
-                <LinkMui href={`/member/profile/${code && code.user.id}`} className={classes.linkMui}>
-                  {`${code && code.user.first_name} ${code && code.user.last_name}`}
+                <LinkMui
+                  href={`/member/profile/${code && code.user.id}`}
+                  className={classes.linkMui}
+                >
+                  {`${code && code.user.first_name} ${
+                    code && code.user.last_name
+                  }`}
                 </LinkMui>
               ) : (
                 `${code && code.user.first_name} ${code && code.user.last_name}`
@@ -244,16 +257,33 @@ const CodeReviewDetails = () => {
           <div className={classes.flex} style={{ margin: "8px 32px" }}>
             <IconButton
               disableRipple
-              classes={{ root: code && code.current_user_liked ? classes.activeIconButton : classes.iconButton }}
+              classes={{
+                root:
+                  code && code.current_user_liked
+                    ? classes.activeIconButton
+                    : classes.iconButton,
+              }}
               size="small"
-              onClick={() => (code && code.current_user_liked ? unlikeCodeReview() : likeCodeReview())}
+              onClick={() =>
+                code && code.current_user_liked
+                  ? unlikeCodeReview()
+                  : likeCodeReview()
+              }
             >
               {code.current_user_liked ? <Grade /> : <GradeOutlined />}
-              <span style={{ fontSize: "14px", margin: "0 8px" }}>Likes: {code.likes}</span>
+              <span style={{ fontSize: "14px", margin: "0 8px" }}>
+                Likes: {code.likes}
+              </span>
             </IconButton>
           </div>
         </div>
-        <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>
+        <div
+          style={{
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <Typography variant="body2">Categories: </Typography>
           {code &&
             code.categories.length > 0 &&
