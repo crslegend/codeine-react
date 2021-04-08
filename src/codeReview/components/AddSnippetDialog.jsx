@@ -36,6 +36,14 @@ const styles = makeStyles((theme) => ({
   },
   formControl: {
     minWidth: "250px",
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      border: "1px solid #484850",
+      boxShadow: "2px 2px 0px #222",
+      borderRadius: "5px 5px 0 0",
+      backgroundColor: "transparent",
+      borderBottomLeftRadius: "5px",
+      borderBottomRightRadius: "5px",
+    },
   },
   leftDiv: {
     width: "70%",
@@ -46,6 +54,20 @@ const styles = makeStyles((theme) => ({
   },
   dialogContent: {
     display: "flex",
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -139,6 +161,14 @@ const AddSnippetDialog = ({
               autoComplete="off"
               variant="outlined"
               margin="dense"
+              InputProps={{
+                classes: {
+                  root: classes.fieldRoot,
+                  focused: classes.focused,
+                  input: classes.fieldInput,
+                  notchedOutline: classes.notchedOutline,
+                },
+              }}
               fullWidth
               value={snippetTitle && snippetTitle}
               onChange={(e) => {
@@ -226,7 +256,11 @@ const AddSnippetDialog = ({
               Select Coding Language
             </Typography>
           </label>
-          <FormControl variant="outlined" margin="dense" className={classes.formControl}>
+          <FormControl
+            variant="outlined"
+            margin="dense"
+            className={classes.formControl}
+          >
             <Select
               native
               id="language-select"
@@ -253,7 +287,11 @@ const AddSnippetDialog = ({
         <Button variant="contained" onClick={() => setAddSnippetDialog(false)}>
           Cancel
         </Button>
-        <Button variant="contained" color="primary" onClick={() => handleAddNewSnippet()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleAddNewSnippet()}
+        >
           Save
         </Button>
       </DialogActions>

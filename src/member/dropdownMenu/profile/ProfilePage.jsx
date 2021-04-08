@@ -143,14 +143,30 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 16,
   },
   free: {
-    backgroundColor: "  #F7DF1E",
-    color: "#000",
+    backgroundColor: "rgba(84,84,84,1)",
+    color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 4px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
     fontSize: 16,
+  },
+  proBorderWrapper: {
+    borderRadius: "50%",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 5,
+  },
+  freeBorderWrapper: {
+    borderRadius: "50%",
+    background: "rgba(84,84,84,1)",
+    padding: 5,
+  },
+  innerBorderWrapper: {
+    borderRadius: "50%",
+    background: "#FFF",
+    padding: 3,
   },
   formControl: {
     width: "100%",
@@ -374,7 +390,6 @@ const Profile = (props) => {
     if (inputValue === "") {
       setOptions(selectedLocation ? [selectedLocation] : []);
     }
-   
 
     fetch({ input: inputValue }, (results) => {
       if (active) {
@@ -415,7 +430,6 @@ const Profile = (props) => {
       Service.client
         .get(`/auth/members/${userid}`)
         .then((res) => {
-         
           setProfileDetails(res.data);
           setSelectedLocation(res.data.location);
           Service.client
@@ -565,7 +579,7 @@ const Profile = (props) => {
           message: "Profile updated successfully!",
           severity: "success",
         });
-       
+
         setProfileDetails(res.data);
         setLoading(false);
       })
@@ -968,54 +982,66 @@ const Profile = (props) => {
                     justifyContent: "center",
                   }}
                 >
-                  <a
-                    href="#profile_photo"
-                    onClick={(e) => setUploadOpen(true)}
-                    style={{ textDecoration: "none" }}
+                  <div
+                    className={
+                      profileDetails &&
+                      profileDetails.member &&
+                      profileDetails.member.membership_tier === "PRO"
+                        ? classes.proBorderWrapper
+                        : classes.freeBorderWrapper
+                    }
                   >
-                    {!profileDetails.profile_photo ? (
-                      <Badge
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        className={classes.avatar}
-                        badgeContent={
-                          <SmallAvatar
-                            alt=""
-                            src={EditIcon}
-                            style={{ backgroundColor: "#d1d1d1" }}
-                          />
-                        }
+                    <div className={classes.innerBorderWrapper}>
+                      <a
+                        href="#profile_photo"
+                        onClick={(e) => setUploadOpen(true)}
+                        style={{ textDecoration: "none" }}
                       >
-                        <Avatar className={classes.avatar}>
-                          {profileDetails.first_name.charAt(0)}
-                        </Avatar>
-                      </Badge>
-                    ) : (
-                      <Badge
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        badgeContent={
-                          <SmallAvatar
-                            alt=""
-                            src={EditIcon}
-                            style={{ backgroundColor: "#d1d1d1" }}
-                          />
-                        }
-                      >
-                        <Avatar
-                          alt="Pic"
-                          src={profileDetails.profile_photo}
-                          className={classes.avatar}
-                        />
-                      </Badge>
-                    )}
-                  </a>
+                        {!profileDetails.profile_photo ? (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            className={classes.avatar}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar className={classes.avatar}>
+                              {profileDetails.first_name.charAt(0)}
+                            </Avatar>
+                          </Badge>
+                        ) : (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar
+                              alt="Pic"
+                              src={profileDetails.profile_photo}
+                              className={classes.avatar}
+                            />
+                          </Badge>
+                        )}
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
                 <div style={{ marginTop: "20px" }}>

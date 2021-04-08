@@ -106,7 +106,8 @@ const styles = makeStyles((theme) => ({
     },
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -347,7 +348,7 @@ const ViewCourseDetails = () => {
             onClick={() => history.push("/courses")}
           >
             <Typography style={{ marginRight: "8px" }} variant="body1">
-              All Courses
+              Courses
             </Typography>
           </Link>
           <Typography variant="body1">Overview</Typography>

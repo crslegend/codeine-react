@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router";
 import Footer from "../landing/Footer";
 
@@ -98,7 +98,6 @@ const styles = makeStyles((theme) => ({
 const ViewAllCourses = () => {
   const classes = styles();
 
-  const history = useHistory();
   const { id } = useParams();
   const location = useLocation();
 
@@ -232,7 +231,7 @@ const ViewAllCourses = () => {
 
   const handlePageNaming = () => {
     if (id === null || id === undefined) {
-      return "All Courses";
+      return "Courses";
     } else {
       if (id === "PY") {
         return "Python Courses";
@@ -266,7 +265,7 @@ const ViewAllCourses = () => {
           >
             <Link className={classes.backLink} to="/courses">
               <Typography style={{ marginRight: "8px" }} variant="body1">
-                All Courses
+                Courses
               </Typography>
             </Link>
             <Typography variant="body1">{handlePageNaming()}</Typography>
@@ -338,7 +337,7 @@ const ViewAllCourses = () => {
                 allCourses
                   .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                   .map((course, index) => (
-                    <CourseCard key={course.id} course={course} />
+                    <CourseCard key={index} course={course} />
                   ))
               ) : (
                 /*{

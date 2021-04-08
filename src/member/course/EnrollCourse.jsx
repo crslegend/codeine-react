@@ -104,6 +104,24 @@ const styles = makeStyles((theme) => ({
     backgroundColor: "#F4F4F4",
     height: "10vh",
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    color: "#222",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const EnrollCourse = () => {
@@ -593,7 +611,7 @@ const EnrollCourse = () => {
                   onClick={() => history.push("/courses")}
                 >
                   <Typography style={{ marginRight: "8px" }} variant="body1">
-                    All Courses
+                    Courses
                   </Typography>
                 </Link>
                 <Link
@@ -1306,6 +1324,14 @@ const EnrollCourse = () => {
               })
             }
             fullWidth
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             placeholder="Enter review description"
             multiline
             rows={3}
