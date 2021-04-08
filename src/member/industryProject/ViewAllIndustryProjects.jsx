@@ -169,7 +169,7 @@ const ViewAllIndustryProject = () => {
       <div className={classes.industryProjects}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
-            all industry projects
+            Industry Projects
           </Typography>
         </div>
         <div className={classes.searchSection}>

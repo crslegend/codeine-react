@@ -347,7 +347,7 @@ const ViewCourseDetails = () => {
             onClick={() => history.push("/courses")}
           >
             <Typography style={{ marginRight: "8px" }} variant="body1">
-              All Courses
+              Courses
             </Typography>
           </Link>
           <Typography variant="body1">Overview</Typography>

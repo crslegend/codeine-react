@@ -231,7 +231,7 @@ const ViewAllCourses = () => {
 
   const handlePageNaming = () => {
     if (id === null || id === undefined) {
-      return "All Courses";
+      return "Courses";
     } else {
       if (id === "PY") {
         return "Python Courses";
@@ -265,7 +265,7 @@ const ViewAllCourses = () => {
           >
             <Link className={classes.backLink} to="/courses">
               <Typography style={{ marginRight: "8px" }} variant="body1">
-                All Courses
+                Courses
               </Typography>
             </Link>
             <Typography variant="body1">{handlePageNaming()}</Typography>
