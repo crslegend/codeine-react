@@ -8,7 +8,6 @@ import jwt_decode from "jwt-decode";
 
 import Service from "../AxiosService";
 import components from "./components/NavbarComponents";
-import PartnerLoggedInNavbar from "./components/NavbarComponents";
 import Navbar from "../components/Navbar";
 import { calculateDateInterval } from "../utils.js";
 import CommentSection from "./components/CommentSection";
@@ -216,9 +215,7 @@ const CodeReviewDetails = () => {
       {user === "member" && (
         <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       )}
-      {user === "partner" && (
-        <PartnerNavbar />
-      )}
+      {user === "partner" && <PartnerNavbar />}
       {!loggedIn && (
         <Navbar
           logo={components.navLogo}

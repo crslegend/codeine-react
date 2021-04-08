@@ -131,21 +131,6 @@ const ViewAllCodeReviews = () => {
 
   console.log(codeReviews);
 
-  const [notificationList, setNotificationList] = useState([]);
-
-  const getUserNotifications = () => {
-    if (Cookies.get("t1")) {
-      Service.client
-        .get("/notification-objects")
-        .then((res) => {
-          setNotificationList(res.data);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
-  const [anchorE2, setAnchorE2] = useState(null);
-
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
       setLoggedIn(true);
@@ -160,7 +145,6 @@ const ViewAllCodeReviews = () => {
           } else {
             if (res.data.partner) {
               setUser("partner");
-              getUserNotifications();
             } else {
               setUser("admin");
             }

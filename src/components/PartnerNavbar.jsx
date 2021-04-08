@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import Service from "../AxiosService";
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PartnerNavbar = () => {
+const PartnerNavbar = ({}) => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -58,8 +58,11 @@ const PartnerNavbar = () => {
   const getUserNotifications = () => {
     if (Cookies.get("t1")) {
       Service.client
-        .get("/notification-objects")
+        .get("/notification-objects", {
+          timeout: 20000,
+        })
         .then((res) => {
+          console.log(res);
           setNotificationList(res.data);
         })
         .catch((err) => console.log(err));
@@ -75,6 +78,11 @@ const PartnerNavbar = () => {
   const handleNotifClose = () => {
     setAnchorE2(null);
   };
+
+  useEffect(() => {
+    getUserNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
@@ -167,24 +175,29 @@ const PartnerNavbar = () => {
 
   const loggedInNavbar = (
     <Fragment>
-      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
-        <a href={`/codereview`} style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Code Review
-          </Typography>
-        </a>
-      </ListItem> */}
+      <ListItem style={{ whiteSpace: "nowrap" }}>{notifBell}</ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
-        {notifBell}
+        <a href={`/codereview`} style={{ textDecoration: "none" }}>
+          <Button
+            variant="outlined"
+            style={{ textTransform: "capitalize" }}
+            color="primary"
+          >
+            <Typography
+              variant="h6"
+              style={{ fontSize: "15px", color: "#437FC7" }}
+            >
+              Code Review
+            </Typography>
+          </Button>
+        </a>
+      </ListItem>
+      <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
           color="primary"
           style={{
             textTransform: "capitalize",
-            marginLeft: "30px",
           }}
           onClick={() => {
             Service.removeCredentials();
