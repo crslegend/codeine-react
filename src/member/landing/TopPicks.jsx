@@ -110,7 +110,7 @@ const TopPicks = () => {
       .then((res) => {
         res.data = res.data.slice(0, 3);
         setArticles(res.data);
-        console.log(res.data);
+        //console.log(res.data);
       })
       .catch((err) => console.log(err));
   };

@@ -325,8 +325,11 @@ const StudentPage = () => {
 
   const handleProfileLink = (m) => {
     if (m.membership_tier === "PRO") {
-      // console.log("hell");
-      return `/member/profile/${m.id}`;
+      if (m.unique_id === null) {
+        return `/member/profile/${m.id}`;
+      } else {
+        return `/${m.unique_id}`;
+      }
     }
   };
 
