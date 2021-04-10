@@ -356,8 +356,11 @@ const CommentsSection = ({ materialId, user }) => {
     const decoded = jwt_decode(Cookies.get("t1"));
 
     if (reviewMember.member.membership_tier === "PRO") {
-      // console.log("hell");
-      return `/member/profile/${reviewMember.id}`;
+      if (reviewMember.member.unique_id === null) {
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        return `/${reviewMember.member.unique_id}`;
+      }
     }
   };
 

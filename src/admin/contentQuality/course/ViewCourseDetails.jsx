@@ -190,8 +190,12 @@ const ViewCourseDetails = () => {
 
   const handleProfileLink = (reviewMember) => {
     if (reviewMember.member.membership_tier === "PRO") {
-      // console.log("hell");
-      return `/member/profile/${reviewMember.id}`;
+      //console.log(reviewMember.member);
+      if (reviewMember.member.unique_id === null) {
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        return `/${reviewMember.member.unique_id}`;
+      }
     }
   };
 
