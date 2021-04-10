@@ -318,6 +318,7 @@ const App = () => {
         component={ResetPassword}
       />
       <Route exact path="/member/profile/:id" component={PublicProfile} />
+      <Route exact path="/:id" component={PublicProfile} />
       <Route path="/reset-password" component={NewPassword} />
       <Route exact path="/verify/:id" strict sensitive component={Activation} />
       <Route component={NotFound} />

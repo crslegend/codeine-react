@@ -226,7 +226,9 @@ const PublicProfile = (props) => {
           setLoggedIn(true);
           if (res.data.member !== null) {
             setUserType("member");
-            if (userid === id) {
+            if (res.data.member.unique_id === id) {
+              setIsOwner(true);
+            } else if (res.data.member === id) {
               setIsOwner(true);
             }
           } else if (res.data.is_admin) {
@@ -533,7 +535,11 @@ const PublicProfile = (props) => {
                   </IconButton>
                 </div>
               ) : (
-                ""
+                <div
+                  style={{
+                    paddingTop: "80px",
+                  }}
+                ></div>
               )}
 
               <div style={{ display: "flex", marginTop: "-80px" }}>
