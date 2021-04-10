@@ -671,6 +671,7 @@ const Profile = (props) => {
           message: "Profile URL is saved!",
           severity: "success",
         });
+        getProfileDetails();
       })
       .catch((err) => {
         setSbOpen(true);
