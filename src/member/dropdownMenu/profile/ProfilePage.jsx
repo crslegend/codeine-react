@@ -648,6 +648,39 @@ const Profile = (props) => {
   const handleURLSubmit = (e) => {
     console.log(uniqueId);
     e.preventDefault();
+
+    if (uniqueId === profileDetails.member.unique_id) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "No updates detected",
+        severity: "info",
+      });
+      return true;
+    }
+
+    const formData = new FormData();
+    formData.append("unique_id", uniqueId);
+
+    Service.client
+      .put(`/auth/members/${profileDetails.id}`, formData)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile URL is saved!",
+          severity: "success",
+        });
+      })
+      .catch((err) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "URL is already taken",
+          severity: "error",
+        });
+        return true;
+      });
   };
 
   const checkCVDetails = () => {
@@ -831,9 +864,9 @@ const Profile = (props) => {
           profileDetails.member.membership_tier === "PRO" ? (
             <Link
               to={
-                uniqueId !== undefined || uniqueId !== ""
-                  ? `/${uniqueId}`
-                  : `/member/profile/${profileDetails.id}`
+                uniqueId === null
+                  ? `/member/profile/${profileDetails.id}`
+                  : `/${uniqueId}`
               }
               className={classes.profileLink}
             >

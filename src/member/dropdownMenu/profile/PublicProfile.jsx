@@ -228,7 +228,7 @@ const PublicProfile = (props) => {
             setUserType("member");
             if (res.data.member.unique_id === id) {
               setIsOwner(true);
-            } else if (res.data.member === id) {
+            } else if (res.data.id === id) {
               setIsOwner(true);
             }
           } else if (res.data.is_admin) {
