@@ -9,7 +9,7 @@ import {
   Avatar,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
-import Label from "../../member/landing/components/Label";
+import Label from "../../member/industryProject/components/Label";
 import Service from "../../AxiosService";
 import { ArrowBack } from "@material-ui/icons";
 

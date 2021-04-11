@@ -24,7 +24,7 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import red from "@material-ui/core/colors/red";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import Toast from "../../components/Toast.js";
-import Label from "../../member/landing/components/Label";
+import Label from "../../member/industryProject/components/Label";
 import { Link, useHistory, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";

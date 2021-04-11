@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MemberNavBar from "../MemberNavBar";
 import {
@@ -21,7 +21,7 @@ import Service from "../../AxiosService";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Toast from "../../components/Toast.js";
-import Label from "../landing/components/Label";
+import Label from "./components/Label";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -342,7 +342,7 @@ const ViewIndustryProjectDetails = () => {
           },
         }}
       >
-        <DialogTitle>This course is only for pro-tier members</DialogTitle>
+        <DialogTitle>Industry projects is only for pro members</DialogTitle>
         <DialogActions>
           <Button
             variant="contained"
