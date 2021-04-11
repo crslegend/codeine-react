@@ -97,7 +97,6 @@ const IndustryProject = () => {
   const classes = styles();
 
   const [loggedIn, setLoggedIn] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -112,7 +111,7 @@ const IndustryProject = () => {
   const [sortMethod, setSortMethod] = useState("");
 
   const [allApplications, setAllApplications] = useState([]);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allApplications.length / itemsPerPage)
@@ -126,20 +125,19 @@ const IndustryProject = () => {
 
   const getAllApplications = (sort) => {
     let queryParams = {
-      search: searchValue,
       isAvailable: true,
     };
     //console.log(sort);
 
     if (sort !== undefined) {
-      if (sort === "published_date" || sort === "-published_date") {
+      if (sort === "date_created" || sort === "-date_created") {
         queryParams = {
           ...queryParams,
           sortDate: sort,
         };
       }
     } else {
-      if (sortMethod === "published_date" || sortMethod === "-published_date") {
+      if (sortMethod === "date_created" || sortMethod === "-date_created") {
         queryParams = {
           ...queryParams,
           sortDate: sortMethod,
@@ -148,7 +146,9 @@ const IndustryProject = () => {
     }
 
     Service.client
-      .get(`/industry-projects/applications/member`)
+      .get(`/industry-projects/applications/member`, {
+        params: { ...queryParams },
+      })
       .then((res) => {
         // console.log(res);
         setAllApplications(res.data);
@@ -162,14 +162,6 @@ const IndustryProject = () => {
     getAllApplications(e.target.value);
   };
 
-  const handleRequestSearch = () => {
-    getAllApplications();
-  };
-
-  const handleCancelSearch = () => {
-    setSearchValue("");
-  };
-
   const handlePageChange = (event, value) => {
     setPage(value);
   };
@@ -179,12 +171,6 @@ const IndustryProject = () => {
     getAllApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (searchValue === "") {
-      getAllApplications();
-    } // eslint-disable-next-line
-  }, [searchValue]);
 
   return (
     <Fragment>
@@ -201,7 +187,7 @@ const IndustryProject = () => {
           >
             <PageTitle title="My Applications" />
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel style={{ top: -4 }}>Filter by</InputLabel>
+              <InputLabel style={{ top: -4 }}>Sort by</InputLabel>
               <Select
                 label="Sort By"
                 value={sortMethod}
@@ -213,12 +199,8 @@ const IndustryProject = () => {
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value="-published_date">
-                  Published Date (Most Recent)
-                </MenuItem>
-                <MenuItem value="published_date">
-                  Published Date (Least Recent)
-                </MenuItem>
+                <MenuItem value="date_created">Oldest First</MenuItem>
+                <MenuItem value="-date_created">Newest First</MenuItem>
               </Select>
             </FormControl>
           </div>

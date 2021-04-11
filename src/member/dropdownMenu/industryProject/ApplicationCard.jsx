@@ -20,7 +20,7 @@ const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
     padding: "10px 10px",
-    marginTop: "30px",
+    marginBottom: "30px",
     border: "1px solid",
     borderRadius: 0,
   },
