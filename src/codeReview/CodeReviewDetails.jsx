@@ -233,7 +233,7 @@ const CodeReviewDetails = () => {
           />
           <div>
             <Typography variant="h6">
-              {code.user.member.pro ? (
+              {code.user.member && code.user.member.pro ? (
                 <LinkMui
                   href={`/member/profile/${code && code.user.id}`}
                   className={classes.linkMui}
