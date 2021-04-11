@@ -8,6 +8,10 @@ import {
   DialogContent,
   TextField,
   Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@material-ui/core";
 import { ToggleButton } from "@material-ui/lab";
 import { Add } from "@material-ui/icons";
@@ -15,10 +19,10 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import PageTitle from "../../components/PageTitle";
 import Toast from "../../components/Toast.js";
 import ProjectCard from "./ProjectCard";
-import { Link, useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-
+import SearchBar from "material-ui-search-bar";
+import Pagination from "@material-ui/lab/Pagination";
 import Service from "../../AxiosService";
 import { formatISO, addDays } from "date-fns";
 
@@ -37,6 +41,35 @@ const useStyles = makeStyles((theme) => ({
     height: 30,
     marginRight: 10,
     marginBottom: 10,
+  },
+  searchSection: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    width: "100%",
+  },
+  formControl: {
+    marginLeft: theme.spacing(5),
+    width: "250px",
+    maxHeight: 50,
+  },
+  searchBar: {
+    width: "75%",
+  },
+  paginationSection: {
+    float: "right",
+    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(5),
+  },
+  pagination: {
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+    [theme.breakpoints.down("sm")]: {
+      size: "small",
+    },
   },
 }));
 
@@ -76,6 +109,13 @@ const IndustryProject = () => {
   });
 
   const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [sortMethod, setSortMethod] = useState("");
+  const itemsPerPage = 5;
+  const [page, setPage] = useState(1);
+  const [noOfPages, setNumPages] = useState(
+    Math.ceil(allIndustryProjects.length / itemsPerPage)
+  );
 
   let decoded;
   if (Cookies.get("t1")) {
@@ -83,25 +123,63 @@ const IndustryProject = () => {
   }
 
   let queryParams = {
-    //   search: searchValue,
+    search: searchValue,
     partner_id: decoded.user_id,
     isAvailable: true,
   };
 
-  const getAllIndustryProjects = () => {
+  const getAllIndustryProjects = (sort) => {
+    if (sort !== undefined) {
+      if (sort === "date_listed" || sort === "-date_listed") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sort,
+        };
+      }
+    } else {
+      if (sortMethod === "date_listed" || sortMethod === "-date_listed") {
+        queryParams = {
+          ...queryParams,
+          sortDate: sortMethod,
+        };
+      }
+    }
+
     Service.client
       .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
-        // console.log(res);
         setAllIndustryProjects(res.data);
-        console.log(res.data);
+        setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
+  };
+
+  const onSortChange = (e) => {
+    setSortMethod(e.target.value);
+    getAllIndustryProjects(e.target.value);
+  };
+
+  const handleRequestSearch = () => {
+    getAllIndustryProjects();
+  };
+
+  const handleCancelSearch = () => {
+    setSearchValue("");
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   useEffect(() => {
     getAllIndustryProjects();
   }, []);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getAllIndustryProjects();
+    } // eslint-disable-next-line
+  }, [searchValue]);
 
   const handleSubmit = () => {
     let neverChooseOne = true;
@@ -206,13 +284,64 @@ const IndustryProject = () => {
           Create New Industry Project
         </Button>
       </div>
+      <div className={classes.searchSection}>
+        <div className={classes.searchBar}>
+          <SearchBar
+            placeholder="Search for Industry Projects"
+            value={searchValue}
+            onChange={(newValue) => setSearchValue(newValue)}
+            onCancelSearch={handleCancelSearch}
+            onRequestSearch={handleRequestSearch}
+            // className={classes.searchBar}
+            classes={{
+              input: classes.input,
+            }}
+          />
+        </div>
+        <div>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel style={{ top: -4 }}>Sort By</InputLabel>
+            <Select
+              label="Sort By"
+              value={sortMethod}
+              onChange={(event) => {
+                onSortChange(event);
+              }}
+              style={{ height: 47, backgroundColor: "#fff" }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="date_listed">Oldest First</MenuItem>
+              <MenuItem value="-date_listed">Newest First</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+      </div>
       <div>
         {allIndustryProjects && allIndustryProjects.length !== 0 ? (
-          allIndustryProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))
+          allIndustryProjects
+            .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+            .map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))
         ) : (
           <div>No industry projects created yet</div>
+        )}
+      </div>
+      <div className={classes.paginationSection}>
+        {allIndustryProjects && allIndustryProjects.length > 0 && (
+          <Pagination
+            count={noOfPages}
+            page={page}
+            onChange={handlePageChange}
+            defaultPage={1}
+            color="primary"
+            size="medium"
+            showFirstButton
+            showLastButton
+            className={classes.pagination}
+          />
         )}
       </div>
       <Dialog
