@@ -248,9 +248,10 @@ const CodeReviewDetails = () => {
               }}
               size="small"
               onClick={() => (code && code.current_user_liked ? unlikeCodeReview() : likeCodeReview())}
+              disabled={!loggedIn}
             >
               {code.current_user_liked ? <Grade /> : <GradeOutlined />}
-              <span style={{ fontSize: "14px", margin: "0 8px" }}>Likes: {code.likes}</span>
+              <span style={{ fontSize: "14px", margin: "0 8px" }}>{code.likes}</span>
             </IconButton>
           </div>
         </div>
