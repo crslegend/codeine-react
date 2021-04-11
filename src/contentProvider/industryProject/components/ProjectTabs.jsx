@@ -22,7 +22,6 @@ import { Info } from "@material-ui/icons";
 import TooltipMui from "@material-ui/core/Tooltip";
 import Service from "../../../AxiosService";
 
-
 const useStyles = makeStyles((theme) => ({
   tab: {
     textTransform: "capitalize",
@@ -97,11 +96,13 @@ const ProjectTabs = ({
 
   const handleClickOpenApplication = (e) => {
     setSelectedApplicant(e.row);
-    if (e.field === "is_accepted") {
-      setOpenAcceptDialog(true);
-    }
-    if (e.field === "is_rejected") {
-      setOpenRejectDialog(true);
+    if (!e.row.is_accepted && !e.row.is_rejected) {
+      if (e.field === "is_accepted") {
+        setOpenAcceptDialog(true);
+      }
+      if (e.field === "is_rejected") {
+        setOpenRejectDialog(true);
+      }
     }
   };
 
