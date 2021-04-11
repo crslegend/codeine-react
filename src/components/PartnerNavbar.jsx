@@ -176,7 +176,7 @@ const PartnerNavbar = ({}) => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>{notifBell}</ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <a href={`/codereview`} style={{ textDecoration: "none" }}>
           <Button
             variant="outlined"
@@ -191,7 +191,7 @@ const PartnerNavbar = ({}) => {
             </Typography>
           </Button>
         </a>
-      </ListItem>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"

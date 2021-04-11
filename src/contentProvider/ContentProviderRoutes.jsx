@@ -17,6 +17,7 @@ import {
   Typography,
   Popover,
   Badge,
+  Divider,
 } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
@@ -30,7 +31,7 @@ import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined"
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import Toast from "../components/Toast.js";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -290,7 +291,7 @@ const ContentProviderHome = () => {
   const loggedInNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>{notifBell}</ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
+      {/* <ListItem style={{ whiteSpace: "nowrap" }}>
         <a href={`/codereview`} style={{ textDecoration: "none" }}>
           <Button
             variant="outlined"
@@ -305,7 +306,7 @@ const ContentProviderHome = () => {
             </Typography>
           </Button>
         </a>
-      </ListItem>
+      </ListItem> */}
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
@@ -501,6 +502,17 @@ const ContentProviderHome = () => {
         <PaymentIcon className={classes.listIcon} />
         <Typography variant="body1">Earnings</Typography>
       </ListItem>
+      <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
+      <a href="/codereview" style={{ textDecoration: "none" }}>
+        <ListItem className={classes.listItem} button>
+          <FontAwesomeIcon
+            icon={faFileCode}
+            className={classes.listIcon}
+            style={{ height: "24px", width: "24px" }}
+          />
+          <Typography variant="body1">Code Review</Typography>
+        </ListItem>
+      </a>
     </Fragment>
   );
 
