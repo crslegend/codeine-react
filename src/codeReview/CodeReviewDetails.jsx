@@ -318,6 +318,7 @@ const CodeReviewDetails = () => {
                     setSelectedLine={setSelectedLine}
                     loggedIn={loggedIn}
                     getCodeReviewComments={getCodeReviewComments}
+                    discussions={codeComments.filter((line => line.code_line_index === i + 1)).length}
                   />
                 ))}
           </div>
