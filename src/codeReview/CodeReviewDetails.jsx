@@ -94,7 +94,7 @@ const reusableChip = (label, index, backgroundColor, fontColor) => {
         color: fontColor ? fontColor : "#000",
         fontWeight: 600,
         backgroundColor: backgroundColor,
-        margin: 8,
+        margin: "8px 4px",
       }}
     />
   );
