@@ -332,7 +332,7 @@ const IndustryProjectDetails = () => {
 
   const handleDeleteSubmit = () => {
     Service.client
-      .patch(`/industry-projects/${id}`, { is_available: false })
+      .delete(`/industry-projects/${id}`, { is_available: false })
       .then((res) => {
         setOpenDeleteDialog(false);
         setSbOpen(true);
@@ -652,7 +652,7 @@ const IndustryProjectDetails = () => {
                 Delete Industry Project?
               </DialogTitle>
               <DialogContent>
-                Are you sure you want to delete this industry project?
+                This action cannot be reversed. Those that applied for this industry project will also be rejected. Are you sure? 
               </DialogContent>
               <DialogActions style={{ marginTop: 40 }}>
                 <Button
