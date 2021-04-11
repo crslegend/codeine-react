@@ -4,7 +4,7 @@ import {
   Typography,
   Card,
   Grid,
-  CardMedia,
+  Chip,
   CardContent,
   Button,
   Dialog,
@@ -13,7 +13,7 @@ import {
   DialogTitle,
   Avatar,
 } from "@material-ui/core";
-import Label from "../../landing/components/Label";
+import { green, red, grey } from "@material-ui/core/colors";
 import Service from "../../../AxiosService";
 
 const styles = makeStyles((theme) => ({
@@ -131,16 +131,36 @@ const ApplicationCard = (props) => {
                   application.industry_project.partner.partner.organization
                     .organization_name}
               </Typography>
-              <Typography variant="h6">
-                Application submitted{" "}
-                {application && formatDate(application.date_created)}
-              </Typography>
-              <Typography variant="h6">
-                Application status{" "}
-                {application && application.is_accepted === true
-                  ? "accepted"
-                  : "pending"}
-              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 5
+                }}
+              >
+                <Typography variant="body1">
+                  Application submitted:{" "}
+                  {application && formatDate(application.date_created)}
+                </Typography>
+                <Typography variant="body1">
+                  {application && application.is_accepted ? (
+                    <Chip
+                      label="Accepted"
+                      style={{ backgroundColor: green[600], color: "#FFF" }}
+                    />
+                  ) : application.is_rejected ? (
+                    <Chip
+                      label="Rejected"
+                      style={{ backgroundColor: red[600], color: "#FFF" }}
+                    />
+                  ) : (
+                    <Chip
+                      label="Pending"
+                      style={{ backgroundColor: grey[600], color: "#FFF" }}
+                    />
+                  )}
+                </Typography>
+              </div>
             </CardContent>
           </Grid>
         </Grid>
