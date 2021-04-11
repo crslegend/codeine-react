@@ -71,6 +71,16 @@ const useStyles = makeStyles((theme) => ({
       size: "small",
     },
   },
+  dateTimeField: {
+    marginTop: 5,
+    width: "45%"
+  },
+  timeContainer: {
+    display: "flex",
+    alignItems: "baseline",
+    textAlign: "center",
+    justifyContent: "space-between"
+  },
 }));
 
 const IndustryProject = () => {
@@ -394,6 +404,7 @@ const IndustryProject = () => {
             }
             required
           />
+          <div className={classes.timeContainer}>
           <KeyboardDatePicker
             className={classes.dateTimeField}
             minDate={currentDate}
@@ -425,6 +436,7 @@ const IndustryProject = () => {
             }
             format="dd/MM/yyyy"
           />
+          </div>
           <KeyboardDatePicker
             className={classes.dateTimeField}
             minDate={beforeDate}
@@ -440,10 +452,10 @@ const IndustryProject = () => {
             }
             format="dd/MM/yyyy"
           />
-          <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+          <Typography variant="body2" style={{ marginTop: 10}}>
             Category (Choost at least 1)
           </Typography>
-          <div>
+          <div style={{marginTop: 5}}>
             <ToggleButton
               value=""
               size="small"
