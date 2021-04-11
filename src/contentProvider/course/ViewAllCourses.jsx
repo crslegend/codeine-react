@@ -119,11 +119,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     padding: theme.spacing(3),
     width: "140px",
-    backgroundColor: "#164D8F",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#fff",
     "&:hover": {
       cursor: "pointer",
-      backgroundColor: "#134075",
+      background:
+        "linear-gradient(231deg, rgba(200,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     },
   },
 }));
@@ -804,7 +806,7 @@ const ViewAllCourses = () => {
             onClick={() => handleRedirectToCreateCourse("free")}
           >
             <Typography variant="h3">
-              FREE
+              ALL
               <br />
               <span style={{ fontSize: 15 }}>members</span>
             </Typography>
