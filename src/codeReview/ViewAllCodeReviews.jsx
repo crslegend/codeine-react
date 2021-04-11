@@ -129,7 +129,7 @@ const ViewAllCodeReviews = () => {
   const [viewMySnippet, setViewMySnippet] = useState(false);
   const [codeReviews, setCodeReviews] = useState();
 
-  console.log(codeReviews);
+  // console.log(codeReviews);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
