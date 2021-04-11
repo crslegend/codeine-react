@@ -104,6 +104,7 @@ const ViewAllIndustryProject = () => {
       search: searchValue,
       isAvailable: true,
       isCompleted: false,
+      isUpcoming: true
     };
 
     if (sort !== undefined) {
