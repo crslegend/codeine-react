@@ -18,6 +18,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
 import PageTitle from "../../../components/PageTitle";
+import Toast from "../../../components/Toast";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -79,6 +80,17 @@ const Payment = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [allTransactions, setAllTransactions] = useState([]);
   const [latestTransactionForPro, setLatestTransactionForPro] = useState();
   const [membershipTransactions, setMembershipTransactions] = useState([]);
@@ -90,6 +102,7 @@ const Payment = () => {
     false
   );
   const [existPending, setExistPending] = useState(false);
+  const [cancelMembershipDialog, setCancelMembershipDialog] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -169,6 +182,24 @@ const Payment = () => {
       .catch((err) => console.log(err));
   };
   // console.log(allTransactions);
+
+  const checkIfCancelMembership = () => {
+    if (localStorage.getItem("cancelMembership")) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleCancelMembership = () => {
+    localStorage.setItem("cancelMembership", "true");
+    setCancelMembershipDialog(false);
+    setSbOpen(true);
+    setSnackbar({
+      ...snackbar,
+      message: "Your Pro Membership has been cancelled",
+      severity: "success",
+    });
+  };
 
   useEffect(() => {
     getTransactionData();
@@ -433,6 +464,7 @@ const Payment = () => {
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
         <div
@@ -475,16 +507,27 @@ const Payment = () => {
               )}
 
               <div style={{ marginLeft: "auto" }}>
-                {latestTransactionForPro ? (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
-                    onClick={() => history.push(`/member/membership`)}
-                    disabled={existPending}
-                  >
-                    Extend Pro Membership
-                  </Button>
+                {!latestTransactionForPro ? (
+                  <Fragment>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ marginLeft: "30px", height: 30 }}
+                      onClick={() => history.push(`/member/membership`)}
+                      disabled={existPending}
+                    >
+                      Extend Pro Membership
+                    </Button>
+                    {checkIfCancelMembership() ? null : (
+                      <Button
+                        variant="outlined"
+                        style={{ marginLeft: "30px", height: 30 }}
+                        onClick={() => setCancelMembershipDialog(true)}
+                      >
+                        Cancel Membership
+                      </Button>
+                    )}
+                  </Fragment>
                 ) : (
                   <Button
                     variant="outlined"
@@ -656,6 +699,34 @@ const Payment = () => {
             </DialogContent>
           </Fragment>
         )}
+      </Dialog>
+
+      <Dialog
+        open={cancelMembershipDialog}
+        onClose={() => setCancelMembershipDialog(false)}
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>Cancel Your Pro Membership</DialogTitle>
+        <DialogContent>
+          You will not be refunded but your pro membership will stay till it
+          expires, and then your account switches to free. Are you sure you want
+          to cancel?
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => setCancelMembershipDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleCancelMembership()}
+            style={{ backgroundColor: "#C74343", color: "#fff" }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );
