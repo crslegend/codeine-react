@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, Forum, Grade, People, Person } from "@material-ui/icons";
+import { Add, Grade, People, Person, SpeakerNotesOff } from "@material-ui/icons";
 import Toast from "../components/Toast.js";
 import AddSnippetDialog from "./components/AddSnippetDialog";
 
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     fontSize: "12px",
     height: 28,
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0.5),
   },
   codeBody: {
     flexGrow: 1,
@@ -92,6 +92,17 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.yellow.main,
   },
 }));
+
+const languageEnumMapping = {
+  python: "PY",
+  java: "JAVA",
+  javascript: "JS",
+  c_cpp: "CPP",
+  csharp: "CS",
+  html: "HTML",
+  scss: "CSS",
+  ruby: "RUBY",
+};
 
 const ViewAllCodeReviews = () => {
   const classes = useStyles();
@@ -113,7 +124,7 @@ const ViewAllCodeReviews = () => {
 
   const [snippet, setSnippet] = useState("");
   const [snippetTitle, setSnippetTitle] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState("python");
+  const [codeLanguage, setCodeLanguage] = useState("PY");
 
   const [categories, setCategories] = useState({
     SEC: false,
@@ -263,7 +274,7 @@ const ViewAllCodeReviews = () => {
     let data = {
       title: snippetTitle,
       code: snippet,
-      coding_languages: [codeLanguage],
+      coding_languages: [codeLanguage].map((lang) => languageEnumMapping[lang]),
       languages: ["ENG"],
       categories: [],
     };
@@ -292,17 +303,9 @@ const ViewAllCodeReviews = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      {user === "member" && (
-        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      )}
+      {user === "member" && <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
       {user === "partner" && <PartnerNavbar />}
-      {!loggedIn && (
-        <Navbar
-          logo={components.navLogo}
-          bgColor="#fff"
-          navbarItems={components.loggedOutNavbar}
-        />
-      )}
+      {!loggedIn && <Navbar logo={components.navLogo} bgColor="#fff" navbarItems={components.loggedOutNavbar} />}
 
       <div className={classes.content}>
         <div className={classes.title}>
@@ -372,9 +375,7 @@ const ViewAllCodeReviews = () => {
                             <pre style={{ margin: 0 }}>
                               <div
                                 dangerouslySetInnerHTML={{
-                                  __html: hljs.highlightAuto(line, [
-                                    code.coding_languages[0],
-                                  ]).value,
+                                  __html: hljs.highlightAuto(line, [code.coding_languages[0]]).value,
                                 }}
                               />
                             </pre>
@@ -382,10 +383,7 @@ const ViewAllCodeReviews = () => {
                         ))}
                   </div>
                   <div className={classes.codeReview}>
-                    <LinkMui
-                      className={classes.linkMui}
-                      onClick={() => history.push(`/codereview/${code.id}`)}
-                    >
+                    <LinkMui className={classes.linkMui} onClick={() => history.push(`/codereview/${code.id}`)}>
                       {code.title}
                     </LinkMui>
                     <div>
@@ -393,25 +391,17 @@ const ViewAllCodeReviews = () => {
                         code.categories.length > 0 &&
                         code.categories.map((category, index) => {
                           if (category === "FE") {
-                            return reusableChip("Frontend", index, "#DD8B8B");
+                            return reusableChip("FE", index, "#DD8B8B");
                           } else if (category === "BE") {
-                            return reusableChip("Backend", index, "#A0DD8B");
+                            return reusableChip("BE", index, "#A0DD8B");
                           } else if (category === "DB") {
-                            return reusableChip(
-                              "Database Administration",
-                              index,
-                              "#8B95DD"
-                            );
+                            return reusableChip("DB", index, "#8B95DD");
                           } else if (category === "SEC") {
-                            return reusableChip("Security", index, "#DDB28B");
+                            return reusableChip("SEC", index, "#DDB28B");
                           } else if (category === "UI") {
-                            return reusableChip("UI/UX", index, "#DDD58B");
+                            return reusableChip("UI", index, "#DDD58B");
                           } else if (category === "ML") {
-                            return reusableChip(
-                              "Machine Learning",
-                              index,
-                              "#8BD8DD"
-                            );
+                            return reusableChip("ML", index, "#8BD8DD");
                           } else {
                             return null;
                           }
@@ -420,46 +410,21 @@ const ViewAllCodeReviews = () => {
                         code.coding_languages.length > 0 &&
                         code.coding_languages.map((language, index) => {
                           if (language === "PY") {
-                            return reusableChip(
-                              "Python",
-                              index,
-                              "#3675A9",
-                              "#fff"
-                            );
+                            return reusableChip("PY", index, "#3675A9", "#fff");
                           } else if (language === "JAVA") {
-                            return reusableChip(
-                              "Java",
-                              index,
-                              "#E57001",
-                              "#fff"
-                            );
+                            return reusableChip("JAVA", index, "#E57001", "#fff");
                           } else if (language === "JS") {
-                            return reusableChip("Javascript", index, "#F7DF1E");
+                            return reusableChip("JS", index, "#F7DF1E");
                           } else if (language === "RUBY") {
-                            return reusableChip("Ruby", index, "#CC0000");
+                            return reusableChip("RUBY", index, "#CC0000");
                           } else if (language === "CPP") {
-                            return reusableChip(
-                              "C++",
-                              index,
-                              "#004482",
-                              "#fff"
-                            );
+                            return reusableChip("C++", index, "#004482", "#fff");
                           } else if (language === "CS") {
                             return reusableChip("C#", index, "#6A1577", "#fff");
                           } else if (language === "HTML") {
-                            return reusableChip(
-                              "HTML",
-                              index,
-                              "#E44D26",
-                              "#fff"
-                            );
+                            return reusableChip("HTML", index, "#E44D26", "#fff");
                           } else if (language === "CSS") {
-                            return reusableChip(
-                              "CSS",
-                              index,
-                              "#264DE4",
-                              "#fff"
-                            );
+                            return reusableChip("CSS", index, "#264DE4", "#fff");
                           } else {
                             return null;
                           }
@@ -467,10 +432,7 @@ const ViewAllCodeReviews = () => {
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
-                        <Grade
-                          style={{ marginRight: "8px" }}
-                          className={classes.likesContainer}
-                        />
+                        <Grade style={{ marginRight: "8px" }} className={classes.likesContainer} />
                         Likes: {code && code.likes}
                       </div>
                       <div
@@ -480,12 +442,8 @@ const ViewAllCodeReviews = () => {
                         }}
                       >
                         <div>
-                          {code.user.profile_photo &&
-                          code.user.profile_photo ? (
-                            <Avatar
-                              style={{ marginRight: "15px" }}
-                              src={code.user && code.user.profile_photo}
-                            />
+                          {code.user.profile_photo && code.user.profile_photo ? (
+                            <Avatar style={{ marginRight: "15px" }} src={code.user && code.user.profile_photo} />
                           ) : (
                             <Avatar style={{ marginRight: "15px" }}>
                               {code.user && code.user.first_name.charAt(0)}
@@ -494,14 +452,10 @@ const ViewAllCodeReviews = () => {
                         </div>
                         <div style={{ flexDirection: "column" }}>
                           <LinkMui className={classes.linkMui1}>
-                            {`${code && code.user.first_name} ${
-                              code && code.user.last_name
-                            }`}
+                            {`${code && code.user.first_name} ${code && code.user.last_name}`}
                           </LinkMui>
                           <Typography variant="body2" style={{ opacity: 0.8 }}>
-                            {` submitted ${
-                              code && calculateDateInterval(code.timestamp)
-                            }`}
+                            {` submitted ${code && calculateDateInterval(code.timestamp)}`}
                           </Typography>
                         </div>
                       </div>
@@ -511,11 +465,13 @@ const ViewAllCodeReviews = () => {
               );
             })
           ) : (
-            <div style={{ textAlign: "center" }}>
-              <Forum fontSize="large" />
-              <Typography variant="h2">
-                No Code Snippets for Review Yet
-              </Typography>
+            <div style={{ textAlign: "center", height: "60vh", display: "grid", placeItems: "center" }}>
+              <div>
+                <SpeakerNotesOff style={{ color: "#676767" }} fontSize="large" />
+                <Typography style={{ color: "#676767" }} variant="h5">
+                  No code reviews submitted
+                </Typography>
+              </div>
             </div>
           )}
         </div>

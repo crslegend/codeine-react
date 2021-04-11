@@ -25,9 +25,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.8, 2),
     background: "rgba(164, 201, 245, 0.1)",
     display: "flex",
+    overflow: "hidden",
+    overflowX: "overlay",
     "&:hover": {
       background: "rgba(164, 201, 245, 0.3)",
       cursor: "pointer",
+      overflow: "hidden",
+      overflowX: "overlay",
     },
   },
   selectedCodeBody: {
@@ -35,9 +39,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.8, 2),
     background: "rgba(255, 123, 110, 0.2)",
     display: "flex",
+    overflow: "hidden",
+    overflowX: "overlay",
     "&:hover": {
       background: "rgba(255, 123, 110, 0.3)",
       cursor: "pointer",
+      overflow: "hidden",
+      overflowX: "overlay",
     },
   },
   iconButton: {
