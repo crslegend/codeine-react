@@ -342,7 +342,7 @@ const ViewAllCodeReviews = () => {
                 </Button>
               ))}
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               startIcon={<Add />}
               onClick={() => setAddSnippetDialog(true)}
