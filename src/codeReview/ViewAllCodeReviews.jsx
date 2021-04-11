@@ -342,7 +342,7 @@ const ViewAllCodeReviews = () => {
                 </Button>
               ))}
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               startIcon={<Add />}
               onClick={() => setAddSnippetDialog(true)}
@@ -433,7 +433,7 @@ const ViewAllCodeReviews = () => {
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Grade style={{ marginRight: "8px" }} className={classes.likesContainer} />
-                        Likes: {code && code.likes}
+                        <span style={{ color: "#676767" }}>{code.likes}</span>
                       </div>
                       <div
                         style={{

@@ -12,7 +12,7 @@ import Navbar from "../components/Navbar";
 import { calculateDateInterval } from "../utils.js";
 import CommentSection from "./components/CommentSection";
 import CodeLine from "./components/CodeLine";
-import { Grade, GradeOutlined } from "@material-ui/icons";
+import { Grade, GradeOutlined, ArrowBack } from "@material-ui/icons";
 import MemberNavBar from "../member/MemberNavBar";
 import PartnerNavbar from "../components/PartnerNavbar";
 
@@ -94,7 +94,7 @@ const reusableChip = (label, index, backgroundColor, fontColor) => {
         color: fontColor ? fontColor : "#000",
         fontWeight: 600,
         backgroundColor: backgroundColor,
-        margin: 8,
+        margin: "8px 4px",
       }}
     />
   );
@@ -216,7 +216,9 @@ const CodeReviewDetails = () => {
       {user === "partner" && <PartnerNavbar />}
       {!loggedIn && <Navbar logo={components.navLogo} bgColor="#fff" navbarItems={components.loggedOutNavbar} />}
       <div className={classes.content}>
-        {/* <Typography variant="h2">{code && code.title}</Typography> */}
+        <IconButton style={{ marginBottom: 8 }} onClick={() => history.goBack()}>
+          <ArrowBack />
+        </IconButton>
         <div className={classes.flex} style={{ marginBottom: "8px" }}>
           <Avatar
             className={classes.avatar}
@@ -246,9 +248,10 @@ const CodeReviewDetails = () => {
               }}
               size="small"
               onClick={() => (code && code.current_user_liked ? unlikeCodeReview() : likeCodeReview())}
+              disabled={!loggedIn}
             >
               {code.current_user_liked ? <Grade /> : <GradeOutlined />}
-              <span style={{ fontSize: "14px", margin: "0 8px" }}>Likes: {code.likes}</span>
+              <span style={{ fontSize: "14px", margin: "0 8px" }}>{code.likes}</span>
             </IconButton>
           </div>
         </div>
@@ -318,6 +321,7 @@ const CodeReviewDetails = () => {
                     setSelectedLine={setSelectedLine}
                     loggedIn={loggedIn}
                     getCodeReviewComments={getCodeReviewComments}
+                    discussions={codeComments.filter((line) => line.code_line_index === i + 1).length}
                   />
                 ))}
           </div>

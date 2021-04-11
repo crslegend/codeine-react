@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton } from "@material-ui/core";
+import { Chip, IconButton } from "@material-ui/core";
 import { AddCircle } from "@material-ui/icons";
 import hljs from "highlight.js";
 
@@ -60,9 +60,26 @@ const useStyles = makeStyles((theme) => ({
       transform: "scale(1.2)",
     },
   },
+  discussions: {
+    minWidth: "130px",
+    width: "130px",
+  },
+  chip: {
+    background: "#a3de83",
+    margin: theme.spacing(0, 0.5),
+  },
 }));
 
-const CodeLine = ({ index, code, language, selectedLine, setSelectedLine, loggedIn, getCodeReviewComments }) => {
+const CodeLine = ({
+  index,
+  code,
+  language,
+  selectedLine,
+  setSelectedLine,
+  loggedIn,
+  getCodeReviewComments,
+  discussions,
+}) => {
   const classes = useStyles();
   const { id } = useParams();
 
@@ -77,7 +94,7 @@ const CodeLine = ({ index, code, language, selectedLine, setSelectedLine, logged
         code_line_index: index,
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setComment("");
         setAddComment(false);
         getCodeReviewComments();
@@ -108,6 +125,9 @@ const CodeLine = ({ index, code, language, selectedLine, setSelectedLine, logged
               <AddCircle fontSize="inherit" />
             </IconButton>
           )}
+        </div>
+        <div className={classes.discussions}>
+          {discussions > 0 && <Chip classes={{ root: classes.chip }} size="small" label={`${discussions} discussion(s)`} />}
         </div>
       </div>
       {addComment && (
