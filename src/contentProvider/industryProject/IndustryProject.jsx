@@ -119,6 +119,7 @@ const IndustryProject = () => {
   });
 
   const [open, setOpen] = useState(false);
+  const [openOrgDialog, setOpenOrgDialog] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
   const itemsPerPage = 5;
@@ -270,7 +271,14 @@ const IndustryProject = () => {
   };
 
   const handleOpen = () => {
-    setOpen(true);
+    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+      // to check whether partner creating is part of an organisation
+      if (res.data.partner.organization === null) {
+        setOpenOrgDialog(true);
+      } else {
+        setOpen(true);
+      }
+    });
   };
 
   return (
@@ -347,6 +355,29 @@ const IndustryProject = () => {
           />
         )}
       </div>
+      <Dialog
+        open={openOrgDialog}
+        onClose={() => setOpenOrgDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>
+          Industry projects can only be created by organisations
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOpenOrgDialog(false);
+            }}
+          >
+            Noted
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog
         open={open}
         onClose={handleClose}
