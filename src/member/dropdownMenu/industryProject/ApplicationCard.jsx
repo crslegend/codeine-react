@@ -118,13 +118,17 @@ const ApplicationCard = (props) => {
                 >
                   {application && application.industry_project.title}
                 </Typography>
-                <Button
-                  onClick={() => setOpenDeleteDialog(true)}
-                  className={classes.deleteButton}
-                  variant="contained"
-                >
-                  Delete
-                </Button>
+                {application &&
+                  !application.is_accepted &&
+                  !application.is_rejected && (
+                    <Button
+                      onClick={() => setOpenDeleteDialog(true)}
+                      className={classes.deleteButton}
+                      variant="contained"
+                    >
+                      Delete
+                    </Button>
+                  )}
               </div>
               <Typography variant="h6">
                 {application &&
@@ -135,7 +139,7 @@ const ApplicationCard = (props) => {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: 5
+                  marginTop: 5,
                 }}
               >
                 <Typography variant="body1">
