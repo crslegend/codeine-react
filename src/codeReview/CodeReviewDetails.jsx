@@ -212,17 +212,9 @@ const CodeReviewDetails = () => {
 
   return (
     <div className={classes.root}>
-      {user === "member" && (
-        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      )}
+      {user === "member" && <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
       {user === "partner" && <PartnerNavbar />}
-      {!loggedIn && (
-        <Navbar
-          logo={components.navLogo}
-          bgColor="#fff"
-          navbarItems={components.loggedOutNavbar}
-        />
-      )}
+      {!loggedIn && <Navbar logo={components.navLogo} bgColor="#fff" navbarItems={components.loggedOutNavbar} />}
       <div className={classes.content}>
         {/* <Typography variant="h2">{code && code.title}</Typography> */}
         <div className={classes.flex} style={{ marginBottom: "8px" }}>
@@ -234,13 +226,8 @@ const CodeReviewDetails = () => {
           <div>
             <Typography variant="h6">
               {code.user.member && code.user.member.pro ? (
-                <LinkMui
-                  href={`/member/profile/${code && code.user.id}`}
-                  className={classes.linkMui}
-                >
-                  {`${code && code.user.first_name} ${
-                    code && code.user.last_name
-                  }`}
+                <LinkMui href={`/member/profile/${code && code.user.id}`} className={classes.linkMui}>
+                  {`${code && code.user.first_name} ${code && code.user.last_name}`}
                 </LinkMui>
               ) : (
                 `${code && code.user.first_name} ${code && code.user.last_name}`
@@ -255,22 +242,13 @@ const CodeReviewDetails = () => {
             <IconButton
               disableRipple
               classes={{
-                root:
-                  code && code.current_user_liked
-                    ? classes.activeIconButton
-                    : classes.iconButton,
+                root: code && code.current_user_liked ? classes.activeIconButton : classes.iconButton,
               }}
               size="small"
-              onClick={() =>
-                code && code.current_user_liked
-                  ? unlikeCodeReview()
-                  : likeCodeReview()
-              }
+              onClick={() => (code && code.current_user_liked ? unlikeCodeReview() : likeCodeReview())}
             >
               {code.current_user_liked ? <Grade /> : <GradeOutlined />}
-              <span style={{ fontSize: "14px", margin: "0 8px" }}>
-                Likes: {code.likes}
-              </span>
+              <span style={{ fontSize: "14px", margin: "0 8px" }}>Likes: {code.likes}</span>
             </IconButton>
           </div>
         </div>
@@ -286,17 +264,40 @@ const CodeReviewDetails = () => {
             code.categories.length > 0 &&
             code.categories.map((category, index) => {
               if (category === "FE") {
-                return reusableChip(category, index, "#DD8B8B");
+                return reusableChip("Frontend", index, "#DD8B8B");
               } else if (category === "BE") {
-                return reusableChip(category, index, "#A0DD8B");
+                return reusableChip("Backend", index, "#A0DD8B");
               } else if (category === "DB") {
-                return reusableChip(category, index, "#8B95DD");
+                return reusableChip("Database Administration", index, "#8B95DD");
               } else if (category === "SEC") {
-                return reusableChip(category, index, "#DDB28B");
+                return reusableChip("Security", index, "#DDB28B");
               } else if (category === "UI") {
-                return reusableChip(category, index, "#DDD58B");
+                return reusableChip("UI/UX", index, "#DDD58B");
               } else if (category === "ML") {
-                return reusableChip(category, index, "#8BD8DD");
+                return reusableChip("Machine Learning", index, "#8BD8DD");
+              } else {
+                return null;
+              }
+            })}
+          {code &&
+            code.coding_languages.length > 0 &&
+            code.coding_languages.map((language, index) => {
+              if (language === "PY") {
+                return reusableChip("Python", index, "#3675A9", "#fff");
+              } else if (language === "JAVA") {
+                return reusableChip("Java", index, "#E57001", "#fff");
+              } else if (language === "JS") {
+                return reusableChip("Javascript", index, "#F7DF1E");
+              } else if (language === "RUBY") {
+                return reusableChip("Ruby", index, "#CC0000");
+              } else if (language === "CPP") {
+                return reusableChip("C++", index, "#004482", "#fff");
+              } else if (language === "CS") {
+                return reusableChip("C#", index, "#6A1577", "#fff");
+              } else if (language === "HTML") {
+                return reusableChip("HTML", index, "#E44D26", "#fff");
+              } else if (language === "CSS") {
+                return reusableChip("CSS", index, "#264DE4", "#fff");
               } else {
                 return null;
               }

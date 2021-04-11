@@ -391,17 +391,17 @@ const ViewAllCodeReviews = () => {
                         code.categories.length > 0 &&
                         code.categories.map((category, index) => {
                           if (category === "FE") {
-                            return reusableChip("Frontend", index, "#DD8B8B");
+                            return reusableChip("FE", index, "#DD8B8B");
                           } else if (category === "BE") {
-                            return reusableChip("Backend", index, "#A0DD8B");
+                            return reusableChip("BE", index, "#A0DD8B");
                           } else if (category === "DB") {
-                            return reusableChip("Database Administration", index, "#8B95DD");
+                            return reusableChip("DB", index, "#8B95DD");
                           } else if (category === "SEC") {
-                            return reusableChip("Security", index, "#DDB28B");
+                            return reusableChip("SEC", index, "#DDB28B");
                           } else if (category === "UI") {
-                            return reusableChip("UI/UX", index, "#DDD58B");
+                            return reusableChip("UI", index, "#DDD58B");
                           } else if (category === "ML") {
-                            return reusableChip("Machine Learning", index, "#8BD8DD");
+                            return reusableChip("ML", index, "#8BD8DD");
                           } else {
                             return null;
                           }
@@ -410,13 +410,13 @@ const ViewAllCodeReviews = () => {
                         code.coding_languages.length > 0 &&
                         code.coding_languages.map((language, index) => {
                           if (language === "PY") {
-                            return reusableChip("Python", index, "#3675A9", "#fff");
+                            return reusableChip("PY", index, "#3675A9", "#fff");
                           } else if (language === "JAVA") {
-                            return reusableChip("Java", index, "#E57001", "#fff");
+                            return reusableChip("JAVA", index, "#E57001", "#fff");
                           } else if (language === "JS") {
-                            return reusableChip("Javascript", index, "#F7DF1E");
+                            return reusableChip("JS", index, "#F7DF1E");
                           } else if (language === "RUBY") {
-                            return reusableChip("Ruby", index, "#CC0000");
+                            return reusableChip("RUBY", index, "#CC0000");
                           } else if (language === "CPP") {
                             return reusableChip("C++", index, "#004482", "#fff");
                           } else if (language === "CS") {
