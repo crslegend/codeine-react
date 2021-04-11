@@ -97,6 +97,7 @@ const ViewIndustryProjectDetails = () => {
 
   const [openApplyDialog, setOpenApplyDialog] = useState(false);
   const [onlyForProDialog, setOnlyForProDialog] = useState(false);
+  const [loginRequired, setLoginRequired] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -105,11 +106,10 @@ const ViewIndustryProjectDetails = () => {
     }
   };
 
-  const getlndustryProject = () => {
+  const getIndustryProject = () => {
     Service.client
       .get(`/industry-projects/${id}`)
       .then((res) => {
-        // console.log(res);
         setIndustryProject(res.data);
         let newCategories = { ...categories };
         for (let i = 0; i < res.data.categories.length; i++) {
@@ -145,35 +145,29 @@ const ViewIndustryProjectDetails = () => {
 
   useEffect(() => {
     checkIfLoggedIn();
-    getlndustryProject();
+    getIndustryProject();
     logEventForAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = () => {
-    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
-      // to check whether member applying is pro-tier
-      if (res.data.member.membership_tier !== "FREE") {
-        Service.client
-          .post(`/industry-projects/${id}/applications`)
-          .then((res) => {
-            setOpenApplyDialog(false);
-            setSbOpen(true);
-            setSnackbar({
-              message: "You have successfully applied!",
-              severity: "success",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-              autoHideDuration: 3000,
-            });
-          })
-          .catch((err) => console.log(err));
-      } else {
-        setOnlyForProDialog(true);
-      }
-    });
+    Service.client
+      .post(`/industry-projects/${id}/applications`)
+      .then((res) => {
+        setOpenApplyDialog(false);
+        setSbOpen(true);
+        setSnackbar({
+          message: "You have successfully applied!",
+          severity: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center",
+          },
+          autoHideDuration: 3000,
+        });
+        getIndustryProject();
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleClose = () => {
@@ -182,7 +176,14 @@ const ViewIndustryProjectDetails = () => {
   };
 
   const handleOpenApplyDialog = () => {
-    setOpenApplyDialog(true);
+    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+      // to check whether member applying is pro-tier
+      if (res.data.member.membership_tier !== "FREE") {
+        setOpenApplyDialog(true);
+      } else {
+        setOnlyForProDialog(true);
+      }
+    });
   };
 
   return (
@@ -244,6 +245,14 @@ const ViewIndustryProjectDetails = () => {
                           label="Applied"
                           style={{ backgroundColor: green[600], color: "#FFF" }}
                         />
+                      ) : !loggedIn ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setLoginRequired(true)}
+                        >
+                          Apply
+                        </Button>
                       ) : (
                         <Button
                           variant="contained"
@@ -284,7 +293,6 @@ const ViewIndustryProjectDetails = () => {
                         industryProject.categories.map((category) => (
                           <Label label={category} />
                         ))}
-                      {console.log(industryProject)}
                     </div>
                     <Typography
                       style={{
@@ -332,7 +340,42 @@ const ViewIndustryProjectDetails = () => {
           <div>Loading....</div>
         )}
       </div>
-
+      <Dialog
+        open={loginRequired}
+        onClose={() => setLoginRequired(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>Login Required</DialogTitle>
+        <DialogContent>
+          Please log in to apply for this industry project.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setLoginRequired(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() =>
+              history.push({
+                pathname: "/member/login",
+                state: { industry_project_id: id },
+              })
+            }
+          >
+            Log in
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog
         open={onlyForProDialog}
         onClose={() => setOnlyForProDialog(false)}
@@ -364,8 +407,6 @@ const ViewIndustryProjectDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Footer />
       <Dialog
         open={openApplyDialog}
         onClose={handleClose}
@@ -401,6 +442,7 @@ const ViewIndustryProjectDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Footer />
     </div>
   );
 };
