@@ -111,10 +111,10 @@ const MemberLoginPage = () => {
 
         if (res.data.user.member) {
           Service.storeCredentials(res.data);
-          if (state.courseId) {
+          if (state && state.courseId) {
             // login to view course
             history.push(`/courses/${state.courseId}`);
-          } else if (state.industry_project_id) {
+          } else if (state && state.industry_project_id) {
             // login to apply industry project
             history.push(`/industryprojects/${state.industry_project_id}`);
           } else {
