@@ -73,13 +73,13 @@ const useStyles = makeStyles((theme) => ({
   },
   dateTimeField: {
     marginTop: 5,
-    width: "45%"
+    width: "45%",
   },
   timeContainer: {
     display: "flex",
     alignItems: "baseline",
     textAlign: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
 }));
 
@@ -158,6 +158,9 @@ const IndustryProject = () => {
     Service.client
       .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
+        if (sort === undefined || sort === "") {
+          res.data.sort((a, b) => b.date_listed.localeCompare(a.date_listed));
+        }
         setAllIndustryProjects(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
@@ -235,8 +238,6 @@ const IndustryProject = () => {
       }
     }
 
-    console.log(data);
-
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
@@ -244,8 +245,6 @@ const IndustryProject = () => {
     formData.append("end_date", data.end_date);
     formData.append("application_deadline", data.application_deadline);
     formData.append("categories", JSON.stringify(data.categories));
-
-    console.log(formData);
 
     Service.client
       .post(`/industry-projects`, formData)
@@ -261,13 +260,7 @@ const IndustryProject = () => {
           },
           autoHideDuration: 3000,
         });
-      })
-      .then((res) => {
-        Service.client
-          .get(`/industry-projects`, { params: { ...queryParams } })
-          .then((res) => {
-            setAllIndustryProjects(res.data);
-          });
+        getAllIndustryProjects();
       })
       .catch((err) => console.log(err));
   };
@@ -405,37 +398,37 @@ const IndustryProject = () => {
             required
           />
           <div className={classes.timeContainer}>
-          <KeyboardDatePicker
-            className={classes.dateTimeField}
-            minDate={currentDate}
-            variant="inline"
-            label="Start Date"
-            name="start_date"
-            value={industryProject.start_date}
-            onChange={(e) =>
-              setIndustryProject({
-                ...industryProject,
-                start_date: e,
-              })
-            }
-            format="dd/MM/yyyy"
-          />
-          to
-          <KeyboardDatePicker
-            className={classes.dateTimeField}
-            minDate={afterDate}
-            variant="inline"
-            label="End Date"
-            name="end_date"
-            value={industryProject.end_date}
-            onChange={(e) =>
-              setIndustryProject({
-                ...industryProject,
-                end_date: e,
-              })
-            }
-            format="dd/MM/yyyy"
-          />
+            <KeyboardDatePicker
+              className={classes.dateTimeField}
+              minDate={currentDate}
+              variant="inline"
+              label="Start Date"
+              name="start_date"
+              value={industryProject.start_date}
+              onChange={(e) =>
+                setIndustryProject({
+                  ...industryProject,
+                  start_date: e,
+                })
+              }
+              format="dd/MM/yyyy"
+            />
+            to
+            <KeyboardDatePicker
+              className={classes.dateTimeField}
+              minDate={afterDate}
+              variant="inline"
+              label="End Date"
+              name="end_date"
+              value={industryProject.end_date}
+              onChange={(e) =>
+                setIndustryProject({
+                  ...industryProject,
+                  end_date: e,
+                })
+              }
+              format="dd/MM/yyyy"
+            />
           </div>
           <KeyboardDatePicker
             className={classes.dateTimeField}
@@ -452,10 +445,10 @@ const IndustryProject = () => {
             }
             format="dd/MM/yyyy"
           />
-          <Typography variant="body2" style={{ marginTop: 10}}>
+          <Typography variant="body2" style={{ marginTop: 10 }}>
             Category (Choost at least 1)
           </Typography>
-          <div style={{marginTop: 5}}>
+          <div style={{ marginTop: 5 }}>
             <ToggleButton
               value=""
               size="small"
