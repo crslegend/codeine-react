@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     fontSize: "12px",
     height: 28,
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0.5),
   },
   codeBody: {
     flexGrow: 1,
@@ -92,6 +92,17 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.yellow.main,
   },
 }));
+
+const languageEnumMapping = {
+  python: "PY",
+  java: "JAVA",
+  javascript: "JS",
+  c_cpp: "CPP",
+  csharp: "CS",
+  html: "HTML",
+  scss: "CSS",
+  ruby: "RUBY",
+};
 
 const ViewAllCodeReviews = () => {
   const classes = useStyles();
@@ -113,7 +124,7 @@ const ViewAllCodeReviews = () => {
 
   const [snippet, setSnippet] = useState("");
   const [snippetTitle, setSnippetTitle] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState("python");
+  const [codeLanguage, setCodeLanguage] = useState("PY");
 
   const [categories, setCategories] = useState({
     SEC: false,
@@ -129,7 +140,7 @@ const ViewAllCodeReviews = () => {
   const [viewMySnippet, setViewMySnippet] = useState(false);
   const [codeReviews, setCodeReviews] = useState();
 
-  // console.log(codeReviews);
+  console.log(codeReviews);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -263,7 +274,7 @@ const ViewAllCodeReviews = () => {
     let data = {
       title: snippetTitle,
       code: snippet,
-      coding_languages: [codeLanguage],
+      coding_languages: [codeLanguage].map((lang) => languageEnumMapping[lang]),
       languages: ["ENG"],
       categories: [],
     };
@@ -292,17 +303,9 @@ const ViewAllCodeReviews = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      {user === "member" && (
-        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      )}
+      {user === "member" && <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
       {user === "partner" && <PartnerNavbar />}
-      {!loggedIn && (
-        <Navbar
-          logo={components.navLogo}
-          bgColor="#fff"
-          navbarItems={components.loggedOutNavbar}
-        />
-      )}
+      {!loggedIn && <Navbar logo={components.navLogo} bgColor="#fff" navbarItems={components.loggedOutNavbar} />}
 
       <div className={classes.content}>
         <div className={classes.title}>

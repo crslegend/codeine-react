@@ -71,17 +71,6 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const languageEnumMapping = {
-  python: "PY",
-  java: "JAVA",
-  javascript: "JS",
-  c_cpp: "CPP",
-  csharp: "CS",
-  html: "HTML",
-  scss: "CSS",
-  ruby: "RUBY",
-};
-
 const AddSnippetDialog = ({
   addSnippetDialog,
   setAddSnippetDialog,
