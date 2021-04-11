@@ -48,6 +48,21 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "20px",
     width: 280,
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+    width: 400,
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const ResetPasswordPage = (props) => {
@@ -159,6 +174,14 @@ const ResetPasswordPage = (props) => {
             variant="outlined"
             margin="dense"
             placeholder="Your email"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={emailDetails && emailDetails.email}
             onChange={handleEmailChange}
             type="email"

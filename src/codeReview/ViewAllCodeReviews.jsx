@@ -14,6 +14,8 @@ import Toast from "../components/Toast.js";
 import AddSnippetDialog from "./components/AddSnippetDialog";
 
 import hljs from "highlight.js";
+import MemberNavBar from "../member/MemberNavBar";
+import PartnerNavbar from "../components/PartnerNavbar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -290,19 +292,18 @@ const ViewAllCodeReviews = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }, user && user)
-            : components.memberNavbar
-        }
-      />
+      {user === "member" && (
+        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+      {user === "partner" && <PartnerNavbar />}
+      {!loggedIn && (
+        <Navbar
+          logo={components.navLogo}
+          bgColor="#fff"
+          navbarItems={components.loggedOutNavbar}
+        />
+      )}
+
       <div className={classes.content}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>

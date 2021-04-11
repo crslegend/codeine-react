@@ -66,13 +66,28 @@ const styles = makeStyles((theme) => ({
     },
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -341,8 +356,11 @@ const CommentsSection = ({ materialId, user }) => {
     const decoded = jwt_decode(Cookies.get("t1"));
 
     if (reviewMember.member.membership_tier === "PRO") {
-      // console.log("hell");
-      return `/member/profile/${reviewMember.id}`;
+      if (reviewMember.member.unique_id === null) {
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        return `/${reviewMember.member.unique_id}`;
+      }
     }
   };
 
@@ -1303,6 +1321,14 @@ const CommentsSection = ({ materialId, user }) => {
             fullWidth
             placeholder="Your comments here"
             multiline
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             rows={4}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
@@ -1357,6 +1383,14 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your reply here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({
@@ -1413,6 +1447,14 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your comments here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({

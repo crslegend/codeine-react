@@ -3,28 +3,32 @@ import { Button, ListItem, Typography } from "@material-ui/core";
 import logo from "../../assets/codeineLogos/Member.svg";
 import { Link } from "react-router-dom";
 
-const memberNavbar = (
+const loggedOutNavbar = (
   <Fragment>
     <ListItem style={{ whiteSpace: "nowrap" }}>
-      <Link to="/partner" style={{ textDecoration: "none" }}>
+      <Button
+        variant="outlined"
+        component={Link}
+        to="/partner"
+        style={{ textTransform: "capitalize" }}
+      >
         <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-          Teach On Codeine
+          Teach on Codeine
         </Typography>
-      </Link>
+      </Button>
     </ListItem>
-    {/* <ListItem style={{ whiteSpace: "nowrap" }}>
-      <Link to="/industry" style={{ textDecoration: "none" }}>
-        <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-          Partners for Enterprise
-        </Typography>
-      </Link>
-    </ListItem> */}
     <ListItem style={{ whiteSpace: "nowrap" }}>
-      <Link to="/member/login" style={{ textDecoration: "none" }}>
+      <Button
+        to="/member/login"
+        variant="outlined"
+        component={Link}
+        style={{ textTransform: "capitalize" }}
+        color="primary"
+      >
         <Typography variant="h6" style={{ fontSize: "15px", color: "#437FC7" }}>
           Log In
         </Typography>
-      </Link>
+      </Button>
     </ListItem>
     <ListItem style={{ whiteSpace: "nowrap" }}>
       <Button
@@ -42,37 +46,6 @@ const memberNavbar = (
     </ListItem>
   </Fragment>
 );
-
-const loggedInNavbar = (onClickFn, user) => {
-  return (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to={`/${user}/home`} style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
-          }}
-          onClick={onClickFn}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-};
 
 const navLogo = (
   <Fragment>
@@ -92,7 +65,6 @@ const navLogo = (
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  memberNavbar,
-  loggedInNavbar,
+  loggedOutNavbar,
   navLogo,
 };

@@ -59,7 +59,8 @@ const styles = makeStyles((theme) => ({
     borderRadius: 0,
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     padding: "0px 3px",
     letterSpacing: "0.5px",
@@ -67,8 +68,8 @@ const styles = makeStyles((theme) => ({
     width: "30px",
   },
   free: {
-    backgroundColor: "#F7DF1E",
-    color: "#000000",
+    backgroundColor: "rgba(84,84,84,1)",
+    color: "#FFFFFF",
     padding: "0px 3px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
@@ -110,6 +111,24 @@ const styles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "none",
     },
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    color: "#222",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -576,6 +595,14 @@ const CoursesPage = () => {
                   description: e.target.value,
                 })
               }
+              InputProps={{
+                classes: {
+                  root: classes.fieldRoot,
+                  focused: classes.focused,
+                  input: classes.fieldInput,
+                  notchedOutline: classes.notchedOutline,
+                },
+              }}
               fullWidth
               placeholder="Enter review description"
               multiline

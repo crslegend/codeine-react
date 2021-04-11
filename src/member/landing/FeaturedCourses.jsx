@@ -50,7 +50,7 @@ const FeaturedCourses = () => {
             }}
           >
             {courses &&
-              courses.map((course) => (
+              courses.map((course, index) => (
                 <CourseCard key={course.id} course={course} />
               ))}
           </div>

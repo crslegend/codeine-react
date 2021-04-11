@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
   cardroot: {
     marginRight: "20px",
-    marginTop: "-45px",
+    marginTop: "-50px",
     height: "80%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
@@ -77,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -113,6 +114,22 @@ const useStyles = makeStyles((theme) => ({
       color: "#515050",
       backgroundColor: "transparent",
     },
+  },
+  proBorderWrapper: {
+    borderRadius: "50%",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 5,
+  },
+  freeBorderWrapper: {
+    borderRadius: "50%",
+    background: "rgba(84,84,84,1)",
+    padding: 5,
+  },
+  innerBorderWrapper: {
+    borderRadius: "50%",
+    background: "#FFF",
+    padding: 3,
   },
   cardmedia: {
     height: "40px",
@@ -209,7 +226,9 @@ const PublicProfile = (props) => {
           setLoggedIn(true);
           if (res.data.member !== null) {
             setUserType("member");
-            if (userid === id) {
+            if (res.data.member.unique_id === id) {
+              setIsOwner(true);
+            } else if (res.data.id === id) {
               setIsOwner(true);
             }
           } else if (res.data.is_admin) {
@@ -448,18 +467,28 @@ const PublicProfile = (props) => {
       <Grid container className={classes.root}>
         <Grid item xs={4}>
           <div className={classes.avatar}>
-            {member.profile_photo && member.profile_photo ? (
-              <Avatar
-                style={{ width: "120px", height: "120px" }}
-                src={member.profile_photo}
-              />
-            ) : (
-              <Avatar style={{ width: "120px", height: "120px" }}>
-                <Typography variant="h1">
-                  {member && member.first_name.charAt(0)}
-                </Typography>
-              </Avatar>
-            )}
+            <div
+              className={
+                member && member.member.membership_tier === "PRO"
+                  ? classes.proBorderWrapper
+                  : classes.freeBorderWrapper
+              }
+            >
+              <div className={classes.innerBorderWrapper}>
+                {member.profile_photo && member.profile_photo ? (
+                  <Avatar
+                    style={{ width: "120px", height: "120px" }}
+                    src={member.profile_photo}
+                  />
+                ) : (
+                  <Avatar style={{ width: "120px", height: "120px" }}>
+                    <Typography variant="h1">
+                      {member && member.first_name.charAt(0)}
+                    </Typography>
+                  </Avatar>
+                )}
+              </div>
+            </div>
           </div>
 
           <Card elevation={0} className={classes.cardroot}>
@@ -506,7 +535,11 @@ const PublicProfile = (props) => {
                   </IconButton>
                 </div>
               ) : (
-                ""
+                <div
+                  style={{
+                    paddingTop: "80px",
+                  }}
+                ></div>
               )}
 
               <div style={{ display: "flex", marginTop: "-80px" }}>

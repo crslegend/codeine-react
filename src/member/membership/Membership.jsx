@@ -78,6 +78,20 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "0px",
     fontWeight: 600,
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const Membership = () => {
@@ -269,6 +283,12 @@ const Membership = () => {
                     onChange={(e) => setMonth(e.target.value)}
                     InputProps={{
                       inputProps: { min: 1 },
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                        notchedOutline: classes.notchedOutline,
+                      },
                     }}
                     autoFocus
                   />
