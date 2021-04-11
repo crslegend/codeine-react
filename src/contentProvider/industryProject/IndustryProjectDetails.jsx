@@ -10,9 +10,8 @@ import {
   Typography,
   IconButton,
   Grid,
-  CardMedia,
-  CardContent,
   Avatar,
+  CardContent,
   Chip,
 } from "@material-ui/core";
 // import { DataGrid } from "@material-ui/data-grid";
@@ -25,7 +24,7 @@ import red from "@material-ui/core/colors/red";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import Toast from "../../components/Toast.js";
 import Label from "../../member/industryProject/components/Label";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
@@ -59,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
   cardmedia: {
     height: "100%",
     width: "7vw",
+  },
+  orgavatar: {
+    objectFit: "contain",
   },
   titleSection: {
     // backgroundColor: "#FFF",
@@ -462,14 +464,16 @@ const IndustryProjectDetails = () => {
             <div className={classes.titleSection}>
               <Grid container justify="space-between">
                 <Grid style={{ backgroundColor: "#FFF" }} item xs={1}>
-                  <CardMedia
-                    className={classes.cardmedia}
-                    image={
-                      industryProject.partner.partner.organization
-                        .organization_photo
+                  <Avatar
+                    alt="Pic"
+                    src={
+                      industryProject.partner.partner.organization.organization_photo
                     }
-                    title="Organisation Photo"
-                  ></CardMedia>
+                    classes={{
+                      img: classes.orgavatar,
+                    }}
+                    className={classes.cardmedia}
+                  />
                 </Grid>
                 <Grid style={{ backgroundColor: "#FFF" }} item xs={11}>
                   <CardContent>
@@ -652,7 +656,8 @@ const IndustryProjectDetails = () => {
                 Delete Industry Project?
               </DialogTitle>
               <DialogContent>
-                This action cannot be reversed. Those that applied for this industry project will also be rejected. Are you sure? 
+                This action cannot be reversed. Those that applied for this
+                industry project will also be rejected. Are you sure?
               </DialogContent>
               <DialogActions style={{ marginTop: 40 }}>
                 <Button
