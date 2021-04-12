@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import MemberNavBar from "../MemberNavBar";
 import {
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   Typography,
+  Breadcrumbs,
+  CircularProgress,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
-import { useHistory } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useLocation } from "react-router";
 import Footer from "../landing/Footer";
 
 import SearchBar from "material-ui-search-bar";
-import PageTitle from "../../components/PageTitle";
-
 import Service from "../../AxiosService";
 import Cookies from "js-cookie";
-
 import CourseCard from "../landing/components/CourseCard";
-import components from "./components/NavbarComponents";
+// import components from "./components/NavbarComponents";
 import { NoteAdd } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
@@ -29,6 +29,14 @@ const styles = makeStyles((theme) => ({
     flexDirection: "column",
     fontDisplay: "swap",
   },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+    },
+  },
   courses: {
     paddingTop: "65px",
     minHeight: "calc(100vh - 220px)",
@@ -37,6 +45,11 @@ const styles = makeStyles((theme) => ({
   },
   title: {
     paddingTop: theme.spacing(3),
+  },
+  heading: {
+    lineHeight: "50px",
+    fontWeight: 600,
+    fontFamily: "Roboto Mono",
   },
   cards: {
     display: "flex",
@@ -84,7 +97,9 @@ const styles = makeStyles((theme) => ({
 
 const ViewAllCourses = () => {
   const classes = styles();
-  const history = useHistory();
+
+  const { id } = useParams();
+  const location = useLocation();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -92,11 +107,13 @@ const ViewAllCourses = () => {
   const [sortMethod, setSortMethod] = useState("");
 
   const [allCourses, setAllCourses] = useState([]);
-  const itemsPerPage = 3;
+  const itemsPerPage = 4;
   const [page, setPage] = useState(1);
   const [noOfPages, setNumPages] = useState(
     Math.ceil(allCourses.length / itemsPerPage)
   );
+
+  const [loading, setLoading] = useState(true);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -109,6 +126,14 @@ const ViewAllCourses = () => {
       search: searchValue,
     };
     //console.log(sort);
+
+    if ((id !== null || id !== undefined) && location.pathname !== "/courses") {
+      queryParams = {
+        ...queryParams,
+        coding_language: id,
+      };
+    }
+    // console.log(id);
 
     if (sort !== undefined) {
       if (sort === "rating" || sort === "-rating") {
@@ -144,10 +169,27 @@ const ViewAllCourses = () => {
       .get(`/courses`, { params: { ...queryParams } })
       .then((res) => {
         // console.log(res);
+        setLoading(false);
         setAllCourses(res.data.results);
         setNumPages(Math.ceil(res.data.results.length / itemsPerPage));
       })
       .catch((err) => console.log(err));
+
+    // ANALYTICS: log search strings when members search for courses
+    if (loggedIn && queryParams.search !== "") {
+      Service.client
+        .post(
+          `/analytics`,
+          { payload: "search course" },
+          {
+            params: {
+              search_string: queryParams.search,
+            },
+          }
+        )
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
   };
   //console.log(allCourses);
 
@@ -175,45 +217,67 @@ const ViewAllCourses = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
+    getAllCourses();
+    checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
     if (searchValue === "") {
       getAllCourses();
     } // eslint-disable-next-line
   }, [searchValue]);
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      // const newDateTime = new Date(date).toLocaleTimeString("en-SG");
-      // console.log(newDate);
-      return newDate;
+  const handlePageNaming = () => {
+    if (id === null || id === undefined) {
+      return "Courses";
+    } else {
+      if (id === "PY") {
+        return "Python Courses";
+      } else if (id === "JS") {
+        return "Javascript Courses";
+      } else if (id === "JAVA") {
+        return "Java Courses";
+      } else if (id === "HTML") {
+        return "HTML Courses";
+      } else if (id === "CPP") {
+        return "C++ Courses";
+      } else if (id === "RUBY") {
+        return "Ruby Courses";
+      } else if (id === "CS") {
+        return "C# Courses";
+      } else if (id === "CSS") {
+        return "CSS Courses";
+      }
     }
-    return "";
   };
 
   return (
     <div className={classes.root}>
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              })
-            : components.memberNavbar
-        }
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div className={classes.courses}>
+        {id && id ? (
+          <Breadcrumbs
+            style={{ margin: "10px 0px" }}
+            separator="›"
+            aria-label="breadcrumb"
+          >
+            <Link className={classes.backLink} to="/courses">
+              <Typography style={{ marginRight: "8px" }} variant="body1">
+                Courses
+              </Typography>
+            </Link>
+            <Typography variant="body1">{handlePageNaming()}</Typography>
+          </Breadcrumbs>
+        ) : (
+          ""
+        )}
+
         <div className={classes.title}>
-          <PageTitle title="All Courses" />
+          <Typography variant="h2" className={classes.heading}>
+            {handlePageNaming()}
+          </Typography>
         </div>
         <div className={classes.searchSection}>
           <div className={classes.searchBar}>
@@ -255,15 +319,28 @@ const ViewAllCourses = () => {
             </FormControl>
           </div>
         </div>
-        <div className={classes.cards}>
-          {allCourses && allCourses.length > 0 ? (
-            allCourses
-              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-              .map((course, index) => (
-                <CourseCard key={course.id} course={course} />
-              ))
-          ) : (
-            /*{
+        {loading ? (
+          <div
+            style={{
+              marginTop: "50px",
+              display: "flex",
+              justifyContent: "center",
+              wdith: "100%",
+            }}
+          >
+            <CircularProgress />
+          </div>
+        ) : (
+          <Fragment>
+            <div className={classes.cards}>
+              {allCourses && allCourses.length > 0 ? (
+                allCourses
+                  .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                  .map((course, index) => (
+                    <CourseCard key={index} course={course} />
+                  ))
+              ) : (
+                /*{
                   return (
                   <Card key={index} className={classes.cardRoot}>
                     <CardActionArea
@@ -328,35 +405,37 @@ const ViewAllCourses = () => {
                             );
                 
                 }*/
-            <div
-              style={{
-                display: "block",
-                marginLeft: "auto",
-                marginRight: "auto",
-                textAlign: "center",
-                marginTop: "20px",
-              }}
-            >
-              <NoteAdd fontSize="large" />
-              <Typography variant="h5">No Courses Found</Typography>
+                <div
+                  style={{
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    textAlign: "center",
+                    marginTop: "20px",
+                  }}
+                >
+                  <NoteAdd fontSize="large" />
+                  <Typography variant="h5">No Courses Found</Typography>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className={classes.paginationSection}>
-          {allCourses && allCourses.length > 0 && (
-            <Pagination
-              count={noOfPages}
-              page={page}
-              onChange={handlePageChange}
-              defaultPage={1}
-              color="primary"
-              size="medium"
-              showFirstButton
-              showLastButton
-              className={classes.pagination}
-            />
-          )}
-        </div>
+            <div className={classes.paginationSection}>
+              {allCourses && allCourses.length > 0 && (
+                <Pagination
+                  count={noOfPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  defaultPage={1}
+                  color="primary"
+                  size="medium"
+                  showFirstButton
+                  showLastButton
+                  className={classes.pagination}
+                />
+              )}
+            </div>
+          </Fragment>
+        )}
       </div>
       <Footer />
     </div>

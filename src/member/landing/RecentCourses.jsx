@@ -7,7 +7,7 @@ import Service from "../../AxiosService";
 
 const styles = makeStyles((theme) => ({
   root: {
-    paddingTop: "60px",
+    paddingTop: "30px",
     maxWidth: "100vw",
     paddingLeft: "30px",
     paddingBottom: "10px",
@@ -28,7 +28,9 @@ const RecentCourses = () => {
     Service.client
       .get(`/enrollments`)
       .then((res) => {
-        res.data = res.data.filter(course => course.course !== null).slice(0, 3);
+        res.data = res.data
+          .filter((course) => course.course !== null)
+          .slice(0, 4);
         setCourses(res.data);
       })
       .catch((err) => console.log(err));
@@ -49,7 +51,6 @@ const RecentCourses = () => {
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
             }}
           >
             {courses && courses.length > 0 ? (

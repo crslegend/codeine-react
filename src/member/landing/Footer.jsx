@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import logo from "../../assets/CodeineLogos/MemberWhite.svg";
+import logo from "../../assets/codeineLogos/MemberWhite.svg";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -65,7 +65,7 @@ const Footer = () => {
           </Link> */}
         </div>
         <div className={classes.rightCol}>
-          <Link to="/" className={classes.footerLink}>
+          <Link to="/viewarticles" className={classes.footerLink}>
             Articles
           </Link>
           <Link to="/" className={classes.footerLink}>

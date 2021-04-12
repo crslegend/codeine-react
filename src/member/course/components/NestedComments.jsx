@@ -42,6 +42,24 @@ const styles = makeStyles((theme) => ({
     width: "90%",
     marginLeft: "auto",
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    color: "#222",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const NestedComments = ({
@@ -652,6 +670,14 @@ const NestedComments = ({
             placeholder="Your reply here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({
@@ -708,6 +734,14 @@ const NestedComments = ({
             placeholder="Your comments here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({

@@ -10,29 +10,52 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Avatar, ListItem, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  ListItem,
+  Typography,
+  Badge,
+  Popover,
+} from "@material-ui/core";
+
 import Toast from "../components/Toast.js";
 import Button from "@material-ui/core/Button";
 import SideBar from "../components/Sidebar";
-import logo from "../assets/CodeineLogos/Admin.svg";
+import logo from "../assets/codeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import WorkOutlinedIcon from "@material-ui/icons/WorkOutline";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import AdminHumanResourcePage from "./HumanResource/HumanResourcePage";
-import ContentQualityPage from "./ContentQuality/ContentQualityPage";
-import HelpdeskPage from "./Helpdesk/HelpdeskPage";
-import LearnersAchievementPage from "./LearnersAchievement/LearnersAchievementPage";
-import AnalyticsPage from "./Analytics/AnalyticsPage";
-import ProfilePage from "./Profile/ProfilePage";
-import PasswordPage from "./Password/PasswordPage";
-import ViewCourseDetail from "./ContentQuality/course/ViewCourseDetails";
-import ViewCourseContent from "./ContentQuality/course/EnrollCourse";
+import AdminHumanResourcePage from "./humanResource/HumanResourcePage";
+import ContentQualityPage from "./contentQuality/ContentQualityPage";
+import ContentQualityArticlePage from "./contentQuality/article/ViewArticle";
+import HelpdeskPage from "./helpdesk/HelpdeskPage";
+import LearnersAchievementPage from "./learnersAchievement/LearnersAchievementPage";
+import AnalyticsPage from "./analytics/AnalyticsPage";
+import ProfilePage from "./profile/ProfilePage";
+import PasswordPage from "./password/PasswordPage";
+import Article from "./article/AdminArticleList";
+import ViewCourseDetail from "./contentQuality/course/ViewCourseDetails";
+import ViewCourseContent from "./contentQuality/course/EnrollCourse";
 import Service from "../AxiosService";
+import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import CourseRelatedAnalytics from "./analytics/CourseRelatedAnalytics";
+import CourseDetailAnalytics from "./analytics/CourseDetailAnalytics";
+import ProjectRelatedAnalysis from "./analytics/ProjectRelatedAnalysis";
+import Notifications from "./notification/NotificationManagement";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
+import ViewTicketPage from "./helpdesk/ViewTicketPage";
+import NotifTile from "../components/NotificationTile";
+import ZeroNotif from "../assets/ZeroNotif.svg";
+import IndustryProjectPage from "./industryProject/IndustryProjectPage";
+import ViewIndustryProjectDetails from "./industryProject/ViewIndustryProjectDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,14 +81,14 @@ const useStyles = makeStyles((theme) => ({
   activeLink: {
     width: "100%",
     padding: 10,
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
     backgroundColor: "#F4F4F4",
     borderLeft: "5px solid",
     "& p": {
       fontWeight: 600,
     },
     "&:hover": {
-      borderLeft: "5px solid #437FC7",
+      borderLeft: "5px solid #164D8F",
     },
   },
   avatar: {
@@ -91,6 +114,36 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     textTransform: "uppercase",
     // color: theme.palette.primary.main,
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    height: "30px",
+    width: "30px",
+  },
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
+  },
+  notifpopover: {
+    width: "400px",
+    padding: theme.spacing(1),
   },
 }));
 
@@ -131,26 +184,139 @@ const AdminRoutesPage = () => {
     }
   };
 
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects")
+        .then((res) => {
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   useEffect(() => {
+    getUserNotifications();
     getOwnData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const memberNavbar = (
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
+
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <Typography
+            style={{
+              fontWeight: "800",
+              fontSize: "25px",
+              marginLeft: "10px",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+          >
+            Notifications
+          </Typography>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/admin/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
+
+  const adminNavbar = (
     <Fragment>
       <ListItem style={{ whiteSpace: "nowrap" }}>
+        {notifBell}
+
         <Button
           onClick={() => {
             Service.removeCredentials();
             history.push("/admin/login");
           }}
+          variant="contained"
+          color="secondary"
+          style={{ textTransform: "capitalize", marginLeft: "30px" }}
         >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log Out
-          </Typography>
+          Log Out
         </Button>
       </ListItem>
     </Fragment>
@@ -224,7 +390,7 @@ const AdminRoutesPage = () => {
         className={classes.listItem}
         button
       >
-        <PublicOutlinedIcon className={classes.listIcon} />
+        <HelpOutlineOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Helpdesk</Typography>
       </ListItem>
       <ListItem
@@ -239,6 +405,16 @@ const AdminRoutesPage = () => {
       </ListItem>
       <ListItem
         component={NavLink}
+        to="/admin/industryproject"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <WorkOutlinedIcon className={classes.listIcon} />
+        <Typography variant="body1">Industry Project</Typography>
+      </ListItem>
+      <ListItem
+        component={NavLink}
         to="/admin/analytics"
         activeClassName={classes.activeLink}
         className={classes.listItem}
@@ -247,7 +423,26 @@ const AdminRoutesPage = () => {
         <BrokenImageOutlinedIcon className={classes.listIcon} />
         <Typography variant="body1">Analytics</Typography>
       </ListItem>
-      {/* <Divider /> */}
+      <ListItem
+        component={NavLink}
+        to="/admin/notification/manage"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <NotificationsNoneIcon className={classes.listIcon} />
+        <Typography variant="body1">Notification</Typography>
+      </ListItem>
+      {/* <ListItem
+        component={NavLink}
+        to="/admin/article"
+        activeClassName={classes.activeLink}
+        className={classes.listItem}
+        button
+      >
+        <SubjectIcon className={classes.listIcon} />
+        <Typography variant="body1">Articles</Typography>
+      </ListItem> */}
       <div>
         <label>
           <Typography className={classes.subheader} variant="body2">
@@ -284,7 +479,7 @@ const AdminRoutesPage = () => {
         loggedIn={loggedIn}
         bgColor="#fff"
         logo={navLogo}
-        navbarItems={memberNavbar}
+        navbarItems={adminNavbar}
       />
       <SideBar head={sidebarHead} list={sidebarList} />
       <main className={classes.content}>
@@ -302,6 +497,13 @@ const AdminRoutesPage = () => {
           />
           <Route
             exact
+            strict
+            sensitive
+            path="/admin/contentquality/article/:id"
+            render={() => <ContentQualityArticlePage />}
+          />
+          <Route
+            exact
             path="/admin/contentquality/courses/:id"
             strict
             sensitive
@@ -316,9 +518,25 @@ const AdminRoutesPage = () => {
           />
           <Route exact path="/admin/helpdesk" render={() => <HelpdeskPage />} />
           <Route
+            strict
+            sensitive
+            path="/admin/helpdesk/:id"
+            render={() => <ViewTicketPage />}
+          />
+          <Route
             exact
             path="/admin/learnersachievement"
             render={() => <LearnersAchievementPage />}
+          />
+          <Route
+            exact
+            path="/admin/industryproject"
+            render={() => <IndustryProjectPage />}
+          />
+          <Route
+            exact
+            path="/admin/industryproject/:id"
+            render={() => <ViewIndustryProjectDetails />}
           />
           <Route
             exact
@@ -327,9 +545,43 @@ const AdminRoutesPage = () => {
           />
           <Route
             exact
+            path="/admin/analytics/courses"
+            render={() => <CourseRelatedAnalytics />}
+          />
+          <Route
+            exact
+            path="/admin/analytics/projects"
+            render={() => <ProjectRelatedAnalysis />}
+          />
+          <Route
+            strict
+            sensitive
+            path="/admin/analytics/courses/:id"
+            render={(match) => <CourseDetailAnalytics match={match} />}
+          />
+          <Route
+            strict
+            sensitive
+            path="/admin/notification/manage"
+            render={(match) => <Notifications />}
+          />
+          <Route
+            exact
             path="/admin/profile"
             render={() => (
               <ProfilePage profile={profile} setProfile={setProfile} />
+            )}
+          />
+          <Route
+            exact
+            path="/admin/article"
+            render={() => (
+              <Article
+                history={history}
+                snackbar={snackbar}
+                setSbOpen={setSbOpen}
+                setSnackbar={setSnackbar}
+              />
             )}
           />
           <Route

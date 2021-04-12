@@ -24,6 +24,7 @@ import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import NestedComments from "./NestedComments";
+import { calculateDateInterval } from "../../../utils.js";
 
 const styles = makeStyles((theme) => ({
   dialogButtons: {
@@ -35,6 +36,7 @@ const styles = makeStyles((theme) => ({
     border: "2px solid lightgrey",
     borderRadius: "6px",
     padding: "20px",
+    backgroundColor: "#fff",
   },
   childComment: {
     display: "flex",
@@ -44,6 +46,7 @@ const styles = makeStyles((theme) => ({
     padding: "20px",
     width: "90%",
     marginLeft: "auto",
+    backgroundColor: "#fff",
   },
   nestedChildComment: {
     display: "flex",
@@ -53,6 +56,38 @@ const styles = makeStyles((theme) => ({
     padding: "20px",
     width: "80%",
     marginLeft: "auto",
+    backgroundColor: "#fff",
+  },
+  profileLink: {
+    textDecoration: "none",
+    color: "#000000",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  pro: {
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    color: "#FFFFFF",
+    marginLeft: "8px",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "30px",
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -99,43 +134,6 @@ const CommentsSection = ({ materialId, user }) => {
     getCourseMaterialComments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialId, pageNum]);
-
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
-
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
-
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `${seconds} seconds ago`;
-        }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
 
   const handleAddComment = (id) => {
     if (commentDialogValue === "") {
@@ -354,6 +352,28 @@ const CommentsSection = ({ materialId, user }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleProfileLink = (reviewMember) => {
+    const decoded = jwt_decode(Cookies.get("t1"));
+
+    if (reviewMember.member.membership_tier === "PRO") {
+      if (reviewMember.member.unique_id === null) {
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        return `/${reviewMember.member.unique_id}`;
+      }
+    }
+  };
+
+  const toRenderProfileLinkOrNot = (reviewMember) => {
+    if (reviewMember.member) {
+      const decoded = jwt_decode(Cookies.get("t1"));
+      if (reviewMember.member.membership_tier === "PRO") {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const deletedParentComment = (
     <div
       style={{
@@ -431,7 +451,7 @@ const CommentsSection = ({ materialId, user }) => {
     </div>
   );
 
-  const deletedChildCommentWithButton = (id) => {
+  const deletedChildCommentWithButton = (reply) => {
     return (
       <div style={{ display: "flex" }}>
         <div
@@ -458,21 +478,25 @@ const CommentsSection = ({ materialId, user }) => {
         >
           <Block style={{ marginRight: "10px" }} />
           <Typography variant="body2">This comment has been deleted</Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              order: 2,
-              marginLeft: "auto",
-            }}
-            onClick={() => {
-              setReferencedCommentId(id);
-              getNestedComments(id);
-            }}
-            disabled={checkIfCommentInNestedCommentsArr(id)}
-          >
-            <Typography variant="body2">View Replies</Typography>
-          </Button>
+          {reply.reply_count > 0 && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                order: 2,
+                marginLeft: "auto",
+              }}
+              onClick={() => {
+                setReferencedCommentId(reply.id);
+                getNestedComments(reply.id);
+              }}
+              disabled={checkIfCommentInNestedCommentsArr(reply.id)}
+            >
+              <Typography variant="body2">
+                Replies {reply.reply_count}
+              </Typography>
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -492,7 +516,23 @@ const CommentsSection = ({ materialId, user }) => {
           <SubdirectoryArrowRight fontSize="large" color="primary" />
         </div>
         <div className={classes.childComment}>
-          {reply.user.profile_photo ? (
+          {toRenderProfileLinkOrNot(reply.user) ? (
+            <a
+              href={handleProfileLink(reply.user)}
+              style={{ textDecoration: "none" }}
+            >
+              {reply.user.profile_photo ? (
+                <Avatar
+                  style={{ marginRight: "15px" }}
+                  src={reply.user.profile_photo}
+                />
+              ) : (
+                <Avatar style={{ marginRight: "15px" }}>
+                  {reply.user.first_name.charAt(0)}
+                </Avatar>
+              )}
+            </a>
+          ) : reply.user.profile_photo ? (
             <Avatar
               style={{ marginRight: "15px" }}
               src={reply.user.profile_photo}
@@ -509,10 +549,38 @@ const CommentsSection = ({ materialId, user }) => {
               width: "100%",
             }}
           >
-            <Typography variant="h6" style={{ fontWeight: 600 }}>
-              {reply.user && reply.user.first_name}{" "}
-              {reply.user && reply.user.last_name}
-            </Typography>
+            {toRenderProfileLinkOrNot(reply.user) ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <a
+                  href={handleProfileLink(reply.user)}
+                  className={classes.profileLink}
+                >
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    {reply.user && reply.user.first_name}{" "}
+                    {reply.user && reply.user.last_name}
+                  </Typography>
+                </a>
+                {reply.user.member &&
+                  reply.user.member.membership_tier === "PRO" && (
+                    <div style={{ marginTop: "4px" }}>
+                      <Typography variant="subtitle1" className={classes.pro}>
+                        PRO
+                      </Typography>
+                    </div>
+                  )}
+              </div>
+            ) : (
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                {reply.user && reply.user.first_name}{" "}
+                {reply.user && reply.user.last_name}
+              </Typography>
+            )}
+
             <div style={{ display: "flex" }}>
               <Typography variant="body2">
                 Reply to #{reply.reply_to.display_id}
@@ -605,18 +673,22 @@ const CommentsSection = ({ materialId, user }) => {
                   marginLeft: "auto",
                 }}
               >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setReferencedCommentId(reply.id);
-                    getNestedComments(reply.id);
-                    // setPageNum(2);
-                  }}
-                  disabled={checkIfCommentInNestedCommentsArr(reply.id)}
-                >
-                  <Typography variant="body2">View Replies</Typography>
-                </Button>
+                {reply.reply_count > 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      setReferencedCommentId(reply.id);
+                      getNestedComments(reply.id);
+                      // setPageNum(2);
+                    }}
+                    disabled={checkIfCommentInNestedCommentsArr(reply.id)}
+                  >
+                    <Typography variant="body2">
+                      Replies: {reply.reply_count}
+                    </Typography>
+                  </Button>
+                )}
                 <Button
                   variant="contained"
                   color="primary"
@@ -652,7 +724,29 @@ const CommentsSection = ({ materialId, user }) => {
           <SubdirectoryArrowRight fontSize="large" color="primary" />
         </div>
         <div className={classes.nestedChildComment}>
-          {nestedReply.user.profile_photo ? (
+          {toRenderProfileLinkOrNot(nestedReply.user) ? (
+            <a
+              href={handleProfileLink(nestedReply.user)}
+              style={{ textDecoration: "none" }}
+            >
+              {nestedReply.user.profile_photo ? (
+                <Avatar
+                  style={{
+                    marginRight: "15px",
+                  }}
+                  src={nestedReply.user.profile_photo}
+                />
+              ) : (
+                <Avatar
+                  style={{
+                    marginRight: "15px",
+                  }}
+                >
+                  {nestedReply.user.first_name.charAt(0)}
+                </Avatar>
+              )}
+            </a>
+          ) : nestedReply.user.profile_photo ? (
             <Avatar
               style={{
                 marginRight: "15px",
@@ -675,15 +769,43 @@ const CommentsSection = ({ materialId, user }) => {
               width: "100%",
             }}
           >
-            <Typography
-              variant="h6"
-              style={{
-                fontWeight: 600,
-              }}
-            >
-              {nestedReply.user && nestedReply.user.first_name}{" "}
-              {nestedReply.user && nestedReply.user.last_name}
-            </Typography>
+            {toRenderProfileLinkOrNot(nestedReply.user) ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <a
+                  href={handleProfileLink(nestedReply.user)}
+                  className={classes.profileLink}
+                >
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    {nestedReply.user && nestedReply.user.first_name}{" "}
+                    {nestedReply.user && nestedReply.user.last_name}
+                  </Typography>
+                </a>
+                {nestedReply.user.member &&
+                  nestedReply.user.member.membership_tier === "PRO" && (
+                    <div style={{ marginTop: "4px" }}>
+                      <Typography variant="subtitle1" className={classes.pro}>
+                        PRO
+                      </Typography>
+                    </div>
+                  )}
+              </div>
+            ) : (
+              <Typography
+                variant="h6"
+                style={{
+                  fontWeight: 600,
+                }}
+              >
+                {nestedReply.user && nestedReply.user.first_name}{" "}
+                {nestedReply.user && nestedReply.user.last_name}
+              </Typography>
+            )}
+
             <div
               style={{
                 display: "flex",
@@ -811,7 +933,25 @@ const CommentsSection = ({ materialId, user }) => {
                     return (
                       <Fragment>
                         <div key={index} className={classes.parentComment}>
-                          {comment.user.profile_photo ? (
+                          {toRenderProfileLinkOrNot(comment.user) ? (
+                            <a
+                              href={handleProfileLink(comment.user)}
+                              style={{ textDecoration: "none" }}
+                            >
+                              {comment.user.profile_photo &&
+                              comment.user.profile_photo ? (
+                                <Avatar
+                                  style={{ marginRight: "15px" }}
+                                  src={comment.user.profile_photo}
+                                />
+                              ) : (
+                                <Avatar style={{ marginRight: "15px" }}>
+                                  {comment.user.first_name.charAt(0)}
+                                </Avatar>
+                              )}
+                            </a>
+                          ) : comment.user.profile_photo &&
+                            comment.user.profile_photo ? (
                             <Avatar
                               style={{ marginRight: "15px" }}
                               src={comment.user.profile_photo}
@@ -821,16 +961,52 @@ const CommentsSection = ({ materialId, user }) => {
                               {comment.user.first_name.charAt(0)}
                             </Avatar>
                           )}
+
                           <div
                             style={{ flexDirection: "column", width: "100%" }}
                           >
-                            <Typography
-                              variant="h6"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {comment.user && comment.user.first_name}{" "}
-                              {comment.user && comment.user.last_name}
-                            </Typography>
+                            {toRenderProfileLinkOrNot(comment.user) ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <a
+                                  href={handleProfileLink(comment.user)}
+                                  className={classes.profileLink}
+                                >
+                                  <Typography
+                                    variant="h6"
+                                    style={{ fontWeight: 600 }}
+                                  >
+                                    {comment.user && comment.user.first_name}{" "}
+                                    {comment.user && comment.user.last_name}
+                                  </Typography>
+                                </a>
+                                {comment.user.member &&
+                                  comment.user.member.membership_tier ===
+                                    "PRO" && (
+                                    <div style={{ marginTop: "4px" }}>
+                                      <Typography
+                                        variant="subtitle1"
+                                        className={classes.pro}
+                                      >
+                                        PRO
+                                      </Typography>
+                                    </div>
+                                  )}
+                              </div>
+                            ) : (
+                              <Typography
+                                variant="h6"
+                                style={{ fontWeight: 600 }}
+                              >
+                                {comment.user && comment.user.first_name}{" "}
+                                {comment.user && comment.user.last_name}
+                              </Typography>
+                            )}
+
                             <div style={{ display: "flex" }}>
                               <Typography variant="body2">
                                 #{comment.display_id}
@@ -981,7 +1157,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1002,7 +1177,7 @@ const CommentsSection = ({ materialId, user }) => {
                             } else {
                               return (
                                 <Fragment>
-                                  {deletedChildCommentWithButton(reply.id)}
+                                  {deletedChildCommentWithButton(reply)}
                                   {nestedComments &&
                                     nestedComments.length > 0 &&
                                     nestedComments.map((nestedComment) => {
@@ -1010,7 +1185,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1050,7 +1224,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1071,7 +1244,7 @@ const CommentsSection = ({ materialId, user }) => {
                             } else {
                               return (
                                 <Fragment>
-                                  {deletedChildCommentWithButton(reply.id)}
+                                  {deletedChildCommentWithButton(reply)}
                                   {nestedComments &&
                                     nestedComments.length > 0 &&
                                     nestedComments.map((nestedComment) => {
@@ -1079,7 +1252,6 @@ const CommentsSection = ({ materialId, user }) => {
                                         if (nestedComment.replies.length > 0) {
                                           return nestedComment.replies.map(
                                             (nestedReply, nestedIndex) => {
-                                              console.log(nestedReply);
                                               if (nestedReply.user) {
                                                 return nestedChildComment(
                                                   nestedReply,
@@ -1149,6 +1321,14 @@ const CommentsSection = ({ materialId, user }) => {
             fullWidth
             placeholder="Your comments here"
             multiline
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             rows={4}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
@@ -1203,6 +1383,14 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your reply here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({
@@ -1259,6 +1447,14 @@ const CommentsSection = ({ materialId, user }) => {
             placeholder="Your comments here"
             multiline
             rows={4}
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={commentDialogValue && commentDialogValue.comment}
             onChange={(e) =>
               setCommentDialogValue({

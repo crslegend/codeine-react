@@ -76,7 +76,7 @@ const TopPicks = () => {
         params: { sortRating: "-rating" },
       })
       .then((res) => {
-        res.data.results = res.data.results.slice(0, 3);
+        res.data.results = res.data.results.slice(0, 4);
         setCourses(res.data.results);
       })
       .catch((err) => console.log(err));
@@ -85,7 +85,7 @@ const TopPicks = () => {
   const getTopProjects = () => {
     Service.client
       .get(`/industry-projects`, {
-        params: { isAvailable: "true" },
+        params: { isAvailable: true },
       })
       .then((res) => {
         res.data = res.data.slice(0, 3);
@@ -98,7 +98,7 @@ const TopPicks = () => {
     Service.client
       .get(`/code-reviews`)
       .then((res) => {
-        res.data = res.data.slice(0, 3);
+        res.data = res.data.slice(0, 4);
         setCodeReviews(res.data);
       })
       .catch((err) => console.log(err));
@@ -110,7 +110,7 @@ const TopPicks = () => {
       .then((res) => {
         res.data = res.data.slice(0, 3);
         setArticles(res.data);
-        console.log(res.data);
+        //console.log(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -200,8 +200,8 @@ const TopPicks = () => {
               }}
             >
               {courses &&
-                courses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                courses.map((course, index) => (
+                  <CourseCard key={index} course={course} />
                 ))}
             </div>
           </TabPanel>
@@ -220,11 +220,7 @@ const TopPicks = () => {
           </TabPanel>
           {/* Articles Tab */}
           <TabPanel value={value} index={2}>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
+            <div>
               {articles &&
                 articles.map((article, index) => (
                   <ArticleCard
@@ -237,11 +233,7 @@ const TopPicks = () => {
           </TabPanel>
           {/* Projects Tab */}
           <TabPanel value={value} index={3}>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
+            <div>
               {projects &&
                 projects.map((project) => (
                   <ProjectCard key={project.id} project={project} />

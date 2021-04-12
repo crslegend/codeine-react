@@ -3,10 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Card, CardMedia, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import courses from "../../assets/courses_asset.png";
-import codeReviews from "../../assets/code_review_asset.png";
-import articles from "../../assets/articles_asset.png";
-import projects from "../../assets/industry_project_asset.png";
+import courses from "../../assets/CoursesAsset.png";
+import codeReviews from "../../assets/CodeReviewAsset.png";
+import articles from "../../assets/ArticlesAsset.png";
+import projects from "../../assets/IndustryProjectAsset.png";
 
 const styles = makeStyles((theme) => ({
   container: {
@@ -80,7 +80,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/codereview"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
@@ -109,7 +109,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/viewarticles"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",
@@ -138,7 +138,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               component={Link}
-              //to="/"
+              to="/industryprojects"
               style={{
                 borderColor: "#fff",
                 textTransform: "none",

@@ -11,7 +11,7 @@ import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "25vw",
+    width: "300px",
     padding: "10px 10px",
     marginTop: "30px",
     marginRight: "50px",
@@ -19,13 +19,21 @@ const styles = makeStyles((theme) => ({
     borderRadius: 0,
   },
   pro: {
-    fontFamily: "Roboto Mono",
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     padding: "0px 3px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
+  },
+  free: {
+    backgroundColor: "rgba(84,84,84,1)",
+    color: "#FFFFFF",
+    padding: "0px 3px",
+    letterSpacing: "0.5px",
+    borderRadius: "9px",
+    width: "38px",
   },
 }));
 
@@ -56,24 +64,25 @@ const CourseCard = (props) => {
                 </Typography>
               </div>
             ) : (
-              <div style={{ marginTop: "25px" }}></div>
+              <div style={{ height: "25px" }}>
+                <Typography variant="subtitle1" className={classes.free}>
+                  FREE
+                </Typography>
+              </div>
             )}
 
             <Typography
               style={{
-                fontFamily: "Roboto Mono",
                 fontWeight: 600,
               }}
-              variant="h5"
+              variant="h6"
             >
               {course && course.title}
             </Typography>
             <Typography
-              variant="h6"
+              variant="body1"
               style={{
-                paddingBottom: "50px",
-                fontFamily: "Roboto Mono",
-                fontWeight: 600,
+                paddingBottom: "30px",
               }}
             >
               {course &&
@@ -81,16 +90,10 @@ const CourseCard = (props) => {
             </Typography>
           </div>
           <div>
-            <Typography
-              variant="body1"
-              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
-            >
+            <Typography variant="body1" style={{ fontWeight: 600 }}>
               duration: {course && course.duration}h
             </Typography>
-            <Typography
-              variant="body1"
-              style={{ fontFamily: "Roboto Mono", fontWeight: 600 }}
-            >
+            <Typography variant="body1" style={{ fontWeight: 600 }}>
               exp points: {course && course.exp_points}p
             </Typography>
             <div style={{ display: "flex", margin: "10px 0" }}>

@@ -1,15 +1,16 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
-import { Link, useHistory } from "react-router-dom";
+import MemberNavBar from "../MemberNavBar";
+import { useHistory } from "react-router-dom";
 import { Button, ListItem, Typography } from "@material-ui/core";
 
 import MemberLandingBody from "./MemberLandingBody";
 import Footer from "./Footer";
 
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 
 import Service from "../../AxiosService";
+import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,9 +59,13 @@ const useStyles = makeStyles((theme) => ({
 
 const MemberLandingPage = () => {
   const classes = useStyles();
-  const history = useHistory();
 
   const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    checkIfLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -68,108 +73,9 @@ const MemberLandingPage = () => {
     }
   };
 
-  useEffect(() => {
-    checkIfLoggedIn();
-  }, []);
-
-  const memberNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/partner" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#000" }}>
-            Teach on Codeine
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link to="/member/login" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Log In
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/member/register"
-          style={{
-            textTransform: "capitalize",
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Sign Up
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const loggedInNavbar = (
-    <Fragment>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Link
-          to="/member/home"
-          style={{
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{ fontSize: "15px", color: "#437FC7" }}
-          >
-            Dashboard
-          </Typography>
-        </Link>
-      </ListItem>
-      <ListItem style={{ whiteSpace: "nowrap" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            textTransform: "capitalize",
-          }}
-          onClick={() => {
-            Service.removeCredentials();
-            setLoggedIn(false);
-            history.push("/");
-          }}
-        >
-          <Typography variant="h6" style={{ fontSize: "15px", color: "#fff" }}>
-            Logout
-          </Typography>
-        </Button>
-      </ListItem>
-    </Fragment>
-  );
-
-  const navLogo = (
-    <Fragment>
-      <Link
-        to="/"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingLeft: "10px",
-          width: 100,
-        }}
-      >
-        <img src={logo} width="120%" alt="codeine logo" />
-      </Link>
-    </Fragment>
-  );
-
   return (
     <div className={classes.root}>
-      <Navbar
-        logo={navLogo}
-        bgColor="#fff"
-        navbarItems={loggedIn && loggedIn ? loggedInNavbar : memberNavbar}
-      />
+      <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <MemberLandingBody loggedIn={loggedIn} />
       <Footer />
     </div>

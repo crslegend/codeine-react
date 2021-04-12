@@ -8,27 +8,29 @@ import {
   Grid,
 } from "@material-ui/core";
 import Label from "./Label";
+import { useHistory } from "react-router";
 
 const styles = makeStyles((theme) => ({
   root: {
-    marginTop: "50px",
+    marginTop: "20px",
     border: "1px solid",
     borderRadius: 0,
     width: "100%",
   },
   heading: {
     fontFamily: "Roboto Mono",
-    fontSize: "64px",
+    fontSize: "62px",
     color: "#CECECE",
-    marginLeft: "1vw",
-    lineHeight: "75px",
+    marginLeft: "0.8vw",
+    lineHeight: "80px",
   },
 }));
 
 const ArticleCard = (props) => {
   const classes = styles();
   const { article, index } = props;
-  console.log(article);
+  const history = useHistory();
+  // console.log(article);
 
   let numbering = index + 1;
   if (numbering < 10) {
@@ -51,7 +53,9 @@ const ArticleCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea>
+      <CardActionArea
+        onClick={() => history.push(`/article/member/${article.id}`)}
+      >
         <CardContent>
           <Grid container>
             <Grid item xs={1}>
@@ -64,34 +68,23 @@ const ArticleCard = (props) => {
                   justifyContent: "space-between",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  style={{
-                    fontFamily: "Roboto Mono",
-                  }}
-                >
-                  {article &&
-                    article.member.first_name + " " + article.member.last_name}
+                <Typography variant="body1">
+                  {article.user &&
+                    article.user.first_name + " " + article.user.last_name}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  style={{
-                    fontFamily: "Roboto Mono",
-                  }}
-                >
+                <Typography variant="body2">
                   last updated on {article && formatDate(article.date_edited)}
                 </Typography>
               </div>
               <Typography
-                variant="h5"
+                variant="h6"
                 style={{
-                  fontFamily: "Roboto Mono",
                   fontWeight: "600",
                 }}
               >
                 {article && article.title}
               </Typography>
-              <div style={{ display: "flex", margin: "10px 0" }}>
+              <div style={{ display: "flex", marginTop: "10px" }}>
                 {article &&
                   article.categories.map((category) => (
                     <Label label={category} />

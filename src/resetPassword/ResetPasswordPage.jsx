@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { Link, useParams } from "react-router-dom";
 // import Service from "../AxiosService";
-import Partnerlogo from "../assets/CodeineLogos/Partner.svg";
-import Memberlogo from "../assets/CodeineLogos/Member.svg";
-import Adminlogo from "../assets/CodeineLogos/Admin.svg";
+import Partnerlogo from "../assets/codeineLogos/Partner.svg";
+import Memberlogo from "../assets/codeineLogos/Member.svg";
+import Adminlogo from "../assets/codeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 
 import axios from "axios";
@@ -47,6 +47,21 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     marginBottom: "20px",
     width: 280,
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+    width: 400,
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -159,10 +174,19 @@ const ResetPasswordPage = (props) => {
             variant="outlined"
             margin="dense"
             placeholder="Your email"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={emailDetails && emailDetails.email}
             onChange={handleEmailChange}
             type="email"
             required
+            autoFocus
           />
           <Button
             disabled={loading}

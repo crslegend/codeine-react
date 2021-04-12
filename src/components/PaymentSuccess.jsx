@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper, Typography } from "@material-ui/core";
 import { useLocation, useHistory } from "react-router-dom";
 import Service from "../AxiosService";
-import logo from "../assets/CodeineLogos/Partner.svg";
-import logo1 from "../assets/CodeineLogos/Member.svg";
+import logo from "../assets/codeineLogos/Partner.svg";
+import logo1 from "../assets/codeineLogos/Member.svg";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -51,7 +51,7 @@ const PaymentSuccess = () => {
       history.push(`/partner/home/contributions`);
     } else {
       // return to member consult
-      history.push(`/member/home/consultation`);
+      history.push(`/member/consultations`);
     }
   };
 
@@ -72,7 +72,7 @@ const PaymentSuccess = () => {
           payment_status: "COMPLETED",
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
         })
         .catch((err) => console.log(err));
     }
@@ -87,11 +87,29 @@ const PaymentSuccess = () => {
       Service.client
         .post(`/consultations/${consultationId}/apply`)
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           handlePaymentSuccess(
             res.data.id,
             res.data.consultation_slot.price_per_pax
           );
+        })
+        .catch((err) => console.log(err));
+    }
+
+    // create transaction for upgrade to pro-tier for member
+    if (
+      new URLSearchParams(location.search).get("upgradeTransaction") !== null
+    ) {
+      const upgradeId = new URLSearchParams(location.search).get(
+        "upgradeTransaction"
+      );
+
+      Service.client
+        .patch(`auth/membership-subscriptions/${upgradeId}/update`, {
+          payment_status: "COMPLETED",
+        })
+        .then((res) => {
+          // console.log(res);
         })
         .catch((err) => console.log(err));
     }
@@ -142,7 +160,8 @@ const PaymentSuccess = () => {
           >
             View My Contributions
           </Button>
-        ) : (
+        ) : new URLSearchParams(location.search).get("consultation") !==
+          null ? (
           <Button
             variant="contained"
             color="primary"
@@ -150,6 +169,15 @@ const PaymentSuccess = () => {
             onClick={() => handleRedirect()}
           >
             Go Back To Consultations
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "25px" }}
+            onClick={() => history.push(`/member/payment`)}
+          >
+            Go Back To My Payments
           </Button>
         )}
       </Paper>

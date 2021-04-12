@@ -1,8 +1,9 @@
 import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
-import pricing from "../../assets/pricing_asset.png";
+import pricing from "../../assets/PricingAsset.png";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -14,9 +15,13 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     marginTop: "20%",
-    marginBottom: "30px",
+    marginBottom: "20px",
     lineHeight: "40px",
     fontWeight: 600,
+    fontFamily: "Roboto Mono",
+  },
+  subheading: {
+    marginBottom: "30px",
     fontFamily: "Roboto Mono",
   },
   button: {
@@ -46,8 +51,19 @@ const Pricing = () => {
             our features
           </Typography>
 
-          <Button variant="outlined" color="primary" className={classes.button}>
-            subscribe now
+          <Typography variant="h6" className={classes.subheading}>
+            ** Register today to enjoy a free premium <br /> membership for 7
+            days
+          </Typography>
+
+          <Button
+            component={Link}
+            to="/member/register"
+            variant="outlined"
+            color="primary"
+            className={classes.button}
+          >
+            Start Free Trial
           </Button>
         </Grid>
 

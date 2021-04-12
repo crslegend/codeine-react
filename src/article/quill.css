@@ -1,0 +1,9 @@
+.ql-editor p {
+  font-size: 22px;
+  line-height: 1.8;
+  font-family: "CharterRegular";
+}
+
+.ql-editor pre {
+  font-size: 17px;
+}

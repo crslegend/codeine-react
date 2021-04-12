@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Service from "../../AxiosService";
-import logo from "../../assets/CodeineLogos/Member.svg";
+import logo from "../../assets/codeineLogos/Member.svg";
 import Toast from "../../components/Toast.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +42,21 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     marginBottom: "20px",
     width: 120,
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+    width: 250,
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
 }));
 
@@ -96,9 +111,12 @@ const MemberLoginPage = () => {
 
         if (res.data.user.member) {
           Service.storeCredentials(res.data);
-          if (state) {
+          if (state && state.courseId) {
             // login to view course
             history.push(`/courses/${state.courseId}`);
+          } else if (state && state.industry_project_id) {
+            // login to apply industry project
+            history.push(`/industryprojects/${state.industry_project_id}`);
           } else {
             //history.push("/courses");
             history.push("/");
@@ -115,6 +133,14 @@ const MemberLoginPage = () => {
           //   severity: "error",
           // });
           // return;
+        } else if (res.data.user.is_admin) {
+          setLoading(false);
+          setSbOpen(true);
+          setSnackbar({
+            ...snackbar,
+            message: "This user is not a registered member. Please try again!",
+            severity: "error",
+          });
         }
       })
       .catch((err) => {
@@ -161,15 +187,32 @@ const MemberLoginPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="Email"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={loginDetails && loginDetails.email}
             onChange={handleEmailChange}
             type="email"
             required
+            autoFocus
           />
           <TextField
             variant="outlined"
             margin="dense"
             placeholder="Password"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={loginDetails && loginDetails.password}
             onChange={handlePasswordChange}
             type="password"
