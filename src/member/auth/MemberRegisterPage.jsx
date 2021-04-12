@@ -42,6 +42,21 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "20px",
     width: 120,
   },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+    width: 250,
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
 }));
 
 const MemberRegisterPage = () => {
@@ -140,6 +155,14 @@ const MemberRegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="First Name"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={registerDetails && registerDetails.first_name}
             onChange={handleFirstNameChange}
             type="text"
@@ -150,6 +173,14 @@ const MemberRegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="Last Name"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={registerDetails && registerDetails.last_name}
             onChange={handleLastNameChange}
             type="text"
@@ -159,6 +190,14 @@ const MemberRegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="Email"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={registerDetails && registerDetails.email}
             onChange={handleEmailChange}
             type="email"
@@ -168,6 +207,14 @@ const MemberRegisterPage = () => {
             variant="outlined"
             margin="dense"
             placeholder="Password"
+            InputProps={{
+              classes: {
+                root: classes.fieldRoot,
+                focused: classes.focused,
+                input: classes.fieldInput,
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
             value={registerDetails && registerDetails.password}
             onChange={handlePasswordChange}
             type="password"

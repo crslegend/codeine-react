@@ -225,10 +225,10 @@ const TakeQuiz = ({
           ) : (
             <div>
               <Typography variant="body2">
-                Upgrade to <span style={{ fontWeight: 600 }}>Pro-Tier</span> now
-                to get unlimited access to consultation with the course
-                instructor! Alternatively, you can head over to the comments
-                section to post your questions.
+                Upgrade to <span style={{ fontWeight: 600 }}>Pro</span> now to
+                get unlimited access to consultation with the course instructor!
+                Alternatively, you can head over to the comments section to post
+                your questions.
               </Typography>
             </div>
           )}
@@ -269,7 +269,7 @@ const TakeQuiz = ({
                 to={`/member/membership`}
                 style={{ marginLeft: "10px" }}
               >
-                Upgrade to Pro-Tier
+                Upgrade to Pro
               </Button>
             </div>
           )}

@@ -16,6 +16,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  GridList,
+  GridListTile,
+  GridListTileBar,
+  IconButton,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -34,6 +38,8 @@ import ZeroNotif from "../assets/ZeroNotif.svg";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import "./quill.css";
+import { DropzoneAreaBase } from "material-ui-dropzone";
+import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,8 +134,8 @@ const useStyles = makeStyles((theme) => ({
   },
   popoverPaper: {
     marginTop: "10px",
-    boxShadow: "5px 5px 0px #222",
-    border: "2px solid #222",
+    boxShadow: "3px 4px 0px #222",
+    border: "1px solid #222",
   },
   notification: {
     cursor: "pointer",
@@ -150,6 +156,22 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
       color: theme.palette.primary.main,
     },
+  },
+  dropzone: {
+    width: "100%",
+    minHeight: "150px",
+    "@global": {
+      ".MuiDropzoneArea-text.MuiTypography-h5": {
+        textTransform: "none",
+        fontSize: "14px",
+      },
+    },
+  },
+  gridList: {
+    width: "100%",
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)",
   },
 }));
 
@@ -249,7 +271,9 @@ const EditArticle = (props) => {
     title: "",
     content: "",
   });
+  const [thumbnail, setThumbnail] = useState();
   const [content, setContent] = useState("");
+  const [editThumbnailState, setEditThumbnailState] = useState(false);
 
   useEffect(() => {
     // if (quillRef && quillRef.current) {
@@ -270,7 +294,11 @@ const EditArticle = (props) => {
       Service.client
         .get(`/articles/${id}`)
         .then((res1) => {
+          console.log(res1);
           getFields(res1.data);
+          if (res1.data.thumbnail) {
+            setThumbnail(res1.data.thumbnail);
+          }
         })
         .catch(() => {});
     }
@@ -279,14 +307,29 @@ const EditArticle = (props) => {
   }, []);
 
   const [debouncedText] = useDebounce(articleDetails, 1000);
+  const [debouncedThumbnail] = useDebounce(thumbnail, 1000);
   const [saveState, setSaveState] = useState(true);
 
   useEffect(() => {
-    if (debouncedText) {
+    if (debouncedText || debouncedThumbnail) {
       if (!articleDetails.is_published && articleDetails.title !== "") {
+        const formData = new FormData();
+        console.log(JSON.stringify(articleDetails.categories));
+        formData.append("title", articleDetails.title);
+        formData.append("content", articleDetails.content);
+        formData.append("categories", articleDetails.categories);
+        formData.append("coding_languages", articleDetails.coding_languages);
+        formData.append("languages", articleDetails.languages);
+
+        if (editThumbnailState && thumbnail) {
+          // console.log(thumbnail[0].file);
+          formData.append("thumbnail", thumbnail[0].file);
+        }
+
         Service.client
-          .put(`/articles/${id}`, articleDetails)
+          .put(`/articles/${id}`, formData)
           .then((res) => {
+            setEditThumbnailState(false);
             setSaveState(true);
           })
           .catch((err) => {
@@ -295,7 +338,7 @@ const EditArticle = (props) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedText]);
+  }, [debouncedText, debouncedThumbnail]);
 
   const [languages, setLanguages] = useState({
     ENG: false,
@@ -526,6 +569,19 @@ const EditArticle = (props) => {
   };
 
   const saveAndPublishArticle = () => {
+    if (!thumbnail) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please give a thumbnail for your article!",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
     if (!validateArticle()) {
       let data = {
         ...articleDetails,
@@ -553,10 +609,22 @@ const EditArticle = (props) => {
         }
       }
 
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("content", data.content);
+      formData.append("categories", data.categories);
+      formData.append("coding_languages", data.coding_languages);
+      formData.append("languages", data.languages);
+
+      if (editThumbnailState) {
+        formData.append("thumbnail", thumbnail[0].file);
+      }
+
       Service.client
-        .put(`/articles/${id}`, data)
+        .put(`/articles/${id}`, formData)
         .then((res) => {
           console.log(data);
+          setEditThumbnailState(false);
           setSaveState(true);
           if (userType === "member") {
             history.push(`/article/member/${id}`);
@@ -974,6 +1042,63 @@ const EditArticle = (props) => {
           />
         </Grid>
         <Grid item xs={4} className={classes.gridlayout}>
+          <div style={{ marginBottom: "30px" }}>
+            {thumbnail ? (
+              <GridList className={classes.gridList} cols={1}>
+                <GridListTile>
+                  <img
+                    alt="thumbnail"
+                    src={thumbnail[0].data ? thumbnail[0].data : thumbnail}
+                  />
+                  <GridListTileBar
+                    classes={{
+                      root: classes.titleBar,
+                    }}
+                    actionIcon={
+                      <IconButton
+                        onClick={() => {
+                          setEditThumbnailState(true);
+                          setThumbnail();
+                        }}
+                      >
+                        <Delete style={{ color: "#C74343" }} />
+                      </IconButton>
+                    }
+                  />
+                </GridListTile>
+              </GridList>
+            ) : (
+              <Fragment>
+                <Typography variant="body2" style={{ paddingBottom: "7px" }}>
+                  Article Thumbnail
+                </Typography>
+                <DropzoneAreaBase
+                  dropzoneClass={classes.dropzone}
+                  dropzoneText="Drag and drop an image or click here&nbsp;"
+                  acceptedFiles={["image/*"]}
+                  filesLimit={1}
+                  maxFileSize={5000000}
+                  fileObjects={thumbnail}
+                  onAdd={(newPhoto) => {
+                    console.log("onAdd", newPhoto);
+                    setEditThumbnailState(true);
+                    setThumbnail(newPhoto);
+                    // setValidatePhoto(false);
+                  }}
+                  onDelete={(deletePhotoObj) => {
+                    setThumbnail();
+                    setEditThumbnailState(true);
+                  }}
+                  previewGridProps={{
+                    item: {
+                      xs: "auto",
+                    },
+                  }}
+                  style={{ minHeight: "100px" }}
+                />
+              </Fragment>
+            )}
+          </div>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
               Course Language (Choose at least 1)

@@ -37,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
   },
   popoverPaper: {
     marginTop: "10px",
-    boxShadow: "5px 5px 0px #222",
-    border: "2px solid #222",
+    boxShadow: "3px 4px 0px #222",
+    border: "1px solid #222",
   },
   typography: {
     cursor: "pointer",
@@ -496,11 +496,11 @@ const MemberNavBar = (props) => {
             <div
               className={classes.hover}
               onClick={() => {
-                //history.push("/");
-                alert("clicked on Industry projects");
+                history.push("/member/industryprojects");
+                // alert("clicked on Industry projects");
               }}
             >
-              <Dashboard className={classes.icon} />
+              <Work className={classes.icon} />
               <Typography className={classes.typography}>
                 Industry Projects
               </Typography>

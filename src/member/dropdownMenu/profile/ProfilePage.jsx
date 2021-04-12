@@ -23,27 +23,32 @@ import {
   Box,
   InputAdornment,
   FilledInput,
-  InputLabel,
+  Grid,
 } from "@material-ui/core";
 import {
   Mood,
   Lock,
   Work,
+  Settings,
   Add,
   Close,
   Visibility,
   VisibilityOff,
+  LocationOn,
 } from "@material-ui/icons";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useHistory, Link } from "react-router-dom";
 import MemberNavBar from "../../MemberNavBar";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast.js";
 import validator from "validator";
 import EditIcon from "../../../assets/EditIcon.svg";
-import Cookies from "js-cookie";
+import Cookies, { set } from "js-cookie";
 import Service from "../../../AxiosService";
 import jwt_decode from "jwt-decode";
 import { DatePicker } from "@material-ui/pickers";
+import parse from "autosuggest-highlight/parse";
+import throttle from "lodash/throttle";
 import CVCard from "./components/CVCard";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ECECEC",
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",
-    padding: "auto 0",
   },
   fieldInput: {
     padding: "12px",
@@ -80,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
   focused: {
     border: "1px solid #222",
     boxShadow: "2px 3px 0px #222",
-    backgroundColor: "#FFFFFF",
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",
   },
@@ -119,7 +122,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   proLabel: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "2px",
     padding: "2px 4px",
@@ -129,7 +133,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
   },
   pro: {
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -139,14 +144,30 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 16,
   },
   free: {
-    backgroundColor: "  #F7DF1E",
-    color: "#000",
+    backgroundColor: "rgba(84,84,84,1)",
+    color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 4px",
     letterSpacing: "0.5px",
     borderRadius: "9px",
     width: "30px",
     fontSize: 16,
+  },
+  proBorderWrapper: {
+    borderRadius: "50%",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 5,
+  },
+  freeBorderWrapper: {
+    borderRadius: "50%",
+    background: "rgba(84,84,84,1)",
+    padding: 5,
+  },
+  innerBorderWrapper: {
+    borderRadius: "50%",
+    background: "#FFF",
+    padding: 3,
   },
   formControl: {
     width: "100%",
@@ -170,6 +191,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     width: "100%",
   },
+  location: {
+    color: theme.palette.text.secondary,
+    marginRight: theme.spacing(2),
+  },
 }));
 
 function TabPanel(props) {
@@ -184,7 +209,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "30px" }}>
+        <Box p={0} ml={2} style={{ width: "100%", paddingBottom: "50px" }}>
           <div>{children}</div>
         </Box>
       )}
@@ -204,6 +229,8 @@ function a11yProps(index) {
     "aria-controls": `vertical-tabpanel-${index}`,
   };
 }
+
+const autocompleteService = { current: null };
 
 const SmallAvatar = withStyles((theme) => ({
   root: {
@@ -229,6 +256,7 @@ const Profile = (props) => {
   });
 
   const [value, setValue] = useState(0);
+  const [error, setError] = useState("");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -272,8 +300,15 @@ const Profile = (props) => {
     profile_photo: "",
   });
 
+  const [uniqueId, setUniqueId] = useState("");
+
   const [profilePhoto, setProfilePhoto] = useState();
   const [uploadOpen, setUploadOpen] = useState(false);
+
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [options, setOptions] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   const [CVDetail, setCVDetail] = useState({
     title: "",
@@ -326,11 +361,71 @@ const Profile = (props) => {
     setPasswordDetails({ ...passwordDetails, [prop]: event.target.value });
   };
 
+  const fetch = React.useMemo(
+    () =>
+      throttle((request, callback) => {
+        autocompleteService.current.getPlacePredictions(request, callback);
+      }, 200),
+    []
+  );
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAE5z0wC66Dfis7ho1QVBfPyVIl6Ny3NVw&libraries=places";
+    script.addEventListener("load", () => setLoaded(true));
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    let active = true;
+
+    if (!autocompleteService.current && window.google) {
+      autocompleteService.current = new window.google.maps.places.AutocompleteService();
+    }
+
+    if (!autocompleteService.current) {
+      return undefined;
+    }
+
+    if (inputValue === "") {
+      setOptions(selectedLocation ? [selectedLocation] : []);
+    }
+
+    fetch({ input: inputValue }, (results) => {
+      if (active) {
+        let newOptions = [];
+
+        if (selectedLocation) {
+          newOptions = [selectedLocation];
+        }
+
+        if (results) {
+          newOptions = [...newOptions, ...results];
+        }
+
+        setOptions(newOptions);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [loaded, selectedLocation, inputValue, fetch]);
+
   useEffect(() => {
     checkIfLoggedIn();
     getProfileDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleKeyDown = (event, callback) => {
+    if (event.key === "Enter" && event.shiftKey === false) {
+      event.preventDefault();
+    }
+  };
 
   const getProfileDetails = () => {
     if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
@@ -340,6 +435,8 @@ const Profile = (props) => {
         .then((res) => {
           console.log(res.data);
           setProfileDetails(res.data);
+          setSelectedLocation(res.data.location);
+          setUniqueId(res.data.member.unique_id);
           Service.client
             .get(`/auth/cvs`)
             .then((res) => {
@@ -435,6 +532,7 @@ const Profile = (props) => {
   };
 
   const handleSubmit = (e) => {
+    console.log(profileDetails);
     e.preventDefault();
     if (!validator.isEmail(profileDetails.email)) {
       setSbOpen(true);
@@ -484,10 +582,10 @@ const Profile = (props) => {
         setSbOpen(true);
         setSnackbar({
           ...snackbar,
-          message: "Profile Updated!",
+          message: "Profile updated successfully!",
           severity: "success",
         });
-        console.log(res.data);
+
         setProfileDetails(res.data);
         setLoading(false);
       })
@@ -544,6 +642,45 @@ const Profile = (props) => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  const handleURLSubmit = (e) => {
+    console.log(uniqueId);
+    e.preventDefault();
+
+    if (uniqueId === profileDetails.member.unique_id) {
+      setSbOpen(true);
+      setSnackbar({
+        ...snackbar,
+        message: "No updates detected",
+        severity: "info",
+      });
+      return true;
+    }
+
+    const formData = new FormData();
+    formData.append("unique_id", uniqueId);
+
+    Service.client
+      .put(`/auth/members/${profileDetails.id}`, formData)
+      .then((res) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "Profile URL is saved!",
+          severity: "success",
+        });
+        getProfileDetails();
+      })
+      .catch((err) => {
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message: "URL is already taken",
+          severity: "error",
+        });
+        return true;
       });
   };
 
@@ -727,23 +864,29 @@ const Profile = (props) => {
           {profileDetails.member &&
           profileDetails.member.membership_tier === "PRO" ? (
             <Link
-              to={`/member/profile/${profileDetails.id}`}
+              to={
+                uniqueId === null
+                  ? `/member/profile/${profileDetails.id}`
+                  : `/${uniqueId}`
+              }
               className={classes.profileLink}
             >
               {profileDetails && profileDetails.first_name}{" "}
               {profileDetails && profileDetails.last_name}
             </Link>
           ) : (
-            <Typography
-              variant="h2"
-              style={{
-                fontWeight: "bold",
-                marginBottom: "25px",
-              }}
-            >
-              {profileDetails && profileDetails.first_name}{" "}
-              {profileDetails && profileDetails.last_name}
-            </Typography>
+            <div>
+              <Typography
+                variant="h2"
+                style={{
+                  fontWeight: "bold",
+                  marginBottom: "25px",
+                }}
+              >
+                {profileDetails && profileDetails.first_name}{" "}
+                {profileDetails && profileDetails.last_name}
+              </Typography>
+            </div>
           )}
         </Typography>
 
@@ -756,7 +899,7 @@ const Profile = (props) => {
             classes={{
               indicator: classes.indicator,
             }}
-            style={{ width: "22%" }}
+            style={{ width: "30%" }}
             aria-label="Vertical tabs"
           >
             <Tab
@@ -788,11 +931,31 @@ const Profile = (props) => {
               }}
               label={
                 <div>
-                  <Work style={{ verticalAlign: "middle" }} /> Experience{" "}
+                  <Settings style={{ verticalAlign: "middle" }} /> Customisation{" "}
                   <span className={classes.proLabel}>PRO</span>
                 </div>
               }
               {...a11yProps(1)}
+            />
+            <Tab
+              style={{
+                textTransform: "none",
+              }}
+              disabled={
+                profileDetails.member &&
+                profileDetails.member.membership_tier !== "PRO"
+              }
+              classes={{
+                selected: classes.selected,
+                wrapper: classes.wrapper,
+              }}
+              label={
+                <div>
+                  <Work style={{ verticalAlign: "middle" }} /> Experience{" "}
+                  <span className={classes.proLabel}>PRO</span>
+                </div>
+              }
+              {...a11yProps(2)}
             />
             <Tab
               style={{
@@ -807,7 +970,7 @@ const Profile = (props) => {
                   <Lock style={{ verticalAlign: "middle" }} /> Account
                 </div>
               }
-              {...a11yProps(2)}
+              {...a11yProps(3)}
             />
           </Tabs>
           {/* Profile Tab*/}
@@ -826,7 +989,7 @@ const Profile = (props) => {
                 display: "flex",
                 width: "100%",
                 height: "100px",
-                padding: " 0px 20px",
+                padding: " 0px 30px",
                 alignItems: "center",
                 justifyContent: "space-between",
                 marginBottom: "15px",
@@ -852,25 +1015,32 @@ const Profile = (props) => {
                     style={{ height: 30 }}
                     onClick={() => history.push(`/member/payment`)}
                   >
-                    Extend Pro-Tier Membership
+                    Extend Pro Membership
                   </Button>
                 )}
             </Card>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={(e) => {
+                handleKeyDown(e, handleSubmit);
+              }}
+              noValidate
+              autoComplete="off"
+            >
               <Card
                 elevation={0}
                 style={{
                   backgroundColor: " #FFFFFF",
                   border: "1px solid #ECECEC",
                   width: "100%",
-                  padding: "10px 20px",
-                  marginBottom: "15px",
+                  padding: "20px 30px",
+                  marginBottom: "30px",
                 }}
               >
                 <Typography
                   component={"span"}
                   variant="h5"
-                  style={{ margin: "10px 0px 30px" }}
+                  style={{ padding: "50px 0px" }}
                 >
                   <b>User</b>
                 </Typography>
@@ -881,54 +1051,66 @@ const Profile = (props) => {
                     justifyContent: "center",
                   }}
                 >
-                  <a
-                    href="#profile_photo"
-                    onClick={(e) => setUploadOpen(true)}
-                    style={{ textDecoration: "none" }}
+                  <div
+                    className={
+                      profileDetails &&
+                      profileDetails.member &&
+                      profileDetails.member.membership_tier === "PRO"
+                        ? classes.proBorderWrapper
+                        : classes.freeBorderWrapper
+                    }
                   >
-                    {!profileDetails.profile_photo ? (
-                      <Badge
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        className={classes.avatar}
-                        badgeContent={
-                          <SmallAvatar
-                            alt=""
-                            src={EditIcon}
-                            style={{ backgroundColor: "#d1d1d1" }}
-                          />
-                        }
+                    <div className={classes.innerBorderWrapper}>
+                      <a
+                        href="#profile_photo"
+                        onClick={(e) => setUploadOpen(true)}
+                        style={{ textDecoration: "none" }}
                       >
-                        <Avatar className={classes.avatar}>
-                          {profileDetails.first_name.charAt(0)}
-                        </Avatar>
-                      </Badge>
-                    ) : (
-                      <Badge
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        badgeContent={
-                          <SmallAvatar
-                            alt=""
-                            src={EditIcon}
-                            style={{ backgroundColor: "#d1d1d1" }}
-                          />
-                        }
-                      >
-                        <Avatar
-                          alt="Pic"
-                          src={profileDetails.profile_photo}
-                          className={classes.avatar}
-                        />
-                      </Badge>
-                    )}
-                  </a>
+                        {!profileDetails.profile_photo ? (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            className={classes.avatar}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar className={classes.avatar}>
+                              {profileDetails.first_name.charAt(0)}
+                            </Avatar>
+                          </Badge>
+                        ) : (
+                          <Badge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar
+                                alt=""
+                                src={EditIcon}
+                                style={{ backgroundColor: "#d1d1d1" }}
+                              />
+                            }
+                          >
+                            <Avatar
+                              alt="Pic"
+                              src={profileDetails.profile_photo}
+                              className={classes.avatar}
+                            />
+                          </Badge>
+                        )}
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
                 <div style={{ marginTop: "20px" }}>
@@ -951,7 +1133,6 @@ const Profile = (props) => {
                     required
                     fullWidth
                     value={profileDetails.first_name}
-                    // error={firstNameError}
                     onChange={(event) =>
                       setProfileDetails({
                         ...profileDetails,
@@ -980,7 +1161,6 @@ const Profile = (props) => {
                     required
                     fullWidth
                     value={profileDetails.last_name}
-                    // error={lastNameError}
                     onChange={(event) =>
                       setProfileDetails({
                         ...profileDetails,
@@ -1010,7 +1190,6 @@ const Profile = (props) => {
                     required
                     fullWidth
                     value={profileDetails.email}
-                    // error={emailError}
                     onChange={(event) =>
                       setProfileDetails({
                         ...profileDetails,
@@ -1019,35 +1198,110 @@ const Profile = (props) => {
                     }
                   />
                 </div>
+
                 <div style={{ marginTop: "20px" }}>
-                  <label htmlFor="location">
-                    <Typography variant="body2">Location</Typography>
-                  </label>
-                  <TextField
-                    margin="dense"
-                    variant="filled"
-                    id="location"
-                    name="location"
-                    InputProps={{
-                      disableUnderline: true,
-                      classes: {
-                        root: classes.fieldRoot,
-                        focused: classes.focused,
-                        input: classes.fieldInput,
-                      },
-                    }}
-                    required
-                    fullWidth
-                    value={profileDetails.location}
-                    // error={emailError}
-                    onChange={(event) =>
-                      setProfileDetails({
-                        ...profileDetails,
-                        location: event.target.value,
-                      })
+                  <Autocomplete
+                    id="google-map-demo"
+                    getOptionLabel={(option) =>
+                      typeof option === "string" ? option : option.description
                     }
+                    filterOptions={(x) => x}
+                    options={options}
+                    autoComplete
+                    underlinestyle={{ display: "none" }}
+                    includeInputInList
+                    filterSelectedOptions
+                    value={selectedLocation}
+                    onChange={(event, newValue) => {
+                      setOptions(newValue ? [newValue, ...options] : options);
+                      if (newValue !== null) {
+                        setSelectedLocation(newValue);
+                        setProfileDetails({
+                          ...profileDetails,
+                          location: newValue.description,
+                        });
+                      } else {
+                        setSelectedLocation("");
+                        setProfileDetails({
+                          ...profileDetails,
+                          location: "",
+                        });
+                      }
+                    }}
+                    onInputChange={(event, newInputValue) => {
+                      setInputValue(newInputValue);
+                    }}
+                    renderInput={(params) => (
+                      <div style={{ marginTop: "20px" }}>
+                        <label htmlFor="location">
+                          <Typography variant="body2">Location</Typography>
+                        </label>
+                        <TextField
+                          {...params}
+                          inputProps={{
+                            ...params.inputProps,
+                            style: {
+                              marginTop: "-10px",
+                              marginBottom: "10px",
+                            },
+                          }}
+                          InputProps={{
+                            ...params.InputProps,
+                            disableUnderline: true,
+                            classes: {
+                              root: classes.fieldRoot,
+                              focused: classes.focused,
+                              input: classes.fieldInput,
+                            },
+                          }}
+                          margin="dense"
+                          variant="filled"
+                          fullWidth
+                        />
+                      </div>
+                    )}
+                    renderOption={(option) => {
+                      if (!option || !option.structured_formatting) {
+                        return;
+                      }
+                      const matches =
+                        option.structured_formatting
+                          .main_text_matched_substrings;
+                      const parts = parse(
+                        option.structured_formatting.main_text,
+                        matches.map((match) => [
+                          match.offset,
+                          match.offset + match.length,
+                        ])
+                      );
+
+                      return (
+                        <Grid container alignItems="center">
+                          <Grid item>
+                            <LocationOn className={classes.location} />
+                          </Grid>
+                          <Grid item xs>
+                            {parts.map((part, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  fontWeight: part.highlight ? 700 : 400,
+                                }}
+                              >
+                                {part.text}
+                              </span>
+                            ))}
+
+                            <Typography variant="body2" color="textSecondary">
+                              {option.structured_formatting.secondary_text}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      );
+                    }}
                   />
                 </div>
+
                 <div style={{ marginTop: "20px" }}>
                   <label htmlFor="age">
                     <Typography variant="body2">Age</Typography>
@@ -1070,7 +1324,6 @@ const Profile = (props) => {
                     required
                     fullWidth
                     value={profileDetails.age}
-                    // error={lastNameError}
                     onChange={(event) =>
                       setProfileDetails({
                         ...profileDetails,
@@ -1138,13 +1391,109 @@ const Profile = (props) => {
             </form>
           </TabPanel>
 
-          {/* Experience Tab*/}
+          {/* Customisation Tab*/}
           <TabPanel
             style={{
               width: "100%",
             }}
             value={value}
             index={1}
+          >
+            <Card
+              elevation={0}
+              style={{
+                backgroundColor: " #FFFFFF",
+                border: "1px solid #ECECEC",
+                width: "100%",
+                padding: "20px 20px",
+                marginBottom: "15px",
+              }}
+            >
+              <Typography
+                variant="h5"
+                style={{ fontWeight: "700", marginBottom: "10px" }}
+              >
+                Edit your custom URL
+              </Typography>
+              <Typography variant="body1" style={{ marginBottom: "5px" }}>
+                Make your profile personal with a customised link.
+              </Typography>
+
+              <form onSubmit={handleURLSubmit} noValidate>
+                <div style={{ margin: "20px 0px 10px", display: "flex" }}>
+                  <Typography
+                    variant="body2"
+                    style={{ marginRight: "5px", paddingTop: "20px" }}
+                  >
+                    http://localhost:3000/
+                  </Typography>
+
+                  <TextField
+                    margin="dense"
+                    variant="filled"
+                    id="url"
+                    name="url"
+                    error={error !== "" ? true : false}
+                    helperText={error !== "" ? error : ""}
+                    inputProps={{ maxLength: 10 }}
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
+                        input: classes.fieldInput,
+                      },
+                    }}
+                    required
+                    value={uniqueId}
+                    onChange={(event) => {
+                      const newValue = event.target.value;
+
+                      if (
+                        !newValue.match(/[!@#$%^&*()+=[\]{};`~':"\\|,.<>/?]+/)
+                      ) {
+                        if (!/\s/.test(newValue)) {
+                          setError("");
+                          // only set when successful
+                          setUniqueId(event.target.value);
+                        } else {
+                          setError("Contains invalid characters");
+                        }
+                      } else {
+                        setError("Contains invalid characters");
+                      }
+                    }}
+                  />
+                </div>
+                <Typography variant="subtitle1" style={{ margin: "15px 0px" }}>
+                  <b>Note:</b>
+                  <br /> Your custom URL should contain at most 10 characters
+                  (i.e. code_123). Please do not use spaces, <br />
+                  symbols, or special characters.
+                </Typography>
+                <Button
+                  disabled={loading}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  {loading ? (
+                    <CircularProgress size="1.5rem" style={{ color: "#FFF" }} />
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+              </form>
+            </Card>
+          </TabPanel>
+
+          {/* Experience Tab*/}
+          <TabPanel
+            style={{
+              width: "100%",
+            }}
+            value={value}
+            index={2}
           >
             {CVList && CVList.length === 0 ? (
               <Card
@@ -1256,7 +1605,7 @@ const Profile = (props) => {
               width: "100%",
             }}
             value={value}
-            index={2}
+            index={3}
           >
             <Card
               elevation={0}
@@ -1464,7 +1813,6 @@ const Profile = (props) => {
                 required
                 fullWidth
                 value={CVDetail.title}
-                // error={lastNameError}
                 onChange={(event) =>
                   setCVDetail({
                     ...CVDetail,
@@ -1496,7 +1844,6 @@ const Profile = (props) => {
                 required
                 fullWidth
                 value={CVDetail.description}
-                // error={lastNameError}
                 onChange={(event) =>
                   setCVDetail({
                     ...CVDetail,
@@ -1526,7 +1873,6 @@ const Profile = (props) => {
                 required
                 fullWidth
                 value={CVDetail.organisation}
-                // error={lastNameError}
                 onChange={(event) =>
                   setCVDetail({
                     ...CVDetail,

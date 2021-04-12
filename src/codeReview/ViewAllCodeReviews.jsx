@@ -2,26 +2,22 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
-// import logo from "../assets/CodeineLogos/Member.svg";
 import { calculateDateInterval } from "../utils.js";
 import Service from "../AxiosService";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import components from "./components/NavbarComponents";
-// import PageTitle from "../components/PageTitle";
 import { Avatar, Button, Chip, Paper, Typography } from "@material-ui/core";
 import LinkMui from "@material-ui/core/Link";
-import { Add, Favorite, Forum, People, Person } from "@material-ui/icons";
-// import { ToggleButton } from "@material-ui/lab";
+import { Add, Grade, People, Person, SpeakerNotesOff } from "@material-ui/icons";
 import Toast from "../components/Toast.js";
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
 import AddSnippetDialog from "./components/AddSnippetDialog";
-// import AceEditor from "react-ace";
-// import "ace-builds/src-noconflict/mode-javascript";
-// import "ace-builds/src-noconflict/theme-monokai";
 
-const styles = makeStyles((theme) => ({
+import hljs from "highlight.js";
+import MemberNavBar from "../member/MemberNavBar";
+import PartnerNavbar from "../components/PartnerNavbar";
+
+const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
     display: "flex",
@@ -48,13 +44,25 @@ const styles = makeStyles((theme) => ({
     fontWeight: 600,
     fontFamily: "Roboto Mono",
   },
+  paperRoot: {
+    display: "flex",
+    marginBottom: theme.spacing(2),
+  },
+  codePreview: {
+    width: "25%",
+    height: "200px",
+    padding: theme.spacing(1),
+    opacity: 0.7,
+    background: "rgba(164, 201, 245, 0.2)",
+  },
   codeReview: {
-    marginBottom: "10px",
-    padding: theme.spacing(4),
+    flexGrow: 1,
+    padding: theme.spacing(3),
     display: "flex",
     flexDirection: "column",
   },
   linkMui: {
+    margin: theme.spacing(1),
     fontSize: 28,
     cursor: "pointer",
     "&:hover": {
@@ -69,10 +77,35 @@ const styles = makeStyles((theme) => ({
       color: "#065cc4",
     },
   },
+  chip: {
+    fontSize: "12px",
+    height: 28,
+    margin: theme.spacing(1, 0.5),
+  },
+  codeBody: {
+    flexGrow: 1,
+    padding: theme.spacing(0.8, 2),
+    display: "flex",
+    overflow: "hidden",
+  },
+  likesContainer: {
+    color: theme.palette.yellow.main,
+  },
 }));
 
+const languageEnumMapping = {
+  python: "PY",
+  java: "JAVA",
+  javascript: "JS",
+  c_cpp: "CPP",
+  csharp: "CS",
+  html: "HTML",
+  scss: "CSS",
+  ruby: "RUBY",
+};
+
 const ViewAllCodeReviews = () => {
-  const classes = styles();
+  const classes = useStyles();
   const history = useHistory();
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -91,16 +124,7 @@ const ViewAllCodeReviews = () => {
 
   const [snippet, setSnippet] = useState("");
   const [snippetTitle, setSnippetTitle] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState({
-    PY: false,
-    JAVA: false,
-    JS: false,
-    CPP: false,
-    CS: false,
-    HTML: false,
-    CSS: false,
-    RUBY: false,
-  });
+  const [codeLanguage, setCodeLanguage] = useState("PY");
 
   const [categories, setCategories] = useState({
     SEC: false,
@@ -115,6 +139,8 @@ const ViewAllCodeReviews = () => {
 
   const [viewMySnippet, setViewMySnippet] = useState(false);
   const [codeReviews, setCodeReviews] = useState();
+
+  console.log(codeReviews);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -142,9 +168,9 @@ const ViewAllCodeReviews = () => {
   const getAllCodeReview = (text) => {
     if (text) {
       Service.client
-        .get(`/code-reviews/member/`)
+        .get(`/code-reviews/user/`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
@@ -152,7 +178,7 @@ const ViewAllCodeReviews = () => {
       Service.client
         .get(`/code-reviews`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCodeReviews(res.data);
         })
         .catch((err) => console.log(err));
@@ -165,14 +191,13 @@ const ViewAllCodeReviews = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const resuableChip = (label, index, backgroundColor, fontColor) => {
+  const reusableChip = (label, index, backgroundColor, fontColor) => {
     return (
       <Chip
         key={index}
         label={label}
+        className={classes.chip}
         style={{
-          marginRight: "10px",
-          marginBottom: "10px",
           color: fontColor ? fontColor : "#000",
           fontWeight: 600,
           backgroundColor: backgroundColor,
@@ -232,14 +257,6 @@ const ViewAllCodeReviews = () => {
       return;
     }
 
-    neverChooseOne = true;
-    for (const property in codeLanguage) {
-      if (codeLanguage[property]) {
-        neverChooseOne = false;
-        break;
-      }
-    }
-
     if (neverChooseOne) {
       setSbOpen(true);
       setSnackbar({
@@ -257,7 +274,7 @@ const ViewAllCodeReviews = () => {
     let data = {
       title: snippetTitle,
       code: snippet,
-      coding_languages: [],
+      coding_languages: [codeLanguage].map((lang) => languageEnumMapping[lang]),
       languages: ["ENG"],
       categories: [],
     };
@@ -277,7 +294,7 @@ const ViewAllCodeReviews = () => {
     Service.client
       .post(`/code-reviews`, data)
       .then((res) => {
-        // console.log(res);
+        // console.log(res.data);
         history.push(`/codereview/${res.data.id}`);
       })
       .catch((err) => console.log(err));
@@ -286,23 +303,14 @@ const ViewAllCodeReviews = () => {
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
-      <Navbar
-        logo={components.navLogo}
-        bgColor="#fff"
-        navbarItems={
-          loggedIn && loggedIn
-            ? components.loggedInNavbar(() => {
-                Service.removeCredentials();
-                setLoggedIn(false);
-                history.push("/");
-              }, user && user)
-            : components.memberNavbar
-        }
-      />
+      {user === "member" && <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+      {user === "partner" && <PartnerNavbar />}
+      {!loggedIn && <Navbar logo={components.navLogo} bgColor="#fff" navbarItems={components.loggedOutNavbar} />}
+
       <div className={classes.content}>
         <div className={classes.title}>
           <Typography variant="h2" className={classes.heading}>
-            code review
+            code reviews
           </Typography>
           <div>
             {loggedIn &&
@@ -334,7 +342,7 @@ const ViewAllCodeReviews = () => {
                 </Button>
               ))}
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               startIcon={<Add />}
               onClick={() => setAddSnippetDialog(true)}
@@ -356,106 +364,100 @@ const ViewAllCodeReviews = () => {
           {codeReviews && codeReviews.length > 0 ? (
             codeReviews.map((code, index) => {
               return (
-                <Paper key={index} className={classes.codeReview}>
-                  <div>
-                    <LinkMui
-                      className={classes.linkMui}
-                      onClick={() => history.push(`/codereview/${code.id}`)}
-                    >
+                <Paper key={index} className={classes.paperRoot}>
+                  <div className={classes.codePreview}>
+                    {code &&
+                      code.code
+                        .split("\n")
+                        .slice(0, 6)
+                        .map((line) => (
+                          <div className={classes.codeBody}>
+                            <pre style={{ margin: 0 }}>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: hljs.highlightAuto(line, [code.coding_languages[0]]).value,
+                                }}
+                              />
+                            </pre>
+                          </div>
+                        ))}
+                  </div>
+                  <div className={classes.codeReview}>
+                    <LinkMui className={classes.linkMui} onClick={() => history.push(`/codereview/${code.id}`)}>
                       {code.title}
                     </LinkMui>
-                  </div>
-                  <div style={{ marginTop: "20px" }}>
-                    {code &&
-                      code.categories.length > 0 &&
-                      code.categories.map((category, index) => {
-                        if (category === "FE") {
-                          return resuableChip("Frontend", index, "#DD8B8B");
-                        } else if (category === "BE") {
-                          return resuableChip("Backend", index, "#A0DD8B");
-                        } else if (category === "DB") {
-                          return resuableChip(
-                            "Database Administration",
-                            index,
-                            "#8B95DD"
-                          );
-                        } else if (category === "SEC") {
-                          return resuableChip("Security", index, "#DDB28B");
-                        } else if (category === "UI") {
-                          return resuableChip("UI/UX", index, "#DDD58B");
-                        } else if (category === "ML") {
-                          return resuableChip(
-                            "Machine Learning",
-                            index,
-                            "#8BD8DD"
-                          );
-                        } else {
-                          return null;
-                        }
-                      })}
-                    {code &&
-                      code.coding_languages.length > 0 &&
-                      code.coding_languages.map((language, index) => {
-                        if (language === "PY") {
-                          return resuableChip(
-                            "Python",
-                            index,
-                            "#3675A9",
-                            "#fff"
-                          );
-                        } else if (language === "JAVA") {
-                          return resuableChip("Java", index, "#E57001", "#fff");
-                        } else if (language === "JS") {
-                          return resuableChip("Javascript", index, "#F7DF1E");
-                        } else if (language === "RUBY") {
-                          return resuableChip("Ruby", index, "#CC0000");
-                        } else if (language === "CPP") {
-                          return resuableChip("C++", index, "#004482", "#fff");
-                        } else if (language === "CS") {
-                          return resuableChip("C#", index, "#6A1577", "#fff");
-                        } else if (language === "HTML") {
-                          return resuableChip("HTML", index, "#E44D26", "#fff");
-                        } else if (language === "CSS") {
-                          return resuableChip("CSS", index, "#264DE4", "#fff");
-                        } else {
-                          return null;
-                        }
-                      })}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Favorite style={{ marginRight: "5px" }} />
-                      {`${code && code.likes}`}
+                    <div>
+                      {code &&
+                        code.categories.length > 0 &&
+                        code.categories.map((category, index) => {
+                          if (category === "FE") {
+                            return reusableChip("FE", index, "#DD8B8B");
+                          } else if (category === "BE") {
+                            return reusableChip("BE", index, "#A0DD8B");
+                          } else if (category === "DB") {
+                            return reusableChip("DB", index, "#8B95DD");
+                          } else if (category === "SEC") {
+                            return reusableChip("SEC", index, "#DDB28B");
+                          } else if (category === "UI") {
+                            return reusableChip("UI", index, "#DDD58B");
+                          } else if (category === "ML") {
+                            return reusableChip("ML", index, "#8BD8DD");
+                          } else {
+                            return null;
+                          }
+                        })}
+                      {code &&
+                        code.coding_languages.length > 0 &&
+                        code.coding_languages.map((language, index) => {
+                          if (language === "PY") {
+                            return reusableChip("PY", index, "#3675A9", "#fff");
+                          } else if (language === "JAVA") {
+                            return reusableChip("JAVA", index, "#E57001", "#fff");
+                          } else if (language === "JS") {
+                            return reusableChip("JS", index, "#F7DF1E");
+                          } else if (language === "RUBY") {
+                            return reusableChip("RUBY", index, "#CC0000");
+                          } else if (language === "CPP") {
+                            return reusableChip("C++", index, "#004482", "#fff");
+                          } else if (language === "CS") {
+                            return reusableChip("C#", index, "#6A1577", "#fff");
+                          } else if (language === "HTML") {
+                            return reusableChip("HTML", index, "#E44D26", "#fff");
+                          } else if (language === "CSS") {
+                            return reusableChip("CSS", index, "#264DE4", "#fff");
+                          } else {
+                            return null;
+                          }
+                        })}
                     </div>
-                    <div
-                      style={{
-                        marginLeft: "auto",
-                        display: "flex",
-                      }}
-                    >
-                      <div>
-                        {code.user.profile_photo && code.user.profile_photo ? (
-                          <Avatar
-                            style={{ marginRight: "15px" }}
-                            src={code.user && code.user.profile_photo}
-                          />
-                        ) : (
-                          <Avatar style={{ marginRight: "15px" }}>
-                            {code.user && code.user.first_name.charAt(0)}
-                          </Avatar>
-                        )}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Grade style={{ marginRight: "8px" }} className={classes.likesContainer} />
+                        <span style={{ color: "#676767" }}>{code.likes}</span>
                       </div>
-                      <div style={{ flexDirection: "column" }}>
-                        <LinkMui className={classes.linkMui1}>
-                          {`${code && code.user.first_name} ${
-                            code && code.user.last_name
-                          }`}
-                        </LinkMui>
-                        <Typography variant="body2" style={{ opacity: 0.8 }}>
-                          {` asked ${
-                            code && calculateDateInterval(code.timestamp)
-                          }`}
-                        </Typography>
+                      <div
+                        style={{
+                          marginLeft: "auto",
+                          display: "flex",
+                        }}
+                      >
+                        <div>
+                          {code.user.profile_photo && code.user.profile_photo ? (
+                            <Avatar style={{ marginRight: "15px" }} src={code.user && code.user.profile_photo} />
+                          ) : (
+                            <Avatar style={{ marginRight: "15px" }}>
+                              {code.user && code.user.first_name.charAt(0)}
+                            </Avatar>
+                          )}
+                        </div>
+                        <div style={{ flexDirection: "column" }}>
+                          <LinkMui className={classes.linkMui1}>
+                            {`${code && code.user.first_name} ${code && code.user.last_name}`}
+                          </LinkMui>
+                          <Typography variant="body2" style={{ opacity: 0.8 }}>
+                            {` submitted ${code && calculateDateInterval(code.timestamp)}`}
+                          </Typography>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -463,11 +465,13 @@ const ViewAllCodeReviews = () => {
               );
             })
           ) : (
-            <div style={{ textAlign: "center" }}>
-              <Forum fontSize="large" />
-              <Typography variant="h2">
-                No Code Snippets for Review Yet
-              </Typography>
+            <div style={{ textAlign: "center", height: "60vh", display: "grid", placeItems: "center" }}>
+              <div>
+                <SpeakerNotesOff style={{ color: "#676767" }} fontSize="large" />
+                <Typography style={{ color: "#676767" }} variant="h5">
+                  No code reviews submitted
+                </Typography>
+              </div>
             </div>
           )}
         </div>

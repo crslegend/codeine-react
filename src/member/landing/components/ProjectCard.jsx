@@ -4,11 +4,14 @@ import {
   Typography,
   Card,
   Grid,
-  CardMedia,
+  Avatar,
   CardContent,
   CardActionArea,
+  Chip,
 } from "@material-ui/core";
+import green from "@material-ui/core/colors/green";
 import Label from "./Label";
+import { useHistory } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -22,11 +25,15 @@ const styles = makeStyles((theme) => ({
     height: "100%",
     width: "7vw",
   },
+  orgavatar: {
+    objectFit: "contain",
+  },
 }));
 
 const ProjectCard = (props) => {
   const classes = styles();
   const { project } = props;
+  const history = useHistory();
 
   const formatDate = (date) => {
     const options = {
@@ -44,14 +51,21 @@ const ProjectCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea>
+      <CardActionArea
+        onClick={() =>
+          history.push(`/industryprojects/${project && project.id}`)
+        }
+      >
         <Grid container>
           <Grid item xs={1}>
-            <CardMedia
+            <Avatar
               className={classes.cardmedia}
-              image={project.partner.partner.organization.organization_photo}
+              src={project.partner.partner.organization.organization_photo}
               title="Organisation Photo"
-            ></CardMedia>
+              classes={{
+                img: classes.orgavatar,
+              }}
+            />
           </Grid>
           <Grid item xs={11}>
             <CardContent>
@@ -92,17 +106,24 @@ const ProjectCard = (props) => {
                     project.categories.map((category) => (
                       <Label label={category} />
                     ))}
-                  {console.log(project)}
                 </div>
 
-                <Typography
-                  style={{
-                    color: "#921515",
-                  }}
-                  variant="h6"
-                >
-                  apply by {project && formatDate(project.application_deadline)}
-                </Typography>
+                {project && project.is_applied ? (
+                  <Chip
+                    label="Applied"
+                    style={{ backgroundColor: green[600], color: "#FFF" }}
+                  />
+                ) : (
+                  <Typography
+                    style={{
+                      color: "#921515",
+                    }}
+                    variant="h6"
+                  >
+                    apply by{" "}
+                    {project && formatDate(project.application_deadline)}
+                  </Typography>
+                )}
               </div>
             </CardContent>
           </Grid>

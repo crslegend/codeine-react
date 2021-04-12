@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@material-ui/core";
-import { LocationOn, Email, Edit } from "@material-ui/icons";
+import { LocationOn, Email, Edit, LinkOutlined } from "@material-ui/icons";
 import {
   Radar,
   RadarChart,
@@ -33,12 +33,15 @@ import {
   RadialBar,
   Legend,
 } from "recharts";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import MemberNavBar from "../../MemberNavBar";
 import Navbar from "../../../components/Navbar";
 import partnerLogo from "../../../assets/codeineLogos/Partner.svg";
 import adminLogo from "../../../assets/codeineLogos/Admin.svg";
 import Service from "../../../AxiosService";
 import { useHistory, useParams, Link } from "react-router-dom";
+import { useLocation } from "react-router";
+import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Label from "./components/Label";
 import ExperienceCard from "./components/ExperienceCard";
@@ -51,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
   cardroot: {
     marginRight: "20px",
-    marginTop: "-45px",
+    marginTop: "-50px",
     height: "80%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
@@ -74,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -110,6 +114,22 @@ const useStyles = makeStyles((theme) => ({
       color: "#515050",
       backgroundColor: "transparent",
     },
+  },
+  proBorderWrapper: {
+    borderRadius: "50%",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 5,
+  },
+  freeBorderWrapper: {
+    borderRadius: "50%",
+    background: "rgba(84,84,84,1)",
+    padding: 5,
+  },
+  innerBorderWrapper: {
+    borderRadius: "50%",
+    background: "#FFF",
+    padding: 3,
   },
   cardmedia: {
     height: "40px",
@@ -155,9 +175,21 @@ const PublicProfile = (props) => {
   const classes = useStyles();
   const { id } = useParams();
   const history = useHistory();
+  const location = useLocation();
   const [userType, setUserType] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
+
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
 
   const [member, setMember] = useState("");
   const [dataList, setDataList] = useState([]);
@@ -194,7 +226,9 @@ const PublicProfile = (props) => {
           setLoggedIn(true);
           if (res.data.member !== null) {
             setUserType("member");
-            if (userid === id) {
+            if (res.data.member.unique_id === id) {
+              setIsOwner(true);
+            } else if (res.data.id === id) {
               setIsOwner(true);
             }
           } else if (res.data.is_admin) {
@@ -315,6 +349,8 @@ const PublicProfile = (props) => {
       points: statsData.RUBY,
     });
 
+    list = list.sort((a, b) => a.points - b.points);
+
     setLanguageList(list);
   };
 
@@ -322,7 +358,7 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/members/${id}/profile`)
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setMember(res.data.member);
 
         if (dataList.length === 0) {
@@ -343,7 +379,6 @@ const PublicProfile = (props) => {
         setExperiences(
           res.data.cv.sort((a, b) => b.start_date.localeCompare(a.start_date))
         );
-        console.log(dataList);
       })
 
       .catch((err) => console.log(err));
@@ -422,6 +457,7 @@ const PublicProfile = (props) => {
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       {userType === "partner" || userType === "admin" ? (
         <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       ) : (
@@ -431,39 +467,82 @@ const PublicProfile = (props) => {
       <Grid container className={classes.root}>
         <Grid item xs={4}>
           <div className={classes.avatar}>
-            {member.profile_photo && member.profile_photo ? (
-              <Avatar
-                style={{ width: "120px", height: "120px" }}
-                src={member.profile_photo}
-              />
-            ) : (
-              <Avatar style={{ width: "120px", height: "120px" }}>
-                <Typography variant="h1">
-                  {member && member.first_name.charAt(0)}
-                </Typography>
-              </Avatar>
-            )}
+            <div
+              className={
+                member && member.member.membership_tier === "PRO"
+                  ? classes.proBorderWrapper
+                  : classes.freeBorderWrapper
+              }
+            >
+              <div className={classes.innerBorderWrapper}>
+                {member.profile_photo && member.profile_photo ? (
+                  <Avatar
+                    style={{ width: "120px", height: "120px" }}
+                    src={member.profile_photo}
+                  />
+                ) : (
+                  <Avatar style={{ width: "120px", height: "120px" }}>
+                    <Typography variant="h1">
+                      {member && member.first_name.charAt(0)}
+                    </Typography>
+                  </Avatar>
+                )}
+              </div>
+            </div>
           </div>
 
           <Card elevation={0} className={classes.cardroot}>
             <CardContent>
               {isOwner && isOwner === true ? (
-                <IconButton
-                  onClick={() => history.push("/member/profile")}
+                <div
                   style={{
-                    float: "right",
-                    //marginTop: "-50px",
-                    //marginRight: "-20px",
-                    border: "1px solid",
+                    display: "grid",
+                    justifyContent: "flex-end",
                   }}
                 >
-                  <Edit style={{ fontSize: "24px", margin: "-4px" }} />
-                </IconButton>
+                  <CopyToClipboard
+                    text={`localhost:3000${location.pathname}`}
+                    onCopy={() => {
+                      setSbOpen(true);
+                      setSnackbar({
+                        ...snackbar,
+                        message: "Profile link copied!",
+                        severity: "info",
+                      });
+                      return true;
+                    }}
+                  >
+                    <IconButton
+                      style={{
+                        marginTop: "-5px",
+                        width: "40px",
+                      }}
+                    >
+                      <LinkOutlined
+                        style={{ fontSize: "26px", margin: "-4px" }}
+                      />{" "}
+                    </IconButton>
+                  </CopyToClipboard>
+
+                  <IconButton
+                    onClick={() => history.push("/member/profile")}
+                    style={{
+                      width: "40px",
+                      marginTop: "5px",
+                    }}
+                  >
+                    <Edit style={{ fontSize: "24px", margin: "-4px" }} />
+                  </IconButton>
+                </div>
               ) : (
-                ""
+                <div
+                  style={{
+                    paddingTop: "80px",
+                  }}
+                ></div>
               )}
 
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", marginTop: "-80px" }}>
                 <Typography variant="h6" style={{ fontWeight: 600 }}>
                   {member && member.first_name} {member && member.last_name}
                 </Typography>
@@ -480,6 +559,7 @@ const PublicProfile = (props) => {
               <Typography variant="subtitle1">
                 joined on {member && formatDate(member.date_joined)}
               </Typography>
+
               <div style={{ marginBottom: "25px" }}>
                 <div style={{ display: "flex", marginTop: "15px" }}>
                   <Email />

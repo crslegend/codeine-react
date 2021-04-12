@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   linkMui: {
     fontWeight: 700,
-    fontSize: "25px",
+    fontSize: "23px",
     cursor: "pointer",
     "&:hover": {
       textDecoration: "none",
@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
   },
   proBorderWrapper: {
     borderRadius: 50,
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     padding: 2,
   },
   freeBorderWrapper: {
@@ -161,8 +162,12 @@ const ViewAllArticles = () => {
             width: 100,
           }}
         >
-          {userType === "partner" && <img src={partnerLogo} width="120%" alt="codeine logo" />}
-          {userType === "admin" && <img src={adminLogo} width="120%" alt="codeine logo" />}
+          {userType === "partner" && (
+            <img src={partnerLogo} width="120%" alt="codeine logo" />
+          )}
+          {userType === "admin" && (
+            <img src={adminLogo} width="120%" alt="codeine logo" />
+          )}
         </Link>
       </div>
     </Fragment>
@@ -202,7 +207,7 @@ const ViewAllArticles = () => {
       {(userType === "partner" || userType === "admin") && (
         <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
       )}
-      <PageTitle title="All Articles" />
+      <PageTitle title="Articles" />
 
       <Grid container spacing={3}>
         <Grid item xs={8}>
@@ -225,85 +230,97 @@ const ViewAllArticles = () => {
                   <div
                     key={article.id}
                     style={{
-                      padding: "16px",
+                      display: "flex",
                       backgroundColor: "#fff",
                       marginBottom: "20px",
                     }}
                   >
-                    <div style={{ display: "flex" }}>
-                      <div
-                        className={
-                          article.user && article.user.member && article.user.member.membership_tier === "PRO"
-                            ? classes.proBorderWrapper
-                            : classes.freeBorderWrapper
-                        }
-                        style={{
-                          marginRight: "5px",
-                        }}
-                      >
-                        <div className={classes.innerBorderWrapper}>
-                          <Avatar
-                            src={
-                              article.user.is_admin && !article.user.profile_photo ? CLogo : article.user.profile_photo
-                            }
-                            alt=""
-                            style={{
-                              height: "18px",
-                              width: "18px",
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {article.user.is_admin && article.user.first_name === null && article.user.last_name === null
-                        ? "Codeine Admin in "
-                        : article.user.first_name + " " + article.user.last_name + " in "}
-
-                      {article &&
-                        article.categories &&
-                        article.categories.length > 0 &&
-                        article.categories.map((category, index) => {
-                          if (category === "FE") {
-                            return "Frontend ";
-                          } else if (category === "BE") {
-                            return "Backend ";
-                          } else if (category === "UI") {
-                            return "UI/UX ";
-                          } else if (category === "DB") {
-                            return "Database Administration ";
-                          } else if (category === "ML") {
-                            return "Machine Learning ";
-                          } else {
-                            return "Security ";
-                          }
-                        })}
+                    <div style={{ width: "30%" }}>
+                      <img
+                        alt={`thumbnail ${index}`}
+                        src={article.thumbnail}
+                        width="100%"
+                      />
                     </div>
-                    <div>
-                      <LinkMui
-                        onClick={() => {
-                          if (setLoggedIn) {
-                            if (userType === "admin") {
-                              history.push(`/article/admin/${article.id}`);
-                            } else if (userType === "member") {
-                              history.push(`/article/member/${article.id}`);
-                            } else if (userType === "partner") {
-                              history.push(`/article/partner/${article.id}`);
-                            } else if (userType === "guest") {
+                    <div style={{ padding: "16px", width: "70%" }}>
+                      <div style={{ display: "flex" }}>
+                        <Avatar
+                          src={
+                            article.user.is_admin && !article.user.profile_photo
+                              ? CLogo
+                              : article.user.profile_photo
+                          }
+                          alt=""
+                          style={{
+                            height: "18px",
+                            width: "18px",
+                            marginRight: "5px",
+                            border:
+                              article.user &&
+                              article.user.member &&
+                              article.user.member.membership_tier === "PRO"
+                                ? "3px solid green"
+                                : "",
+                          }}
+                        ></Avatar>
+
+                        {article.user.is_admin &&
+                        article.user.first_name === null &&
+                        article.user.last_name === null
+                          ? "Codeine Admin in "
+                          : article.user.first_name +
+                            " " +
+                            article.user.last_name +
+                            " in "}
+
+                        {article &&
+                          article.categories &&
+                          article.categories.length > 0 &&
+                          article.categories.map((category, index) => {
+                            if (category === "FE") {
+                              return "Frontend ";
+                            } else if (category === "BE") {
+                              return "Backend ";
+                            } else if (category === "UI") {
+                              return "UI/UX ";
+                            } else if (category === "DB") {
+                              return "Database Administration ";
+                            } else if (category === "ML") {
+                              return "Machine Learning ";
+                            } else {
+                              return "Security ";
+                            }
+                          })}
+                      </div>
+                      <div>
+                        <LinkMui
+                          onClick={() => {
+                            if (setLoggedIn) {
+                              if (userType === "admin") {
+                                history.push(`/article/admin/${article.id}`);
+                              } else if (userType === "member") {
+                                history.push(`/article/member/${article.id}`);
+                              } else if (userType === "partner") {
+                                history.push(`/article/partner/${article.id}`);
+                              } else if (userType === "guest") {
+                                history.push(`/article/guest/${article.id}`);
+                              }
+                            } else {
                               history.push(`/article/guest/${article.id}`);
                             }
-                          } else {
-                            history.push(`/article/guest/${article.id}`);
-                          }
-                        }}
-                        className={classes.linkMui}
-                      >
-                        {article.title}
-                      </LinkMui>
-                    </div>
+                          }}
+                          className={classes.linkMui}
+                        >
+                          {article.title}
+                        </LinkMui>
+                      </div>
 
-                    <Typography style={{ fontSize: "12px", color: "#757575" }}>
-                      {formatDate(article.date_created)}
-                    </Typography>
+                      <Typography
+                        style={{ fontSize: "12px", color: "#757575" }}
+                      >
+                        {formatDate(article.date_created)}
+                      </Typography>
+                    </div>
                   </div>
                 );
               })}
@@ -311,35 +328,43 @@ const ViewAllArticles = () => {
         </Grid>
         <Grid item xs={4}>
           <div>
-            <Typography style={{ fontWeight: 700 }}>TRENDING ON CODEINE</Typography>
+            <Typography style={{ fontWeight: 700 }}>
+              TRENDING ON CODEINE
+            </Typography>
 
-            {listOfArticles && listOfArticles.length > 0 && listOfArticles[0] && (
-              <TrendingCard
-                number={"01"}
-                history={history}
-                setLoggedIn={setLoggedIn}
-                article={listOfArticles[0]}
-                userType={userType}
-              />
-            )}
-            {listOfArticles && listOfArticles.length > 1 && listOfArticles[1] && (
-              <TrendingCard
-                number={"02"}
-                history={history}
-                setLoggedIn={setLoggedIn}
-                article={listOfArticles[1]}
-                userType={userType}
-              />
-            )}
-            {listOfArticles && listOfArticles.length > 2 && listOfArticles[2] && (
-              <TrendingCard
-                number={"03"}
-                history={history}
-                setLoggedIn={setLoggedIn}
-                article={listOfArticles[2]}
-                userType={userType}
-              />
-            )}
+            {listOfArticles &&
+              listOfArticles.length > 0 &&
+              listOfArticles[0] && (
+                <TrendingCard
+                  number={"01"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[0]}
+                  userType={userType}
+                />
+              )}
+            {listOfArticles &&
+              listOfArticles.length > 1 &&
+              listOfArticles[1] && (
+                <TrendingCard
+                  number={"02"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[1]}
+                  userType={userType}
+                />
+              )}
+            {listOfArticles &&
+              listOfArticles.length > 2 &&
+              listOfArticles[2] && (
+                <TrendingCard
+                  number={"03"}
+                  history={history}
+                  setLoggedIn={setLoggedIn}
+                  article={listOfArticles[2]}
+                  userType={userType}
+                />
+              )}
           </div>
         </Grid>
       </Grid>

@@ -18,6 +18,7 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import MemberNavBar from "../../MemberNavBar";
 import PageTitle from "../../../components/PageTitle";
+import Toast from "../../../components/Toast";
 
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -79,6 +80,17 @@ const Payment = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [allTransactions, setAllTransactions] = useState([]);
   const [latestTransactionForPro, setLatestTransactionForPro] = useState();
   const [membershipTransactions, setMembershipTransactions] = useState([]);
@@ -86,8 +98,11 @@ const Payment = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [selectedTransaction, setSelectedTransaction] = useState();
-  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(false);
+  const [selectedTransactionDialog, setSelectedTransactionDialog] = useState(
+    false
+  );
   const [existPending, setExistPending] = useState(false);
+  const [cancelMembershipDialog, setCancelMembershipDialog] = useState(false);
 
   const checkIfLoggedIn = () => {
     if (Cookies.get("t1")) {
@@ -129,7 +144,11 @@ const Payment = () => {
             month_duration: res.data[i].month_duration,
           };
           arr.push(obj);
-          if (res.data[i].payment_transaction.payment_status === "PENDING_COMPLETION" && !pendingCheck) {
+          if (
+            res.data[i].payment_transaction.payment_status ===
+              "PENDING_COMPLETION" &&
+            !pendingCheck
+          ) {
             pendingCheck = true;
           }
         }
@@ -154,7 +173,9 @@ const Payment = () => {
             // check = false;
             setLatestTransactionForPro(res.data);
           }
-        } else if (res.data.payment_transaction.payment_status === "PENDING_COMPLETION") {
+        } else if (
+          res.data.payment_transaction.payment_status === "PENDING_COMPLETION"
+        ) {
           setExistPending(true);
         }
       })
@@ -162,19 +183,47 @@ const Payment = () => {
   };
   // console.log(allTransactions);
 
+  const checkIfCancelMembership = () => {
+    if (localStorage.getItem("cancelMembership")) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleCancelMembership = () => {
+    localStorage.setItem("cancelMembership", "true");
+    setCancelMembershipDialog(false);
+    setSbOpen(true);
+    setSnackbar({
+      ...snackbar,
+      message: "Your Pro Membership has been cancelled",
+      severity: "success",
+    });
+  };
+
   useEffect(() => {
     getTransactionData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setAllTransactions]);
 
-  const handleStripePaymentGateway = async (amount, email, userId, numOfMonths, transactionId) => {
+  const handleStripePaymentGateway = async (
+    amount,
+    email,
+    userId,
+    numOfMonths,
+    transactionId
+  ) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
     const data = {
       total_price: amount * numOfMonths,
       email: email,
-      description: numOfMonths && numOfMonths === 1 ? `Pro-Tier for 1 Month` : `Pro-Tier for ${numOfMonths} Months`,
+      description:
+        numOfMonths && numOfMonths === 1
+          ? `Pro Membership for 1 Month`
+          : `Pro Membership for ${numOfMonths} Months`,
+
       mId: userId,
       numOfMonths: numOfMonths,
       transaction: transactionId,
@@ -238,7 +287,9 @@ const Payment = () => {
   const handleContinueTransaction = () => {
     const decoded = jwt_decode(Cookies.get("t1"));
     const month_duration = selectedTransaction.month_duration;
-    const amountToPay = parseFloat(selectedTransaction.payment_amount) / selectedTransaction.month_duration;
+    const amountToPay =
+      parseFloat(selectedTransaction.payment_amount) /
+      selectedTransaction.month_duration;
 
     const cId = selectedTransaction.id;
 
@@ -248,14 +299,20 @@ const Payment = () => {
       .then((res) => {
         const emailAdd = res.data.email;
 
-        handleStripePaymentGateway(amountToPay, emailAdd, decoded.user_id, month_duration, cId);
+        handleStripePaymentGateway(
+          amountToPay,
+          emailAdd,
+          decoded.user_id,
+          month_duration,
+          cId
+        );
       })
       .catch((err) => console.log(err));
   };
 
   const handleDeleteTransaction = () => {
     Service.client
-      .delete(`/auth/membership-subscriptions/${selectedTransaction.id}`)
+      .delete(`/auth/transactions/${selectedTransaction.id}`)
       .then((res) => {
         // console.log(res);
         setSelectedTransactionDialog(false);
@@ -355,7 +412,8 @@ const Payment = () => {
     {
       field: "debit",
       headerName: "Debit",
-      renderCell: (params) => params.value && <div variant="body2">${params.value}</div>,
+      renderCell: (params) =>
+        params.value && <div variant="body2">${params.value}</div>,
       width: 120,
     },
     {
@@ -376,7 +434,8 @@ const Payment = () => {
   for (var h = 0; h < allTransactions.length; h++) {
     transactionRows[h].title = allTransactions[h].consultation_slot.title;
 
-    transactionRows[h].partner = allTransactions[h].consultation_slot.partner_name;
+    transactionRows[h].partner =
+      allTransactions[h].consultation_slot.partner_name;
 
     transactionRows[h].expiry_date = allTransactions[h].expiry_date
       ? formatDateToReturnWithoutTime(allTransactions[h].expiry_date)
@@ -386,21 +445,26 @@ const Payment = () => {
       allTransactions[h].consultation_slot.start_time
     );
 
-    transactionRows[h].date = formatDateToReturnWithoutTime(allTransactions[h].payment_transaction.timestamp);
+    transactionRows[h].date = formatDateToReturnWithoutTime(
+      allTransactions[h].payment_transaction.timestamp
+    );
 
     transactionRows[h].id = allTransactions[h].payment_transaction.id;
 
     if (allTransactions[h].payment_transaction.payment_status === "COMPLETED") {
       transactionRows[h].type = "Payment";
-      transactionRows[h].debit = allTransactions[h].payment_transaction.payment_amount;
+      transactionRows[h].debit =
+        allTransactions[h].payment_transaction.payment_amount;
     } else {
       transactionRows[h].type = "Refund";
-      transactionRows[h].credit = allTransactions[h].payment_transaction.payment_amount;
+      transactionRows[h].credit =
+        allTransactions[h].payment_transaction.payment_amount;
     }
   }
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div style={{ marginTop: "65px" }}>
         <div
@@ -418,7 +482,10 @@ const Payment = () => {
                 marginBottom: "20px",
               }}
             >
-              <Typography variant="h5" style={{ fontWeight: 600, paddingRight: "10px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, paddingRight: "10px" }}
+              >
                 Current Tier:
               </Typography>
               {latestTransactionForPro ? (
@@ -432,20 +499,35 @@ const Payment = () => {
                   size="small"
                 />
               ) : (
-                <Chip label="FREE" style={{ background: "rgba(84,84,84,1)", color: "#000" }} size="small" />
+                <Chip
+                  label="FREE"
+                  style={{ background: "rgba(84,84,84,1)", color: "#fff" }}
+                  size="small"
+                />
               )}
 
               <div style={{ marginLeft: "auto" }}>
-                {latestTransactionForPro ? (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ marginLeft: "30px", height: 30 }}
-                    onClick={() => history.push(`/member/membership`)}
-                    disabled={existPending}
-                  >
-                    Extend Pro-Tier Membership
-                  </Button>
+                {!latestTransactionForPro ? (
+                  <Fragment>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ marginLeft: "30px", height: 30 }}
+                      onClick={() => history.push(`/member/membership`)}
+                      disabled={existPending}
+                    >
+                      Extend Pro Membership
+                    </Button>
+                    {checkIfCancelMembership() ? null : (
+                      <Button
+                        variant="outlined"
+                        style={{ marginLeft: "30px", height: 30 }}
+                        onClick={() => setCancelMembershipDialog(true)}
+                      >
+                        Cancel Membership
+                      </Button>
+                    )}
+                  </Fragment>
                 ) : (
                   <Button
                     variant="outlined"
@@ -454,34 +536,54 @@ const Payment = () => {
                     onClick={() => history.push(`/member/membership`)}
                     disabled={existPending}
                   >
-                    Upgrade To Pro-Tier
+                    Upgrade To Pro
                   </Button>
                 )}
               </div>
             </div>
 
-            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
               Paid On:{" "}
               <span style={{ fontWeight: 500 }}>
                 {latestTransactionForPro
-                  ? formatDateToReturnWithoutTime(latestTransactionForPro.payment_transaction.timestamp)
+                  ? formatDateToReturnWithoutTime(
+                      latestTransactionForPro.payment_transaction.timestamp
+                    )
                   : "-"}
               </span>
             </Typography>
-            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
               Paid By:{" "}
               <span style={{ fontWeight: 500 }}>
-                {latestTransactionForPro ? latestTransactionForPro.payment_transaction.payment_type : "-"}
+                {latestTransactionForPro
+                  ? latestTransactionForPro.payment_transaction.payment_type
+                  : "-"}
               </span>
             </Typography>
-            <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "5px" }}>
-              Pro-Tier Membership Expires On:{" "}
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 600, paddingBottom: "5px" }}
+            >
+              Pro Membership Expires On:{" "}
               <span style={{ fontWeight: 500 }}>
-                {latestTransactionForPro ? formatDateToReturnWithoutTime(latestTransactionForPro.expiry_date) : "-"}
+                {latestTransactionForPro
+                  ? formatDateToReturnWithoutTime(
+                      latestTransactionForPro.expiry_date
+                    )
+                  : "-"}
               </span>
             </Typography>
           </Paper>
-          <Typography variant="h5" style={{ fontWeight: "600", paddingBottom: "10px" }}>
+          <Typography
+            variant="h5"
+            style={{ fontWeight: "600", paddingBottom: "10px" }}
+          >
             Membership Transactions
           </Typography>
           <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
@@ -495,7 +597,10 @@ const Payment = () => {
             />
           </div>
 
-          <Typography variant="h5" style={{ fontWeight: "600", paddingBottom: "10px" }}>
+          <Typography
+            variant="h5"
+            style={{ fontWeight: "600", paddingBottom: "10px" }}
+          >
             Consultation Transactions
           </Typography>
           <div style={{ height: "500px", width: "100%", marginBottom: "25px" }}>
@@ -522,12 +627,17 @@ const Payment = () => {
         maxWidth="sm"
         fullWidth={true}
       >
-        {selectedTransaction && selectedTransaction && selectedTransaction.payment_status !== "COMPLETED" ? (
+        {selectedTransaction &&
+        selectedTransaction &&
+        selectedTransaction.payment_status !== "COMPLETED" ? (
           <Fragment>
             <DialogTitle>Transaction Pending Completion</DialogTitle>
             <DialogContent>This transaction is incomplete.</DialogContent>
             <DialogActions>
-              <Button onClick={() => handleDeleteTransaction()} style={{ backgroundColor: "#C74343", color: "#fff" }}>
+              <Button
+                onClick={() => handleDeleteTransaction()}
+                style={{ backgroundColor: "#C74343", color: "#fff" }}
+              >
                 Delete Transaction
               </Button>
               <Button
@@ -552,10 +662,17 @@ const Payment = () => {
                   marginBottom: "10px",
                 }}
               >
-                <Typography variant="body1" style={{ marginRight: "10px", fontWeight: 600 }}>
+                <Typography
+                  variant="body1"
+                  style={{ marginRight: "10px", fontWeight: 600 }}
+                >
                   Transaction Status:{" "}
                 </Typography>
-                <Chip label="Completed" style={{ backgroundColor: "green", color: "#fff" }} size="small" />
+                <Chip
+                  label="Completed"
+                  style={{ backgroundColor: "green", color: "#fff" }}
+                  size="small"
+                />
               </div>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Transaction ID: </span>
@@ -575,11 +692,41 @@ const Payment = () => {
               </Typography>
               <Typography variant="body1" style={{ paddingBottom: "5px" }}>
                 <span style={{ fontWeight: 600 }}>Expires On: </span>
-                {formatDateToReturnWithoutTime(selectedTransaction && selectedTransaction.expiry_date)}
+                {formatDateToReturnWithoutTime(
+                  selectedTransaction && selectedTransaction.expiry_date
+                )}
               </Typography>
             </DialogContent>
           </Fragment>
         )}
+      </Dialog>
+
+      <Dialog
+        open={cancelMembershipDialog}
+        onClose={() => setCancelMembershipDialog(false)}
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>Cancel Your Pro Membership</DialogTitle>
+        <DialogContent>
+          You will not be refunded but your pro membership will stay till it
+          expires, and then your account switches to free. Are you sure you want
+          to cancel?
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => setCancelMembershipDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleCancelMembership()}
+            style={{ backgroundColor: "#C74343", color: "#fff" }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );

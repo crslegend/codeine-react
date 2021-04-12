@@ -38,8 +38,11 @@ import PartnerRoute from "./components/routes/PartnerRoute";
 import MemberRoute from "./components/routes/MemberRoute";
 import MemberAndPublicRoute from "./components/routes/MemberAndPublicRoute";
 import PartnerAndPublicRoute from "./components/routes/PartnerAndPublicRoute";
-import ViewCodeReviewDetails from "./codeReview/ViewCodeReviewDetails";
+import CodeReviewDetails from "./codeReview/CodeReviewDetails";
 import ViewAllCodeReviews from "./codeReview/ViewAllCodeReviews";
+import ViewAllIndustryProject from "./member/industryProject/ViewAllIndustryProjects";
+import ViewIndustryProjectDetails from "./member/industryProject/ViewIndustryProjectDetails";
+import IndustryProjectPage from "./member/dropdownMenu/industryProject/IndustryProjectPage";
 import AllNotifications from "./notification/ViewAllNotification";
 import NotificationDetail from "./notification/NotificationDetail";
 import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketPage";
@@ -79,7 +82,7 @@ const App = () => {
         user="admin"
       />
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
-      <Route path="/codereview/:id" component={ViewCodeReviewDetails} />
+      <Route path="/codereview/:id" component={CodeReviewDetails} />
       <PartnerAndPublicRoute
         exact
         path="/partner"
@@ -104,6 +107,12 @@ const App = () => {
         user="partner"
       />
       <MemberAndPublicRoute exact path="/" component={MemberLandingPage} />
+      <MemberAndPublicRoute
+        strict
+        sensitive
+        path="/courses/language/:id"
+        component={ViewAllCourses}
+      />
       <MemberAndPublicRoute exact path="/courses" component={ViewAllCourses} />
       <MemberAndPublicRoute
         exact
@@ -125,6 +134,18 @@ const App = () => {
         strict
         sensitive
         component={BookConsult}
+      />
+      <MemberAndPublicRoute
+        exact
+        path="/industryprojects"
+        component={ViewAllIndustryProject}
+      />
+      <MemberAndPublicRoute
+        exact
+        path="/industryprojects/:id"
+        component={ViewIndustryProjectDetails}
+        strict
+        sensitive
       />
       <LandingPageRoute
         exact
@@ -172,6 +193,12 @@ const App = () => {
         exact
         path="/member/consultations"
         component={MemberConsultationPage}
+        user="member"
+      />
+      <PrivateRoute
+        exact
+        path="/member/industryprojects"
+        component={IndustryProjectPage}
         user="member"
       />
       <PrivateRoute
@@ -294,6 +321,7 @@ const App = () => {
         component={ResetPassword}
       />
       <Route exact path="/member/profile/:id" component={PublicProfile} />
+      <Route exact path="/:id" component={PublicProfile} />
       <Route path="/reset-password" component={NewPassword} />
       <Route exact path="/verify/:id" strict sensitive component={Activation} />
       <Route component={NotFound} />

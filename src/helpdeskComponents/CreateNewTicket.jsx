@@ -27,9 +27,34 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     width: "100%",
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      border: "1px solid #484850",
+      boxShadow: "2px 2px 0px #222",
+      borderRadius: "5px 5px 0 0",
+      backgroundColor: "transparent",
+      borderBottomLeftRadius: "5px",
+      borderBottomRightRadius: "5px",
+    },
   },
   resize: {
     fontSize: 14,
+    padding: "12px",
+  },
+  fieldRoot: {
+    backgroundColor: "#FFFFFF",
+  },
+  focused: {
+    boxShadow: "2px 2px 0px #222",
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
+  },
+  fieldInput: {
+    padding: "12px",
+    fontSize: "14px",
+  },
+  notchedOutline: {
+    borderColor: "#222 !important",
+    borderWidth: "1px !important",
   },
   submit: {
     marginTop: "20px",
@@ -65,6 +90,7 @@ const CreateNewTicket = ({
   setFile,
   transactionId,
   setTransactionId,
+  codeReviews,
 }) => {
   const classes = useStyles();
 
@@ -104,6 +130,9 @@ const CreateNewTicket = ({
       <MenuItem value="CONSULTATION" classes={{ root: classes.resize }}>
         Consultations
       </MenuItem>
+      <MenuItem value="CODE_REVIEWS" classes={{ root: classes.resize }}>
+        Code Reviews
+      </MenuItem>
     </Select>
   );
 
@@ -139,6 +168,9 @@ const CreateNewTicket = ({
       </MenuItem>
       <MenuItem value="CONSULTATION" classes={{ root: classes.resize }}>
         Consultations
+      </MenuItem>
+      <MenuItem value="CODE_REVIEWS" classes={{ root: classes.resize }}>
+        Code Reviews
       </MenuItem>
     </Select>
   );
@@ -184,7 +216,10 @@ const CreateNewTicket = ({
                     autoFocus
                     InputProps={{
                       classes: {
+                        root: classes.fieldRoot,
+                        focused: classes.focused,
                         input: classes.resize,
+                        notchedOutline: classes.notchedOutline,
                       },
                     }}
                     value={transactionId ? transactionId : ""}
@@ -304,7 +339,87 @@ const CreateNewTicket = ({
                 </div>
               );
             } else if (issueType === "INDUSTRY_PROJECT") {
+              return (
+                <div style={{ marginTop: "20px" }}>
+                  <Typography variant="h6">Projects</Typography>
+                  <FormControl
+                    margin="dense"
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <Select
+                      displayEmpty
+                      value={selectedTagging ? selectedTagging : ""}
+                      onChange={(e) => {
+                        setSelectedTagging(e.target.value);
+                      }}
+                      style={{ backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="" classes={{ root: classes.resize }}>
+                        <em>Select Project</em>
+                      </MenuItem>
+                      {industryProjects &&
+                        industryProjects.length > 0 &&
+                        industryProjects.map((project, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={
+                                user &&
+                                (user === "member"
+                                  ? project.industry_project.id
+                                  : project.id)
+                              }
+                              classes={{ root: classes.resize }}
+                            >
+                              {user &&
+                                (user === "member"
+                                  ? project.industry_project.title
+                                  : project.title)}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </div>
+              );
             } else if (issueType === "CODE_REVIEWS") {
+              return (
+                <div style={{ marginTop: "20px" }}>
+                  <Typography variant="h6">Your Posted Code Reviews</Typography>
+                  <FormControl
+                    margin="dense"
+                    variant="outlined"
+                    className={classes.formControl}
+                  >
+                    <Select
+                      displayEmpty
+                      value={selectedTagging ? selectedTagging : ""}
+                      onChange={(e) => {
+                        setSelectedTagging(e.target.value);
+                      }}
+                      style={{ backgroundColor: "#fff" }}
+                    >
+                      <MenuItem value="" classes={{ root: classes.resize }}>
+                        <em>Select a Code Review</em>
+                      </MenuItem>
+                      {codeReviews &&
+                        codeReviews.length > 0 &&
+                        codeReviews.map((code, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={code.id}
+                              classes={{ root: classes.resize }}
+                            >
+                              {code.title}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </div>
+              );
             }
           })()}
           {issueType && issueType !== "" && (
@@ -325,7 +440,10 @@ const CreateNewTicket = ({
                 inputProps={{ style: { resize: "vertical" } }}
                 InputProps={{
                   classes: {
+                    root: classes.fieldRoot,
+                    focused: classes.focused,
                     input: classes.resize,
+                    notchedOutline: classes.notchedOutline,
                   },
                 }}
                 value={description ? description : ""}

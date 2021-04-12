@@ -22,6 +22,7 @@ import Toast from "../../../components/Toast.js";
 // import Cookies from "js-cookie";
 import ReactQuill from "react-quill";
 import parse, { attributesToProps } from "html-react-parser";
+import "../../../article/quill.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     fontDisplay: "swap",
     backgroundColor: "#fff",
+    padding: theme.spacing(3),
   },
   codeineLogo: {
     display: "flex",
@@ -72,6 +74,15 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "capitalize",
     "&:hover": {
       backgroundColor: theme.palette.darkgreen.main,
+    },
+  },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline #437FC7",
+      cursor: "pointer",
     },
   },
 }));
@@ -186,6 +197,7 @@ const ViewArticle = (props) => {
             onClick={() => {
               history.push("/admin/contentquality");
             }}
+            className={classes.backLink}
           >
             Content Quality
           </Link>
@@ -214,7 +226,11 @@ const ViewArticle = (props) => {
 
       <Typography
         variant="h1"
-        style={{ fontWeight: "600", marginBottom: "10px" }}
+        style={{
+          fontWeight: "800",
+          marginBottom: "10px",
+          fontFamily: "Helvetica",
+        }}
       >
         {articleDetails.title}
       </Typography>
@@ -251,9 +267,77 @@ const ViewArticle = (props) => {
         </div>
       )}
 
+      {articleDetails &&
+        articleDetails.coding_languages &&
+        articleDetails.coding_languages.length > 0 &&
+        articleDetails.coding_languages.map((language, index) => {
+          if (language === "PY") {
+            return <Chip key={index} label="Python" className={classes.chip} />;
+          } else if (language === "JAVA") {
+            return <Chip key={index} label="Java" className={classes.chip} />;
+          } else if (language === "JS") {
+            return (
+              <Chip key={index} label="Javascript" className={classes.chip} />
+            );
+          } else if (language === "CPP") {
+            return <Chip key={index} label="C++" className={classes.chip} />;
+          } else if (language === "CS") {
+            return <Chip key={index} label="C#" className={classes.chip} />;
+          } else if (language === "RUBY") {
+            return <Chip key={index} label="Ruby" className={classes.chip} />;
+          } else {
+            return (
+              <Chip key={index} label={language} className={classes.chip} />
+            );
+          }
+        })}
+
+      {articleDetails &&
+        articleDetails.categories &&
+        articleDetails.categories.length > 0 &&
+        articleDetails.categories.map((category, index) => {
+          if (category === "FE") {
+            return (
+              <Chip key={index} label="Frontend" className={classes.chip} />
+            );
+          } else if (category === "BE") {
+            return (
+              <Chip key={index} label="Backend" className={classes.chip} />
+            );
+          } else if (category === "UI") {
+            return <Chip key={index} label="UI/UX" className={classes.chip} />;
+          } else if (category === "DB") {
+            return (
+              <Chip
+                key={index}
+                label="Database Administration"
+                className={classes.chip}
+              />
+            );
+          } else if (category === "ML") {
+            return (
+              <Chip
+                key={index}
+                label="Machine Learning"
+                className={classes.chip}
+              />
+            );
+          } else {
+            return (
+              <Chip key={index} label="Security" className={classes.chip} />
+            );
+          }
+        })}
+
       <div style={{ fontSize: "20px", marginBottom: "30px" }}>
         {/* {parse(articleDetails.content, options)} */}
-
+        <div style={{ width: "75%" }}>
+          <img
+            alt="thumbnail"
+            src={articleDetails && articleDetails.thumbnail}
+            width="100%"
+          />
+        </div>
         <div style={{ fontSize: "18px" }}>
           <ReactQuill
             //modules={modules}
@@ -262,72 +346,6 @@ const ViewArticle = (props) => {
             theme={"bubble"}
           />
         </div>
-
-        {articleDetails &&
-          articleDetails.coding_languages &&
-          articleDetails.coding_languages.length > 0 &&
-          articleDetails.coding_languages.map((language, index) => {
-            if (language === "PY") {
-              return (
-                <Chip key={index} label="Python" className={classes.chip} />
-              );
-            } else if (language === "JAVA") {
-              return <Chip key={index} label="Java" className={classes.chip} />;
-            } else if (language === "JS") {
-              return (
-                <Chip key={index} label="Javascript" className={classes.chip} />
-              );
-            } else if (language === "CPP") {
-              return <Chip key={index} label="C++" className={classes.chip} />;
-            } else if (language === "CS") {
-              return <Chip key={index} label="C#" className={classes.chip} />;
-            } else if (language === "RUBY") {
-              return <Chip key={index} label="Ruby" className={classes.chip} />;
-            } else {
-              return (
-                <Chip key={index} label={language} className={classes.chip} />
-              );
-            }
-          })}
-
-        {articleDetails &&
-          articleDetails.categories &&
-          articleDetails.categories.length > 0 &&
-          articleDetails.categories.map((category, index) => {
-            if (category === "FE") {
-              return (
-                <Chip key={index} label="Frontend" className={classes.chip} />
-              );
-            } else if (category === "BE") {
-              return (
-                <Chip key={index} label="Backend" className={classes.chip} />
-              );
-            } else if (category === "UI") {
-              return (
-                <Chip key={index} label="UI/UX" className={classes.chip} />
-              );
-            } else if (category === "DB") {
-              return (
-                <Chip
-                  key={index}
-                  label="Database Administration"
-                  className={classes.chip}
-                />
-              );
-            } else if (category === "ML") {
-              return (
-                <Chip
-                  key={index}
-                  label="Machine Learning"
-                  className={classes.chip}
-                />
-              );
-            } else {
-              return (
-                <Chip key={index} label="Security" className={classes.chip} />
-              );
-            }
-          })}
 
         <div
           style={{

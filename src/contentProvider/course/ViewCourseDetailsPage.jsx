@@ -83,7 +83,8 @@ const styles = makeStyles((theme) => ({
     },
   },
   pro: {
-    backgroundColor: theme.palette.primary.main,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     color: "#FFFFFF",
     marginLeft: "8px",
     padding: "0px 3px",
@@ -165,8 +166,11 @@ const ViewCourseDetailsPage = () => {
 
   const handleProfileLink = (reviewMember) => {
     if (reviewMember.member.membership_tier === "PRO") {
-      // console.log("hell");
-      return `/member/profile/${reviewMember.id}`;
+      if (reviewMember.member.unique_id === null) {
+        return `/member/profile/${reviewMember.id}`;
+      } else {
+        return `/${reviewMember.member.unique_id}`;
+      }
     }
   };
 

@@ -338,8 +338,8 @@ const DashboardPage = () => {
   };
 
   useEffect(() => {
-    getAnalytics();
     checkIfLoggedIn();
+    getAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
