@@ -1484,6 +1484,7 @@ const Profile = (props) => {
                 name="description"
                 multiline
                 rows={4}
+                inputProps={{ style: { resize: "vertical" } }}
                 InputProps={{
                   disableUnderline: true,
                   classes: {

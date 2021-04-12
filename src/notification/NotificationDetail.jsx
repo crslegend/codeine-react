@@ -13,10 +13,17 @@ import {
 } from "@material-ui/core";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
-import AccountIcon from "../assets/notifIcon/AccountIcon.png";
-import AnnouncementIcon from "../assets/notifIcon/AnnouncementIcon.png";
-import ConsulatationIcon from "../assets/notifIcon/ConsultationIcon.png";
-import PaymentIcon from "../assets/notifIcon/PaymentIcon.svg";
+import {
+  Computer,
+  ContactSupport,
+  Person,
+  Timeline,
+  Work,
+} from "@material-ui/icons";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -277,75 +284,111 @@ const NotificationDetail = () => {
 
   return (
     <div className={classes.root}>
-      {userType === "member" && (
-        <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      )}
-      {(userType === "partner" || userType === "admin") && (
-        <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
-      )}
-      <div style={{ display: "flex", position: "relative", marginTop: "65px" }}>
-        <div style={{ display: "flex", width: `calc(100% - 30px)` }}>
-          {notification.notification.notification_type === "HELPDESK" && (
-            <Avatar
-              src={AccountIcon}
+      <div style={{ display: "flex" }}>
+        {userType === "member" && (
+          <MemberNavBar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        )}
+        {(userType === "partner" || userType === "admin") && (
+          <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
+        )}
+        <div style={{ marginTop: "65px" }}>
+          <div style={{ display: "flex" }}>
+            {notification.notification &&
+              notification.notification.ticket.ticket_type === "ACCOUNT" && (
+                <Avatar
+                  src={Person}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.ticket.ticket_type === "GENERAL" && (
+                <Avatar
+                  src={ContactSupport}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.ticket.ticket_type === "TECHNICAL" && (
+                <Avatar
+                  src={Computer}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.ticket.ticket_type ===
+                "INDUSTRY_PROJECT" && (
+                <Avatar
+                  src={Work}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.ticket.ticket_type ===
+                "CODE_REVIEWS" && (
+                <Avatar
+                  src={Work}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.notification_type ===
+                "CONSULTATION" && (
+                <Avatar
+                  src={Timeline}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {notification.notification &&
+              notification.notification.notification_type ===
+                "CONSULTATION" && (
+                <Avatar
+                  src={Timeline}
+                  alt=""
+                  style={{ height: "65px", width: "65px" }}
+                ></Avatar>
+              )}
+            {/* {notification.notification.notification_type === "PAYMENT" && (
+              <Avatar
+                src={PaymentIcon}
+                alt=""
+                style={{ height: "65px", width: "65px" }}
+              ></Avatar>
+            )} */}
+            <div style={{ marginLeft: "15px" }}>
+              <Typography
+                style={{
+                  fontWeight: 800,
+                }}
+              >
+                {notification.notification && notification.notification.title}
+              </Typography>
+
+              <Typography
+                style={{
+                  fontSize: "12px",
+                  color: "#797a7d",
+                }}
+              >
+                {calculateDateInterval(notification.notification.timestamp)}
+              </Typography>
+            </div>
+          </div>
+
+          {notification.notification && notification.notification.photo && (
+            <img
+              src={notification.notification && notification.notification.photo}
               alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
-          )}
-          {notification.notification.notification_type === "GENERAL" && (
-            <Avatar
-              src={AnnouncementIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
-          )}
-          {notification.notification.notification_type === "COURSE" && (
-            <Avatar
-              src={AnnouncementIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
-          )}
-          {notification.notification.notification_type === "PAYMENT" && (
-            <Avatar
-              src={PaymentIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
+              style={{ width: "100%" }}
+            ></img>
           )}
 
-          <img
-            src={notification.notification && notification.notification.photo}
-            alt=""
-            style={{ height: "100px" }}
-          ></img>
-
-          <Typography
-            style={{
-              fontWeight: 700,
-              color: "#797a7d",
-              cursor: "pointer",
-            }}
-          >
-            {notification.notification && notification.notification.title}
-          </Typography>
-
-          <Typography
-            style={{
-              fontSize: "12px",
-              color: "#797a7d",
-              cursor: "pointer",
-            }}
-          >
-            {calculateDateInterval(notification.notification.timestamp)}
-          </Typography>
-          <Typography
-            variant="body1"
-            style={{
-              color: "#797a7d",
-              cursor: "pointer",
-            }}
-          >
+          <Typography>
             {notification.notification && notification.notification.description}
           </Typography>
         </div>

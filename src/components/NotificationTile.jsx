@@ -127,22 +127,66 @@ const NotificationTile = (props) => {
             history.push(
               `/member/helpdesk/tickets/${res.data.notification.ticket.id}`
             );
+            history.go();
           } else if (userType === "partner") {
             history.push(
               `/partner/home/helpdesk/tickets/${res.data.notification.ticket.id}`
             );
+            history.go();
+          } else if (userType === "admin") {
+            history.push(`/admin/helpdesk/${res.data.notification.ticket.id}`);
+            history.go();
           }
-        } else if (
-          res.data.notification.notification_type === "GENERAL" ||
-          res.data.notification.notification_type === "ANNOUNCEMENT" ||
-          res.data.notification.notification_type === "REMINDER"
-        ) {
+        } else if (res.data.notification.notification_type === "GENERAL") {
           if (userType === "member") {
             history.push(`/member/notification/view/${res.data.id}`);
+            history.go();
           } else if (userType === "partner") {
             history.push(`/partner/notification/view/${res.data.id}`);
+            history.go();
           } else if (userType === "admin") {
             history.push(`/admin/notification/view/${res.data.id}`);
+            history.go();
+          }
+        } else if (res.data.notification.notification_type === "ARTICLE") {
+          if (userType === "member") {
+            history.push(`/article/member/${res.data.notification.article.id}`);
+            history.go();
+          } else if (userType === "partner") {
+            history.push(
+              `/article/partner/${res.data.notification.article.id}`
+            );
+            history.go();
+          } else if (userType === "admin") {
+            history.push(`/article/admin/${res.data.notification.article.id}`);
+            history.go();
+          }
+        } else if (res.data.notification.notification_type === "COURSE") {
+          if (userType === "member") {
+            history.push(`/courses/enroll/${res.data.notification.course.id}`);
+            history.go();
+          } else if (userType === "partner") {
+            history.push(
+              `/partner/home/content/view/comments/${res.data.notification.course.id}`
+            );
+            history.go();
+          } else if (userType === "admin") {
+            history.push(
+              `/article/contentquality/courses/${res.data.notification.course.id}`
+            );
+            history.go();
+          }
+        } else {
+          // TO BE DELETE LATER
+          if (userType === "member") {
+            history.push(`/member/notification/view/${res.data.id}`);
+            history.go();
+          } else if (userType === "partner") {
+            history.push(`/partner/notification/view/${res.data.id}`);
+            history.go();
+          } else if (userType === "admin") {
+            history.push(`/admin/notification/view/${res.data.id}`);
+            history.go();
           }
         }
       })

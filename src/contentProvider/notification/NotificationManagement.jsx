@@ -219,8 +219,6 @@ const PartnerNotificationPage = () => {
           memberIdList[i] = res.data[i].member.id;
         }
         formData.append("receiver_ids", JSON.stringify(memberIdList));
-        console.log("memberIdList");
-        console.log(memberIdList);
         Service.client
           .post("/notifications", formData)
           .then(() => {

@@ -256,12 +256,9 @@ const StudentPage = () => {
       };
     }
 
-    // console.log("courseid: " + queryParams.courseId);
-
     Service.client
       .get(`/enrolled-members`, { params: { ...queryParams } })
       .then((res) => {
-        console.log(res.data);
         let arr = [];
         let obj = {};
         for (let i = 0; i < res.data.length; i++) {
@@ -382,11 +379,7 @@ const StudentPage = () => {
           )}
         </div>
       </div>
-      <Grid
-        item
-        xs={12}
-        style={{ height: "calc(100vh - 280px)", width: "100%" }}
-      >
+      <Grid item xs={12} style={{ height: `calc(100vh - 280px)`, width: "100%" }}>
         <DataGrid
           rows={studentRows}
           columns={studentColumns.map((column) => ({
