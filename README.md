@@ -1,4 +1,4 @@
-# codeine-django
+# codeine-react
 
 Frontend powering Codeine
 
