@@ -1,6 +1,6 @@
 # codeine-django
 
-Backend powering Codeine
+Frontend powering Codeine
 
 ## Key Features
 * Course based content
