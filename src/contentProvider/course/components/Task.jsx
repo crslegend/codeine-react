@@ -28,6 +28,7 @@ import { DropzoneAreaBase } from "material-ui-dropzone";
 // import SubTask from "./SubTask";
 import QuestionDialog from "./QuestionDialog";
 import QuizCreationModal from "./QuizCreationModal";
+import VideoCreationModal from "./VideoCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -174,11 +175,13 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setEditVideo();
-          setEditMode(false);
-          setCourseMaterialId();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setEditVideo();
+            setEditMode(false);
+            setCourseMaterialId();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     } else if (materialType === "file") {
@@ -237,12 +240,14 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setCourseMaterialId();
-          setEditMode(false);
-          setEditFile();
-          setZipFile();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setCourseMaterialId();
+            setEditMode(false);
+            setEditFile();
+            setZipFile();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     } else {
@@ -269,11 +274,13 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setCourseMaterialId();
-          setEditMode(false);
-          setEditQuiz();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setCourseMaterialId();
+            setEditMode(false);
+            setEditQuiz();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     }
@@ -480,6 +487,8 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         open={courseMaterialDialog}
         onClose={() => {
           setCourseMaterialDialog(false);
+        }}
+        onExited={() => {
           setEditFile();
           setEditVideo();
           setEditQuiz();
@@ -643,73 +652,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
               );
             } else if (materialType === "video") {
               return (
-                <Fragment>
-                  <label htmlFor="title">
-                    <Typography variant="body2">Title of Video</Typography>
-                  </label>
-                  <TextField
-                    id="title"
-                    variant="outlined"
-                    fullWidth
-                    autoFocus
-                    margin="dense"
-                    value={editVideo && editVideo.title}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        title: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="Enter Title"
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Video
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="description"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editVideo && editVideo.description}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        description: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="Enter Description"
-                    multiline
-                    rows={6}
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="url">
-                    <Typography variant="body2">Video URL</Typography>
-                  </label>
-                  <TextField
-                    id="url"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editVideo && editVideo.video_url}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        video_url: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="e.g. https://www.youtube.com"
-                    style={{ marginBottom: "15px" }}
-                  />
-                </Fragment>
+                <VideoCreationModal video={editVideo} setVideo={setEditVideo} />
               );
             } else if (materialType === "quiz") {
               return (

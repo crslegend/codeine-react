@@ -2,7 +2,13 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import { Assignment, Delete, DragIndicator, InsertDriveFile, Theaters } from "@material-ui/icons";
+import {
+  Assignment,
+  Delete,
+  DragIndicator,
+  InsertDriveFile,
+  Theaters,
+} from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -18,10 +24,11 @@ import {
 import validator from "validator";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast";
-import axios from "axios"
+import axios from "axios";
 
 import Service from "../../../AxiosService";
 import QuizCreationModel from "./QuizCreationModal";
+import VideoCreationModal from "./VideoCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -82,7 +89,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionBankModalOpen }) => {
+const Column = ({
+  column,
+  tasks,
+  index,
+  courseId,
+  getCourse,
+  state,
+  setQuestionBankModalOpen,
+}) => {
   const classes = useStyles();
   // console.log(tasks);
 
@@ -160,7 +175,11 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
   const handleCreateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (video.title === "" || video.description === "" || video.video_url === "") {
+      if (
+        video.title === "" ||
+        video.description === "" ||
+        video.video_url === ""
+      ) {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -212,7 +231,11 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
         })
         .catch((err) => console.log(err));
     } else if (materialType === "file") {
-      if (file.title === "" || file.description === "" || (file.google_drive_url === "" && !zipFile)) {
+      if (
+        file.title === "" ||
+        file.description === "" ||
+        (file.google_drive_url === "" && !zipFile)
+      ) {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all required fields!",
@@ -278,7 +301,11 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
     } else {
       // add quiz as course material
       // console.log(questionGroups)
-      if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
+      if (
+        quiz.title === "" ||
+        quiz.description === "" ||
+        quiz.passing_marks === ""
+      ) {
         setSbOpen(true);
         setSnackbar({
           message: "Missing fields!",
@@ -298,25 +325,29 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
           console.log(res);
           let quizId = res.data.quiz.id;
 
-          axios.all(questionGroups.map((qg) => {
-            return Service.client.put(`/quiz/${quizId}/question-groups`, qg).then((res) => console.log(res));
-          })).then(res => {
-  
-            setCourseMaterialDialog(false);
-            setMaterialType();
-            setChapterIdForCourseMaterial();
-            setEditMode(false);
-            setQuiz({
-              title: "",
-              description: "",
-              passing_marks: 0,
-              is_randomized: false,
-              instructions: "",
+          axios
+            .all(
+              questionGroups.map((qg) => {
+                return Service.client
+                  .put(`/quiz/${quizId}/question-groups`, qg)
+                  .then((res) => console.log(res));
+              })
+            )
+            .then((res) => {
+              setCourseMaterialDialog(false);
+              setMaterialType();
+              setChapterIdForCourseMaterial();
+              setEditMode(false);
+              setQuiz({
+                title: "",
+                description: "",
+                passing_marks: 0,
+                is_randomized: false,
+                instructions: "",
+              });
+              setQuestionGroups([]);
+              getCourse();
             });
-            setQuestionGroups([]);
-            getCourse();
-
-          })
         })
         .catch((err) => console.log(err));
     }
@@ -330,7 +361,11 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
       <Draggable draggableId={column.id} index={index}>
         {(provided) => {
           return (
-            <div className={classes.container} {...provided.draggableProps} ref={provided.innerRef}>
+            <div
+              className={classes.container}
+              {...provided.draggableProps}
+              ref={provided.innerRef}
+            >
               <div className={classes.columnHeader}>
                 <div {...provided.dragHandleProps} className={classes.handle}>
                   <DragIndicator />
@@ -409,12 +444,20 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       style={{
-                        backgroundColor: snapshot.isDraggingOver ? "#e0e0e0" : "#fff",
+                        backgroundColor: snapshot.isDraggingOver
+                          ? "#e0e0e0"
+                          : "#fff",
                       }}
                     >
                       {tasks &&
                         tasks.map((task, index) => (
-                          <Task key={task.id} task={task} index={index} getCourse={getCourse} courseId={courseId} />
+                          <Task
+                            key={task.id}
+                            task={task}
+                            index={index}
+                            getCourse={getCourse}
+                            courseId={courseId}
+                          />
                         ))}
                       {provided.placeholder}
                     </div>
@@ -508,7 +551,12 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" className={classes.dialogButtons} type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.dialogButtons}
+              type="submit"
+            >
               Save
             </Button>
           </DialogActions>
@@ -595,7 +643,9 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                       style={{ marginBottom: "15px" }}
                     />
                     <label htmlFor="description">
-                      <Typography variant="body2">Description of File</Typography>
+                      <Typography variant="body2">
+                        Description of File
+                      </Typography>
                     </label>
                     <TextField
                       id="description"
@@ -644,7 +694,10 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                         },
                       }}
                     />
-                    <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
+                    <Typography
+                      variant="h6"
+                      style={{ textAlign: "center", marginTop: "10px" }}
+                    >
                       OR
                     </Typography>
                     <label htmlFor="url">
@@ -670,70 +723,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                   </Fragment>
                 );
               } else if (materialType === "video") {
-                return (
-                  <Fragment>
-                    <label htmlFor="title">
-                      <Typography variant="body2">Title of Video</Typography>
-                    </label>
-                    <TextField
-                      id="title"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.title}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          title: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="Enter Title"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="description">
-                      <Typography variant="body2">Description of Video</Typography>
-                    </label>
-                    <TextField
-                      id="description"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.description}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          description: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="Enter Description"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="url">
-                      <Typography variant="body2">Video URL</Typography>
-                    </label>
-                    <TextField
-                      id="url"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.video_url}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          video_url: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="https://www.google.com"
-                      style={{ marginBottom: "15px" }}
-                    />
-                  </Fragment>
-                );
+                return <VideoCreationModal video={video} setVideo={setVideo} />;
               } else if (materialType === "quiz") {
                 return (
                   <QuizCreationModel
