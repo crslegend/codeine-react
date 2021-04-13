@@ -65,7 +65,11 @@ const VideoCreationModal = ({
     //   arr[index] =
   };
 
-  const handleRemove = (index) => {};
+  const handleRemove = (index) => {
+    let arr = [...codeSnippetArr];
+    arr.splice(index, 1);
+    setCodeSnippetArr(arr);
+  };
 
   return (
     <Fragment>
