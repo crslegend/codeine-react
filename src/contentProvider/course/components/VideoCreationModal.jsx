@@ -56,6 +56,8 @@ const VideoCreationModal = ({ video, setVideo }) => {
         required
         placeholder="Enter Description"
         style={{ marginBottom: "15px" }}
+        multiline
+        rows={5}
       />
       <label htmlFor="url">
         <Typography variant="body2">Video URL</Typography>
