@@ -136,6 +136,8 @@ const Column = ({
     description: "",
     video_url: "",
   });
+  const [codeSnippetArr, setCodeSnippetArr] = useState([]);
+
   const [quiz, setQuiz] = useState({
     title: "",
     description: "",
@@ -723,7 +725,14 @@ const Column = ({
                   </Fragment>
                 );
               } else if (materialType === "video") {
-                return <VideoCreationModal video={video} setVideo={setVideo} />;
+                return (
+                  <VideoCreationModal
+                    video={video}
+                    setVideo={setVideo}
+                    codeSnippetArr={codeSnippetArr}
+                    setCodeSnippetArr={setCodeSnippetArr}
+                  />
+                );
               } else if (materialType === "quiz") {
                 return (
                   <QuizCreationModel
