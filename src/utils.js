@@ -41,5 +41,37 @@ export const downloadJSON = (jsonObj) => {
     label: jsonObj.label + " (copy)",
   };
 
-  return "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy));
+  return (
+    "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy))
+  );
+};
+
+export const checkTimeDiff = (start, end) => {
+  const startArr = start.split(":");
+  const endArr = end.split(":");
+  let startSeconds;
+  let endSeconds;
+
+  if (startArr.length === 2) {
+    startSeconds = parseInt(startArr[0]) * 60 + parseInt(startArr[0]);
+  } else if (startArr.length === 3) {
+    startSeconds =
+      parseInt(startArr[0]) * 60 * 60 +
+      parseInt(startArr[1]) * 60 +
+      parseInt(startArr[2]);
+  }
+
+  if (endArr.length === 2) {
+    endSeconds = parseInt(endArr[0]) * 60 + parseInt(endArr[0]);
+  } else if (endArr.length === 3) {
+    endSeconds =
+      parseInt(endArr[0]) * 60 * 60 +
+      parseInt(endArr[1]) * 60 +
+      parseInt(endArr[2]);
+  }
+
+  if (endSeconds - startSeconds <= 0) {
+    return false;
+  }
+  return true;
 };

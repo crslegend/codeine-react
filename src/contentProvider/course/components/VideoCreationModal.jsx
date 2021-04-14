@@ -19,6 +19,7 @@ import "ace-builds/src-noconflict/mode-html";
 import "ace-builds/src-noconflict/mode-ruby";
 import "ace-builds/src-noconflict/mode-scss";
 import { Delete, Help } from "@material-ui/icons";
+import { checkTimeDiff } from "../../../utils.js";
 
 const useStyles = makeStyles((theme) => ({
   snippetDiv: {
@@ -102,6 +103,20 @@ const VideoCreationModal = ({
       setSbOpen(true);
       setSnackbar({
         message: "Please enter a valid format for end time",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (!checkTimeDiff(newObj.start, newObj.end)) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Start time cannot be equal to or later than end time",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
