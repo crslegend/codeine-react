@@ -451,16 +451,18 @@ const ContentProviderHome = () => {
         <NotificationsNoneIcon className={classes.listIcon} />
         <Typography variant="body1">Notification</Typography>
       </ListItem>
-      <ListItem
-        component={NavLink}
-        to="/partner/home/industryproject"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <WorkOutlineIcon className={classes.listIcon} />
-        <Typography variant="body1">Industry Projects</Typography>
-      </ListItem>
+      {user && user.partner && user.partner.organization && (
+        <ListItem
+          component={NavLink}
+          to="/partner/home/industryproject"
+          activeClassName={classes.activeLink}
+          className={classes.listItem}
+          button
+        >
+          <WorkOutlineIcon className={classes.listIcon} />
+          <Typography variant="body1">Industry Projects</Typography>
+        </ListItem>
+      )}
       <ListItem
         component={NavLink}
         to="/partner/home/helpdesk"
