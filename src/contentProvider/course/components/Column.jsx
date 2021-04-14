@@ -229,6 +229,7 @@ const Column = ({
             description: "",
             video_url: "",
           });
+          setCodeSnippetArr([]);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -765,6 +766,7 @@ const Column = ({
                   description: "",
                   video_url: "",
                 });
+                setCodeSnippetArr([]);
               }}
             >
               Cancel

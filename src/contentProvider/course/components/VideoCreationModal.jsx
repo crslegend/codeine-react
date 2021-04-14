@@ -215,7 +215,8 @@ const VideoCreationModal = ({
           title={
             <Typography variant="body2">
               You can add code snippets to be displayed at a given time frame of
-              the video
+              the video. Members will be able to copy the displayed code snippet
+              while watching the video
             </Typography>
           }
         >
@@ -340,6 +341,7 @@ const VideoCreationModal = ({
           <AceEditor
             placeholder="Enter code snippet here"
             theme="monokai"
+            // mode={"auto"}
             fontSize={14}
             showPrintMargin={true}
             showGutter={true}
@@ -363,11 +365,12 @@ const VideoCreationModal = ({
       <div style={{ display: "flex", marginTop: "10px" }}>
         <Button
           variant="outlined"
-          style={{ marginLeft: "auto" }}
+          style={{ marginLeft: "auto", textTransform: "capitalize" }}
           disabled={
             newObj.start === "" || newObj.end === "" || newObj.code === ""
           }
           onClick={() => handleAddCodeSnippet()}
+          size="small"
         >
           Add Code Snippet
         </Button>
