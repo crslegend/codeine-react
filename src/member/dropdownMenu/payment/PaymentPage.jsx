@@ -507,7 +507,7 @@ const Payment = () => {
               )}
 
               <div style={{ marginLeft: "auto" }}>
-                {!latestTransactionForPro ? (
+                {latestTransactionForPro ? (
                   <Fragment>
                     <Button
                       variant="outlined"

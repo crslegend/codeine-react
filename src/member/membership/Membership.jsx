@@ -171,7 +171,7 @@ const Membership = () => {
       .post(`/auth/membership-subscriptions`, data)
       .then((res) => {
         // console.log(res);
-
+        localStorage.removeItem("cancelMembership");
         handleStripePaymentGateway(
           parseFloat(data.subscription_fee),
           user.email,
