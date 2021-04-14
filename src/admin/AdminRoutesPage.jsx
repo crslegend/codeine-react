@@ -16,6 +16,8 @@ import {
   Typography,
   Badge,
   Popover,
+  Tooltip,
+  IconButton,
 } from "@material-ui/core";
 
 import Toast from "../components/Toast.js";
@@ -53,6 +55,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 import NotifTile from "../components/NotificationTile";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import IndustryProjectPage from "./industryProject/IndustryProjectPage";
 import ViewIndustryProjectDetails from "./industryProject/ViewIndustryProjectDetails";
@@ -216,6 +219,15 @@ const AdminRoutesPage = () => {
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
 
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
   const notifBell = (
     <div>
       <Badge
@@ -248,17 +260,31 @@ const AdminRoutesPage = () => {
         style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
-          <Typography
-            style={{
-              fontWeight: "800",
-              fontSize: "25px",
-              marginLeft: "10px",
-              marginBottom: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Notifications
-          </Typography>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
             return (

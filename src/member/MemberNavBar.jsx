@@ -11,6 +11,8 @@ import {
   Button,
   Divider,
   Badge,
+  IconButton,
+  Tooltip,
 } from "@material-ui/core";
 import Service from "../AxiosService";
 import jwt_decode from "jwt-decode";
@@ -23,6 +25,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 
@@ -183,6 +186,15 @@ const MemberNavBar = (props) => {
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
 
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
   const navLogo = (
     <Fragment>
       <a
@@ -281,17 +293,30 @@ const MemberNavBar = (props) => {
         style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
-          <Typography
-            style={{
-              fontWeight: "800",
-              fontSize: "25px",
-              marginLeft: "10px",
-              marginBottom: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Notifications
-          </Typography>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
             return (

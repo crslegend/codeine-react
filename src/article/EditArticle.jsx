@@ -20,6 +20,7 @@ import {
   GridListTile,
   GridListTileBar,
   IconButton,
+  Tooltip,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -37,6 +38,7 @@ import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import "./quill.css";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Delete } from "@material-ui/icons";
@@ -650,6 +652,15 @@ const EditArticle = (props) => {
     }
   };
 
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
   const navLogo = (
     <Fragment>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -749,17 +760,30 @@ const EditArticle = (props) => {
         style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
-          <Typography
-            style={{
-              fontWeight: "800",
-              fontSize: "25px",
-              marginLeft: "10px",
-              marginBottom: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Notifications
-          </Typography>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
             return (

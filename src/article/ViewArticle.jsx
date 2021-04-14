@@ -441,10 +441,18 @@ const ViewArticle = (props) => {
                 return (
                   <Chip key={index} label="Ruby" className={classes.chip} />
                 );
-              } else {
+              } else if (language === "HTML") {
                 return (
-                  <Chip key={index} label={language} className={classes.chip} />
+                  <Chip key={index} label="HTML" className={classes.chip} />
                 );
+              } else if (language === "CSS") {
+                return (
+                  <Chip key={index} label="CSS" className={classes.chip} />
+                );
+              } else {
+                // return (
+                //   <Chip key={index} label={language} className={classes.chip} />
+                // );
               }
             })}
 

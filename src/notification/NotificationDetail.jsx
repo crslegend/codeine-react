@@ -294,6 +294,7 @@ const NotificationDetail = () => {
         <div style={{ marginTop: "65px" }}>
           <div style={{ display: "flex" }}>
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.ticket.ticket_type === "ACCOUNT" && (
                 <Avatar
                   src={Person}
@@ -302,6 +303,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.ticket.ticket_type === "GENERAL" && (
                 <Avatar
                   src={ContactSupport}
@@ -310,6 +312,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.ticket.ticket_type === "TECHNICAL" && (
                 <Avatar
                   src={Computer}
@@ -318,6 +321,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.ticket.ticket_type ===
                 "INDUSTRY_PROJECT" && (
                 <Avatar
@@ -327,6 +331,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.ticket.ticket_type ===
                 "CODE_REVIEWS" && (
                 <Avatar
@@ -336,6 +341,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.notification_type ===
                 "CONSULTATION" && (
                 <Avatar
@@ -345,6 +351,7 @@ const NotificationDetail = () => {
                 ></Avatar>
               )}
             {notification.notification &&
+              notification.notification.ticket &&
               notification.notification.notification_type ===
                 "CONSULTATION" && (
                 <Avatar

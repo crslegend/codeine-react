@@ -230,6 +230,8 @@ const AdminHumanResourcePage = () => {
       width: 160,
     },
     {
+      width: 200,
+      headerName: "Membership Tier",
       field: "membership_tier",
       hidden: true,
     },
