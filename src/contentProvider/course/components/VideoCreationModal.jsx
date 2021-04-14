@@ -7,6 +7,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
+import Toast from "../../../components/Toast.js";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/mode-java";
@@ -38,10 +39,79 @@ const VideoCreationModal = ({
 }) => {
   const classes = useStyles();
 
+  const [sbOpen, setSbOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "error",
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+    autoHideDuration: 3000,
+  });
+
   const [newObj, setNewObj] = useState({ start: "", end: "", code: "" });
   //   console.log(codeSnippetArr);
 
   const handleAddCodeSnippet = () => {
+    const startArr = newObj.start.split(":");
+    const endArr = newObj.end.split(":");
+
+    const pattern1 = /^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+    const pattern2 = /^[0-5][0-9]:[0-5][0-9]$/;
+    let invalid = false;
+    if (startArr.length < 2) {
+      invalid = true;
+    } else if (startArr.length === 2) {
+      if (!pattern2.test(newObj.start)) {
+        invalid = true;
+      }
+    } else if (startArr.length === 3) {
+      if (!pattern1.test(newObj.start)) {
+        invalid = true;
+      }
+    }
+
+    if (invalid) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter a valid format for start time",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    if (endArr.length < 2) {
+      invalid = true;
+    } else if (endArr.length === 2) {
+      if (!pattern2.test(newObj.end)) {
+        invalid = true;
+      }
+    } else if (endArr.length === 3) {
+      if (!pattern1.test(newObj.end)) {
+        invalid = true;
+      }
+    }
+
+    if (invalid) {
+      setSbOpen(true);
+      setSnackbar({
+        message: "Please enter a valid format for end time",
+        severity: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "center",
+        },
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
     let arr = [...codeSnippetArr];
     arr.push(newObj);
     setCodeSnippetArr(arr);
@@ -73,6 +143,7 @@ const VideoCreationModal = ({
 
   return (
     <Fragment>
+      <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
       <label htmlFor="title">
         <Typography variant="body2">Title of Video</Typography>
       </label>
