@@ -215,9 +215,12 @@ const Column = ({
         });
         return;
       }
-
+      const videoObj = {
+        ...video,
+        video_code_snippets: codeSnippetArr,
+      };
       Service.client
-        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
+        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, videoObj)
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);

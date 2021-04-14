@@ -59,14 +59,10 @@ const VideoCreationModal = ({
     const endArr = newObj.end.split(":");
 
     const pattern1 = /^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
-    const pattern2 = /^[0-5][0-9]:[0-5][0-9]$/;
+    // const pattern2 = /^[0-5][0-9]:[0-5][0-9]$/;
     let invalid = false;
-    if (startArr.length < 2) {
+    if (startArr.length < 3) {
       invalid = true;
-    } else if (startArr.length === 2) {
-      if (!pattern2.test(newObj.start)) {
-        invalid = true;
-      }
     } else if (startArr.length === 3) {
       if (!pattern1.test(newObj.start)) {
         invalid = true;
@@ -87,12 +83,8 @@ const VideoCreationModal = ({
       return;
     }
 
-    if (endArr.length < 2) {
+    if (endArr.length < 3) {
       invalid = true;
-    } else if (endArr.length === 2) {
-      if (!pattern2.test(newObj.end)) {
-        invalid = true;
-      }
     } else if (endArr.length === 3) {
       if (!pattern1.test(newObj.end)) {
         invalid = true;
@@ -128,7 +120,12 @@ const VideoCreationModal = ({
     }
 
     let arr = [...codeSnippetArr];
-    arr.push(newObj);
+    const obj = {
+      start_time: newObj.start,
+      end_time: newObj.end,
+      code: newObj.code,
+    };
+    arr.push(obj);
     setCodeSnippetArr(arr);
     setNewObj({
       start: "",
@@ -140,10 +137,10 @@ const VideoCreationModal = ({
   const handleChangeInput = (e, index) => {
     let arr = [...codeSnippetArr];
     if (e.target.name === "start") {
-      arr[index].start = e.target.value;
-    } else if (e.target.value === "end") {
-      arr[index].end = e.target.value;
-    } else {
+      arr[index].start_time = e.target.value;
+    } else if (e.target.name === "end") {
+      arr[index].end_time = e.target.value;
+    } else if (e.target.name === "code") {
       arr[index].code = e.target.value;
     }
     setCodeSnippetArr(arr);
@@ -260,7 +257,7 @@ const VideoCreationModal = ({
                     variant="outlined"
                     margin="dense"
                     inputProps={{ style: { fontSize: "14px" } }}
-                    value={obj && obj.start}
+                    value={obj && obj.start_time}
                     onChange={(e) => handleChangeInput(e, index)}
                   />
                 </div>
@@ -273,7 +270,7 @@ const VideoCreationModal = ({
                     variant="outlined"
                     margin="dense"
                     inputProps={{ style: { fontSize: "14px" } }}
-                    value={obj && obj.end}
+                    value={obj && obj.end_time}
                     onChange={(e) => handleChangeInput(e, index)}
                   />
                 </div>
@@ -333,7 +330,7 @@ const VideoCreationModal = ({
               variant="outlined"
               margin="dense"
               inputProps={{ style: { fontSize: "14px" } }}
-              placeholder="04:20"
+              placeholder="00:04:20"
               value={newObj && newObj.start}
               onChange={(e) => setNewObj({ ...newObj, start: e.target.value })}
             />
@@ -346,7 +343,7 @@ const VideoCreationModal = ({
               variant="outlined"
               margin="dense"
               inputProps={{ style: { fontSize: "14px" } }}
-              placeholder="05:20"
+              placeholder="00:05:20"
               value={newObj && newObj.end}
               onChange={(e) => setNewObj({ ...newObj, end: e.target.value })}
             />
