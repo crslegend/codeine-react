@@ -17,6 +17,7 @@ import {
   Paper,
   TextField,
   Typography,
+  IconButton,
 } from "@material-ui/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Footer from "../landing/Footer";
@@ -40,6 +41,11 @@ import { Rating } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
 import CommentsSection from "./components/CommentsSection";
 import EnrollCourseWithIDE from "./EnrollCourseWithIDE";
+import { formatToVideoTimeFormat } from "../../utils";
+import hljs from "highlight.js";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -122,6 +128,12 @@ const styles = makeStyles((theme) => ({
     borderColor: "#222 !important",
     borderWidth: "1px !important",
   },
+  codeBody: {
+    display: "flex",
+    border: "2px solid #676767",
+    borderRadius: "5px",
+    marginTop: "15px",
+  },
 }));
 
 const EnrollCourse = () => {
@@ -170,6 +182,10 @@ const EnrollCourse = () => {
   const [openIDE, setOpenIDE] = useState(false);
 
   const ref = React.createRef();
+
+  const [videoDuration, setVideoDuration] = useState();
+  const [codeSnippetArr, setCodeSnippetArr] = useState();
+  const [codeSnippet, setCodeSnippet] = useState();
 
   const handleChange = (panel) => (event, isExpanded) => {
     // console.log(isExpanded);
@@ -492,10 +508,31 @@ const EnrollCourse = () => {
     }
 
     setChosenCourseMaterial(material);
+    setCodeSnippet();
+    if (material.material_type === "VIDEO") {
+      if (material.video.video_code_snippets.length > 0) {
+        setCodeSnippetArr(material.video.video_code_snippets);
+      }
+    }
   };
 
   const handleDuration = (duration) => {
     // console.log(duration);
+    setVideoDuration(duration);
+  };
+
+  const displayCodeSnippetForVideo = (state) => {
+    console.log(chosenCourseMaterial);
+    if (codeSnippet) {
+      return;
+    }
+    console.log(formatToVideoTimeFormat(state.played * videoDuration));
+    if (
+      formatToVideoTimeFormat(state.played * videoDuration) ===
+      codeSnippetArr[0].start_time
+    ) {
+      setCodeSnippet(codeSnippetArr[0].code);
+    }
   };
 
   const handleVideoProgress = (state, videoId) => {
@@ -747,7 +784,7 @@ const EnrollCourse = () => {
                     );
                   } else if (chosenCourseMaterial.material_type === "VIDEO") {
                     return (
-                      <div>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
                         <ReactPlayer
                           ref={ref}
                           url={
@@ -757,11 +794,59 @@ const EnrollCourse = () => {
                           width="100%"
                           height="500px"
                           onDuration={handleDuration}
-                          onProgress={(state) =>
-                            handleVideoProgress(state, chosenCourseMaterial.id)
-                          }
+                          onProgress={(state) => {
+                            if (
+                              chosenCourseMaterial.video.video_code_snippets
+                                .length > 0
+                            ) {
+                              displayCodeSnippetForVideo(state);
+                            }
+
+                            handleVideoProgress(state, chosenCourseMaterial.id);
+                          }}
                           controls
                         />
+                        {codeSnippet && (
+                          <div className={classes.codeBody}>
+                            <div style={{ width: "95%", padding: "24px" }}>
+                              <pre style={{ margin: 0 }}>
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: hljs.highlightAuto(codeSnippet)
+                                      .value,
+                                  }}
+                                />
+                              </pre>
+                            </div>
+                            <div
+                              style={{
+                                width: "5%",
+                                marginRight: "5px",
+                                paddingTop: "8px",
+                              }}
+                            >
+                              <CopyToClipboard
+                                text={codeSnippet}
+                                onCopy={() => {
+                                  setSbOpen(true);
+                                  setSnackbar({
+                                    ...snackbar,
+                                    message: "Code Snippet copied!",
+                                    severity: "info",
+                                  });
+                                  return true;
+                                }}
+                              >
+                                <IconButton size="small">
+                                  <FontAwesomeIcon
+                                    icon={faClipboard}
+                                    style={{ height: "20px", width: "20px" }}
+                                  />
+                                </IconButton>
+                              </CopyToClipboard>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   } else if (
