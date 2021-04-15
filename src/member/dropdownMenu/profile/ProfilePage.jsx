@@ -934,10 +934,10 @@ const Profile = (props) => {
               style={{
                 textTransform: "none",
               }}
-              // disabled={
-              //   profileDetails.member &&
-              //   profileDetails.member.membership_tier !== "PRO"
-              // }
+              disabled={
+                profileDetails.member &&
+                profileDetails.member.membership_tier !== "PRO"
+              }
               classes={{
                 selected: classes.selected,
                 wrapper: classes.wrapper,
