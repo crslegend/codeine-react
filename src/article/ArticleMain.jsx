@@ -1,6 +1,14 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Typography, ListItem } from "@material-ui/core";
+import {
+  Button,
+  Typography,
+  ListItem,
+  Badge,
+  Popover,
+  Tooltip,
+  IconButton,
+} from "@material-ui/core";
 import { useHistory, useParams, useLocation, Link } from "react-router-dom";
 import Service from "../AxiosService";
 import CommentDrawer from "./ArticleComments";
@@ -13,6 +21,11 @@ import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
 import Toast from "../components/Toast.js";
 import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import ZeroNotif from "../assets/ZeroNotif.svg";
+import NotifTile from "../components/NotificationTile";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,6 +64,36 @@ const useStyles = makeStyles((theme) => ({
   },
   split: {
     height: "calc(100vh - 65px)",
+  },
+  notifpopover: {
+    width: "400px",
+    padding: theme.spacing(1),
+  },
+  notification: {
+    cursor: "pointer",
+    color: "#878787",
+    height: "30px",
+    width: "30px",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      cursor: "pointer",
+    },
+  },
+  notificationOpen: {
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    height: "30px",
+    width: "30px",
+  },
+  viewallnotif: {
+    textAlign: "center",
+    cursor: "pointer",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -126,6 +169,7 @@ const ArticleMain = () => {
   useEffect(() => {
     checkIfLoggedIn();
     getArticleDetails();
+    getUserNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -142,6 +186,143 @@ const ArticleMain = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openIDE, setOpenIDE] = useState(false);
+
+  const [notificationList, setNotificationList] = useState([]);
+
+  const getUserNotifications = () => {
+    if (Cookies.get("t1")) {
+      Service.client
+        .get("/notification-objects", {
+          timeout: 20000,
+        })
+        .then((res) => {
+          console.log(res);
+          setNotificationList(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const [anchorE2, setAnchorE2] = useState(null);
+
+  const handleNotifClick = (event) => {
+    setAnchorE2(event.currentTarget);
+  };
+
+  const handleNotifClose = () => {
+    setAnchorE2(null);
+  };
+
+  const notifOpen = Boolean(anchorE2);
+  const notifid = notifOpen ? "simple-popover" : undefined;
+
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
+  const notifBell = (
+    <div>
+      <Badge
+        badgeContent={
+          notificationList.length > 0 ? notificationList[0].num_unread : 0
+        }
+        color="primary"
+      >
+        <NotificationsIcon
+          className={
+            notifOpen ? classes.notificationOpen : classes.notification
+          }
+          onClick={handleNotifClick}
+        />
+      </Badge>
+
+      <Popover
+        id={notifid}
+        open={notifOpen}
+        anchorEl={anchorE2}
+        onClose={handleNotifClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ maxHeight: "70%" }}
+      >
+        <div className={classes.notifpopover}>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+
+          {notificationList.slice(0, 20).map((notification, index) => {
+            return (
+              <NotifTile
+                key={index}
+                notification={notification}
+                getUserNotifications={getUserNotifications}
+                userType="member"
+              />
+            );
+          })}
+          {notificationList.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img src={ZeroNotif} alt="" />
+              <Typography style={{ fontWeight: "700", marginTop: "20px" }}>
+                All caught up!
+              </Typography>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            backgroundColor: "#dbdbdb",
+            position: "sticky",
+            bottom: 0,
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}
+        >
+          <Typography
+            className={classes.viewallnotif}
+            onClick={() => {
+              //alert("clicked on view all notifications");
+              history.push("/partner/notifications");
+            }}
+          >
+            View all
+          </Typography>
+        </div>
+      </Popover>
+    </div>
+  );
 
   const navLogo = (
     <Fragment>
@@ -169,6 +350,7 @@ const ArticleMain = () => {
 
   const loggedInNavbar = (
     <Fragment>
+      <ListItem style={{ whiteSpace: "nowrap" }}>{notifBell}</ListItem>
       <ListItem style={{ whiteSpace: "nowrap" }}>
         <Button
           variant="contained"
