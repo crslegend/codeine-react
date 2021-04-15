@@ -13,13 +13,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import {
-  Assignment,
-  Delete,
-  InsertDriveFile,
-  Theaters,
-  DragHandle,
-} from "@material-ui/icons";
+import { Assignment, Delete, InsertDriveFile, Theaters, DragHandle } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
@@ -84,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Task = ({ task, index, getCourse, subtasks, courseId }) => {
+const Task = ({ task, index, getCourse, subtasks, courseId, setQuestionBankModalOpen }) => {
   const classes = useStyles();
   const theme = useTheme();
   // console.log(task);
@@ -118,9 +112,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const [editQuiz, setEditQuiz] = useState();
   const [editQuizQuestionGroups, setEditQuizQuestionGroups] = useState([]);
 
-  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
-    false
-  );
+  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(false);
 
   const [addQuestionDialog, setAddQuestionDialog] = useState(false);
 
@@ -134,11 +126,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        editVideo.title === "" ||
-        editVideo.description === "" ||
-        editVideo.video_url === ""
-      ) {
+      if (editVideo.title === "" || editVideo.description === "" || editVideo.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -223,12 +211,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
             return;
           }
 
-          if (
-            !checkTimeDiff(
-              codeSnippetArr[i].start_time,
-              codeSnippetArr[i].end_time
-            )
-          ) {
+          if (!checkTimeDiff(codeSnippetArr[i].start_time, codeSnippetArr[i].end_time)) {
             setSbOpen(true);
             setSnackbar({
               message: "Start time cannot be equal to or later than end time",
@@ -329,11 +312,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         })
         .catch((err) => console.log(err));
     } else {
-      if (
-        editQuiz.title === "" ||
-        editQuiz.description === "" ||
-        editQuiz.passing_marks === ""
-      ) {
+      if (editQuiz.title === "" || editQuiz.description === "" || editQuiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Check your fields",
@@ -397,11 +376,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         {(provided, snapshot) => {
           return (
             <div
-              className={
-                snapshot.isDragging
-                  ? classes.containerDragging
-                  : classes.container
-              }
+              className={snapshot.isDragging ? classes.containerDragging : classes.container}
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
@@ -585,16 +560,12 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         }}
       >
         <DialogTitle>
-          Course Material{" "}
-          <span style={{ textTransform: "capitalize" }}>({materialType})</span>
+          Course Material <span style={{ textTransform: "capitalize" }}>({materialType})</span>
           <div style={{ float: "right" }}>
             {/* <IconButton size="small" onClick={() => setEditMode(true)}>
               <Edit />
             </IconButton> */}
-            <IconButton
-              size="small"
-              onClick={() => setDeleteCourseMaterialDialog(true)}
-            >
+            <IconButton size="small" onClick={() => setDeleteCourseMaterialDialog(true)}>
               <Delete />
             </IconButton>
           </div>
@@ -663,11 +634,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                       <div style={{ display: "flex" }}>
                         <Typography variant="body2" style={{ margin: "5px 0" }}>
                           <LinkMui
-                            href={
-                              editFile.zip_file
-                                ? editFile.zip_file.replace("#", "")
-                                : "#"
-                            }
+                            href={editFile.zip_file ? editFile.zip_file.replace("#", "") : "#"}
                             rel="noopener noreferrer"
                             target="_blank"
                           >
@@ -699,10 +666,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     />
                   </div>
 
-                  <Typography
-                    variant="h6"
-                    style={{ textAlign: "center", marginTop: "10px" }}
-                  >
+                  <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                     OR
                   </Typography>
                   <label htmlFor="url">
@@ -713,11 +677,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     variant="outlined"
                     fullWidth
                     margin="dense"
-                    value={
-                      editFile && editFile.google_drive_url !== null
-                        ? editFile.google_drive_url
-                        : ""
-                    }
+                    value={editFile && editFile.google_drive_url !== null ? editFile.google_drive_url : ""}
                     onChange={(e) => {
                       setEditFile({
                         ...editFile,
@@ -757,6 +717,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     setCourseMaterialId();
                     setZipFile();
                   }}
+                  setQuestionBankModalOpen={setQuestionBankModalOpen}
                 />
               );
             }
