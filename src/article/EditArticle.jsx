@@ -20,6 +20,7 @@ import {
   GridListTile,
   GridListTileBar,
   IconButton,
+  Tooltip,
 } from "@material-ui/core";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -37,9 +38,17 @@ import NotifTile from "../components/NotificationTile";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import "./quill.css";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Delete } from "@material-ui/icons";
+import { Dashboard, Timeline, Work } from "@material-ui/icons";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,18 +92,13 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     cursor: "pointer",
-    padding: theme.spacing(1),
-    "&:hover": {
-      backgroundColor: "#e0e0e0",
-      cursor: "pointer",
-    },
   },
   toprow: {
     display: "flex",
     marginBottom: "5px",
     padding: theme.spacing(1),
     "&:hover": {
-      backgroundColor: "#e0e0e0",
+      backgroundColor: "#f5f5f5",
       cursor: "pointer",
     },
   },
@@ -172,6 +176,33 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "nowrap",
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: "translateZ(0)",
+  },
+  proBorderWrapper: {
+    borderRadius: 50,
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    padding: 3,
+  },
+  freeBorderWrapper: {
+    borderRadius: 50,
+    background: "rgba(84,84,84,1)",
+    padding: 3,
+  },
+  innerBorderWrapper: {
+    borderRadius: 50,
+    background: "#FFF",
+    padding: 2,
+  },
+  hover: {
+    padding: theme.spacing(1),
+    display: "flex",
+    "&:hover": {
+      backgroundColor: "#f5f5f5",
+      cursor: "pointer",
+    },
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -650,6 +681,15 @@ const EditArticle = (props) => {
     }
   };
 
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
   const navLogo = (
     <Fragment>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -749,17 +789,30 @@ const EditArticle = (props) => {
         style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
-          <Typography
-            style={{
-              fontWeight: "800",
-              fontSize: "25px",
-              marginLeft: "10px",
-              marginBottom: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Notifications
-          </Typography>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
             return (
@@ -808,21 +861,29 @@ const EditArticle = (props) => {
       {userType === "member" && (
         <ListItem style={{ whiteSpace: "nowrap" }}>
           {notifBell}
-          <Avatar
-            onClick={handleClick}
-            src={user && user.profile_photo}
-            alt=""
+          <div
+            className={
+              user && user.member && user.member.membership_tier === "PRO"
+                ? classes.proBorderWrapper
+                : classes.freeBorderWrapper
+            }
             style={{
-              width: "34px",
-              height: "34px",
-              cursor: "pointer",
               marginLeft: "30px",
-              border:
-                user && user.member && user.member.membership_tier !== "PRO"
-                  ? ""
-                  : "3px solid green",
             }}
-          />
+          >
+            <div className={classes.innerBorderWrapper}>
+              <Avatar
+                onClick={handleClick}
+                src={user && user.profile_photo}
+                alt=""
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  cursor: "pointer",
+                }}
+              />
+            </div>
+          </div>
           <Popover
             id={popoverid}
             open={open}
@@ -842,11 +903,28 @@ const EditArticle = (props) => {
           >
             <div className={classes.popover}>
               <div className={classes.toprow}>
-                <Avatar
-                  src={user && user.profile_photo}
-                  alt=""
-                  style={{ width: "55px", height: "55px", marginRight: "15px" }}
-                />
+                <div
+                  className={
+                    user && user.member && user.member.membership_tier === "PRO"
+                      ? classes.proBorderWrapper
+                      : classes.freeBorderWrapper
+                  }
+                  style={{
+                    marginRight: "15px",
+                  }}
+                >
+                  <div className={classes.innerBorderWrapper}>
+                    <Avatar
+                      src={user && user.profile_photo}
+                      alt=""
+                      style={{
+                        width: "55px",
+                        height: "55px",
+                      }}
+                    />
+                  </div>
+                </div>
+
                 <div
                   style={{
                     flexDirection: "column",
@@ -879,86 +957,138 @@ const EditArticle = (props) => {
 
               <Divider style={{ marginBottom: "5px" }} />
 
-              <Typography
-                className={classes.typography}
+              <div
+                className={classes.hover}
                 onClick={() => {
-                  //history.push("/member/dashboard");
-                  alert("Clicked on Dashboard");
+                  history.push("/member/dashboard");
+                  // alert("Clicked on Dashboard");
                 }}
               >
-                Dashboard
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <Dashboard className={classes.icon} />
+                <Typography className={classes.typography}>
+                  Dashboard
+                </Typography>
+              </div>
+              <div
+                className={classes.hover}
                 onClick={() => {
                   history.push("/member/courses");
                 }}
               >
-                Courses
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <InsertDriveFileIcon className={classes.icon} />
+                <Typography className={classes.typography}>Courses</Typography>
+              </div>
+
+              <div
+                className={classes.hover}
                 onClick={() => {
                   history.push("/member/consultations");
                 }}
               >
-                Consultations
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <Timeline className={classes.icon} />
+                <Typography className={classes.typography}>
+                  Consultations
+                </Typography>
+              </div>
+
+              <div
+                className={classes.hover}
                 onClick={() => {
                   history.push("/member/articles");
                 }}
               >
-                Articles
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <FontAwesomeIcon
+                  icon={faNewspaper}
+                  className={classes.icon}
+                  style={{ height: "24px", width: "24px" }}
+                />
+                <Typography className={classes.typography}>Articles</Typography>
+              </div>
+
+              <div
+                className={classes.hover}
                 onClick={() => {
-                  //history.push("/");
-                  alert("clicked on Industry projects");
+                  history.push("/codereview");
                 }}
               >
-                Industry Projects
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <FontAwesomeIcon
+                  icon={faFileCode}
+                  className={classes.icon}
+                  style={{ height: "24px", width: "24px" }}
+                />
+                <Typography className={classes.typography}>
+                  Code Review
+                </Typography>
+              </div>
+
+              {user && user.member && user.member.membership_tier === "PRO" && (
+                <div
+                  className={classes.hover}
+                  onClick={() => {
+                    history.push("/member/industryprojects");
+                    // alert("clicked on Industry projects");
+                  }}
+                >
+                  <Work className={classes.icon} />
+                  <Typography className={classes.typography}>
+                    Industry Projects
+                  </Typography>
+                </div>
+              )}
+
+              <div
+                className={classes.hover}
                 onClick={() => {
                   //history.push("/");
-                  alert("clicked on Helpdesk");
+                  history.push("/member/helpdesk");
                 }}
               >
-                Helpdesk
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <HelpOutlineOutlinedIcon className={classes.icon} />
+                <Typography className={classes.typography}>Helpdesk</Typography>
+              </div>
+
+              <div
+                className={classes.hover}
                 onClick={() => {
                   history.push("/member/payment");
                 }}
               >
-                My Payments
-              </Typography>
-              <Typography
-                className={classes.typography}
+                <AccountBalanceWalletIcon className={classes.icon} />
+                <Typography className={classes.typography}>
+                  My Payments
+                </Typography>
+              </div>
+
+              <Divider style={{ marginTop: "5px", marginBottom: "5px" }} />
+
+              <div
+                className={classes.hover}
                 onClick={() => {
                   Service.removeCredentials();
-                  // setLoggedIn(false);
                   history.push("/");
                 }}
               >
-                Log out
-              </Typography>
+                <ExitToAppIcon className={classes.icon} />
+                <Typography
+                  className={classes.typography}
+                  style={{ fontWeight: "700" }}
+                >
+                  Log Out
+                </Typography>
+              </div>
             </div>
           </Popover>
         </ListItem>
       )}
       {(userType === "partner" || userType === "admin") && (
         <ListItem style={{ whiteSpace: "nowrap" }}>
+          {notifBell}
           <Button
             variant="contained"
             color="primary"
             style={{
               textTransform: "capitalize",
+              marginLeft: "30px",
             }}
             onClick={() => {
               Service.removeCredentials();

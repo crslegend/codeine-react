@@ -288,6 +288,14 @@ const MemberArticleIDE = (props) => {
                           className={classes.chip}
                         />
                       );
+                    } else if (language === "HTML") {
+                      return (
+                        <Chip
+                          key={index}
+                          label="HTML"
+                          className={classes.chip}
+                        />
+                      );
                     } else {
                       return (
                         <Chip

@@ -288,18 +288,21 @@ const App = () => {
       />
       <PrivateRoute
         exact
+        strict
         path="/member/notification/view/:id"
         component={NotificationDetail}
         user="member"
       />
       <PrivateRoute
         exact
+        strict
         path="/partner/notification/view/:id"
         component={NotificationDetail}
         user="partner"
       />
       <PrivateRoute
         exact
+        strict
         path="/admin/notification/view/:id"
         component={NotificationDetail}
         user="admin"

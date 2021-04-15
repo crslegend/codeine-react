@@ -24,7 +24,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import LazyLoad from "react-lazyload";
+import NotifDetail from "./NotificationDetail";
 
 import EditIcon from "../../assets/EditIcon.svg";
 
@@ -59,6 +59,17 @@ const useStyles = makeStyles((theme) => ({
   },
   padding: {
     paddingRight: theme.spacing(3),
+  },
+  borderbox: {
+    padding: theme.spacing(1),
+    cursor: "pointer",
+    backgroundColor: "#fff",
+    border: "1px black solid",
+    marginBottom: theme.spacing(2),
+    "&:hover": {
+      backgroundColor: "#f5f5f5",
+      cursor: "pointer",
+    },
   },
 }));
 
@@ -179,15 +190,6 @@ const AdminNotificationPage = () => {
       });
       return;
     }
-    if (notificationDetails.notification_type === "") {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Please select a valid notification type!",
-        severity: "error",
-      });
-      return;
-    }
     if (
       selectedMemberList.rowIds.length === 0 &&
       selectedPartnerList.rowIds.length === 0
@@ -202,22 +204,13 @@ const AdminNotificationPage = () => {
     } else {
       userList = selectedMemberList.rowIds.concat(selectedPartnerList.rowIds);
     }
-    if (notificationPhoto && notificationPhoto.length === 0) {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Please upload an image!",
-        severity: "error",
-      });
-      return;
-    }
 
     // instantiate form-data
     const formData = new FormData();
 
     formData.append("title", notificationDetails.title);
     formData.append("description", notificationDetails.description);
-    formData.append("notification_type", notificationDetails.notification_type);
+    formData.append("notification_type", "GENERAL");
     formData.append("receiver_ids", JSON.stringify(userList));
     console.log(userList);
 
@@ -234,6 +227,14 @@ const AdminNotificationPage = () => {
           message: "New Notification created",
           severity: "success",
         });
+        setNotificationDetails({
+          title: "",
+          description: "",
+          notification_type: "",
+          userList: "",
+          photo: "",
+        });
+        getNotificationSent();
       })
       .catch();
   };
@@ -241,6 +242,7 @@ const AdminNotificationPage = () => {
   useEffect(() => {
     getMemberData();
     getPartnerData();
+    getNotificationSent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -447,11 +449,21 @@ const AdminNotificationPage = () => {
 
   const [notificationPhoto, setNotificationPhoto] = useState([]);
 
+  const [sentNotifications, setSentNotifications] = useState();
+
   const getNotificationSent = () => {
-    Service.client.get("/notifications");
+    Service.client
+      .get("/notifications", { params: { is_sender: true } })
+      .then((res) => {
+        setSentNotifications(res.data);
+      })
+      .catch();
   };
 
   const [times, setTimes] = useState(0);
+
+  const [showNotifDetail, setShowNotifDetail] = useState(false);
+  const [selectedNotif, setSelectedNotif] = useState();
 
   return (
     <div className={classes.root}>
@@ -517,7 +529,7 @@ const AdminNotificationPage = () => {
                 })
               }
             />
-            <div style={{ marginTop: "20px" }}>
+            {/* <div style={{ marginTop: "20px" }}>
               <InputLabel>Notification Type</InputLabel>
               <Select
                 className={classes.formControl}
@@ -532,7 +544,7 @@ const AdminNotificationPage = () => {
                 <MenuItem value={"ANNOUNCEMENT"}>Announcement</MenuItem>
                 <MenuItem value={"REMINDER"}>Reminder</MenuItem>
               </Select>
-            </div>
+            </div> */}
             <Accordion
               style={{ marginTop: "30px" }}
               TransitionProps={{ unmountOnExit: true }}
@@ -641,7 +653,35 @@ const AdminNotificationPage = () => {
         </Grid>
       </TabPanel>
 
-      <TabPanel value={value} index={1}></TabPanel>
+      <TabPanel value={value} index={1}>
+        {!showNotifDetail &&
+          sentNotifications &&
+          sentNotifications.length > 0 &&
+          sentNotifications.map((notif, index) => {
+            return (
+              <div
+                key={notif.id}
+                className={classes.borderbox}
+                onClick={() => {
+                  setShowNotifDetail(true);
+                  setSelectedNotif(notif);
+                }}
+              >
+                {notif.title}
+                <br />
+                {notif.description}
+              </div>
+            );
+          })}
+
+        {showNotifDetail && (
+          <NotifDetail
+            notification={selectedNotif}
+            setShowNotifDetail={setShowNotifDetail}
+          />
+        )}
+        {/* {showNotifDetail && "Hello"} */}
+      </TabPanel>
     </div>
   );
 };

@@ -36,14 +36,16 @@ export const calculateDateInterval = (timestamp) => {
 };
 
 export const downloadJSON = (jsonObj) => {
+  if (!jsonObj) {
+    return;
+  }
+
   let copy = {
     ...jsonObj,
     label: jsonObj.label + " (copy)",
   };
 
-  return (
-    "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy))
-  );
+  return "data: text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(copy));
 };
 
 export const checkTimeDiff = (start, end) => {
@@ -52,15 +54,9 @@ export const checkTimeDiff = (start, end) => {
   let startSeconds;
   let endSeconds;
 
-  startSeconds =
-    parseInt(startArr[0]) * 60 * 60 +
-    parseInt(startArr[1]) * 60 +
-    parseInt(startArr[2]);
+  startSeconds = parseInt(startArr[0]) * 60 * 60 + parseInt(startArr[1]) * 60 + parseInt(startArr[2]);
 
-  endSeconds =
-    parseInt(endArr[0]) * 60 * 60 +
-    parseInt(endArr[1]) * 60 +
-    parseInt(endArr[2]);
+  endSeconds = parseInt(endArr[0]) * 60 * 60 + parseInt(endArr[1]) * 60 + parseInt(endArr[2]);
 
   if (endSeconds - startSeconds <= 0) {
     return false;
@@ -83,7 +79,6 @@ export const formatToVideoTimeFormat = (seconds) => {
 
 export const convertVideoTimeFormatToSeconds = (string) => {
   const arr = string.split(":");
-  const seconds =
-    parseInt(arr[0]) * 60 * 60 + parseInt(arr[1]) * 60 + parseInt(arr[2]);
+  const seconds = parseInt(arr[0]) * 60 * 60 + parseInt(arr[1]) * 60 + parseInt(arr[2]);
   return seconds;
 };
