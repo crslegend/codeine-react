@@ -27,6 +27,7 @@ import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import InfoIcon from "@material-ui/icons/Info";
 import Service from "../AxiosService";
 import { useHistory, useParams, useLocation } from "react-router";
 import jwt_decode from "jwt-decode";
@@ -60,6 +61,12 @@ const styles = makeStyles((theme) => ({
   },
   pop: {
     padding: theme.spacing(1),
+  },
+  avatar: {
+    backgroundColor: theme.palette.secondary.main,
+    width: theme.spacing(6),
+    height: theme.spacing(6),
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -293,72 +300,58 @@ const NotificationDetail = () => {
         )}
         <div style={{ marginTop: "65px" }}>
           <div style={{ display: "flex" }}>
-            {notification.notification &&
-              notification.notification.ticket &&
-              notification.notification.ticket.ticket_type === "ACCOUNT" && (
-                <Avatar
-                  src={Person}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+            {notification &&
+              notification.notification &&
+              notification.notification.notification_type === "ACCOUNT" && (
+                <Avatar className={classes.avatar}>
+                  <Person />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
-              notification.notification.ticket.ticket_type === "GENERAL" && (
-                <Avatar
-                  src={ContactSupport}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+            {notification &&
+              notification.notification &&
+              notification.notification.notification_type === "GENERAL" && (
+                <Avatar className={classes.avatar}>
+                  <InfoIcon />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
-              notification.notification.ticket.ticket_type === "TECHNICAL" && (
-                <Avatar
-                  src={Computer}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+            {notification &&
+              notification.notification &&
+              notification.notification.notification_type === "TECHNICAL" && (
+                <Avatar className={classes.avatar}>
+                  <Computer />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
-              notification.notification.ticket.ticket_type ===
+            {notification &&
+              notification.notification &&
+              notification.notification.notification_type ===
                 "INDUSTRY_PROJECT" && (
-                <Avatar
-                  src={Work}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+                <Avatar className={classes.avatar}>
+                  <Work />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
-              notification.notification.ticket.ticket_type ===
+            {notification &&
+              notification.notification &&
+              notification.notification.notification_type ===
                 "CODE_REVIEWS" && (
-                <Avatar
-                  src={Work}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+                <Avatar className={classes.avatar}>
+                  <Work />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
+            {notification &&
+              notification.notification &&
               notification.notification.notification_type ===
                 "CONSULTATION" && (
-                <Avatar
-                  src={Timeline}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+                <Avatar className={classes.avatar}>
+                  <Timeline />
+                </Avatar>
               )}
-            {notification.notification &&
-              notification.notification.ticket &&
+            {notification &&
+              notification.notification &&
               notification.notification.notification_type ===
                 "CONSULTATION" && (
-                <Avatar
-                  src={Timeline}
-                  alt=""
-                  style={{ height: "65px", width: "65px" }}
-                ></Avatar>
+                <Avatar className={classes.avatar}>
+                  <Timeline />
+                </Avatar>
               )}
             {/* {notification.notification.notification_type === "PAYMENT" && (
               <Avatar

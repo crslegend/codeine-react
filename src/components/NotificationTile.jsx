@@ -8,6 +8,7 @@ import {
   Avatar,
   IconButton,
 } from "@material-ui/core";
+import InfoIcon from "@material-ui/icons/Info";
 import AccountIcon from "../assets/notifIcon/AccountIcon.png";
 import AnnouncementIcon from "../assets/notifIcon/AnnouncementIcon.png";
 import ConsulatationIcon from "../assets/notifIcon/ConsultationIcon.png";
@@ -48,6 +49,15 @@ const styles = makeStyles((theme) => ({
   },
   pop: {
     padding: theme.spacing(1),
+  },
+  avatar: {
+    backgroundColor: theme.palette.secondary.main,
+    width: "65px",
+    height: "65px",
+  },
+  avatarIcon: {
+    width: "50px",
+    height: "50px",
   },
 }));
 
@@ -238,40 +248,32 @@ const NotificationTile = (props) => {
           style={{ display: "flex", width: `calc(100% - 30px)` }}
           onClick={() => handleNotifClick(notification.id)}
         >
-          {/* {notification.notification.notification_type === "HELPDESK" && (
-            <Avatar
-              src={AccountIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
+          {notification.notification.notification_type === "HELPDESK" && (
+            <Avatar className={classes.avatar}>
+              <InfoIcon className={classes.avatarIcon} />
+            </Avatar>
           )}
           {notification.notification.notification_type === "GENERAL" && (
-            <Avatar
-              src={AnnouncementIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
+            <Avatar className={classes.avatar}>
+              <InfoIcon className={classes.avatarIcon} />
+            </Avatar>
           )}
           {notification.notification.notification_type === "COURSE" && (
-            <Avatar
-              src={AnnouncementIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
+            <Avatar className={classes.avatar}>
+              <AnnouncementIcon className={classes.avatarIcon} />
+            </Avatar>
           )}
           {notification.notification.notification_type === "PAYMENT" && (
-            <Avatar
-              src={PaymentIcon}
-              alt=""
-              style={{ height: "65px", width: "65px" }}
-            ></Avatar>
-          )} */}
+            <Avatar className={classes.avatar}>
+              <PaymentIcon className={classes.avatarIcon} />
+            </Avatar>
+          )}
 
-          <Avatar
+          {/* <Avatar
             src={notification.notification && notification.notification.photo}
             alt=""
             style={{ height: "65px", width: "65px" }}
-          ></Avatar>
+          ></Avatar> */}
 
           <div style={{ marginLeft: "10px" }}>
             {notification.is_read ? (

@@ -665,8 +665,6 @@ const AdminNotificationPage = () => {
                 onClick={() => {
                   setShowNotifDetail(true);
                   setSelectedNotif(notif);
-                  console.log("selectedNotif");
-                  console.log(selectedNotif);
                 }}
               >
                 {notif.title}

@@ -518,18 +518,20 @@ const MemberNavBar = (props) => {
               <Typography className={classes.typography}>Articles</Typography>
             </div>
 
-            <div
-              className={classes.hover}
-              onClick={() => {
-                history.push("/member/industryprojects");
-                // alert("clicked on Industry projects");
-              }}
-            >
-              <Work className={classes.icon} />
-              <Typography className={classes.typography}>
-                Industry Projects
-              </Typography>
-            </div>
+            {user && user.member && user.member.membership_tier === "PRO" && (
+              <div
+                className={classes.hover}
+                onClick={() => {
+                  history.push("/member/industryprojects");
+                  // alert("clicked on Industry projects");
+                }}
+              >
+                <Work className={classes.icon} />
+                <Typography className={classes.typography}>
+                  Industry Projects
+                </Typography>
+              </div>
+            )}
 
             <div
               className={classes.hover}
