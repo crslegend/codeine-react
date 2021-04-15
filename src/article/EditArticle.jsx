@@ -48,7 +48,7 @@ import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -1005,6 +1005,22 @@ const EditArticle = (props) => {
                 <Typography className={classes.typography}>Articles</Typography>
               </div>
 
+              <div
+                className={classes.hover}
+                onClick={() => {
+                  history.push("/codereview");
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faFileCode}
+                  className={classes.icon}
+                  style={{ height: "24px", width: "24px" }}
+                />
+                <Typography className={classes.typography}>
+                  Code Review
+                </Typography>
+              </div>
+
               {user && user.member && user.member.membership_tier === "PRO" && (
                 <div
                   className={classes.hover}
@@ -1066,11 +1082,13 @@ const EditArticle = (props) => {
       )}
       {(userType === "partner" || userType === "admin") && (
         <ListItem style={{ whiteSpace: "nowrap" }}>
+          {notifBell}
           <Button
             variant="contained"
             color="primary"
             style={{
               textTransform: "capitalize",
+              marginLeft: "30px",
             }}
             onClick={() => {
               Service.removeCredentials();

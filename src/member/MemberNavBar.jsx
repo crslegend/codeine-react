@@ -23,7 +23,7 @@ import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import NotifTile from "../components/NotificationTile";
@@ -516,6 +516,22 @@ const MemberNavBar = (props) => {
                 style={{ height: "24px", width: "24px" }}
               />
               <Typography className={classes.typography}>Articles</Typography>
+            </div>
+
+            <div
+              className={classes.hover}
+              onClick={() => {
+                history.push("/codereview");
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faFileCode}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
+              <Typography className={classes.typography}>
+                Code Review
+              </Typography>
             </div>
 
             {user && user.member && user.member.membership_tier === "PRO" && (
