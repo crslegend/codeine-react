@@ -136,6 +136,8 @@ const Column = ({
     description: "",
     video_url: "",
   });
+  const [codeSnippetArr, setCodeSnippetArr] = useState([]);
+
   const [quiz, setQuiz] = useState({
     title: "",
     description: "",
@@ -213,9 +215,12 @@ const Column = ({
         });
         return;
       }
-
+      const videoObj = {
+        ...video,
+        video_code_snippets: codeSnippetArr,
+      };
       Service.client
-        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
+        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, videoObj)
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
@@ -227,6 +232,7 @@ const Column = ({
             description: "",
             video_url: "",
           });
+          setCodeSnippetArr([]);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -723,7 +729,14 @@ const Column = ({
                   </Fragment>
                 );
               } else if (materialType === "video") {
-                return <VideoCreationModal video={video} setVideo={setVideo} />;
+                return (
+                  <VideoCreationModal
+                    video={video}
+                    setVideo={setVideo}
+                    codeSnippetArr={codeSnippetArr}
+                    setCodeSnippetArr={setCodeSnippetArr}
+                  />
+                );
               } else if (materialType === "quiz") {
                 return (
                   <QuizCreationModel
@@ -756,6 +769,7 @@ const Column = ({
                   description: "",
                   video_url: "",
                 });
+                setCodeSnippetArr([]);
               }}
             >
               Cancel
