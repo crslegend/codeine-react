@@ -388,7 +388,7 @@ const QuestionBankDetails = ({
             classes={{ root: classes.exportButton }}
             startIcon={<Launch />}
             href={downloadJSON(selectedQuestionBank)}
-            download={`question-bank-${selectedQuestionBank.id}.json`}
+            download={`question-bank-${selectedQuestionBank && selectedQuestionBank.id}.json`}
           >
             Export Question Bank
           </Button>

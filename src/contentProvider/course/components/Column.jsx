@@ -2,13 +2,7 @@ import React, { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
-import {
-  Assignment,
-  Delete,
-  DragIndicator,
-  InsertDriveFile,
-  Theaters,
-} from "@material-ui/icons";
+import { Assignment, Delete, DragIndicator, InsertDriveFile, Theaters } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
 import {
   Button,
@@ -89,15 +83,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Column = ({
-  column,
-  tasks,
-  index,
-  courseId,
-  getCourse,
-  state,
-  setQuestionBankModalOpen,
-}) => {
+const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionBankModalOpen }) => {
   const classes = useStyles();
   // console.log(tasks);
 
@@ -136,6 +122,8 @@ const Column = ({
     description: "",
     video_url: "",
   });
+  const [codeSnippetArr, setCodeSnippetArr] = useState([]);
+
   const [quiz, setQuiz] = useState({
     title: "",
     description: "",
@@ -175,11 +163,7 @@ const Column = ({
   const handleCreateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        video.title === "" ||
-        video.description === "" ||
-        video.video_url === ""
-      ) {
+      if (video.title === "" || video.description === "" || video.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -213,9 +197,12 @@ const Column = ({
         });
         return;
       }
-
+      const videoObj = {
+        ...video,
+        video_code_snippets: codeSnippetArr,
+      };
       Service.client
-        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
+        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, videoObj)
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
@@ -227,15 +214,12 @@ const Column = ({
             description: "",
             video_url: "",
           });
+          setCodeSnippetArr([]);
           getCourse();
         })
         .catch((err) => console.log(err));
     } else if (materialType === "file") {
-      if (
-        file.title === "" ||
-        file.description === "" ||
-        (file.google_drive_url === "" && !zipFile)
-      ) {
+      if (file.title === "" || file.description === "" || (file.google_drive_url === "" && !zipFile)) {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all required fields!",
@@ -301,11 +285,7 @@ const Column = ({
     } else {
       // add quiz as course material
       // console.log(questionGroups)
-      if (
-        quiz.title === "" ||
-        quiz.description === "" ||
-        quiz.passing_marks === ""
-      ) {
+      if (quiz.title === "" || quiz.description === "" || quiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Missing fields!",
@@ -328,9 +308,7 @@ const Column = ({
           axios
             .all(
               questionGroups.map((qg) => {
-                return Service.client
-                  .put(`/quiz/${quizId}/question-groups`, qg)
-                  .then((res) => console.log(res));
+                return Service.client.put(`/quiz/${quizId}/question-groups`, qg).then((res) => console.log(res));
               })
             )
             .then((res) => {
@@ -361,11 +339,7 @@ const Column = ({
       <Draggable draggableId={column.id} index={index}>
         {(provided) => {
           return (
-            <div
-              className={classes.container}
-              {...provided.draggableProps}
-              ref={provided.innerRef}
-            >
+            <div className={classes.container} {...provided.draggableProps} ref={provided.innerRef}>
               <div className={classes.columnHeader}>
                 <div {...provided.dragHandleProps} className={classes.handle}>
                   <DragIndicator />
@@ -444,9 +418,7 @@ const Column = ({
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       style={{
-                        backgroundColor: snapshot.isDraggingOver
-                          ? "#e0e0e0"
-                          : "#fff",
+                        backgroundColor: snapshot.isDraggingOver ? "#e0e0e0" : "#fff",
                       }}
                     >
                       {tasks &&
@@ -457,6 +429,7 @@ const Column = ({
                             index={index}
                             getCourse={getCourse}
                             courseId={courseId}
+                            setQuestionBankModalOpen={setQuestionBankModalOpen}
                           />
                         ))}
                       {provided.placeholder}
@@ -551,12 +524,7 @@ const Column = ({
             >
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.dialogButtons}
-              type="submit"
-            >
+            <Button variant="contained" color="primary" className={classes.dialogButtons} type="submit">
               Save
             </Button>
           </DialogActions>
@@ -643,9 +611,7 @@ const Column = ({
                       style={{ marginBottom: "15px" }}
                     />
                     <label htmlFor="description">
-                      <Typography variant="body2">
-                        Description of File
-                      </Typography>
+                      <Typography variant="body2">Description of File</Typography>
                     </label>
                     <TextField
                       id="description"
@@ -694,10 +660,7 @@ const Column = ({
                         },
                       }}
                     />
-                    <Typography
-                      variant="h6"
-                      style={{ textAlign: "center", marginTop: "10px" }}
-                    >
+                    <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                       OR
                     </Typography>
                     <label htmlFor="url">
@@ -723,7 +686,14 @@ const Column = ({
                   </Fragment>
                 );
               } else if (materialType === "video") {
-                return <VideoCreationModal video={video} setVideo={setVideo} />;
+                return (
+                  <VideoCreationModal
+                    video={video}
+                    setVideo={setVideo}
+                    codeSnippetArr={codeSnippetArr}
+                    setCodeSnippetArr={setCodeSnippetArr}
+                  />
+                );
               } else if (materialType === "quiz") {
                 return (
                   <QuizCreationModel
@@ -756,6 +726,7 @@ const Column = ({
                   description: "",
                   video_url: "",
                 });
+                setCodeSnippetArr([]);
               }}
             >
               Cancel
