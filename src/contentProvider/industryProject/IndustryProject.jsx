@@ -71,6 +71,16 @@ const useStyles = makeStyles((theme) => ({
       size: "small",
     },
   },
+  dateTimeField: {
+    marginTop: 5,
+    width: "45%",
+  },
+  timeContainer: {
+    display: "flex",
+    alignItems: "baseline",
+    textAlign: "center",
+    justifyContent: "space-between",
+  },
 }));
 
 const IndustryProject = () => {
@@ -109,6 +119,7 @@ const IndustryProject = () => {
   });
 
   const [open, setOpen] = useState(false);
+  const [openOrgDialog, setOpenOrgDialog] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [sortMethod, setSortMethod] = useState("");
   const itemsPerPage = 5;
@@ -148,6 +159,9 @@ const IndustryProject = () => {
     Service.client
       .get(`/industry-projects`, { params: { ...queryParams } })
       .then((res) => {
+        if (sort === undefined || sort === "") {
+          res.data.sort((a, b) => b.date_listed.localeCompare(a.date_listed));
+        }
         setAllIndustryProjects(res.data);
         setNumPages(Math.ceil(res.data.length / itemsPerPage));
       })
@@ -225,8 +239,6 @@ const IndustryProject = () => {
       }
     }
 
-    console.log(data);
-
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
@@ -234,8 +246,6 @@ const IndustryProject = () => {
     formData.append("end_date", data.end_date);
     formData.append("application_deadline", data.application_deadline);
     formData.append("categories", JSON.stringify(data.categories));
-
-    console.log(formData);
 
     Service.client
       .post(`/industry-projects`, formData)
@@ -251,13 +261,7 @@ const IndustryProject = () => {
           },
           autoHideDuration: 3000,
         });
-      })
-      .then((res) => {
-        Service.client
-          .get(`/industry-projects`, { params: { ...queryParams } })
-          .then((res) => {
-            setAllIndustryProjects(res.data);
-          });
+        getAllIndustryProjects();
       })
       .catch((err) => console.log(err));
   };
@@ -267,7 +271,14 @@ const IndustryProject = () => {
   };
 
   const handleOpen = () => {
-    setOpen(true);
+    Service.client.get(`/auth/members/${decoded.user_id}`).then((res) => {
+      // to check whether partner creating is part of an organisation
+      if (res.data.partner.organization === null) {
+        setOpenOrgDialog(true);
+      } else {
+        setOpen(true);
+      }
+    });
   };
 
   return (
@@ -345,6 +356,29 @@ const IndustryProject = () => {
         )}
       </div>
       <Dialog
+        open={openOrgDialog}
+        onClose={() => setOpenOrgDialog(false)}
+        PaperProps={{
+          style: {
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>
+          Industry projects can only be created by organisations
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOpenOrgDialog(false);
+            }}
+          >
+            Noted
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
@@ -394,37 +428,39 @@ const IndustryProject = () => {
             }
             required
           />
-          <KeyboardDatePicker
-            className={classes.dateTimeField}
-            minDate={currentDate}
-            variant="inline"
-            label="Start Date"
-            name="start_date"
-            value={industryProject.start_date}
-            onChange={(e) =>
-              setIndustryProject({
-                ...industryProject,
-                start_date: e,
-              })
-            }
-            format="dd/MM/yyyy"
-          />
-          to
-          <KeyboardDatePicker
-            className={classes.dateTimeField}
-            minDate={afterDate}
-            variant="inline"
-            label="End Date"
-            name="end_date"
-            value={industryProject.end_date}
-            onChange={(e) =>
-              setIndustryProject({
-                ...industryProject,
-                end_date: e,
-              })
-            }
-            format="dd/MM/yyyy"
-          />
+          <div className={classes.timeContainer}>
+            <KeyboardDatePicker
+              className={classes.dateTimeField}
+              minDate={currentDate}
+              variant="inline"
+              label="Start Date"
+              name="start_date"
+              value={industryProject.start_date}
+              onChange={(e) =>
+                setIndustryProject({
+                  ...industryProject,
+                  start_date: e,
+                })
+              }
+              format="dd/MM/yyyy"
+            />
+            to
+            <KeyboardDatePicker
+              className={classes.dateTimeField}
+              minDate={afterDate}
+              variant="inline"
+              label="End Date"
+              name="end_date"
+              value={industryProject.end_date}
+              onChange={(e) =>
+                setIndustryProject({
+                  ...industryProject,
+                  end_date: e,
+                })
+              }
+              format="dd/MM/yyyy"
+            />
+          </div>
           <KeyboardDatePicker
             className={classes.dateTimeField}
             minDate={beforeDate}
@@ -440,10 +476,10 @@ const IndustryProject = () => {
             }
             format="dd/MM/yyyy"
           />
-          <Typography variant="body2" style={{ paddingBottom: "10px" }}>
+          <Typography variant="body2" style={{ marginTop: 10 }}>
             Category (Choost at least 1)
           </Typography>
-          <div>
+          <div style={{ marginTop: 5 }}>
             <ToggleButton
               value=""
               size="small"

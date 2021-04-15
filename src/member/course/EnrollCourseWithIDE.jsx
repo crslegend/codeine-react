@@ -25,6 +25,11 @@ import ReactPlayer from "react-player";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import TakeQuiz from "./components/TakeQuiz";
 
+import hljs from "highlight.js";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+
 const styles = makeStyles((theme) => ({
   courseSection: {
     minHeight: "100vh",
@@ -53,6 +58,12 @@ const styles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
   },
+  codeBody: {
+    display: "flex",
+    border: "2px solid #676767",
+    borderRadius: "5px",
+    marginTop: "15px",
+  },
 }));
 
 const EnrollCourseWithIDE = ({
@@ -76,6 +87,11 @@ const EnrollCourseWithIDE = ({
   course,
   handleChosenCourseMaterial,
   handleCheckMaterial,
+  setSbOpen,
+  setSnackbar,
+  snackbar,
+  displayCodeSnippetForVideo,
+  codeSnippet,
 }) => {
   const classes = styles();
   const ref = React.createRef();
@@ -226,7 +242,7 @@ const EnrollCourseWithIDE = ({
                   );
                 } else if (chosenCourseMaterial.material_type === "VIDEO") {
                   return (
-                    <div>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                       <ReactPlayer
                         ref={ref}
                         url={
@@ -236,11 +252,57 @@ const EnrollCourseWithIDE = ({
                         width="100%"
                         height="500px"
                         onDuration={handleDuration}
-                        onProgress={(state) =>
-                          handleVideoProgress(state, chosenCourseMaterial.id)
-                        }
+                        onProgress={(state) => {
+                          if (
+                            chosenCourseMaterial.video.video_code_snippets
+                              .length > 0
+                          ) {
+                            displayCodeSnippetForVideo(state);
+                          }
+                          handleVideoProgress(state, chosenCourseMaterial.id);
+                        }}
                         controls
                       />
+                      {codeSnippet && (
+                        <div className={classes.codeBody}>
+                          <div style={{ width: "95%", padding: "24px" }}>
+                            <pre style={{ margin: 0 }}>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: hljs.highlightAuto(codeSnippet).value,
+                                }}
+                              />
+                            </pre>
+                          </div>
+                          <div
+                            style={{
+                              width: "5%",
+                              marginRight: "5px",
+                              paddingTop: "8px",
+                            }}
+                          >
+                            <CopyToClipboard
+                              text={codeSnippet}
+                              onCopy={() => {
+                                setSbOpen(true);
+                                setSnackbar({
+                                  ...snackbar,
+                                  message: "Code Snippet copied!",
+                                  severity: "info",
+                                });
+                                return true;
+                              }}
+                            >
+                              <IconButton size="small">
+                                <FontAwesomeIcon
+                                  icon={faClipboard}
+                                  style={{ height: "20px", width: "20px" }}
+                                />
+                              </IconButton>
+                            </CopyToClipboard>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 } else if (

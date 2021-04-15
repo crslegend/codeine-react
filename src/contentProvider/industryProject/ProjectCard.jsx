@@ -4,14 +4,14 @@ import {
   Typography,
   Card,
   Grid,
-  CardMedia,
+  Avatar,
   CardContent,
   CardActionArea,
   Chip,
 } from "@material-ui/core";
 import green from "@material-ui/core/colors/green";
 import Label from "../../member/landing/components/Label";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -24,6 +24,9 @@ const styles = makeStyles((theme) => ({
   cardmedia: {
     height: "100%",
     width: "7vw",
+  },
+  orgavatar: {
+    objectFit: "contain",
   },
 }));
 
@@ -57,11 +60,14 @@ const ProjectCard = (props) => {
       >
         <Grid container>
           <Grid item xs={1}>
-            <CardMedia
+            <Avatar
+              alt="Pic"
+              src={project.partner.partner.organization.organization_photo}
+              classes={{
+                img: classes.orgavatar,
+              }}
               className={classes.cardmedia}
-              image={project.partner.partner.organization.organization_photo}
-              title="Organisation Photo"
-            ></CardMedia>
+            />
           </Grid>
           <Grid item xs={11}>
             <CardContent>
