@@ -41,7 +41,7 @@ import { Rating } from "@material-ui/lab";
 import jwt_decode from "jwt-decode";
 import CommentsSection from "./components/CommentsSection";
 import EnrollCourseWithIDE from "./EnrollCourseWithIDE";
-import { formatToVideoTimeFormat } from "../../utils";
+import { convertVideoTimeFormatToSeconds } from "../../utils";
 import hljs from "highlight.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -184,6 +184,7 @@ const EnrollCourse = () => {
   const ref = React.createRef();
 
   const [videoDuration, setVideoDuration] = useState();
+  const [timeFrame, setTimeFrame] = useState({ start: "", end: "" });
   const [codeSnippetArr, setCodeSnippetArr] = useState();
   const [codeSnippet, setCodeSnippet] = useState();
 
@@ -489,7 +490,7 @@ const EnrollCourse = () => {
 
   const handleChosenCourseMaterial = (material) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    console.log(material);
+    // console.log(material);
     if (
       chosenCourseMaterial &&
       chosenCourseMaterial.material_type === "FINAL"
@@ -522,16 +523,41 @@ const EnrollCourse = () => {
   };
 
   const displayCodeSnippetForVideo = (state) => {
-    console.log(chosenCourseMaterial);
+    // console.log(chosenCourseMaterial);
     if (codeSnippet) {
+      if (
+        state.played * videoDuration > timeFrame.end ||
+        state.played * videoDuration < timeFrame.start
+      ) {
+        setTimeFrame({ start: "", end: "" });
+        setCodeSnippet();
+      }
       return;
     }
-    console.log(formatToVideoTimeFormat(state.played * videoDuration));
-    if (
-      formatToVideoTimeFormat(state.played * videoDuration) ===
-      codeSnippetArr[0].start_time
-    ) {
-      setCodeSnippet(codeSnippetArr[0].code);
+    // console.log(formatToVideoTimeFormat(state.played * videoDuration));
+    for (let i = 0; i < codeSnippetArr.length; i++) {
+      // console.log(i);
+      if (
+        state.played * videoDuration <=
+          convertVideoTimeFormatToSeconds(codeSnippetArr[i].end_time) &&
+        state.played * videoDuration >=
+          convertVideoTimeFormatToSeconds(codeSnippetArr[i].start_time)
+      ) {
+        setTimeFrame({
+          start: convertVideoTimeFormatToSeconds(codeSnippetArr[i].start_time),
+          end: convertVideoTimeFormatToSeconds(codeSnippetArr[i].end_time),
+        });
+        setCodeSnippet(codeSnippetArr[i].code);
+        setSbOpen(true);
+        setSnackbar({
+          ...snackbar,
+          message:
+            "There is code snippet available below the video player for you to copy.",
+          severity: "info",
+          autoHideDuration: 5000,
+        });
+        break;
+      }
     }
   };
 
@@ -624,6 +650,11 @@ const EnrollCourse = () => {
             course={course}
             handleChosenCourseMaterial={handleChosenCourseMaterial}
             handleCheckMaterial={handleCheckMaterial}
+            setSbOpen={setSbOpen}
+            setSnackbar={setSnackbar}
+            snackbar={snackbar}
+            displayCodeSnippetForVideo={displayCodeSnippetForVideo}
+            codeSnippet={codeSnippet}
           />
         </Fragment>
       ) : (

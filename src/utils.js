@@ -80,3 +80,10 @@ export const formatToVideoTimeFormat = (seconds) => {
 
   return `${pad(hh)}:${pad(mm)}:${ss}`;
 };
+
+export const convertVideoTimeFormatToSeconds = (string) => {
+  const arr = string.split(":");
+  const seconds =
+    parseInt(arr[0]) * 60 * 60 + parseInt(arr[1]) * 60 + parseInt(arr[2]);
+  return seconds;
+};
