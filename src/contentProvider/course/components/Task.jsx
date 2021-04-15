@@ -13,13 +13,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import {
-  Assignment,
-  Delete,
-  InsertDriveFile,
-  Theaters,
-  DragHandle,
-} from "@material-ui/icons";
+import { Assignment, Delete, InsertDriveFile, Theaters, DragHandle } from "@material-ui/icons";
 import validator from "validator";
 import Toast from "../../../components/Toast";
 
@@ -28,6 +22,8 @@ import { DropzoneAreaBase } from "material-ui-dropzone";
 // import SubTask from "./SubTask";
 import QuestionDialog from "./QuestionDialog";
 import QuizCreationModal from "./QuizCreationModal";
+import VideoCreationModal from "./VideoCreationModal";
+import { checkTimeDiff } from "../../../utils";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -82,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Task = ({ task, index, getCourse, subtasks, courseId }) => {
+const Task = ({ task, index, getCourse, subtasks, courseId, setQuestionBankModalOpen }) => {
   const classes = useStyles();
   const theme = useTheme();
   // console.log(task);
@@ -111,12 +107,12 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   // const [fileURLCheckbox, setFileURLCheckbox] = useState(false);
 
   const [editVideo, setEditVideo] = useState();
+  const [codeSnippetArr, setCodeSnippetArr] = useState([]);
+
   const [editQuiz, setEditQuiz] = useState();
   const [editQuizQuestionGroups, setEditQuizQuestionGroups] = useState([]);
 
-  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(
-    false
-  );
+  const [deleteCourseMaterialDialog, setDeleteCourseMaterialDialog] = useState(false);
 
   const [addQuestionDialog, setAddQuestionDialog] = useState(false);
 
@@ -130,11 +126,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
   const handleUpdateCourseMaterial = () => {
     if (materialType === "video") {
       // check for empty fields
-      if (
-        editVideo.title === "" ||
-        editVideo.description === "" ||
-        editVideo.video_url === ""
-      ) {
+      if (editVideo.title === "" || editVideo.description === "" || editVideo.video_url === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Please fill up all fields!",
@@ -169,16 +161,88 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         return;
       }
 
+      if (codeSnippetArr.length > 0) {
+        const pattern1 = /^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+        for (let i = 0; i < codeSnippetArr.length; i++) {
+          const startArr = codeSnippetArr[i].start_time.split(":");
+          const endArr = codeSnippetArr[i].end_time.split(":");
+          let invalid = false;
+          if (startArr.length < 3) {
+            invalid = true;
+          } else if (startArr.length === 3) {
+            if (!pattern1.test(codeSnippetArr[i].start_time)) {
+              invalid = true;
+            }
+          }
+
+          if (invalid) {
+            setSbOpen(true);
+            setSnackbar({
+              message: "Please enter a valid format for start time",
+              severity: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+            return;
+          }
+
+          if (endArr.length < 3) {
+            invalid = true;
+          } else if (endArr.length === 3) {
+            if (!pattern1.test(codeSnippetArr[i].end_time)) {
+              invalid = true;
+            }
+          }
+
+          if (invalid) {
+            setSbOpen(true);
+            setSnackbar({
+              message: "Please enter a valid format for end time",
+              severity: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+            return;
+          }
+
+          if (!checkTimeDiff(codeSnippetArr[i].start_time, codeSnippetArr[i].end_time)) {
+            setSbOpen(true);
+            setSnackbar({
+              message: "Start time cannot be equal to or later than end time",
+              severity: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+              autoHideDuration: 3000,
+            });
+            return;
+          }
+        }
+      }
+
+      const videoObj = {
+        ...editVideo,
+        video_code_snippets: codeSnippetArr,
+      };
       Service.client
-        .put(`/materials/${courseMaterialId}/videos`, editVideo)
+        .put(`/materials/${courseMaterialId}/videos`, videoObj)
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setEditVideo();
-          setEditMode(false);
-          setCourseMaterialId();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setEditVideo();
+            setEditMode(false);
+            setCourseMaterialId();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     } else if (materialType === "file") {
@@ -237,20 +301,18 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setCourseMaterialId();
-          setEditMode(false);
-          setEditFile();
-          setZipFile();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setCourseMaterialId();
+            setEditMode(false);
+            setEditFile();
+            setZipFile();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     } else {
-      if (
-        editQuiz.title === "" ||
-        editQuiz.description === "" ||
-        editQuiz.passing_marks === ""
-      ) {
+      if (editQuiz.title === "" || editQuiz.description === "" || editQuiz.passing_marks === "") {
         setSbOpen(true);
         setSnackbar({
           message: "Check your fields",
@@ -269,11 +331,13 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
-          setMaterialType();
-          setCourseMaterialId();
-          setEditMode(false);
-          setEditQuiz();
-          getCourse();
+          setTimeout(() => {
+            setMaterialType();
+            setCourseMaterialId();
+            setEditMode(false);
+            setEditQuiz();
+            getCourse();
+          }, 300);
         })
         .catch((err) => console.log(err));
     }
@@ -312,11 +376,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         {(provided, snapshot) => {
           return (
             <div
-              className={
-                snapshot.isDragging
-                  ? classes.containerDragging
-                  : classes.container
-              }
+              className={snapshot.isDragging ? classes.containerDragging : classes.container}
               {...provided.draggableProps}
               ref={provided.innerRef}
             >
@@ -351,6 +411,8 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                           description: task.description,
                           video_url: task.video.video_url,
                         });
+                        const arr = [...task.video.video_code_snippets];
+                        setCodeSnippetArr(arr);
                         setMaterialType("video");
                         setCourseMaterialId(task.id);
                       } else if (task.material_type === "FILE") {
@@ -480,8 +542,11 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         open={courseMaterialDialog}
         onClose={() => {
           setCourseMaterialDialog(false);
+        }}
+        onExited={() => {
           setEditFile();
           setEditVideo();
+          setCodeSnippetArr([]);
           setEditQuiz();
           setEditMode(false);
           setCourseMaterialId();
@@ -495,16 +560,12 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
         }}
       >
         <DialogTitle>
-          Course Material{" "}
-          <span style={{ textTransform: "capitalize" }}>({materialType})</span>
+          Course Material <span style={{ textTransform: "capitalize" }}>({materialType})</span>
           <div style={{ float: "right" }}>
             {/* <IconButton size="small" onClick={() => setEditMode(true)}>
               <Edit />
             </IconButton> */}
-            <IconButton
-              size="small"
-              onClick={() => setDeleteCourseMaterialDialog(true)}
-            >
+            <IconButton size="small" onClick={() => setDeleteCourseMaterialDialog(true)}>
               <Delete />
             </IconButton>
           </div>
@@ -573,11 +634,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                       <div style={{ display: "flex" }}>
                         <Typography variant="body2" style={{ margin: "5px 0" }}>
                           <LinkMui
-                            href={
-                              editFile.zip_file
-                                ? editFile.zip_file.replace("#", "")
-                                : "#"
-                            }
+                            href={editFile.zip_file ? editFile.zip_file.replace("#", "") : "#"}
                             rel="noopener noreferrer"
                             target="_blank"
                           >
@@ -609,10 +666,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     />
                   </div>
 
-                  <Typography
-                    variant="h6"
-                    style={{ textAlign: "center", marginTop: "10px" }}
-                  >
+                  <Typography variant="h6" style={{ textAlign: "center", marginTop: "10px" }}>
                     OR
                   </Typography>
                   <label htmlFor="url">
@@ -623,11 +677,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     variant="outlined"
                     fullWidth
                     margin="dense"
-                    value={
-                      editFile && editFile.google_drive_url !== null
-                        ? editFile.google_drive_url
-                        : ""
-                    }
+                    value={editFile && editFile.google_drive_url !== null ? editFile.google_drive_url : ""}
                     onChange={(e) => {
                       setEditFile({
                         ...editFile,
@@ -643,73 +693,12 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
               );
             } else if (materialType === "video") {
               return (
-                <Fragment>
-                  <label htmlFor="title">
-                    <Typography variant="body2">Title of Video</Typography>
-                  </label>
-                  <TextField
-                    id="title"
-                    variant="outlined"
-                    fullWidth
-                    autoFocus
-                    margin="dense"
-                    value={editVideo && editVideo.title}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        title: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="Enter Title"
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="description">
-                    <Typography variant="body2">
-                      Description of Video
-                    </Typography>
-                  </label>
-                  <TextField
-                    id="description"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editVideo && editVideo.description}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        description: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="Enter Description"
-                    multiline
-                    rows={6}
-                    style={{ marginBottom: "15px" }}
-                  />
-                  <label htmlFor="url">
-                    <Typography variant="body2">Video URL</Typography>
-                  </label>
-                  <TextField
-                    id="url"
-                    variant="outlined"
-                    fullWidth
-                    margin="dense"
-                    value={editVideo && editVideo.video_url}
-                    onChange={(e) => {
-                      setEditVideo({
-                        ...editVideo,
-                        video_url: e.target.value,
-                      });
-                    }}
-                    inputProps={{ style: { fontSize: "14px" } }}
-                    required
-                    placeholder="e.g. https://www.youtube.com"
-                    style={{ marginBottom: "15px" }}
-                  />
-                </Fragment>
+                <VideoCreationModal
+                  video={editVideo}
+                  setVideo={setEditVideo}
+                  codeSnippetArr={codeSnippetArr}
+                  setCodeSnippetArr={setCodeSnippetArr}
+                />
               );
             } else if (materialType === "quiz") {
               return (
@@ -728,6 +717,7 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
                     setCourseMaterialId();
                     setZipFile();
                   }}
+                  setQuestionBankModalOpen={setQuestionBankModalOpen}
                 />
               );
             }
@@ -739,12 +729,6 @@ const Task = ({ task, index, getCourse, subtasks, courseId }) => {
             className={classes.dialogButtons}
             onClick={() => {
               setCourseMaterialDialog(false);
-              setEditFile();
-              setEditVideo();
-              setEditQuiz();
-              setEditMode(false);
-              setCourseMaterialId();
-              setZipFile();
             }}
           >
             Cancel

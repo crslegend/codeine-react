@@ -18,6 +18,8 @@ import {
   Popover,
   Badge,
   Divider,
+  Tooltip,
+  IconButton,
 } from "@material-ui/core";
 import Sidebar from "../components/Sidebar";
 import { AttachMoney, Dashboard, NoteAdd, Timeline } from "@material-ui/icons";
@@ -63,6 +65,7 @@ import IndustryProjectDetails from "./industryProject/IndustryProjectDetails";
 import CreateNewTicketPage from "./helpdesk/CreateNewTicketPage";
 import ViewSubmittedTicketsPage from "./helpdesk/ViewSubmittedTicketsPage";
 import Notification from "./notification/NotificationManagement";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import ViewTicketPage from "./helpdesk/ViewTicketPage";
 
 const useStyles = makeStyles((theme) => ({
@@ -202,6 +205,15 @@ const ContentProviderHome = () => {
   const notifOpen = Boolean(anchorE2);
   const notifid = notifOpen ? "simple-popover" : undefined;
 
+  const markAllAsRead = () => {
+    Service.client
+      .patch(`/notification-objects/mark/all-read`)
+      .then((res) => {
+        setNotificationList(res.data);
+      })
+      .catch();
+  };
+
   const notifBell = (
     <div>
       <Badge
@@ -234,17 +246,31 @@ const ContentProviderHome = () => {
         style={{ maxHeight: "70%" }}
       >
         <div className={classes.notifpopover}>
-          <Typography
-            style={{
-              fontWeight: "800",
-              fontSize: "25px",
-              marginLeft: "10px",
-              marginBottom: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Notifications
-          </Typography>
+          <div style={{ display: "flex" }}>
+            <Typography
+              style={{
+                fontWeight: "800",
+                fontSize: "25px",
+                marginLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
+              Notifications
+            </Typography>
+
+            <div style={{ marginLeft: "auto" }}>
+              <Tooltip title="Mark all as read">
+                <IconButton
+                  onClick={() => {
+                    markAllAsRead();
+                  }}
+                >
+                  <DoneAllIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
             return (
@@ -252,7 +278,7 @@ const ContentProviderHome = () => {
                 key={index}
                 notification={notification}
                 getUserNotifications={getUserNotifications}
-                userType="member"
+                userType="partner"
               />
             );
           })}
@@ -425,16 +451,18 @@ const ContentProviderHome = () => {
         <NotificationsNoneIcon className={classes.listIcon} />
         <Typography variant="body1">Notification</Typography>
       </ListItem>
-      <ListItem
-        component={NavLink}
-        to="/partner/home/industryproject"
-        activeClassName={classes.activeLink}
-        className={classes.listItem}
-        button
-      >
-        <WorkOutlineIcon className={classes.listIcon} />
-        <Typography variant="body1">Industry Projects</Typography>
-      </ListItem>
+      {user && user.partner && user.partner.organization && (
+        <ListItem
+          component={NavLink}
+          to="/partner/home/industryproject"
+          activeClassName={classes.activeLink}
+          className={classes.listItem}
+          button
+        >
+          <WorkOutlineIcon className={classes.listIcon} />
+          <Typography variant="body1">Industry Projects</Typography>
+        </ListItem>
+      )}
       <ListItem
         component={NavLink}
         to="/partner/home/helpdesk"

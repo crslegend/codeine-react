@@ -18,10 +18,11 @@ import {
 import validator from "validator";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Toast from "../../../components/Toast";
-import axios from "axios"
+import axios from "axios";
 
 import Service from "../../../AxiosService";
 import QuizCreationModel from "./QuizCreationModal";
+import VideoCreationModal from "./VideoCreationModal";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -121,6 +122,8 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
     description: "",
     video_url: "",
   });
+  const [codeSnippetArr, setCodeSnippetArr] = useState([]);
+
   const [quiz, setQuiz] = useState({
     title: "",
     description: "",
@@ -194,9 +197,12 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
         });
         return;
       }
-
+      const videoObj = {
+        ...video,
+        video_code_snippets: codeSnippetArr,
+      };
       Service.client
-        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, video)
+        .post(`/chapters/${chapterIdForCouseMaterial}/videos`, videoObj)
         .then((res) => {
           // console.log(res);
           setCourseMaterialDialog(false);
@@ -208,6 +214,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
             description: "",
             video_url: "",
           });
+          setCodeSnippetArr([]);
           getCourse();
         })
         .catch((err) => console.log(err));
@@ -298,25 +305,27 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
           console.log(res);
           let quizId = res.data.quiz.id;
 
-          axios.all(questionGroups.map((qg) => {
-            return Service.client.put(`/quiz/${quizId}/question-groups`, qg).then((res) => console.log(res));
-          })).then(res => {
-  
-            setCourseMaterialDialog(false);
-            setMaterialType();
-            setChapterIdForCourseMaterial();
-            setEditMode(false);
-            setQuiz({
-              title: "",
-              description: "",
-              passing_marks: 0,
-              is_randomized: false,
-              instructions: "",
+          axios
+            .all(
+              questionGroups.map((qg) => {
+                return Service.client.put(`/quiz/${quizId}/question-groups`, qg).then((res) => console.log(res));
+              })
+            )
+            .then((res) => {
+              setCourseMaterialDialog(false);
+              setMaterialType();
+              setChapterIdForCourseMaterial();
+              setEditMode(false);
+              setQuiz({
+                title: "",
+                description: "",
+                passing_marks: 0,
+                is_randomized: false,
+                instructions: "",
+              });
+              setQuestionGroups([]);
+              getCourse();
             });
-            setQuestionGroups([]);
-            getCourse();
-
-          })
         })
         .catch((err) => console.log(err));
     }
@@ -414,7 +423,14 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                     >
                       {tasks &&
                         tasks.map((task, index) => (
-                          <Task key={task.id} task={task} index={index} getCourse={getCourse} courseId={courseId} />
+                          <Task
+                            key={task.id}
+                            task={task}
+                            index={index}
+                            getCourse={getCourse}
+                            courseId={courseId}
+                            setQuestionBankModalOpen={setQuestionBankModalOpen}
+                          />
                         ))}
                       {provided.placeholder}
                     </div>
@@ -671,68 +687,12 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                 );
               } else if (materialType === "video") {
                 return (
-                  <Fragment>
-                    <label htmlFor="title">
-                      <Typography variant="body2">Title of Video</Typography>
-                    </label>
-                    <TextField
-                      id="title"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.title}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          title: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="Enter Title"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="description">
-                      <Typography variant="body2">Description of Video</Typography>
-                    </label>
-                    <TextField
-                      id="description"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.description}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          description: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="Enter Description"
-                      style={{ marginBottom: "15px" }}
-                    />
-                    <label htmlFor="url">
-                      <Typography variant="body2">Video URL</Typography>
-                    </label>
-                    <TextField
-                      id="url"
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      value={video && video.video_url}
-                      onChange={(e) => {
-                        setVideo({
-                          ...video,
-                          video_url: e.target.value,
-                        });
-                      }}
-                      inputProps={{ style: { fontSize: "14px" } }}
-                      required
-                      placeholder="https://www.google.com"
-                      style={{ marginBottom: "15px" }}
-                    />
-                  </Fragment>
+                  <VideoCreationModal
+                    video={video}
+                    setVideo={setVideo}
+                    codeSnippetArr={codeSnippetArr}
+                    setCodeSnippetArr={setCodeSnippetArr}
+                  />
                 );
               } else if (materialType === "quiz") {
                 return (
@@ -766,6 +726,7 @@ const Column = ({ column, tasks, index, courseId, getCourse, state, setQuestionB
                   description: "",
                   video_url: "",
                 });
+                setCodeSnippetArr([]);
               }}
             >
               Cancel
