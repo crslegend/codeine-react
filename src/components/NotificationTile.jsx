@@ -12,6 +12,8 @@ import InfoIcon from "@material-ui/icons/Info";
 import AccountIcon from "../assets/notifIcon/AccountIcon.png";
 import AnnouncementIcon from "../assets/notifIcon/AnnouncementIcon.png";
 import ConsulatationIcon from "../assets/notifIcon/ConsultationIcon.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCode } from "@fortawesome/free-solid-svg-icons";
 import PaymentIcon from "../assets/notifIcon/PaymentIcon.svg";
 import Service from "../AxiosService";
 import { useHistory } from "react-router";
@@ -268,6 +270,16 @@ const NotificationTile = (props) => {
               <PaymentIcon className={classes.avatarIcon} />
             </Avatar>
           )}
+          {/* {notification.notification.notification_type === "CODEREVIEW" && (
+            <Avatar className={classes.avatar}>
+              <FontAwesomeIcon
+                icon={faFileCode}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
+              <PaymentIcon className={classes.avatarIcon} />
+            </Avatar>
+          )} */}
 
           {/* <Avatar
             src={notification.notification && notification.notification.photo}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
   Avatar,
@@ -13,9 +13,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  InputLabel,
-  Select,
-  MenuItem,
   Grid,
 } from "@material-ui/core";
 import Toast from "../../components/Toast.js";
@@ -25,8 +22,6 @@ import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import NotifDetail from "./NotificationDetail";
-
-import EditIcon from "../../assets/EditIcon.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -234,6 +229,7 @@ const AdminNotificationPage = () => {
           userList: "",
           photo: "",
         });
+        setNotificationPhoto();
         getNotificationSent();
       })
       .catch();
@@ -529,22 +525,6 @@ const AdminNotificationPage = () => {
                 })
               }
             />
-            {/* <div style={{ marginTop: "20px" }}>
-              <InputLabel>Notification Type</InputLabel>
-              <Select
-                className={classes.formControl}
-                value={notificationDetails.notification_type}
-                onChange={(event) =>
-                  setNotificationDetails({
-                    ...notificationDetails,
-                    notification_type: event.target.value,
-                  })
-                }
-              >
-                <MenuItem value={"ANNOUNCEMENT"}>Announcement</MenuItem>
-                <MenuItem value={"REMINDER"}>Reminder</MenuItem>
-              </Select>
-            </div> */}
             <Accordion
               style={{ marginTop: "30px" }}
               TransitionProps={{ unmountOnExit: true }}
@@ -667,8 +647,9 @@ const AdminNotificationPage = () => {
                   setSelectedNotif(notif);
                 }}
               >
-                {notif.title}
-                <br />
+                <Typography style={{ fontWeight: "700" }}>
+                  {notif.title}
+                </Typography>
                 {notif.description}
               </div>
             );
@@ -680,7 +661,6 @@ const AdminNotificationPage = () => {
             setShowNotifDetail={setShowNotifDetail}
           />
         )}
-        {/* {showNotifDetail && "Hello"} */}
       </TabPanel>
     </div>
   );
