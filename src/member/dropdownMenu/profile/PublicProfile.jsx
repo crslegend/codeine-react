@@ -201,7 +201,10 @@ const PublicProfile = (props) => {
 
   const [badges, setBadges] = useState([]);
   const [badgesDialog, setBadgesDialog] = useState(false);
+
   const [articles, setArticles] = useState([]);
+  const [articleDialog, setArticleDialog] = useState(false);
+
   const [experiences, setExperiences] = useState([]);
 
   const checkIfMemberIdIsPro = () => {
@@ -383,7 +386,7 @@ const PublicProfile = (props) => {
           .filter((article) => article.is_activated === true);
         setArticles(
           res.data.articles.sort((a, b) =>
-            b.date_created.localeCompare(a.date_created)
+            a.date_created.localeCompare(b.date_created)
           )
         );
 
@@ -843,14 +846,26 @@ const PublicProfile = (props) => {
             </Grid>
 
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
-              <Typography
-                variant="h5"
-                style={{ fontWeight: 600, marginBottom: "20px" }}
-              >
-                Articles
-              </Typography>
+              <div>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
+                >
+                  Articles
+                </Typography>
+                {articles && articles.length > 3 ? (
+                  <Button
+                    className={classes.seeAll}
+                    onClick={() => setArticleDialog(true)}
+                  >
+                    See All
+                  </Button>
+                ) : (
+                  ""
+                )}
+              </div>
               {articles && articles.length > 0 ? (
-                articles.map((article, index) => {
+                articles.slice(0, 3).map((article, index) => {
                   return <ArticleCard key={index} article={article} />;
                 })
               ) : (

@@ -1,13 +1,14 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Card, CardContent } from "@material-ui/core";
+import { FavoriteBorder, ChatBubbleOutlineRounded } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import Label from "./Label";
 
 const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    marginBottom: "30px",
+    marginBottom: "20px",
     border: "1px solid #C4C4C4",
     borderRadius: 0,
   },
@@ -80,9 +81,14 @@ const ArticleCard = (props) => {
           </div>
         </div>
 
-        <div>
-          <Typography variant="body2" style={{ display: "flex" }}>
-            no
+        <div style={{ display: "flex" }}>
+          <FavoriteBorder />
+          <Typography variant="body2" style={{ marginLeft: "5px" }}>
+            {article.engagements && article.engagements.length} likes
+          </Typography>
+          <ChatBubbleOutlineRounded style={{ marginLeft: "25px" }} />
+          <Typography variant="body2" style={{ marginLeft: "5px" }}>
+            {article && article.num_comments} comments
           </Typography>
         </div>
       </CardContent>

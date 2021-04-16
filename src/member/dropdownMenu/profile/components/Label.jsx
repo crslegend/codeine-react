@@ -4,7 +4,7 @@ import { Typography, Tooltip } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "30px",
+    width: "35px",
     height: "23px",
     marginRight: "10px",
     fontFamily: "Roboto Mono",
