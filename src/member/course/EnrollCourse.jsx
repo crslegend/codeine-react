@@ -45,8 +45,8 @@ import EnrollCourseWithIDE from "./EnrollCourseWithIDE";
 import { convertVideoTimeFormatToSeconds } from "../../utils";
 import hljs from "highlight.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({

@@ -28,8 +28,8 @@ import TakeQuiz from "./components/TakeQuiz";
 
 import hljs from "highlight.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 const styles = makeStyles((theme) => ({
   courseSection: {
