@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   Button,
   Popover,
-  Container,
   Chip,
   Typography,
   Avatar,
@@ -23,8 +22,8 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Menu from "@material-ui/icons/MoreVert";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import ReactQuill, { Quill } from "react-quill";
-import parse, { attributesToProps } from "html-react-parser";
+import ReactQuill from "react-quill";
+import { attributesToProps } from "html-react-parser";
 import FlagDialog from "./FlagArticleDialog";
 import Toast from "../components/Toast";
 import hljs from "highlight.js";

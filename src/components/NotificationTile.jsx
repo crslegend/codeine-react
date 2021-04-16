@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import More from "@material-ui/icons/MoreHoriz";
-import {
-  Typography,
-  Popover,
-  Grid,
-  Avatar,
-  IconButton,
-} from "@material-ui/core";
+import { Typography, Popover, Avatar, IconButton } from "@material-ui/core";
 import { Work } from "@material-ui/icons/Info";
 import InfoIcon from "@material-ui/icons/Info";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -193,14 +187,10 @@ const NotificationTile = (props) => {
             history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           } else if (userType === "partner") {
-            history.push(
-              `/partner/home/content/view/comments/${res.data.notification.course.id}`
-            );
+            history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           } else if (userType === "admin") {
-            history.push(
-              `/article/contentquality/courses/${res.data.notification.course.id}`
-            );
+            history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           }
         } else {

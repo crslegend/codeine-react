@@ -1,13 +1,11 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Breadcrumbs, Link, Avatar } from "@material-ui/core";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import InfoIcon from "@material-ui/icons/Info";
-import { useHistory, useParams, useLocation } from "react-router";
 
 const styles = makeStyles((theme) => ({
-  root: {
-  },
+  root: {},
   typography: {
     padding: theme.spacing(1),
     cursor: "pointer",
@@ -42,7 +40,6 @@ const styles = makeStyles((theme) => ({
 
 const NotificationDetail = (props) => {
   const classes = styles();
-  const history = useHistory();
   const { notification, setShowNotifDetail } = props;
 
   const calculateDateInterval = (timestamp) => {

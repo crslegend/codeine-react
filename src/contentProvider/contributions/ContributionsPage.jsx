@@ -152,8 +152,8 @@ const ContributionsPage = () => {
       email: email,
       description:
         numOfMonths && numOfMonths === 1
-          ? `Funding for 1 Month`
-          : `Funding for ${numOfMonths} Months`,
+          ? `Fund a month`
+          : `Fund for ${numOfMonths} months`,
       pId: userId,
       numOfMonths: numOfMonths,
       contribution: contributionId,
@@ -174,7 +174,7 @@ const ContributionsPage = () => {
     if (paymentAmount < 1) {
       setSbOpen(true);
       setSnackbar({
-        message: "Funding amount has to be at least a dollar",
+        message: "Minimum funding amount of $1",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -395,7 +395,7 @@ const ContributionsPage = () => {
           onClick={() => setPaymentDialog(true)}
           disabled={existPending}
         >
-          Make A Funding
+          Help Fund Codeine
         </Button>
       </div>
 
@@ -467,7 +467,7 @@ const ContributionsPage = () => {
               />
             </div>
 
-            <Typography variant="body1">No funding made yet.</Typography>
+            <Typography variant="body1">No funds received yet</Typography>
           </Fragment>
         )}
       </Paper>
@@ -526,7 +526,7 @@ const ContributionsPage = () => {
             style={{ marginBottom: "20px" }}
           />
           <label htmlFor="month">
-            <Typography>Enter number of months for funding</Typography>
+            <Typography>Enter number of months to fund</Typography>
           </label>
           <TextField
             id="month"

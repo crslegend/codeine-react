@@ -1,11 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import More from "@material-ui/icons/MoreVert";
 import {
   Typography,
-  Popover,
-  Grid,
-  Avatar,
   ListItem,
   Button,
   Link,
@@ -22,7 +18,7 @@ import adminLogo from "../assets/codeineLogos/Admin.svg";
 import ZeroNotif from "../assets/ZeroNotif.svg";
 import NotifTile from "../components/NotificationTile";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import Cookies, { set } from "js-cookie";
+import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const styles = makeStyles((theme) => ({
@@ -77,61 +73,10 @@ const AllNotifications = (props) => {
   const location = useLocation();
   const userType = location.pathname.split("/", 4)[1];
 
-  const calculateDateInterval = (timestamp) => {
-    const dateBefore = new Date(timestamp);
-    const dateNow = new Date();
-
-    let seconds = Math.floor((dateNow - dateBefore) / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    let days = Math.floor(hours / 24);
-
-    hours = hours - days * 24;
-    minutes = minutes - days * 24 * 60 - hours * 60;
-    seconds = seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60;
-
-    if (days === 0) {
-      if (hours === 0) {
-        if (minutes === 0) {
-          return `a few seconds ago`;
-        }
-
-        if (minutes === 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      if (hours === 1) {
-        return `${hours} hour ago`;
-      }
-      return `${hours} hours ago`;
-    }
-
-    if (days === 1) {
-      return `${days} day ago`;
-    }
-    return `${days} days ago`;
-  };
-
   const [popover, setPopover] = useState({
     popoverId: null,
     anchorEl: null,
   });
-
-  const handleClick = (event, courseId) => {
-    setPopover({
-      popoverId: courseId,
-      anchorEl: event.currentTarget,
-    });
-  };
-
-  const handleClose = () => {
-    setPopover({
-      popoverId: null,
-      anchorEl: null,
-    });
-  };
 
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);

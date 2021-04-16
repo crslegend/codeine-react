@@ -231,6 +231,8 @@ const AdminNotificationPage = () => {
         });
         setNotificationPhoto();
         getNotificationSent();
+        setAccordion1State(false);
+        setAccordion2State(false);
       })
       .catch();
   };
@@ -287,7 +289,7 @@ const AdminNotificationPage = () => {
 
   let memberRows = allMembersList;
 
-  const [searchValueMember, setSearchValueMember] = useState("");
+  const [searchValueMember] = useState("");
 
   const getMemberData = () => {
     let queryParams = {
@@ -402,7 +404,7 @@ const AdminNotificationPage = () => {
 
   let partnerRows = allPartnerList;
 
-  const [searchValuePartner, setSearchValuePartner] = useState("");
+  const [searchValuePartner] = useState("");
 
   const getPartnerData = () => {
     let queryParams = {
@@ -460,6 +462,8 @@ const AdminNotificationPage = () => {
 
   const [showNotifDetail, setShowNotifDetail] = useState(false);
   const [selectedNotif, setSelectedNotif] = useState();
+  const [accordion1State, setAccordion1State] = useState(false);
+  const [accordion2State, setAccordion2State] = useState(false);
 
   return (
     <div className={classes.root}>
@@ -528,7 +532,11 @@ const AdminNotificationPage = () => {
             <Accordion
               style={{ marginTop: "30px" }}
               TransitionProps={{ unmountOnExit: true }}
-              onChange={() => setTimes(times + 1)}
+              onChange={() => {
+                setTimes(times + 1);
+                setAccordion1State(!accordion1State);
+              }}
+              expanded={accordion1State}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -564,7 +572,11 @@ const AdminNotificationPage = () => {
             </Accordion>
             <Accordion
               TransitionProps={{ unmountOnExit: true }}
-              onChange={() => setTimes(times + 1)}
+              onChange={() => {
+                setTimes(times + 1);
+                setAccordion2State(!accordion2State);
+              }}
+              expanded={accordion2State}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -647,7 +659,7 @@ const AdminNotificationPage = () => {
                   setSelectedNotif(notif);
                 }}
               >
-                <Typography style={{ fontWeight: "700" }}>
+                <Typography style={{ fontWeight: "700", cursor: "pointer" }}>
                   {notif.title}
                 </Typography>
                 {notif.description}
