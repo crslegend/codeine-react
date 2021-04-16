@@ -45,6 +45,7 @@ import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Label from "./components/Label";
 import ExperienceCard from "./components/ExperienceCard";
+import ArticleCard from "./components/ArticleCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -200,6 +201,7 @@ const PublicProfile = (props) => {
 
   const [badges, setBadges] = useState([]);
   const [badgesDialog, setBadgesDialog] = useState(false);
+  const [articles, setArticles] = useState([]);
   const [experiences, setExperiences] = useState([]);
 
   const checkIfMemberIdIsPro = () => {
@@ -358,7 +360,7 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/members/${id}/profile`)
       .then((res) => {
-        //console.log(res.data);
+        console.log(res.data);
         setMember(res.data.member);
 
         if (dataList.length === 0) {
@@ -375,6 +377,15 @@ const PublicProfile = (props) => {
         setCourses(res.data.courses);
 
         setBadges(res.data.achievements.reverse());
+
+        res.data.articles = res.data.articles
+          .filter((article) => article.is_published === true)
+          .filter((article) => article.is_activated === true);
+        setArticles(
+          res.data.articles.sort((a, b) =>
+            b.date_created.localeCompare(a.date_created)
+          )
+        );
 
         setExperiences(
           res.data.cv.sort((a, b) => b.start_date.localeCompare(a.start_date))
@@ -814,20 +825,41 @@ const PublicProfile = (props) => {
                         }}
                       >
                         <TableCell
-                          colSpan={2}
+                          colSpan={3}
                           style={{
                             textAlign: "center",
                             height: "150px",
+                            color: "#C4C4C4",
                           }}
                           valign="middle"
                         >
-                          Member has not completed any courses
+                          No Completed Courses
                         </TableCell>
                       </TableRow>
                     )}
                   </TableBody>
                 </Table>
               </TableContainer>
+            </Grid>
+
+            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <Typography
+                variant="h5"
+                style={{ fontWeight: 600, marginBottom: "20px" }}
+              >
+                Articles
+              </Typography>
+              {articles && articles.length > 0 ? (
+                articles.map((article, index) => {
+                  return <ArticleCard key={index} article={article} />;
+                })
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography style={{ textAlign: "center", color: "#C4C4C4" }}>
+                    No Published Articles
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
 
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
