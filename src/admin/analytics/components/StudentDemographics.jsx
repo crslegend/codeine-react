@@ -150,7 +150,7 @@ const StudentDemographics = ({ memberDemographics }) => {
             </div>
             {memberDemographics && memberDemographics.average_age ? (
               <Typography variant="h1" className={classes.numbers}>
-                {memberDemographics.average_age}
+                {memberDemographics.average_age.toFixed()}
               </Typography>
             ) : (
               <Typography variant="body1">Not Available</Typography>
