@@ -193,14 +193,10 @@ const NotificationTile = (props) => {
             history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           } else if (userType === "partner") {
-            history.push(
-              `/partner/home/content/view/comments/${res.data.notification.course.id}`
-            );
+            history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           } else if (userType === "admin") {
-            history.push(
-              `/article/contentquality/courses/${res.data.notification.course.id}`
-            );
+            history.push(`/codereview/${res.data.notification.code_review.id}`);
             history.go();
           }
         } else {

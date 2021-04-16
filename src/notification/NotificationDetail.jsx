@@ -311,10 +311,13 @@ const NotificationDetail = () => {
               >
                 Posted by{" "}
                 {notification.notification &&
-                notification.notification.sender &&
-                notification.notification.sender.is_admin
-                  ? "Codeine Admin ~ "
-                  : notification.notification.sender.first_name +
+                  notification.notification.sender &&
+                  notification.notification.sender.is_admin &&
+                  "Codeine Admin ~ "}
+                {notification.notification &&
+                  notification.notification.sender &&
+                  !notification.notification.sender.is_admin &&
+                  notification.notification.sender.first_name +
                     " " +
                     notification.notification.sender.last_name +
                     " ~ "}
