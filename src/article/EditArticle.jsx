@@ -1213,7 +1213,7 @@ const EditArticle = (props) => {
           </div>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-              Course Language (Choose at least 1)
+              Language (Choose at least 1)
             </Typography>
             <div>
               <ToggleButton
