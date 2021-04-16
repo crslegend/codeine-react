@@ -12,6 +12,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import {
+  Add,
   Announcement,
   ArrowBack,
   Assignment,
@@ -20,6 +21,7 @@ import {
   FileCopyOutlined,
   Movie,
 } from "@material-ui/icons";
+import Fab from "@material-ui/core/Fab";
 import LinkMui from "@material-ui/core/Link";
 import Service from "../../AxiosService";
 import ReactPlayer from "react-player";
@@ -132,17 +134,25 @@ const EnrollCourseWithIDE = ({
         })
         .catch((err) => console.log(err));
     }
+    checkIDE();
+  };
+
+  const checkIDE = () => {
+    setInterval(() =>
+      Service.client.get(`ide/${portNum}`).then((res) => {
+        if (res.data.ready) {
+          setLoadingIDE(false);
+          clearInterval();
+        }
+      }),
+      3000
+    );
   };
 
   useEffect(() => {
     startIDE();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const hideLoader = () => {
-    console.log("FINISH");
-    setLoadingIDE(false);
-  };
 
   return (
     <div className={classes.courseSection}>
@@ -168,9 +178,7 @@ const EnrollCourseWithIDE = ({
                       }}
                     >
                       <Announcement fontSize="large" />
-                      <Typography variant="body1">
-                        Choose a course material on the right to start
-                      </Typography>
+                      <Typography variant="body1">Choose a course material on the right to start</Typography>
                     </Paper>
                   );
                 } else if (chosenCourseMaterial.material_type === "FILE") {
@@ -184,16 +192,10 @@ const EnrollCourseWithIDE = ({
                           padding: "20px",
                         }}
                       >
-                        <Typography
-                          variant="h6"
-                          style={{ fontWeight: 600, paddingBottom: "10px" }}
-                        >
+                        <Typography variant="h6" style={{ fontWeight: 600, paddingBottom: "10px" }}>
                           {chosenCourseMaterial.title}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          style={{ paddingBottom: "30px" }}
-                        >
+                        <Typography variant="body2" style={{ paddingBottom: "30px" }}>
                           {chosenCourseMaterial.description}
                         </Typography>
                         <div
@@ -202,25 +204,23 @@ const EnrollCourseWithIDE = ({
                             justifyContent: "center",
                           }}
                         >
-                          {chosenCourseMaterial.course_file.zip_file &&
-                            chosenCourseMaterial.course_file.zip_file && (
-                              <Button
-                                variant="outlined"
-                                color="primary"
-                                style={{
-                                  textTransform: "capitalize",
-                                  height: 25,
-                                }}
-                                href={chosenCourseMaterial.course_file.zip_file}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Download File
-                              </Button>
-                            )}
+                          {chosenCourseMaterial.course_file.zip_file && chosenCourseMaterial.course_file.zip_file && (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              style={{
+                                textTransform: "capitalize",
+                                height: 25,
+                              }}
+                              href={chosenCourseMaterial.course_file.zip_file}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download File
+                            </Button>
+                          )}
                           {chosenCourseMaterial.course_file.google_drive_url &&
-                            chosenCourseMaterial.course_file
-                              .google_drive_url && (
+                            chosenCourseMaterial.course_file.google_drive_url && (
                               <Button
                                 variant="outlined"
                                 color="primary"
@@ -229,10 +229,7 @@ const EnrollCourseWithIDE = ({
                                   height: 25,
                                   marginLeft: "10px",
                                 }}
-                                href={
-                                  chosenCourseMaterial.course_file
-                                    .google_drive_url
-                                }
+                                href={chosenCourseMaterial.course_file.google_drive_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
@@ -248,18 +245,12 @@ const EnrollCourseWithIDE = ({
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <ReactPlayer
                         ref={ref}
-                        url={
-                          chosenCourseMaterial &&
-                          chosenCourseMaterial.video.video_url
-                        }
+                        url={chosenCourseMaterial && chosenCourseMaterial.video.video_url}
                         width="100%"
                         height="500px"
                         onDuration={handleDuration}
                         onProgress={(state) => {
-                          if (
-                            chosenCourseMaterial.video.video_code_snippets
-                              .length > 0
-                          ) {
+                          if (chosenCourseMaterial.video.video_code_snippets.length > 0) {
                             displayCodeSnippetForVideo(state);
                           }
                           handleVideoProgress(state, chosenCourseMaterial.id);
@@ -312,13 +303,8 @@ const EnrollCourseWithIDE = ({
                   return (
                     <div>
                       <TakeQuiz
-                        quiz={
-                          chosenCourseMaterial.quiz && chosenCourseMaterial.quiz
-                        }
-                        quizTitle={
-                          chosenCourseMaterial.title &&
-                          chosenCourseMaterial.title
-                        }
+                        quiz={chosenCourseMaterial.quiz && chosenCourseMaterial.quiz}
+                        quizTitle={chosenCourseMaterial.title && chosenCourseMaterial.title}
                         quizType={chosenCourseMaterial.material_type}
                         pageNum={pageNum}
                         setPageNum={setPageNum}
@@ -353,15 +339,8 @@ const EnrollCourseWithIDE = ({
               })()}
             </div>
             <div style={{ marginTop: "20px" }}>
-              <Accordion
-                expanded={expanded === `overview`}
-                onChange={handleChange(`overview`)}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  id={`overview`}
-                  style={{ backgroundColor: "#F4F4F4" }}
-                >
+              <Accordion expanded={expanded === `overview`} onChange={handleChange(`overview`)}>
+                <AccordionSummary expandIcon={<ExpandMore />} id={`overview`} style={{ backgroundColor: "#F4F4F4" }}>
                   <Typography variant="h6" style={{ fontWeight: 600 }}>
                     Course Overview
                   </Typography>
@@ -396,11 +375,7 @@ const EnrollCourseWithIDE = ({
                 course.chapters.length > 0 &&
                 course.chapters.map((chapter, index) => {
                   return (
-                    <Accordion
-                      expanded={expanded === `${index}`}
-                      key={index}
-                      onChange={handleChange(`${index}`)}
-                    >
+                    <Accordion expanded={expanded === `${index}`} key={index} onChange={handleChange(`${index}`)}>
                       <AccordionSummary
                         expandIcon={<ExpandMore />}
                         id={`${index}`}
@@ -426,10 +401,7 @@ const EnrollCourseWithIDE = ({
                           padding: "20px",
                         }}
                       >
-                        <Typography
-                          variant="body1"
-                          style={{ paddingBottom: "20px" }}
-                        >
+                        <Typography variant="body1" style={{ paddingBottom: "20px" }}>
                           {chapter.overview && chapter.overview}
                         </Typography>
                         {chapter.course_materials &&
@@ -448,13 +420,9 @@ const EnrollCourseWithIDE = ({
                                     <Checkbox
                                       style={{ marginBottom: "20px" }}
                                       checked={
-                                        progressArr &&
-                                        progressArr.length > 0 &&
-                                        progressArr.includes(material.id)
+                                        progressArr && progressArr.length > 0 && progressArr.includes(material.id)
                                       }
-                                      onChange={(e) =>
-                                        handleCheckMaterial(e, material.id)
-                                      }
+                                      onChange={(e) => handleCheckMaterial(e, material.id)}
                                     />
                                   </div>
 
@@ -486,9 +454,7 @@ const EnrollCourseWithIDE = ({
                                       <AttachFile fontSize="small" />
                                       <LinkMui
                                         className={classes.linkMui}
-                                        onClick={() =>
-                                          handleChosenCourseMaterial(material)
-                                        }
+                                        onClick={() => handleChosenCourseMaterial(material)}
                                       >
                                         {material.title}
                                       </LinkMui>
@@ -499,41 +465,35 @@ const EnrollCourseWithIDE = ({
                                         marginBottom: "10px",
                                       }}
                                     >
-                                      {material.course_file.zip_file &&
-                                        material.course_file.zip_file && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                            }}
-                                            href={material.course_file.zip_file}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            Download File
-                                          </Button>
-                                        )}
-                                      {material.course_file.google_drive_url &&
-                                        material.course_file
-                                          .google_drive_url && (
-                                          <Button
-                                            variant="outlined"
-                                            style={{
-                                              textTransform: "capitalize",
-                                              height: 25,
-                                              marginLeft: "10px",
-                                            }}
-                                            href={
-                                              material.course_file
-                                                .google_drive_url
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            File URL
-                                          </Button>
-                                        )}
+                                      {material.course_file.zip_file && material.course_file.zip_file && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                          }}
+                                          href={material.course_file.zip_file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          Download File
+                                        </Button>
+                                      )}
+                                      {material.course_file.google_drive_url && material.course_file.google_drive_url && (
+                                        <Button
+                                          variant="outlined"
+                                          style={{
+                                            textTransform: "capitalize",
+                                            height: 25,
+                                            marginLeft: "10px",
+                                          }}
+                                          href={material.course_file.google_drive_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          File URL
+                                        </Button>
+                                      )}
                                     </div>
                                     <Typography
                                       style={{
@@ -560,13 +520,9 @@ const EnrollCourseWithIDE = ({
                                     <Checkbox
                                       style={{ marginBottom: "20px" }}
                                       checked={
-                                        progressArr &&
-                                        progressArr.length > 0 &&
-                                        progressArr.includes(material.id)
+                                        progressArr && progressArr.length > 0 && progressArr.includes(material.id)
                                       }
-                                      onChange={(e) =>
-                                        handleCheckMaterial(e, material.id)
-                                      }
+                                      onChange={(e) => handleCheckMaterial(e, material.id)}
                                     />
                                   </div>
                                   <div
@@ -593,15 +549,10 @@ const EnrollCourseWithIDE = ({
                                       >
                                         {`${index + 1}.`}
                                       </Typography>
-                                      <Movie
-                                        fontSize="small"
-                                        style={{ marginRight: "5px" }}
-                                      />
+                                      <Movie fontSize="small" style={{ marginRight: "5px" }} />
                                       <LinkMui
                                         className={classes.linkMui}
-                                        onClick={() =>
-                                          handleChosenCourseMaterial(material)
-                                        }
+                                        onClick={() => handleChosenCourseMaterial(material)}
                                       >
                                         {material.title}
                                       </LinkMui>
@@ -630,13 +581,9 @@ const EnrollCourseWithIDE = ({
                                     <Checkbox
                                       style={{ marginBottom: "20px" }}
                                       checked={
-                                        progressArr &&
-                                        progressArr.length > 0 &&
-                                        progressArr.includes(material.id)
+                                        progressArr && progressArr.length > 0 && progressArr.includes(material.id)
                                       }
-                                      onChange={(e) =>
-                                        handleCheckMaterial(e, material.id)
-                                      }
+                                      onChange={(e) => handleCheckMaterial(e, material.id)}
                                     />
                                   </div>
 
@@ -664,17 +611,12 @@ const EnrollCourseWithIDE = ({
                                       >
                                         {`${index + 1}.`}
                                       </Typography>
-                                      <Assignment
-                                        fontSize="small"
-                                        style={{ marginRight: "5px" }}
-                                      />
+                                      <Assignment fontSize="small" style={{ marginRight: "5px" }} />
                                       <LinkMui
                                         className={classes.linkMui}
                                         onClick={() => {
                                           handleChosenCourseMaterial(material);
-                                          handleCreateQuizResult(
-                                            material.quiz.id
-                                          );
+                                          handleCreateQuizResult(material.quiz.id);
                                         }}
                                       >
                                         {material.title}
@@ -686,12 +628,9 @@ const EnrollCourseWithIDE = ({
                                           order: 2,
                                         }}
                                       >
-                                        {material.quiz &&
-                                        material.quiz.questions.length === 1
-                                          ? material.quiz.questions.length +
-                                            ` Question`
-                                          : material.quiz.questions.length +
-                                            ` Questions`}
+                                        {material.quiz && material.quiz.questions.length === 1
+                                          ? material.quiz.questions.length + ` Question`
+                                          : material.quiz.questions.length + ` Questions`}
                                       </Typography>
                                     </div>
                                     <Typography
@@ -713,15 +652,8 @@ const EnrollCourseWithIDE = ({
                     </Accordion>
                   );
                 })}
-              <Accordion
-                expanded={expanded === `final`}
-                onChange={handleChange(`final`)}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  id={`final`}
-                  style={{ backgroundColor: "#F4F4F4" }}
-                >
+              <Accordion expanded={expanded === `final`} onChange={handleChange(`final`)}>
+                <AccordionSummary expandIcon={<ExpandMore />} id={`final`} style={{ backgroundColor: "#F4F4F4" }}>
                   <Typography variant="h6" style={{ fontWeight: 600 }}>
                     Final Quiz
                   </Typography>
@@ -740,10 +672,7 @@ const EnrollCourseWithIDE = ({
                       minWidth: "100%",
                     }}
                   >
-                    <Assignment
-                      fontSize="small"
-                      style={{ marginRight: "5px" }}
-                    />
+                    <Assignment fontSize="small" style={{ marginRight: "5px" }} />
                     <LinkMui
                       className={classes.linkMui}
                       onClick={() => {
@@ -783,14 +712,11 @@ const EnrollCourseWithIDE = ({
               </div>
             ) : null}
 
-            <iframe
-              width="100%"
-              height="100%"
-              src={`http://localhost:${portNum}`}
-              title="ide"
-              loading="lazy"
-              onLoad={() => hideLoader()}
-            />
+            <iframe width="100%" height="100%" src={`http://localhost:${portNum}`} title="ide" loading="lazy" />
+
+            <Fab color="primary" aria-label="add">
+              <Add />
+            </Fab>
           </div>
         </Splitter>
       </div>
