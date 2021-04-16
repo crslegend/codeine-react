@@ -20,6 +20,8 @@ import "ace-builds/src-noconflict/mode-ruby";
 import "ace-builds/src-noconflict/mode-scss";
 import { Delete, Help } from "@material-ui/icons";
 import { checkTimeDiff } from "../../../utils.js";
+import ReactPlayer from "react-player";
+import validator from "validator";
 
 const useStyles = makeStyles((theme) => ({
   snippetDiv: {
@@ -39,6 +41,8 @@ const VideoCreationModal = ({
   setCodeSnippetArr,
 }) => {
   const classes = useStyles();
+
+  const ref = React.createRef();
 
   const [sbOpen, setSbOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -153,6 +157,19 @@ const VideoCreationModal = ({
     setCodeSnippetArr(arr);
   };
 
+  const checkIfUrlIsValid = (url) => {
+    if (
+      validator.isURL(url, {
+        protocols: ["http", "https"],
+        require_protocol: true,
+        allow_underscores: true,
+      })
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <Fragment>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -219,6 +236,18 @@ const VideoCreationModal = ({
         placeholder="https://www.google.com"
         style={{ marginBottom: "15px" }}
       />
+      {checkIfUrlIsValid(video && video.video_url) && (
+        <div style={{ marginBottom: "20px" }}>
+          <ReactPlayer
+            ref={ref}
+            url={video.video_url}
+            width="100%"
+            height="450px"
+            controls
+          />
+        </div>
+      )}
+
       <div style={{ display: "flex", alignItems: "center" }}>
         <Typography variant="body2">
           Add Code Snippet to Video (Optional)
