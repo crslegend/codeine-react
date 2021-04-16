@@ -63,9 +63,9 @@ const styles = makeStyles((theme) => ({
   },
   legend: {
     fontWeight: 600,
-    marginBottom: "3px",
+    marginBottom: "5px",
     textAlign: "right",
-    marginRight: theme.spacing(36),
+    marginRight: theme.spacing(47),
   },
 }));
 
