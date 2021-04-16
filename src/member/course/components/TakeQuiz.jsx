@@ -168,7 +168,7 @@ const TakeQuiz = ({
               <Typography variant="body1" style={{ paddingBottom: "25px" }}>
                 {resultObj && resultObj.passed
                   ? "Well Done! You passed the quiz!"
-                  : "You did not pass the quiz. Try Again!"}
+                  : "Review the chapter content and try again!"}
               </Typography>
               <Button
                 variant="contained"
@@ -197,7 +197,7 @@ const TakeQuiz = ({
                     Result: <span style={{ color: "red" }}>Failed</span>
                   </Typography>
                   <Typography variant="body1" style={{ paddingBottom: "25px" }}>
-                    You did not pass the final quiz. Try Again!
+                    Review the course content and try again!
                   </Typography>
                   <Button
                     variant="contained"
@@ -215,7 +215,7 @@ const TakeQuiz = ({
       <Dialog open={consultDialog} onClose={() => setConsultDialog(false)}>
         <DialogTitle>Need Additional Help?</DialogTitle>
         <DialogContent>
-          {!canBookConsult ? (
+          {canBookConsult ? (
             <div>
               <Typography variant="body2">
                 Book a consultation with the course instructor to clarify your
@@ -234,7 +234,7 @@ const TakeQuiz = ({
           )}
         </DialogContent>
         <DialogActions>
-          {!canBookConsult ? (
+          {canBookConsult ? (
             <div>
               <Button
                 variant="contained"

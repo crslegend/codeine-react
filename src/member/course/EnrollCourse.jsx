@@ -29,6 +29,7 @@ import {
   Assignment,
   AttachFile,
   ExpandMore,
+  FileCopyOutlined,
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
@@ -44,8 +45,8 @@ import EnrollCourseWithIDE from "./EnrollCourseWithIDE";
 import { convertVideoTimeFormatToSeconds } from "../../utils";
 import hljs from "highlight.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 // import calculate from "./components/CalculateDuration";
 
 const styles = makeStyles((theme) => ({
@@ -130,9 +131,11 @@ const styles = makeStyles((theme) => ({
   },
   codeBody: {
     display: "flex",
-    border: "2px solid #676767",
+    border: "2px solid #C74343",
+    background: "rgba(164, 201, 245, 0.1)",
     borderRadius: "5px",
     marginTop: "15px",
+    boxShadow: "2px 3px 0px #C74343",
   },
 }));
 
@@ -554,7 +557,7 @@ const EnrollCourse = () => {
           message:
             "There is code snippet available below the video player for you to copy.",
           severity: "info",
-          autoHideDuration: 5000,
+          autoHideDuration: 3000,
         });
         break;
       }
@@ -852,7 +855,7 @@ const EnrollCourse = () => {
                             <div
                               style={{
                                 width: "5%",
-                                marginRight: "5px",
+                                paddingRight: "8px",
                                 paddingTop: "8px",
                               }}
                             >
@@ -869,10 +872,7 @@ const EnrollCourse = () => {
                                 }}
                               >
                                 <IconButton size="small">
-                                  <FontAwesomeIcon
-                                    icon={faClipboard}
-                                    style={{ height: "20px", width: "20px" }}
-                                  />
+                                  <FileCopyOutlined />
                                 </IconButton>
                               </CopyToClipboard>
                             </div>

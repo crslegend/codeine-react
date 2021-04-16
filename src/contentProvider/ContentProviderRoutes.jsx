@@ -273,14 +273,14 @@ const ContentProviderHome = () => {
           </div>
 
           {notificationList.slice(0, 20).map((notification, index) => {
-            return (
-              <NotifTile
-                key={index}
-                notification={notification}
-                getUserNotifications={getUserNotifications}
-                userType="partner"
-              />
-            );
+            // return (
+            //   <NotifTile
+            //     key={index}
+            //     notification={notification}
+            //     getUserNotifications={getUserNotifications}
+            //     userType="partner"
+            //   />
+            // );
           })}
           {notificationList.length === 0 && (
             <div style={{ textAlign: "center", marginTop: "20px" }}>

@@ -350,7 +350,7 @@ const CourseDetailsDrawer = ({
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <Switch
               color="primary"
@@ -365,11 +365,11 @@ const CourseDetailsDrawer = ({
           }
           label="Pro Course"
           labelPlacement="start"
-        />
+        /> */}
         <Button
           variant="contained"
           color="primary"
-          style={{ float: "right" }}
+          style={{ marginLeft: "auto" }}
           onClick={() => {
             handleNextPage();
             reference.parentElement.scrollTop = 0;
