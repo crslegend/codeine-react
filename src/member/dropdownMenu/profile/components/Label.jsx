@@ -4,7 +4,7 @@ import { Typography, Tooltip } from "@material-ui/core";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "30px",
+    width: "35px",
     height: "23px",
     marginRight: "10px",
     fontFamily: "Roboto Mono",
@@ -31,6 +31,22 @@ const Label = (props) => {
       return "#DDD58B";
     } else if (label === "ML") {
       return "#8BD8DD";
+    } else if (label === "PY") {
+      return "#3675A9";
+    } else if (label === "CPP") {
+      return "#004482";
+    } else if (label === "RUBY") {
+      return "#CC0000";
+    } else if (label === "JAVA") {
+      return "#E57001";
+    } else if (label === "JS") {
+      return "#F3BF04";
+    } else if (label === "CS") {
+      return "#6A1577";
+    } else if (label === "CSS") {
+      return "#264DE4";
+    } else if (label === "HTML") {
+      return "#E44D26";
     }
   };
 
@@ -47,6 +63,22 @@ const Label = (props) => {
       return "UI/UX";
     } else if (label === "ML") {
       return "Machine Learning";
+    } else if (label === "PY") {
+      return "Python";
+    } else if (label === "CPP") {
+      return "C++";
+    } else if (label === "JAVA") {
+      return "Java";
+    } else if (label === "JS") {
+      return "Javascript";
+    } else if (label === "RUBY") {
+      return "Ruby";
+    } else if (label === "CS") {
+      return "C#";
+    } else if (label === "CSS") {
+      return "CSS";
+    } else if (label === "HTML") {
+      return "HTML";
     }
   };
 

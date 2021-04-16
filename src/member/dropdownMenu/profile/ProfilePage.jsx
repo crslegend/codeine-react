@@ -571,9 +571,15 @@ const Profile = (props) => {
     formData.append("last_name", profileDetails.last_name);
     formData.append("email", profileDetails.email);
     formData.append("data_joined", profileDetails.date_joined);
-    formData.append("age", profileDetails.age);
-    formData.append("gender", profileDetails.gender);
-    formData.append("location", profileDetails.location);
+    if (profileDetails.age !== null) {
+      formData.append("age", profileDetails.age);
+    }
+    if (profileDetails.gender !== null) {
+      formData.append("gender", profileDetails.gender);
+    }
+    if (profileDetails.location !== null) {
+      formData.append("location", profileDetails.location);
+    }
 
     // submit form-data as per usual
     Service.client
@@ -863,14 +869,7 @@ const Profile = (props) => {
           Settings for&nbsp;
           {profileDetails.member &&
           profileDetails.member.membership_tier === "PRO" ? (
-            <Link
-              to={
-                uniqueId === null
-                  ? `/member/profile/${profileDetails.id}`
-                  : `/${uniqueId}`
-              }
-              className={classes.profileLink}
-            >
+            <Link to={`/${uniqueId}`} className={classes.profileLink}>
               {profileDetails && profileDetails.first_name}{" "}
               {profileDetails && profileDetails.last_name}
             </Link>

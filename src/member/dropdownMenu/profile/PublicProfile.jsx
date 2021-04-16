@@ -45,6 +45,7 @@ import Toast from "../../../components/Toast.js";
 import jwt_decode from "jwt-decode";
 import Label from "./components/Label";
 import ExperienceCard from "./components/ExperienceCard";
+import ArticleCard from "./components/ArticleCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   cardroot: {
     marginRight: "20px",
     marginTop: "-50px",
-    height: "80%",
+    height: "90%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
@@ -200,6 +201,10 @@ const PublicProfile = (props) => {
 
   const [badges, setBadges] = useState([]);
   const [badgesDialog, setBadgesDialog] = useState(false);
+
+  const [articles, setArticles] = useState([]);
+  const [articleDialog, setArticleDialog] = useState(false);
+
   const [experiences, setExperiences] = useState([]);
 
   const checkIfMemberIdIsPro = () => {
@@ -358,7 +363,7 @@ const PublicProfile = (props) => {
     Service.client
       .get(`/members/${id}/profile`)
       .then((res) => {
-        //console.log(res.data);
+        console.log(res.data);
         setMember(res.data.member);
 
         if (dataList.length === 0) {
@@ -376,6 +381,15 @@ const PublicProfile = (props) => {
 
         setBadges(res.data.achievements.reverse());
 
+        res.data.articles = res.data.articles
+          .filter((article) => article.is_published === true)
+          .filter((article) => article.is_activated === true);
+        setArticles(
+          res.data.articles.sort((a, b) =>
+            b.date_created.localeCompare(a.date_created)
+          )
+        );
+
         setExperiences(
           res.data.cv.sort((a, b) => b.start_date.localeCompare(a.start_date))
         );
@@ -385,6 +399,7 @@ const PublicProfile = (props) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     checkIfMemberIdIsPro();
     checkIfLoggedIn();
     getMemberData();
@@ -814,20 +829,53 @@ const PublicProfile = (props) => {
                         }}
                       >
                         <TableCell
-                          colSpan={2}
+                          colSpan={3}
                           style={{
                             textAlign: "center",
                             height: "150px",
+                            color: "#C4C4C4",
                           }}
                           valign="middle"
                         >
-                          Member has not completed any courses
+                          No Completed Courses
                         </TableCell>
                       </TableRow>
                     )}
                   </TableBody>
                 </Table>
               </TableContainer>
+            </Grid>
+
+            <Grid item xs={12} style={{ marginBottom: "40px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: 600, marginBottom: "20px" }}
+                >
+                  Articles
+                </Typography>
+                {articles && articles.length > 0 ? (
+                  <Button
+                    className={classes.seeAll}
+                    onClick={() => setArticleDialog(true)}
+                  >
+                    See All
+                  </Button>
+                ) : (
+                  ""
+                )}
+              </div>
+              {articles && articles.length > 0 ? (
+                articles.slice(0, 3).map((article, index) => {
+                  return <ArticleCard key={index} article={article} />;
+                })
+              ) : (
+                <Grid style={{ height: "100px", paddingTop: "40px" }}>
+                  <Typography style={{ textAlign: "center", color: "#C4C4C4" }}>
+                    No Published Articles
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
 
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
@@ -911,6 +959,23 @@ const PublicProfile = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
+      </Dialog>
+
+      <Dialog
+        open={articleDialog}
+        onClose={() => setArticleDialog(false)}
+        style={{ borderRadius: "50px" }}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <DialogTitle>All Articles</DialogTitle>
+        <DialogContent>
+          {articles &&
+            articles.map((article, index) => {
+              return <ArticleCard key={index} article={article} />;
+            })}
+        </DialogContent>
       </Dialog>
 
       <Dialog

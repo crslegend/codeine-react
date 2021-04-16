@@ -249,11 +249,7 @@ const ViewCourseDetails = () => {
 
   const handleProfileLink = (reviewMember) => {
     if (reviewMember.member.membership_tier === "PRO") {
-      if (reviewMember.member.unique_id === null) {
-        return `/member/profile/${reviewMember.id}`;
-      } else {
-        return `/${reviewMember.member.unique_id}`;
-      }
+      return `/${reviewMember.member.unique_id}`;
     }
   };
 
