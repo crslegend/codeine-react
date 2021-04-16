@@ -17,6 +17,7 @@ import {
   Assignment,
   AttachFile,
   ExpandMore,
+  FileCopyOutlined,
   Movie,
 } from "@material-ui/icons";
 import LinkMui from "@material-ui/core/Link";
@@ -27,8 +28,8 @@ import TakeQuiz from "./components/TakeQuiz";
 
 import hljs from "highlight.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 const styles = makeStyles((theme) => ({
   courseSection: {
@@ -60,9 +61,11 @@ const styles = makeStyles((theme) => ({
   },
   codeBody: {
     display: "flex",
-    border: "2px solid #676767",
+    border: "2px solid #C74343",
+    background: "rgba(164, 201, 245, 0.1)",
     borderRadius: "5px",
     marginTop: "15px",
+    boxShadow: "2px 3px 0px #C74343",
   },
 }));
 
@@ -277,7 +280,7 @@ const EnrollCourseWithIDE = ({
                           <div
                             style={{
                               width: "5%",
-                              marginRight: "5px",
+                              paddingRight: "8px",
                               paddingTop: "8px",
                             }}
                           >
@@ -294,10 +297,7 @@ const EnrollCourseWithIDE = ({
                               }}
                             >
                               <IconButton size="small">
-                                <FontAwesomeIcon
-                                  icon={faClipboard}
-                                  style={{ height: "20px", width: "20px" }}
-                                />
+                                <FileCopyOutlined />
                               </IconButton>
                             </CopyToClipboard>
                           </div>

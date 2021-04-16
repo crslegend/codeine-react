@@ -7,6 +7,7 @@ const BACKEND_URL = "http://localhost:8000";
 
 const client = axios.create({
   baseURL: BACKEND_URL,
+  timeout: 15000,
 });
 
 // set JWT, add refresh token to cookie
