@@ -385,12 +385,24 @@ const IndustryProjectDetails = () => {
     setOpenDeleteDialog(true);
   };
 
-  const formatStatus = (status) => {
-    if (status) {
-      return "Yes";
-    } else {
-      return "No";
+  const formatStatus = (row) => {
+    if (row.is_accepted) {
+      return "Accepted";
     }
+    if (row.is_rejected) {
+      return "Rejected";
+    }
+    return "Pending";
+  };
+
+  const formatColor = (row) => {
+    if (row.is_accepted) {
+      return "green";
+    }
+    if (row.is_rejected) {
+      return "red";
+    }
+    return "orange";
   };
 
   const applicationsColumns = [
@@ -414,29 +426,16 @@ const IndustryProjectDetails = () => {
     },
     {
       field: "is_accepted",
-      headerName: "Accepted",
+      headerName: "Status",
       renderCell: (params) => (
-        <div>
-          {params.value ? (
-            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
-          ) : (
-            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
-          )}
-        </div>
-      ),
-      flex: 1,
-    },
-    {
-      field: "is_rejected",
-      headerName: "Rejected",
-      renderCell: (params) => (
-        <div>
-          {params.value ? (
-            <div style={{ color: "green" }}>{formatStatus(params.value)}</div>
-          ) : (
-            <div style={{ color: "red" }}>{formatStatus(params.value)}</div>
-          )}
-        </div>
+        <strong>
+          <Typography
+            variant="body2"
+            style={{ color: formatColor(params.row) }}
+          >
+            {formatStatus(params.row)}
+          </Typography>
+        </strong>
       ),
       flex: 1,
     },
@@ -467,7 +466,8 @@ const IndustryProjectDetails = () => {
                   <Avatar
                     alt="Pic"
                     src={
-                      industryProject.partner.partner.organization.organization_photo
+                      industryProject.partner.partner.organization
+                        .organization_photo
                     }
                     classes={{
                       img: classes.orgavatar,
