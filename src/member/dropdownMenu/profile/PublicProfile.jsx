@@ -386,7 +386,7 @@ const PublicProfile = (props) => {
           .filter((article) => article.is_activated === true);
         setArticles(
           res.data.articles.sort((a, b) =>
-            a.date_created.localeCompare(b.date_created)
+            b.date_created.localeCompare(a.date_created)
           )
         );
 
@@ -846,14 +846,14 @@ const PublicProfile = (props) => {
             </Grid>
 
             <Grid item xs={12} style={{ marginBottom: "40px" }}>
-              <div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   variant="h5"
                   style={{ fontWeight: 600, marginBottom: "20px" }}
                 >
                   Articles
                 </Typography>
-                {articles && articles.length > 3 ? (
+                {articles && articles.length > 0 ? (
                   <Button
                     className={classes.seeAll}
                     onClick={() => setArticleDialog(true)}
@@ -958,6 +958,23 @@ const PublicProfile = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
+      </Dialog>
+
+      <Dialog
+        open={articleDialog}
+        onClose={() => setArticleDialog(false)}
+        style={{ borderRadius: "50px" }}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+        fullWidth={true}
+      >
+        <DialogTitle>All Articles</DialogTitle>
+        <DialogContent>
+          {articles &&
+            articles.map((article, index) => {
+              return <ArticleCard key={index} article={article} />;
+            })}
+        </DialogContent>
       </Dialog>
 
       <Dialog
