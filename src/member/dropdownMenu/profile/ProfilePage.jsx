@@ -433,7 +433,7 @@ const Profile = (props) => {
       Service.client
         .get(`/auth/members/${userid}`)
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           setProfileDetails(res.data);
           setSelectedLocation(res.data.location);
           setUniqueId(res.data.member.unique_id);
@@ -532,7 +532,7 @@ const Profile = (props) => {
   };
 
   const handleSubmit = (e) => {
-    console.log(profileDetails);
+    //console.log(profileDetails);
     e.preventDefault();
     if (!validator.isEmail(profileDetails.email)) {
       setSbOpen(true);
@@ -652,7 +652,7 @@ const Profile = (props) => {
   };
 
   const handleURLSubmit = (e) => {
-    console.log(uniqueId);
+    //console.log(uniqueId);
     e.preventDefault();
 
     if (uniqueId === profileDetails.member.unique_id) {
