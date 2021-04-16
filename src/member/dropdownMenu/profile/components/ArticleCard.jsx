@@ -29,7 +29,7 @@ const ArticleCard = (props) => {
   const classes = styles();
   const { article } = props;
 
-  console.log(article);
+  //console.log(article);
 
   const formatDate = (date) => {
     const options = {

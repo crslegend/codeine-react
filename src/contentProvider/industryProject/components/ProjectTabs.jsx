@@ -14,7 +14,7 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import SearchBar from "material-ui-search-bar";
+// import SearchBar from "material-ui-search-bar";
 import { DataGrid } from "@material-ui/data-grid";
 import SkillSetChart from "./SkillSetChart";
 import ApplicantDemographics from "./ApplicantDemographics";
@@ -93,16 +93,17 @@ const ProjectTabs = ({
   const [selectedApplicant, setSelectedApplicant] = useState();
   const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [openChooseDialog, setOpenChooseDialog] = useState(false);
 
   const handleClickOpenApplication = (e) => {
     setSelectedApplicant(e.row);
     if (!e.row.is_accepted && !e.row.is_rejected) {
       if (e.field === "is_accepted") {
-        setOpenAcceptDialog(true);
+        setOpenChooseDialog(true);
       }
-      if (e.field === "is_rejected") {
-        setOpenRejectDialog(true);
-      }
+      // if (e.field === "is_rejected") {
+      //   setOpenRejectDialog(true);
+      // }
     }
   };
 
@@ -115,6 +116,7 @@ const ProjectTabs = ({
         }
       )
       .then((res) => {
+        setOpenChooseDialog(false);
         setOpenAcceptDialog(false);
         getIndustryProject();
         setSbOpen(true);
@@ -141,6 +143,7 @@ const ProjectTabs = ({
       )
       .then((res) => {
         setOpenRejectDialog(false);
+        setOpenChooseDialog(false);
         getIndustryProject();
         setSbOpen(true);
         setSnackbar({
@@ -193,7 +196,7 @@ const ProjectTabs = ({
                   return (
                     <Fragment>
                       <div style={{ marginTop: "10px" }}>
-                        <SearchBar
+                        {/* <SearchBar
                           placeholder="Search applications..."
                           // value={searchValue}
                           // onChange={(newValue) => setSearchValue(newValue)}
@@ -202,7 +205,7 @@ const ProjectTabs = ({
                           // classes={{
                           //   input: classes.input,
                           // }}
-                        />
+                        /> */}
                       </div>
                       <Paper
                         style={{
@@ -232,10 +235,8 @@ const ProjectTabs = ({
                           Reject Applicant?
                         </DialogTitle>
                         <DialogContent>
-                          By rejecting this applicant, you will not be able to
-                          accept this applicant in the future.
-                          <br />
-                          <span>Are you sure?</span>
+                          This action cannot be undone. Are you sure you want to
+                          reject this applicant?
                         </DialogContent>
                         <DialogActions style={{ marginTop: 40 }}>
                           <Button
@@ -258,6 +259,36 @@ const ProjectTabs = ({
                         </DialogActions>
                       </Dialog>
                       <Dialog
+                        open={openChooseDialog}
+                        onClose={() => setOpenChooseDialog(false)}
+                        aria-labelledby="form-dialog-title"
+                        classes={{ paper: classes.dialogPaper }}
+                      >
+                        <DialogTitle id="form-dialog-title">
+                          Applicant Status
+                        </DialogTitle>
+                        <DialogContent>
+                          Would you like to accept or reject the applicant?
+                        </DialogContent>
+                        <DialogActions style={{ marginTop: 40 }}>
+                          <Button
+                            onClick={() => setOpenRejectDialog(true)}
+                            color="primary"
+                            variant="outlined"
+                            className={classes.deleteButton}
+                          >
+                            Reject
+                          </Button>
+                          <Button
+                            onClick={() => setOpenAcceptDialog(true)}
+                            color="primary"
+                            variant="contained"
+                          >
+                            Accept
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                      <Dialog
                         open={openAcceptDialog}
                         onClose={() => setOpenAcceptDialog(false)}
                         aria-labelledby="form-dialog-title"
@@ -267,10 +298,8 @@ const ProjectTabs = ({
                           Accept Applicant?
                         </DialogTitle>
                         <DialogContent>
-                          By accepting this applicant, you will not be able to
-                          reject this applicant in the future.
-                          <br />
-                          <span>Are you sure?</span>
+                          This action cannot be undone. Are you sure you want to
+                          accept this applicant?
                         </DialogContent>
                         <DialogActions style={{ marginTop: 40 }}>
                           <Button
