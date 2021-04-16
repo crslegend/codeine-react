@@ -6,7 +6,6 @@ import {
   Typography,
   CircularProgress,
   IconButton,
-  TextField,
 } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import Service from "../AxiosService";
@@ -59,7 +58,7 @@ const MemberArticleIDE = (props) => {
     setOpenIDE,
   } = props;
 
-  const [user, setUser] = useState(null);
+  const [user] = useState(null);
 
   const [portNum, setPortNum] = useState();
   const [loadingIDE, setLoadingIDE] = useState(true);

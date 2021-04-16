@@ -287,7 +287,7 @@ const AdminNotificationPage = () => {
 
   let memberRows = allMembersList;
 
-  const [searchValueMember, setSearchValueMember] = useState("");
+  const [searchValueMember] = useState("");
 
   const getMemberData = () => {
     let queryParams = {
@@ -402,7 +402,7 @@ const AdminNotificationPage = () => {
 
   let partnerRows = allPartnerList;
 
-  const [searchValuePartner, setSearchValuePartner] = useState("");
+  const [searchValuePartner] = useState("");
 
   const getPartnerData = () => {
     let queryParams = {
@@ -647,7 +647,7 @@ const AdminNotificationPage = () => {
                   setSelectedNotif(notif);
                 }}
               >
-                <Typography style={{ fontWeight: "700" }}>
+                <Typography style={{ fontWeight: "700", cursor: "pointer" }}>
                   {notif.title}
                 </Typography>
                 {notif.description}
