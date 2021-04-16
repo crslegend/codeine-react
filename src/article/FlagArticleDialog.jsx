@@ -44,7 +44,7 @@ const FlagArticleDialog = (props) => {
     if (description === "" || !description) {
       setSbOpen(true);
       setSnackbar({
-        message: "Please give details for your enquiry!",
+        message: "Please explain why you flag this article!",
         severity: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -74,7 +74,7 @@ const FlagArticleDialog = (props) => {
         setSbOpen(true);
         setSnackbar({
           message:
-            "Article has been flag and raised to us, we will review the article shortly. Thank you.",
+            "Article has been flagged to us, we will review the article shortly.",
           severity: "success",
           anchorOrigin: {
             vertical: "bottom",
@@ -98,7 +98,7 @@ const FlagArticleDialog = (props) => {
         <div>
           <label htmlFor="details">
             <Typography variant="h6" style={{ paddingTop: "20px" }}>
-              Details of your enquiry
+              Please describe why you flag this article
             </Typography>
           </label>
           <TextField
@@ -107,7 +107,7 @@ const FlagArticleDialog = (props) => {
             variant="outlined"
             fullWidth
             margin="dense"
-            placeholder="Tell us in detail of your enquiry"
+            placeholder="Tell us in detail.."
             multiline
             rows={4}
             inputProps={{ style: { resize: "vertical" } }}
