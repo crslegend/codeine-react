@@ -385,7 +385,7 @@ const PartnerNotificationPage = () => {
                   setSelectedNotif(notif);
                 }}
               >
-                <Typography style={{ fontWeight: "700" }}>
+                <Typography style={{ fontWeight: "700", cursor: "pointer" }}>
                   {notif.title}
                 </Typography>
                 {notif.description}
