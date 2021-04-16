@@ -61,7 +61,7 @@ const ArticleCard = (props) => {
           last updated on {article && formatDate(article.date_edited)}
         </Typography>
         <div className={classes.title}>
-          <Link className={classes.link} to={`/article/member/${article.id}`}>
+          <Link className={classes.link} to={`/article/${article.id}`}>
             <Typography
               style={{
                 fontWeight: 600,

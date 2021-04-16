@@ -491,7 +491,7 @@ const MemberArticleList = (props) => {
                               cursor: "pointer",
                             }}
                             onClick={() => {
-                              history.push(`/article/member/${article.id}`);
+                              history.push(`/article/${article.id}`);
                             }}
                           >
                             {article.title}
@@ -639,9 +639,7 @@ const MemberArticleList = (props) => {
                 allArticles.map((article, index) => {
                   return (
                     <CardActionArea
-                      onClick={() =>
-                        history.push(`/article/member/${article.id}`)
-                      }
+                      onClick={() => history.push(`/article/${article.id}`)}
                       key={index}
                       style={{ borderTop: "1px solid #F3F3F3" }}
                     >

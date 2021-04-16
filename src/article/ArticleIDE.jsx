@@ -10,10 +10,9 @@ import {
 import { useParams } from "react-router-dom";
 import Service from "../AxiosService";
 // import Toast from "../components/Toast.js";
-import { ArrowBack } from "@material-ui/icons";
-import UseAnimations from "react-useanimations";
-import heart from "react-useanimations/lib/heart";
-import CommentIcon from "@material-ui/icons/Comment";
+import { ArrowBack, InsertEmoticon } from "@material-ui/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import Splitter, { SplitDirection } from "@devbookhq/splitter";
 import parse, { attributesToProps } from "html-react-parser";
 
@@ -44,6 +43,42 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+  },
+  iconButton: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.grey[700],
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
+  },
+  iconButtonComment: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.grey[700],
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
+  },
+  activeIconButton: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.yellow.main,
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.orange.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
   },
 }));
 
@@ -366,7 +401,7 @@ const MemberArticleIDE = (props) => {
                     display: "flex",
                   }}
                 >
-                  <UseAnimations
+                  {/* <UseAnimations
                     animation={heart}
                     size={30}
                     reverse={articleDetails.current_user_liked}
@@ -378,7 +413,45 @@ const MemberArticleIDE = (props) => {
                   <CommentIcon onClick={() => setDrawerOpen(true)} />
                   <Typography style={{ display: "inline-flex" }}>
                     {articleDetails.top_level_comments.length} responses
-                  </Typography>
+                  </Typography> */}
+                  <IconButton
+                    disableRipple
+                    classes={{
+                      root: articleDetails.current_user_liked
+                        ? classes.activeIconButton
+                        : classes.iconButton,
+                    }}
+                    size="small"
+                    onClick={(e) => handleLikeArticle(e)}
+                  >
+                    <InsertEmoticon />
+                    <span style={{ fontSize: "12px", margin: "0 2px" }}>
+                      {articleDetails.engagements.length}
+                    </span>
+                  </IconButton>
+                  {/* <Typography style={{ marginRight: "15px" }}>
+              {articleDetails.engagements.length}
+            </Typography> */}
+                  <IconButton
+                    disableRipple
+                    classes={{
+                      root: classes.iconButtonComment,
+                    }}
+                    onClick={() => setDrawerOpen(true)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faCommentAlt}
+                      style={{
+                        height: "20px",
+                        width: "20px",
+                        cursor: "pointer",
+                        marginRight: "2px",
+                      }}
+                    />
+                    <span style={{ fontSize: "12px", margin: "0 2px" }}>
+                      {articleDetails.top_level_comments.length}
+                    </span>
+                  </IconButton>
                 </div>
                 {/* <Divider style={{ marginTop: "20px" }} /> */}
               </div>

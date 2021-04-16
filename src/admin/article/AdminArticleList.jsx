@@ -407,7 +407,7 @@ const AdminArticleList = (props) => {
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        history.push(`/article/admin/${article.id}`);
+                        history.push(`/article/${article.id}`);
                       }}
                     >
                       {article.title}

@@ -155,18 +155,7 @@ const NotificationTile = (props) => {
             history.go();
           }
         } else if (res.data.notification.notification_type === "ARTICLE") {
-          if (userType === "member") {
-            history.push(`/article/member/${res.data.notification.article.id}`);
-            history.go();
-          } else if (userType === "partner") {
-            history.push(
-              `/article/partner/${res.data.notification.article.id}`
-            );
-            history.go();
-          } else if (userType === "admin") {
-            history.push(`/article/admin/${res.data.notification.article.id}`);
-            history.go();
-          }
+          history.push(`/article/${res.data.notification.article.id}`);
         } else if (res.data.notification.notification_type === "COURSE") {
           if (userType === "member") {
             history.push(`/courses/enroll/${res.data.notification.course.id}`);

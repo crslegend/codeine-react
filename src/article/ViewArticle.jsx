@@ -12,18 +12,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
 import Service from "../AxiosService";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import UseAnimations from "react-useanimations";
-import heart from "react-useanimations/lib/heart";
-import CommentIcon from "@material-ui/icons/Comment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
+import { InsertEmoticon } from "@material-ui/icons";
 import Menu from "@material-ui/icons/MoreVert";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import ReactQuill from "react-quill";
-import { attributesToProps } from "html-react-parser";
 import FlagDialog from "./FlagArticleDialog";
 import Toast from "../components/Toast";
 import hljs from "highlight.js";
@@ -112,6 +112,42 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 50,
     background: "#FFF",
     padding: 2,
+  },
+  iconButton: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.grey[700],
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
+  },
+  iconButtonComment: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.grey[700],
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
+  },
+  activeIconButton: {
+    padding: 0,
+    margin: "-4px 8px",
+    fontSize: "22px",
+    color: theme.palette.yellow.main,
+    transition: "all .15s ease-in-out",
+    "&:hover": {
+      color: theme.palette.orange.main,
+      background: "transparent",
+      transform: "scale(1.2)",
+    },
   },
 }));
 
@@ -225,15 +261,6 @@ const ViewArticle = (props) => {
         "please login! - to discuss the flow, should we redirect to member login page? but not all viewers of article are members..."
       );
     }
-  };
-
-  const options = {
-    replace: (domNode) => {
-      if (domNode.attribs && domNode.name === "img") {
-        const props = attributesToProps(domNode.attribs);
-        return <img style={{ width: "100%" }} alt="" {...props} />;
-      }
-    },
   };
 
   const openingIDE = () => {
@@ -521,23 +548,57 @@ const ViewArticle = (props) => {
               display: "flex",
             }}
           >
-            <UseAnimations
+            {/* <UseAnimations
               animation={heart}
               size={30}
               reverse={articleDetails.current_user_liked}
               onClick={(e) => handleLikeArticle(e)}
               style={{ cursor: "pointer" }}
-            />
-            <Typography style={{ marginRight: "15px" }}>
+            /> */}
+
+            <IconButton
+              disableRipple
+              classes={{
+                root: articleDetails.current_user_liked
+                  ? classes.activeIconButton
+                  : classes.iconButton,
+              }}
+              size="small"
+              onClick={(e) => handleLikeArticle(e)}
+              disabled={user === null}
+            >
+              <InsertEmoticon />
+              <span style={{ fontSize: "12px", margin: "0 2px" }}>
+                {articleDetails.engagements.length}
+              </span>
+            </IconButton>
+            {/* <Typography style={{ marginRight: "15px" }}>
               {articleDetails.engagements.length}
-            </Typography>
-            <CommentIcon
-              style={{ cursor: "pointer" }}
+            </Typography> */}
+            <IconButton
+              disableRipple
+              classes={{
+                root: classes.iconButtonComment,
+              }}
               onClick={() => setDrawerOpen(true)}
-            />
-            <Typography style={{ display: "inline-flex" }}>
+            >
+              <FontAwesomeIcon
+                icon={faCommentAlt}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  cursor: "pointer",
+                  marginRight: "2px",
+                }}
+              />
+              <span style={{ fontSize: "12px", margin: "0 2px" }}>
+                {articleDetails.top_level_comments.length}
+              </span>
+            </IconButton>
+
+            {/* <Typography style={{ display: "inline-flex" }}>
               {articleDetails.top_level_comments.length}
-            </Typography>
+            </Typography> */}
 
             <Popover
               id={popoverid}

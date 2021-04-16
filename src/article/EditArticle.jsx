@@ -550,13 +550,7 @@ const EditArticle = (props) => {
         Service.client
           .patch(`/articles/${id}/publish`)
           .then((res) => {
-            if (userType === "member") {
-              history.push(`/article/member/${res.data.id}`);
-            } else if (userType === "partner") {
-              history.push(`/article/partner/${res.data.id}`);
-            } else if (userType === "admin") {
-              history.push(`/article/admin/${res.data.id}`);
-            }
+            history.push(`/article/${res.data.id}`);
           })
           .catch((err) => {
             console.log(err);
@@ -657,13 +651,7 @@ const EditArticle = (props) => {
           console.log(data);
           setEditThumbnailState(false);
           setSaveState(true);
-          if (userType === "member") {
-            history.push(`/article/member/${id}`);
-          } else if (userType === "partner") {
-            history.push(`/article/partner/${id}`);
-          } else if (userType === "admin") {
-            history.push(`/article/admin/${id}`);
-          }
+          history.push(`/article/${id}`);
         })
         .catch((err) => {
           console.log(err);
@@ -672,13 +660,7 @@ const EditArticle = (props) => {
   };
 
   const backToArticle = () => {
-    if (userType === "member") {
-      history.push(`/article/member/${id}`);
-    } else if (userType === "partner") {
-      history.push(`/article/partner/${id}`);
-    } else if (userType === "admin") {
-      history.push(`/article/admin/${id}`);
-    }
+    history.push(`/article/${id}`);
   };
 
   const markAllAsRead = () => {

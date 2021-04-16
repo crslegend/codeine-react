@@ -53,9 +53,7 @@ const ArticleCard = (props) => {
 
   return (
     <Card elevation={0} className={classes.root}>
-      <CardActionArea
-        onClick={() => history.push(`/article/member/${article.id}`)}
-      >
+      <CardActionArea onClick={() => history.push(`/article/${article.id}`)}>
         <CardContent>
           <Grid container>
             <Grid item xs={1}>

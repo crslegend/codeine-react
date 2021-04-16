@@ -9,7 +9,8 @@ const styles = makeStyles((theme) => ({
   },
   proBorderWrapper: {
     borderRadius: 50,
-    background: "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
+    background:
+      "linear-gradient(231deg, rgba(255,43,26,1) 0%, rgba(255,185,26,1) 54%, rgba(255,189,26,1) 100%)",
     padding: 2,
   },
   freeBorderWrapper: {
@@ -59,7 +60,9 @@ const TrendingArticle = (props) => {
           <div style={{ display: "flex" }}>
             <div
               className={
-                article.user && article.user.member && article.user.member.membership_tier === "PRO"
+                article.user &&
+                article.user.member &&
+                article.user.member.membership_tier === "PRO"
                   ? classes.proBorderWrapper
                   : classes.freeBorderWrapper
               }
@@ -69,7 +72,11 @@ const TrendingArticle = (props) => {
             >
               <div className={classes.innerBorderWrapper}>
                 <Avatar
-                  src={article.user.is_admin && !article.user.profile_photo ? CLogo : article.user.profile_photo}
+                  src={
+                    article.user.is_admin && !article.user.profile_photo
+                      ? CLogo
+                      : article.user.profile_photo
+                  }
                   alt=""
                   style={{
                     height: "18px",
@@ -79,32 +86,24 @@ const TrendingArticle = (props) => {
               </div>
             </div>
 
-            {article.user.is_admin && article.user.first_name === null && article.user.last_name === null
+            {article.user.is_admin &&
+            article.user.first_name === null &&
+            article.user.last_name === null
               ? "Codeine Admin"
               : article.user.first_name + " " + article.user.last_name}
           </div>
 
           <Typography
             onClick={() => {
-              if (setLoggedIn) {
-                if (userType === "admin") {
-                  history.push(`/article/admin/${article.id}`);
-                } else if (userType === "member") {
-                  history.push(`/article/member/${article.id}`);
-                } else if (userType === "partner") {
-                  history.push(`/article/partner/${article.id}`);
-                } else if (userType === "guest") {
-                  history.push(`/article/guest/${article.id}`);
-                }
-              } else {
-                history.push(`/article/guest/${article.id}`);
-              }
+              history.push(`/article/${article.id}`);
             }}
             style={{ fontWeight: 600, fontSize: "18px", cursor: "pointer" }}
           >
             {article.title}
           </Typography>
-          <Typography style={{ fontSize: "12px", color: "#757575" }}>{formatDate(article.date_created)}</Typography>
+          <Typography style={{ fontSize: "12px", color: "#757575" }}>
+            {formatDate(article.date_created)}
+          </Typography>
         </div>
       </div>
     </div>
