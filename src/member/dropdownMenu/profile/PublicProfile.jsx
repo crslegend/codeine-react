@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   cardroot: {
     marginRight: "20px",
     marginTop: "-50px",
-    height: "80%",
+    height: "90%",
     padding: "55px 10px 30px",
     [theme.breakpoints.down("sm")]: {
       marginRight: "10px",
@@ -399,6 +399,7 @@ const PublicProfile = (props) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     checkIfMemberIdIsPro();
     checkIfLoggedIn();
     getMemberData();

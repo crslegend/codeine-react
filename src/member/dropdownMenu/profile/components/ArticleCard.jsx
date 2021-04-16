@@ -81,7 +81,7 @@ const ArticleCard = (props) => {
           </div>
         </div>
 
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", marginBottom: "-15px" }}>
           <FavoriteBorder />
           <Typography variant="body2" style={{ marginLeft: "5px" }}>
             {article.engagements && article.engagements.length} likes
