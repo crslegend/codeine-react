@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     borderRadius: "5px",
     // marginRight: "30px",
+    width: "14rem",
+    height: "3.5rem",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 }));
 
@@ -49,12 +53,12 @@ const EarningsReport = ({ earningsReport }) => {
         }}
       >
         <div className={classes.statsDiv}>
-          <div style={{ display: "flex" }}>
-            <Typography variant="h6">Fundings</Typography>
+          <div style={{ display: "flex"}}>
+            <Typography variant="h6">Funding</Typography>
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total amount of funding received from organizations
+                  Total amount received from organizations
                 </Typography>
               }
             >
@@ -80,7 +84,7 @@ const EarningsReport = ({ earningsReport }) => {
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total amount of earnings from pro members
+                  Total revenue from Membership Subscriptions
                 </Typography>
               }
             >
@@ -102,11 +106,11 @@ const EarningsReport = ({ earningsReport }) => {
         <DragHandle style={{ fontSize: "50px" }} color="disabled" />
         <div className={classes.statsDiv}>
           <div style={{ display: "flex" }}>
-            <Typography variant="h6">Total Income</Typography>
+            <Typography variant="h6">Total Revenue</Typography>
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total income before accounting for expenses
+                  Total revenue before expenses
                 </Typography>
               }
             >
@@ -133,7 +137,7 @@ const EarningsReport = ({ earningsReport }) => {
       >
         <div className={classes.statsDiv}>
           <div style={{ display: "flex" }}>
-            <Typography variant="h6">Expenses</Typography>
+            <Typography variant="h6">Total Expenses</Typography>
             <TooltipMui
               title={
                 <Typography variant="body2">
@@ -160,7 +164,7 @@ const EarningsReport = ({ earningsReport }) => {
             <TooltipMui
               title={
                 <Typography variant="body2">
-                  Total net income after accounting for expenses
+                  Net income (Total Revenue - Total Expenses)
                 </Typography>
               }
             >
