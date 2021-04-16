@@ -27,7 +27,6 @@ import logo from "../assets/codeineLogos/Admin.svg";
 import SupervisorAccountOutlinedIcon from "@material-ui/icons/SupervisorAccountOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import WorkOutlinedIcon from "@material-ui/icons/WorkOutline";
 import BrokenImageOutlinedIcon from "@material-ui/icons/BrokenImageOutlined";

@@ -1,13 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Popover,
-  Avatar,
-  ListItem,
-  Button,
-  Link,
-} from "@material-ui/core";
+import { Typography, Avatar, ListItem, Button, Link } from "@material-ui/core";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
@@ -173,46 +166,6 @@ const NotificationDetail = () => {
           });
       }
     }
-  };
-
-  const [popover, setPopover] = useState({
-    popoverId: null,
-    anchorEl: null,
-  });
-
-  const handleClick = (event, notifId) => {
-    setPopover({
-      popoverId: notifId,
-      anchorEl: event.currentTarget,
-    });
-  };
-
-  const handleClose = () => {
-    setPopover({
-      popoverId: null,
-      anchorEl: null,
-    });
-  };
-
-  const markUnread = (notifId) => {
-    Service.client
-      .patch(`/notification-objects/${notification.id}/unread`)
-      .then(() => {})
-      .catch();
-  };
-
-  const markRead = (notifId) => {
-    Service.client
-      .patch(`/notification-objects/${notification.id}/read`)
-      .then(() => {})
-      .catch();
-  };
-
-  const deleteNotif = (notifId) => {
-    Service.client
-      .delete(`/notification-objects/${notifId}`)
-      .then(() => {})
-      .catch();
   };
 
   const navLogo = (

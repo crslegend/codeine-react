@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
-  Avatar,
   Typography,
   AppBar,
   Tabs,
@@ -119,39 +118,6 @@ const PartnerNotificationPage = () => {
     autoHideDuration: 3000,
   });
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    if (date !== null) {
-      const newDate = new Date(date).toLocaleDateString(undefined, options);
-      return newDate;
-    }
-    return "";
-  };
-
-  const formatStatus = (status) => {
-    if (status) {
-      return "Active";
-    } else {
-      return "Deactivated";
-    }
-  };
-
-  const formatNull = (input) => {
-    if (input) {
-      if (input.organization_name) {
-        return input.organization_name;
-      }
-      return input;
-    } else {
-      return "-";
-    }
-  };
-
   const [notificationDetails, setNotificationDetails] = useState({
     title: "",
     description: "",
@@ -188,15 +154,6 @@ const PartnerNotificationPage = () => {
       setSnackbar({
         ...snackbar,
         message: "Please select a course!",
-        severity: "error",
-      });
-      return;
-    }
-    if (notificationPhoto && notificationPhoto.length === 0) {
-      setSbOpen(true);
-      setSnackbar({
-        ...snackbar,
-        message: "Please upload an image!",
         severity: "error",
       });
       return;
