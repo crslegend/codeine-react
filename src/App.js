@@ -296,7 +296,7 @@ const App = () => {
       />
       <MemberAndPublicRoute
         exact
-        path="/ide"
+        path="/ide/:portNum"
         component={OnlyIDE}
       />
 

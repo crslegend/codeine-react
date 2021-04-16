@@ -12,7 +12,6 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import {
-  Add,
   Announcement,
   ArrowBack,
   Assignment,
@@ -148,7 +147,7 @@ const EnrollCourseWithIDE = ({
       icon: <Launch />,
       name: "Open In New Tab",
       action: () => {
-        window.open("https://www.youtube.com/watch?v=WPqXP_kLzpo", "_blank", 'height=800, width=1080');
+        window.open(`/ide/${portNum}`, "_blank", "height=800, width=1080");
         handleClose();
       },
     },
