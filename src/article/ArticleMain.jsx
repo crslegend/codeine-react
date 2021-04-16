@@ -100,8 +100,8 @@ const useStyles = makeStyles((theme) => ({
 const ArticleMain = () => {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
-  const userType = location.pathname.split("/", 3)[2];
+  //const location = useLocation();
+  //const userType = location.pathname.split("/", 3)[2];
   const { id } = useParams();
 
   const [sbOpen, setSbOpen] = useState(false);
@@ -115,43 +115,29 @@ const ArticleMain = () => {
     autoHideDuration: 3000,
   });
 
+  const [userType, setUserType] = useState("guest");
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
 
   const checkIfLoggedIn = () => {
-    if (Service.getJWT() !== null && Service.getJWT() !== undefined) {
-      const userid = jwt_decode(Service.getJWT()).user_id;
-      if (userType === "member") {
-        Service.client
-          .get(`/auth/members/${userid}`)
-          .then((res) => {
-            setUser(res.data);
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            setUser(null);
-          });
-      } else if (userType === "partner") {
-        Service.client
-          .get(`/auth/partners/${userid}`)
-          .then((res) => {
-            setUser(res.data);
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            setUser(null);
-          });
-      } else if (userType === "admin") {
-        Service.client
-          .get(`/auth/admins/${userid}`)
-          .then((res) => {
-            setUser(res.data);
-            setLoggedIn(true);
-          })
-          .catch((err) => {
-            setUser(null);
-          });
-      }
+    if (Cookies.get("t1")) {
+      setLoggedIn(true);
+
+      const decoded = jwt_decode(Cookies.get("t1"));
+      Service.client
+        .get(`/auth/members/${decoded.user_id}`)
+        .then((res) => {
+          // console.log(res.data);
+          setUser(res.data);
+          if (res.data.member) {
+            setUserType("member");
+          } else if (res.data.partner) {
+            setUserType("partner");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 

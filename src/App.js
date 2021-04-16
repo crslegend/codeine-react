@@ -56,31 +56,17 @@ const App = () => {
       <Route
         strict
         sensitive
-        path="/article/guest/:id"
+        exact
+        path="/article/:id"
         component={ViewArticlePage}
       />
       <Route strict sensitive path="/viewarticles" component={AllArticlePage} />
-      <PrivateRoute
+      {/* <PrivateRoute
         strict
         sensitive
-        path="/article/member/:id"
+        path="/article/:id"
         component={ViewArticlePage}
-        user="member"
-      />
-      <PrivateRoute
-        strict
-        sensitive
-        path="/article/partner/:id"
-        component={ViewArticlePage}
-        user="partner"
-      />
-      <PrivateRoute
-        strict
-        sensitive
-        path="/article/admin/:id"
-        component={ViewArticlePage}
-        user="admin"
-      />
+      /> */}
       <Route exact path="/codereview" component={ViewAllCodeReviews} />
       <Route path="/codereview/:id" component={CodeReviewDetails} />
       <PartnerAndPublicRoute

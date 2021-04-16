@@ -295,19 +295,7 @@ const ViewAllArticles = () => {
                       <div>
                         <LinkMui
                           onClick={() => {
-                            if (setLoggedIn) {
-                              if (userType === "admin") {
-                                history.push(`/article/admin/${article.id}`);
-                              } else if (userType === "member") {
-                                history.push(`/article/member/${article.id}`);
-                              } else if (userType === "partner") {
-                                history.push(`/article/partner/${article.id}`);
-                              } else if (userType === "guest") {
-                                history.push(`/article/guest/${article.id}`);
-                              }
-                            } else {
-                              history.push(`/article/guest/${article.id}`);
-                            }
+                            history.push(`/article/${article.id}`);
                           }}
                           className={classes.linkMui}
                         >

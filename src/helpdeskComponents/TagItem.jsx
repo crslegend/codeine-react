@@ -21,9 +21,9 @@ const TagItem = ({ enquiry, formatDate, user }) => {
     if (user === "admin") {
       return `/admin/contentquality/article/${id}`;
     } else if (user === "member") {
-      return `/article/member/${id}`;
+      return `/article/${id}`;
     } else if (user === "partner") {
-      return `/article/parnter/${id}`;
+      return `/article/${id}`;
     }
   };
 
