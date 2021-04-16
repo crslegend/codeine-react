@@ -6,10 +6,8 @@ import {
   Chip,
   Typography,
   Avatar,
-  Divider,
   Link,
 } from "@material-ui/core";
-import { Language } from "@material-ui/icons";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../../../AxiosService";
 import UseAnimations from "react-useanimations";
@@ -17,11 +15,7 @@ import heart from "react-useanimations/lib/heart";
 import CommentIcon from "@material-ui/icons/Comment";
 import CommentDrawer from "./ArticleComments";
 import Toast from "../../../components/Toast.js";
-// import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-// import jwt_decode from "jwt-decode";
-// import Cookies from "js-cookie";
 import ReactQuill from "react-quill";
-import parse, { attributesToProps } from "html-react-parser";
 import "../../../article/quill.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -178,15 +172,6 @@ const ViewArticle = (props) => {
       });
   };
 
-  const options = {
-    replace: (domNode) => {
-      if (domNode.attribs && domNode.name === "img") {
-        const props = attributesToProps(domNode.attribs);
-        return <img style={{ width: "100%" }} alt="" {...props} />;
-      }
-    },
-  };
-
   return (
     <div className={classes.root}>
       <Toast open={sbOpen} setOpen={setSbOpen} {...snackbar} />
@@ -329,7 +314,7 @@ const ViewArticle = (props) => {
           }
         })}
 
-      <div style={{ fontSize: "20px", marginBottom: "30px" }}>
+      <div style={{ fontSize: "20px" }}>
         {/* {parse(articleDetails.content, options)} */}
         <div style={{ width: "75%" }}>
           <img
@@ -338,7 +323,7 @@ const ViewArticle = (props) => {
             width="100%"
           />
         </div>
-        <div style={{ fontSize: "18px" }}>
+        <div>
           <ReactQuill
             //modules={modules}
             value={articleDetails.content}

@@ -7,3 +7,7 @@
 .ql-editor pre {
   font-size: 17px;
 }
+
+.ql-tooltip {
+  display: none;
+}

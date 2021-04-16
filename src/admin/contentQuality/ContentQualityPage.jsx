@@ -184,7 +184,7 @@ const AdminContentQualityPage = () => {
           )}
         </div>
       ),
-      width: 170,
+      width: 200,
     },
     {
       field: "is_available",
@@ -200,7 +200,7 @@ const AdminContentQualityPage = () => {
           )}
         </div>
       ),
-      width: 160,
+      width: 200,
     },
     {
       field: "is_deleted",
@@ -272,7 +272,7 @@ const AdminContentQualityPage = () => {
           )}
         </div>
       ),
-      width: 170,
+      width: 200,
     },
     {
       field: "is_activated",
@@ -288,7 +288,7 @@ const AdminContentQualityPage = () => {
           )}
         </div>
       ),
-      width: 160,
+      width: 200,
     },
   ];
 

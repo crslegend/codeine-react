@@ -159,7 +159,7 @@ const IndustryProjectDetails = () => {
     Service.client
       .get(`/industry-projects/${id}`)
       .then((res) => {
-        // console.log(res);
+        //console.log(res.data);
         setIndustryProject(res.data);
         setEditIndustryProject(res.data);
         let newCategories = { ...categories };
@@ -185,6 +185,8 @@ const IndustryProjectDetails = () => {
               " " +
               res.data.industry_project_applications[i].member.last_name,
             member_id: res.data.industry_project_applications[i].member.id,
+            member_link:
+              res.data.industry_project_applications[i].member.member.unique_id,
             date_created:
               res.data.industry_project_applications[i].date_created,
             is_completed: res.data.is_completed,
@@ -297,7 +299,7 @@ const IndustryProjectDetails = () => {
       }
     }
 
-    console.log(data);
+    //console.log(data);
 
     const formData = new FormData();
     formData.append("title", data.title);
@@ -307,7 +309,7 @@ const IndustryProjectDetails = () => {
     formData.append("application_deadline", data.application_deadline);
     formData.append("categories", JSON.stringify(data.categories));
 
-    console.log(formData);
+    //console.log(formData);
 
     Service.client
       .patch(`/industry-projects/${id}`, formData)
@@ -417,11 +419,7 @@ const IndustryProjectDetails = () => {
       headerName: "Name",
       flex: 1,
       renderCell: (params) => {
-        return (
-          <a href={`/member/profile/${params.row.member_id}`}>
-            {params.row.name}
-          </a>
-        );
+        return <a href={`/${params.row.member_link}`}>{params.row.name}</a>;
       },
     },
     {
