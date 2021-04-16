@@ -557,7 +557,7 @@ const EnrollCourse = () => {
           message:
             "There is code snippet available below the video player for you to copy.",
           severity: "info",
-          autoHideDuration: 5000,
+          autoHideDuration: 3000,
         });
         break;
       }
