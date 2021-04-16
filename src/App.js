@@ -49,6 +49,7 @@ import CreateNewTicketPage from "./member/dropdownMenu/helpdesk/CreateNewTicketP
 import Membership from "./member/membership/Membership";
 import ViewSubmittedTicketsPage from "./member/dropdownMenu/helpdesk/ViewSubmittedTicketsPage";
 import ViewTicketPage from "./member/dropdownMenu/helpdesk/ViewTicketPage";
+import OnlyIDE from "./member/ide/OnlyIDE";
 
 const App = () => {
   return (
@@ -292,6 +293,11 @@ const App = () => {
         path="/admin/notification/view/:id"
         component={NotificationDetail}
         user="admin"
+      />
+      <MemberAndPublicRoute
+        exact
+        path="/ide"
+        component={OnlyIDE}
       />
 
       {/* <Route exact path="/industry" component={IndustryLanding} /> */}
