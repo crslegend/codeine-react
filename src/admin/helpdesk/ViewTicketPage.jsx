@@ -53,14 +53,17 @@ const ViewTicketPage = () => {
       .catch((err) => console.log(err));
 
     const decoded = jwt_decode(Cookies.get("t1"));
-    Service.client
-      .patch(`helpdesk/tickets/${id}/assign`, {
-        admin_id: decoded.user_id,
-      })
-      .then((res) => {
-        // console.log(res);
-      })
-      .catch((err) => console.log(err));
+
+    if (!enquiry.assigned_admin) {
+      Service.client
+        .patch(`helpdesk/tickets/${id}/assign`, {
+          admin_id: decoded.user_id,
+        })
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const markTicketAsResolved = () => {
