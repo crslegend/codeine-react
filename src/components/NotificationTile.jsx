@@ -8,13 +8,15 @@ import {
   Avatar,
   IconButton,
 } from "@material-ui/core";
+import { Work } from "@material-ui/icons/Info";
 import InfoIcon from "@material-ui/icons/Info";
-import AccountIcon from "../assets/notifIcon/AccountIcon.png";
-import AnnouncementIcon from "../assets/notifIcon/AnnouncementIcon.png";
-import ConsulatationIcon from "../assets/notifIcon/ConsultationIcon.png";
-import PaymentIcon from "../assets/notifIcon/PaymentIcon.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
 import Service from "../AxiosService";
 import { useHistory } from "react-router";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -51,13 +53,13 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   avatar: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
     width: "65px",
     height: "65px",
   },
   avatarIcon: {
-    width: "50px",
-    height: "50px",
+    width: "45px",
+    height: "45px",
   },
 }));
 
@@ -186,6 +188,21 @@ const NotificationTile = (props) => {
             );
             history.go();
           }
+        } else if (res.data.notification.notification_type === "CODE_REVIEW") {
+          if (userType === "member") {
+            history.push(`/codereview/${res.data.notification.code_review.id}`);
+            history.go();
+          } else if (userType === "partner") {
+            history.push(
+              `/partner/home/content/view/comments/${res.data.notification.course.id}`
+            );
+            history.go();
+          } else if (userType === "admin") {
+            history.push(
+              `/article/contentquality/courses/${res.data.notification.course.id}`
+            );
+            history.go();
+          }
         } else {
           // TO BE DELETE LATER
           if (userType === "member") {
@@ -250,7 +267,7 @@ const NotificationTile = (props) => {
         >
           {notification.notification.notification_type === "HELPDESK" && (
             <Avatar className={classes.avatar}>
-              <InfoIcon className={classes.avatarIcon} />
+              <HelpOutlineOutlinedIcon className={classes.avatarIcon} />
             </Avatar>
           )}
           {notification.notification.notification_type === "GENERAL" && (
@@ -260,20 +277,38 @@ const NotificationTile = (props) => {
           )}
           {notification.notification.notification_type === "COURSE" && (
             <Avatar className={classes.avatar}>
-              <AnnouncementIcon className={classes.avatarIcon} />
+              <InsertDriveFileIcon className={classes.avatarIcon} />
             </Avatar>
           )}
           {notification.notification.notification_type === "PAYMENT" && (
             <Avatar className={classes.avatar}>
-              <PaymentIcon className={classes.avatarIcon} />
+              <AccountBalanceWalletIcon className={classes.avatarIcon} />
             </Avatar>
           )}
-
-          {/* <Avatar
-            src={notification.notification && notification.notification.photo}
-            alt=""
-            style={{ height: "65px", width: "65px" }}
-          ></Avatar> */}
+          {notification.notification.notification_type === "CODE_REVIEW" && (
+            <Avatar className={classes.avatar}>
+              <FontAwesomeIcon
+                icon={faFileCode}
+                className={classes.icon}
+                style={{ height: "24px", width: "24px" }}
+              />
+            </Avatar>
+          )}
+          {notification.notification.notification_type === "ARTICLE" && (
+            <Avatar className={classes.avatar}>
+              <FontAwesomeIcon
+                icon={faNewspaper}
+                className={classes.avatarIcon}
+                style={{ height: "24px", width: "24px" }}
+              />
+            </Avatar>
+          )}
+          {notification.notification.notification_type ===
+            "INDUSTRY_PROJECT" && (
+            <Avatar className={classes.avatar}>
+              <Work className={classes.avatarIcon} />
+            </Avatar>
+          )}
 
           <div style={{ marginLeft: "10px" }}>
             {notification.is_read ? (

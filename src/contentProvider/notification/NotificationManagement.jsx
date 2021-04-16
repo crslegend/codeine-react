@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import {
   Avatar,
@@ -10,22 +10,15 @@ import {
   Box,
   Button,
   TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  InputLabel,
   Select,
   MenuItem,
   Grid,
 } from "@material-ui/core";
 import Toast from "../../components/Toast.js";
 import { DropzoneAreaBase } from "material-ui-dropzone";
-import { DataGrid } from "@material-ui/data-grid";
 import PageTitle from "../../components/PageTitle";
 import Service from "../../AxiosService";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
-import EditIcon from "../../assets/EditIcon.svg";
+import NotifDetail from "./NotificationDetail";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,10 +47,22 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   formControl: {
-    minWidth: "220px",
+    marginTop: theme.spacing(2),
+    width: "100%",
   },
   padding: {
     paddingRight: theme.spacing(3),
+  },
+  borderbox: {
+    padding: theme.spacing(1),
+    cursor: "pointer",
+    backgroundColor: "#fff",
+    border: "1px black solid",
+    marginBottom: theme.spacing(2),
+    "&:hover": {
+      backgroundColor: "#f5f5f5",
+      cursor: "pointer",
+    },
   },
 }));
 
@@ -202,7 +207,7 @@ const PartnerNotificationPage = () => {
 
     formData.append("title", notificationDetails.title);
     formData.append("description", notificationDetails.description);
-    formData.append("notification_type", "ANNOUCEMENT");
+    formData.append("notification_type", "GENERAL");
     formData.append("course_id", notificationDetails.courseId);
 
     if (notificationPhoto && notificationPhoto.length > 0) {
@@ -235,6 +240,8 @@ const PartnerNotificationPage = () => {
               photo: "",
               courseId: "",
             });
+            getNotificationSent();
+            setNotificationPhoto();
           })
           .catch();
       })
@@ -252,14 +259,25 @@ const PartnerNotificationPage = () => {
 
   useEffect(() => {
     getCourseCreated();
+    getNotificationSent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [notificationPhoto, setNotificationPhoto] = useState([]);
 
+  const [sentNotifications, setSentNotifications] = useState();
+
   const getNotificationSent = () => {
-    Service.client.get("/notifications");
+    Service.client
+      .get("/notifications", { params: { is_sender: true } })
+      .then((res) => {
+        setSentNotifications(res.data);
+      })
+      .catch();
   };
+
+  const [showNotifDetail, setShowNotifDetail] = useState(false);
+  const [selectedNotif, setSelectedNotif] = useState();
 
   return (
     <div className={classes.root}>
@@ -290,7 +308,7 @@ const PartnerNotificationPage = () => {
 
       <TabPanel value={value} index={0}>
         <Grid container>
-          <Grid item xs={8}>
+          <Grid item xs={8} className={classes.padding}>
             <div>
               <TextField
                 margin="normal"
@@ -396,7 +414,35 @@ const PartnerNotificationPage = () => {
         </Grid>
       </TabPanel>
 
-      <TabPanel value={value} index={1}></TabPanel>
+      <TabPanel value={value} index={1}>
+        {!showNotifDetail &&
+          sentNotifications &&
+          sentNotifications.length > 0 &&
+          sentNotifications.map((notif, index) => {
+            return (
+              <div
+                key={notif.id}
+                className={classes.borderbox}
+                onClick={() => {
+                  setShowNotifDetail(true);
+                  setSelectedNotif(notif);
+                }}
+              >
+                <Typography style={{ fontWeight: "700" }}>
+                  {notif.title}
+                </Typography>
+                {notif.description}
+              </div>
+            );
+          })}
+
+        {showNotifDetail && (
+          <NotifDetail
+            notification={selectedNotif}
+            setShowNotifDetail={setShowNotifDetail}
+          />
+        )}
+      </TabPanel>
     </div>
   );
 };

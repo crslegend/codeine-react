@@ -7,9 +7,6 @@ import { useHistory, useParams, useLocation } from "react-router";
 
 const styles = makeStyles((theme) => ({
   root: {
-    width: "60%",
-    marginLeft: "auto",
-    marginRight: "auto",
   },
   typography: {
     padding: theme.spacing(1),
@@ -93,7 +90,7 @@ const NotificationDetail = (props) => {
       >
         <Link
           onClick={() => {
-            history.push("/partner/home/notification");
+            setShowNotifDetail(false);
           }}
           className={classes.backLink}
         >

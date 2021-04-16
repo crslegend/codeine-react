@@ -162,7 +162,7 @@ const PartnerNavbar = ({}) => {
                 key={index}
                 notification={notification}
                 getUserNotifications={getUserNotifications}
-                userType="member"
+                userType="partner"
               />
             );
           })}
