@@ -73,7 +73,7 @@ const ApplicantDemographics = ({ memberDemographics }) => {
       for (let i = 0; i < memberDemographics.genders.length; i++) {
         obj = {
           gender:
-            memberDemographics.genders[i].gender === null
+            memberDemographics.genders[i].gender === null || memberDemographics.genders[i].gender === "U"
               ? "Unknown"
               : memberDemographics.genders[i].gender === "M"
               ? "Male"
@@ -90,9 +90,7 @@ const ApplicantDemographics = ({ memberDemographics }) => {
       for (let i = 0; i < memberDemographics.locations.length; i++) {
         obj = {
           location:
-            memberDemographics.locations[i].location === null
-              ? "Unknown"
-              : memberDemographics.locations[i].location,
+            memberDemographics.locations[i].location === null ? "Unknown" : memberDemographics.locations[i].location,
           Number: memberDemographics.locations[i].id__count,
         };
         arr.push(obj);
@@ -124,13 +122,7 @@ const ApplicantDemographics = ({ memberDemographics }) => {
         >
           <div style={{ display: "flex" }}>
             <Typography variant="h6">Average Age</Typography>
-            <TooltipMui
-              title={
-                <Typography variant="body2">
-                  The average age of the applicants
-                </Typography>
-              }
-            >
+            <TooltipMui title={<Typography variant="body2">The average age of the applicants</Typography>}>
               <IconButton disableRipple size="small">
                 <Info fontSize="small" color="primary" />
               </IconButton>
@@ -163,10 +155,7 @@ const ApplicantDemographics = ({ memberDemographics }) => {
                 >
                   {genderData &&
                     genderData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
                 <Tooltip />
@@ -194,12 +183,7 @@ const ApplicantDemographics = ({ memberDemographics }) => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="location">
-                <Label
-                  value={`Country of Origin`}
-                  position="bottom"
-                  offset={5}
-                  style={{ textAnchor: "middle" }}
-                />
+                <Label value={`Country of Origin`} position="bottom" offset={5} style={{ textAnchor: "middle" }} />
               </XAxis>
               <YAxis>
                 <Label
