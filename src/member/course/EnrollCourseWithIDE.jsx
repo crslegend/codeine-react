@@ -20,8 +20,12 @@ import {
   ExpandMore,
   FileCopyOutlined,
   Movie,
+  Menu,
+  HelpOutline,
+  Launch,
 } from "@material-ui/icons";
-import Fab from "@material-ui/core/Fab";
+import SpeedDial from "@material-ui/lab/SpeedDial";
+import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import LinkMui from "@material-ui/core/Link";
 import Service from "../../AxiosService";
 import ReactPlayer from "react-player";
@@ -69,6 +73,22 @@ const styles = makeStyles((theme) => ({
     marginTop: "15px",
     boxShadow: "2px 3px 0px #C74343",
   },
+  floatingButtonWrapper: {
+    position: "relative",
+    marginTop: theme.spacing(3),
+    height: 380,
+  },
+  speedDial: {
+    position: "absolute",
+    "&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft": {
+      bottom: theme.spacing(4),
+      right: theme.spacing(2),
+    },
+    "&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight": {
+      top: theme.spacing(2),
+      left: theme.spacing(2),
+    },
+  },
 }));
 
 const EnrollCourseWithIDE = ({
@@ -104,6 +124,36 @@ const EnrollCourseWithIDE = ({
   const [portNum, setPortNum] = useState();
   const [loadingIDE, setLoadingIDE] = useState(true);
 
+  // speed dial props
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  // speed dial actions
+  const actions = [
+    {
+      icon: <HelpOutline />,
+      name: "Tutorial",
+      action: () => {
+        window.open("https://www.youtube.com/watch?v=WPqXP_kLzpo", "_blank");
+        handleClose();
+      },
+    },
+    {
+      icon: <Launch />,
+      name: "Open In New Tab",
+      action: () => {
+        window.open("https://www.youtube.com/watch?v=WPqXP_kLzpo", "_blank", 'height=800, width=1080');
+        handleClose();
+      },
+    },
+  ];
+
   const startIDE = () => {
     // console.log(course);
     if (course && course.github_repo) {
@@ -138,13 +188,14 @@ const EnrollCourseWithIDE = ({
   };
 
   const checkIDE = () => {
-    setInterval(() =>
-      Service.client.get(`ide/${portNum}`).then((res) => {
-        if (res.data.ready) {
-          setLoadingIDE(false);
-          clearInterval();
-        }
-      }),
+    setInterval(
+      () =>
+        Service.client.get(`ide/${portNum}`).then((res) => {
+          if (res.data.ready) {
+            setLoadingIDE(false);
+            clearInterval();
+          }
+        }),
       3000
     );
   };
@@ -713,10 +764,28 @@ const EnrollCourseWithIDE = ({
             ) : null}
 
             <iframe width="100%" height="100%" src={`http://localhost:${portNum}`} title="ide" loading="lazy" />
-
-            <Fab color="primary" aria-label="add">
-              <Add />
-            </Fab>
+            <SpeedDial
+              ariaLabel="SpeedDial example"
+              className={classes.speedDial}
+              hidden={false}
+              icon={<Menu />}
+              onClose={handleClose}
+              onOpen={handleOpen}
+              open={open}
+              direction="up"
+              FabProps={{
+                size: "medium",
+              }}
+            >
+              {actions.map((action) => (
+                <SpeedDialAction
+                  key={action.name}
+                  icon={action.icon}
+                  tooltipTitle={action.name}
+                  onClick={action.action}
+                />
+              ))}
+            </SpeedDial>
           </div>
         </Splitter>
       </div>
