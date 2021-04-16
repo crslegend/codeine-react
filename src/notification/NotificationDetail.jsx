@@ -1,29 +1,15 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import More from "@material-ui/icons/MoreHoriz";
 import {
   Typography,
   Popover,
-  Grid,
   Avatar,
-  IconButton,
   ListItem,
   Button,
   Link,
 } from "@material-ui/core";
 import MemberNavBar from "../member/MemberNavBar";
 import Navbar from "../components/Navbar";
-import {
-  Computer,
-  ContactSupport,
-  Person,
-  Timeline,
-  Work,
-} from "@material-ui/icons";
-import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper, faFileCode } from "@fortawesome/free-solid-svg-icons";
 import partnerLogo from "../assets/codeineLogos/Partner.svg";
 import adminLogo from "../assets/codeineLogos/Admin.svg";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -63,7 +49,7 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   avatar: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
     width: theme.spacing(6),
     height: theme.spacing(6),
     marginBottom: theme.spacing(2),
@@ -298,15 +284,8 @@ const NotificationDetail = () => {
         {(userType === "partner" || userType === "admin") && (
           <Navbar logo={navLogo} bgColor="#fff" navbarItems={loggedInNavbar} />
         )}
-        <div style={{ marginTop: "65px" }}>
+        <div style={{ marginTop: "85px" }}>
           <div style={{ display: "flex" }}>
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type === "ACCOUNT" && (
-                <Avatar className={classes.avatar}>
-                  <Person />
-                </Avatar>
-              )}
             {notification &&
               notification.notification &&
               notification.notification.notification_type === "GENERAL" && (
@@ -314,52 +293,7 @@ const NotificationDetail = () => {
                   <InfoIcon />
                 </Avatar>
               )}
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type === "TECHNICAL" && (
-                <Avatar className={classes.avatar}>
-                  <Computer />
-                </Avatar>
-              )}
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type ===
-                "INDUSTRY_PROJECT" && (
-                <Avatar className={classes.avatar}>
-                  <Work />
-                </Avatar>
-              )}
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type ===
-                "CODE_REVIEWS" && (
-                <Avatar className={classes.avatar}>
-                  <Work />
-                </Avatar>
-              )}
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type ===
-                "CONSULTATION" && (
-                <Avatar className={classes.avatar}>
-                  <Timeline />
-                </Avatar>
-              )}
-            {notification &&
-              notification.notification &&
-              notification.notification.notification_type ===
-                "CONSULTATION" && (
-                <Avatar className={classes.avatar}>
-                  <Timeline />
-                </Avatar>
-              )}
-            {/* {notification.notification.notification_type === "PAYMENT" && (
-              <Avatar
-                src={PaymentIcon}
-                alt=""
-                style={{ height: "65px", width: "65px" }}
-              ></Avatar>
-            )} */}
+
             <div style={{ marginLeft: "15px" }}>
               <Typography
                 style={{
@@ -375,6 +309,15 @@ const NotificationDetail = () => {
                   color: "#797a7d",
                 }}
               >
+                Posted by{" "}
+                {notification.notification &&
+                notification.notification.sender &&
+                notification.notification.sender.is_admin
+                  ? "Codeine Admin ~ "
+                  : notification.notification.sender.first_name +
+                    " " +
+                    notification.notification.sender.last_name +
+                    " ~ "}
                 {calculateDateInterval(notification.notification.timestamp)}
               </Typography>
             </div>
@@ -393,53 +336,6 @@ const NotificationDetail = () => {
           </Typography>
         </div>
       </div>
-
-      <Popover
-        open={popover.popoverId === notification.id}
-        onClose={handleClose}
-        anchorEl={popover.anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <div className={classes.pop}>
-          <Typography
-            variant="body2"
-            className={classes.typography}
-            onClick={() => {
-              handleClose();
-              markUnread(notification.id);
-            }}
-          >
-            ✔ Mark as unread
-          </Typography>
-          <Typography
-            variant="body2"
-            className={classes.typography}
-            onClick={() => {
-              handleClose();
-              markRead(notification.id);
-            }}
-          >
-            ✔ Mark as read
-          </Typography>
-
-          <Typography
-            variant="body2"
-            className={classes.typography}
-            onClick={() => {
-              deleteNotif(notification.id);
-            }}
-          >
-            X Delete Notification
-          </Typography>
-        </div>
-      </Popover>
     </div>
   );
 };

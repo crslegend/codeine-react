@@ -207,7 +207,7 @@ const PartnerNotificationPage = () => {
 
     formData.append("title", notificationDetails.title);
     formData.append("description", notificationDetails.description);
-    formData.append("notification_type", "ANNOUCEMENT");
+    formData.append("notification_type", "GENERAL");
     formData.append("course_id", notificationDetails.courseId);
 
     if (notificationPhoto && notificationPhoto.length > 0) {

@@ -292,7 +292,7 @@ const AdminRoutesPage = () => {
                 key={index}
                 notification={notification}
                 getUserNotifications={getUserNotifications}
-                userType="member"
+                userType="admin"
               />
             );
           })}
