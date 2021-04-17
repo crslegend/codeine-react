@@ -1213,7 +1213,7 @@ const EditArticle = (props) => {
           </div>
           <div style={{ marginBottom: "30px" }}>
             <Typography variant="body2" style={{ paddingBottom: "10px" }}>
-              Course Language (Choose at least 1)
+              Language (Choose at least 1)
             </Typography>
             <div>
               <ToggleButton
@@ -1445,31 +1445,19 @@ const EditArticle = (props) => {
               </ToggleButton>
             </div>
           </div>
+          <Button
+            variant="contained"
+            className={classes.redButton}
+            onClick={handleClickOpen}
+            style={{
+              marginBottom: "10px",
+              marginRight: "15px",
+            }}
+          >
+            Delete Article
+          </Button>
           {articleDetails && articleDetails.is_published && (
             <>
-              <Button
-                variant="contained"
-                className={classes.greenButton}
-                style={{ marginBottom: "10px", marginRight: "15px" }}
-                onClick={(e) => saveAndPublishArticle(e)}
-              >
-                Save and publish
-              </Button>
-              {/* <Button
-                variant="contained"
-                style={{
-                  textTransform: "capitalize",
-                  marginLeft: "15px",
-                  marginRight: "15px",
-                  marginBottom: "10px",
-                }}
-                onClick={() => {
-                  setDialog2Open(true);
-                }}
-              >
-                Back to Article
-              </Button> */}
-
               <Button
                 variant="contained"
                 color="primary"
@@ -1482,6 +1470,14 @@ const EditArticle = (props) => {
               >
                 Unpublish
               </Button>
+              <Button
+                variant="contained"
+                className={classes.greenButton}
+                style={{ marginBottom: "10px", marginRight: "15px" }}
+                onClick={(e) => saveAndPublishArticle(e)}
+              >
+                Save and publish
+              </Button>
             </>
           )}
           {articleDetails && !articleDetails.is_published && (
@@ -1491,22 +1487,14 @@ const EditArticle = (props) => {
               style={{
                 marginRight: "15px",
                 marginBottom: "10px",
+                marginLeft: "15px",
+                float: "right",
               }}
               onClick={(e) => publishArticle(e)}
             >
               Publish
             </Button>
           )}
-          <Button
-            variant="contained"
-            className={classes.redButton}
-            onClick={handleClickOpen}
-            style={{
-              marginBottom: "10px",
-            }}
-          >
-            Delete Article
-          </Button>
         </Grid>
       </Grid>
       <Dialog

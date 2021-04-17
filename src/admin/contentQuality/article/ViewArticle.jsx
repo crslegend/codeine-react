@@ -7,16 +7,17 @@ import {
   Typography,
   Avatar,
   Link,
+  IconButton,
 } from "@material-ui/core";
 import { useHistory, useParams } from "react-router-dom";
 import Service from "../../../AxiosService";
-import UseAnimations from "react-useanimations";
-import heart from "react-useanimations/lib/heart";
-import CommentIcon from "@material-ui/icons/Comment";
 import CommentDrawer from "./ArticleComments";
 import Toast from "../../../components/Toast.js";
 import ReactQuill from "react-quill";
 import "../../../article/quill.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
+import { InsertEmoticon } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -338,19 +339,53 @@ const ViewArticle = (props) => {
             display: "flex",
           }}
         >
-          <UseAnimations
+          {/* <UseAnimations
             animation={heart}
             size={30}
             reverse={articleDetails.current_user_liked}
             //onClick={(e) => handleLikeArticle(e)}
-          />
-          <Typography style={{ marginRight: "15px" }}>
+          /> */}
+          <IconButton
+            disableRipple
+            classes={{
+              root: articleDetails.current_user_liked
+                ? classes.activeIconButton
+                : classes.iconButton,
+            }}
+            size="small"
+          >
+            <InsertEmoticon />
+            <span style={{ fontSize: "12px", margin: "0 2px" }}>
+              {articleDetails.engagements.length}
+            </span>
+          </IconButton>
+          {/* <Typography style={{ marginRight: "15px" }}>
             {articleDetails.engagements.length}
           </Typography>
           <CommentIcon onClick={() => setDrawerOpen(true)} />
           <Typography style={{ display: "inline-flex" }}>
             {articleDetails.top_level_comments.length}
-          </Typography>
+          </Typography> */}
+          <IconButton
+            disableRipple
+            classes={{
+              root: classes.iconButtonComment,
+            }}
+            onClick={() => setDrawerOpen(true)}
+          >
+            <FontAwesomeIcon
+              icon={faCommentAlt}
+              style={{
+                height: "20px",
+                width: "20px",
+                cursor: "pointer",
+                marginRight: "2px",
+              }}
+            />
+            <span style={{ fontSize: "12px", margin: "0 2px" }}>
+              {articleDetails.top_level_comments.length}
+            </span>
+          </IconButton>
         </div>
       </div>
       <CommentDrawer

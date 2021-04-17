@@ -286,12 +286,12 @@ const AdminArticleList = (props) => {
             root: classes.tabs,
           }}
         >
-          <Tab label="Drafts" {...a11yProps(0)} />
-          <Tab label="Published Articles" {...a11yProps(1)} />
+          <Tab label="Published Articles" {...a11yProps(0)} />
+          <Tab label="Drafts" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
 
-      <TabPanel value={value} index={0}>
+      <TabPanel value={value} index={1}>
         {articleList
           .filter((article) => !article.is_published)
           .map((article, index) => {
@@ -393,7 +393,7 @@ const AdminArticleList = (props) => {
             );
           })}
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      <TabPanel value={value} index={0}>
         {articleList
           .filter((article) => article.is_published)
           .map((article, index) => {

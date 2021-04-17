@@ -15,6 +15,7 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { useHistory, useParams, Link } from "react-router-dom";
+import MuiAlert from "@material-ui/lab/Alert";
 import Service from "../AxiosService";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,6 +34,17 @@ import "./quill.css";
 hljs.configure({
   languages: ["javascript", "ruby", "python", "rust", "java", "html", "css"],
 });
+
+function Alert(props) {
+  return (
+    <MuiAlert
+      elevation={6}
+      variant="filled"
+      style={{ width: "100%", marginTop: "20px" }}
+      {...props}
+    />
+  );
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -349,6 +361,13 @@ const ViewArticle = (props) => {
           </Link>
           <Typography>{articleDetails.title}</Typography>
         </Breadcrumbs>
+
+        {articleDetails.is_activated === false && (
+          <Alert severity="error">
+            Your article has been flagged and deactivate by Codeine.
+          </Alert>
+        )}
+
         <div
           style={{
             display: "flex",

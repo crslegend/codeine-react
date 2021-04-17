@@ -341,118 +341,12 @@ const PartnerArticlesList = (props) => {
                 root: classes.tabs,
               }}
             >
-              <Tab label="Drafts" {...a11yProps(0)} />
-              <Tab label="Published" {...a11yProps(1)} />
+              <Tab label="Published" {...a11yProps(0)} />
+              <Tab label="Drafts" {...a11yProps(1)} />
             </Tabs>
           </AppBar>
 
           <TabPanel value={value} index={0}>
-            {articleList
-              .filter((article) => !article.is_published)
-              .map((article, index) => {
-                return (
-                  <div key={article.id} className={classes.articlelists}>
-                    <Typography
-                      style={{ fontWeight: "700", cursor: "pointer" }}
-                      onClick={() => {
-                        history.push(`/article/edit/partner/${article.id}`);
-                      }}
-                    >
-                      {article.title.length === 0
-                        ? "Untitled article"
-                        : article.title}
-                    </Typography>
-                    <div style={{ display: "flex" }}>
-                      <Typography
-                        style={{ fontSize: "14px", color: "#757575" }}
-                      >
-                        Last edited{" "}
-                        {calculateDateInterval(article.date_edited) +
-                          " ~ " +
-                          article.content.length +
-                          " words so far"}
-                      </Typography>
-                      <ExpandMoreIcon
-                        style={{ color: "#757575" }}
-                        onClick={(e) => handlePopoverOpen(e, article.id)}
-                      />
-                      <Popover
-                        open={popover.popoverId === article.id}
-                        anchorEl={popover.anchorEl}
-                        onClose={handlePopoverClose}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                      >
-                        <div style={{ padding: "5px" }}>
-                          <Typography
-                            variant="body2"
-                            className={classes.typography}
-                            onClick={() => {
-                              history.push(
-                                `/article/edit/partner/${article.id}`
-                              );
-                            }}
-                          >
-                            Edit Draft
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            className={classes.typography}
-                            onClick={() => {
-                              handleDialogOpen(article.id);
-                              handlePopoverClose();
-                            }}
-                          >
-                            Delete Draft
-                          </Typography>
-                        </div>
-                      </Popover>
-                    </div>
-
-                    <div className={classes.divider}>
-                      <Divider />
-                    </div>
-                    <Dialog
-                      open={dialogStatus.dialogId === article.id}
-                      onClose={handleDialogClose}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                    >
-                      <DialogTitle id="alert-dialog-title">
-                        {"Delete Article?"}
-                      </DialogTitle>
-                      <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                          Are you sure you want to delete this article?
-                        </DialogContentText>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleDialogClose} variant="outlined">
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            deleteArticle(article.id);
-                            handlePopoverClose();
-                          }}
-                          variant="contained"
-                          className={classes.redButton}
-                        >
-                          Delete
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  </div>
-                );
-              })}
-          </TabPanel>
-          <TabPanel value={value} index={1}>
             {articleList
               .filter((article) => article.is_published)
               .map((article, index) => {
@@ -536,6 +430,112 @@ const PartnerArticlesList = (props) => {
                             }}
                           >
                             Delete
+                          </Typography>
+                        </div>
+                      </Popover>
+                    </div>
+
+                    <div className={classes.divider}>
+                      <Divider />
+                    </div>
+                    <Dialog
+                      open={dialogStatus.dialogId === article.id}
+                      onClose={handleDialogClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <DialogTitle id="alert-dialog-title">
+                        {"Delete Article?"}
+                      </DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                          Are you sure you want to delete this article?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleDialogClose} variant="outlined">
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            deleteArticle(article.id);
+                            handlePopoverClose();
+                          }}
+                          variant="contained"
+                          className={classes.redButton}
+                        >
+                          Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </div>
+                );
+              })}
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            {articleList
+              .filter((article) => !article.is_published)
+              .map((article, index) => {
+                return (
+                  <div key={article.id} className={classes.articlelists}>
+                    <Typography
+                      style={{ fontWeight: "700", cursor: "pointer" }}
+                      onClick={() => {
+                        history.push(`/article/edit/partner/${article.id}`);
+                      }}
+                    >
+                      {article.title.length === 0
+                        ? "Untitled article"
+                        : article.title}
+                    </Typography>
+                    <div style={{ display: "flex" }}>
+                      <Typography
+                        style={{ fontSize: "14px", color: "#757575" }}
+                      >
+                        Last edited{" "}
+                        {calculateDateInterval(article.date_edited) +
+                          " ~ " +
+                          article.content.length +
+                          " words so far"}
+                      </Typography>
+                      <ExpandMoreIcon
+                        style={{ color: "#757575" }}
+                        onClick={(e) => handlePopoverOpen(e, article.id)}
+                      />
+                      <Popover
+                        open={popover.popoverId === article.id}
+                        anchorEl={popover.anchorEl}
+                        onClose={handlePopoverClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                      >
+                        <div style={{ padding: "5px" }}>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={() => {
+                              history.push(
+                                `/article/edit/partner/${article.id}`
+                              );
+                            }}
+                          >
+                            Edit Draft
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className={classes.typography}
+                            onClick={() => {
+                              handleDialogOpen(article.id);
+                              handlePopoverClose();
+                            }}
+                          >
+                            Delete Draft
                           </Typography>
                         </div>
                       </Popover>
