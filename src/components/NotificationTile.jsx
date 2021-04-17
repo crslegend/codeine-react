@@ -156,6 +156,7 @@ const NotificationTile = (props) => {
           }
         } else if (res.data.notification.notification_type === "ARTICLE") {
           history.push(`/article/${res.data.notification.article.id}`);
+          history.go();
         } else if (res.data.notification.notification_type === "COURSE") {
           if (userType === "member") {
             history.push(`/courses/enroll/${res.data.notification.course.id}`);
