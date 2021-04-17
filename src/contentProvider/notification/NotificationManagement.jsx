@@ -13,6 +13,7 @@ import {
   MenuItem,
   Grid,
 } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Toast from "../../components/Toast.js";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import PageTitle from "../../components/PageTitle";
@@ -128,8 +129,12 @@ const PartnerNotificationPage = () => {
 
   const [coursesCreated, setCoursesCreated] = useState();
 
+  const [progress, setProgress] = useState(false);
+
   const createNotification = (e) => {
     e.preventDefault();
+
+    setProgress(true);
 
     if (notificationDetails.title === "") {
       setSbOpen(true);
@@ -138,6 +143,7 @@ const PartnerNotificationPage = () => {
         message: "Please enter a valid title!",
         severity: "error",
       });
+      setProgress(false);
       return;
     }
     if (notificationDetails.description === "") {
@@ -147,6 +153,7 @@ const PartnerNotificationPage = () => {
         message: "Please enter a valid description!",
         severity: "error",
       });
+      setProgress(false);
       return;
     }
     if (notificationDetails.courseId === "") {
@@ -156,6 +163,7 @@ const PartnerNotificationPage = () => {
         message: "Please select a course!",
         severity: "error",
       });
+      setProgress(false);
       return;
     }
 
@@ -199,10 +207,15 @@ const PartnerNotificationPage = () => {
             });
             getNotificationSent();
             setNotificationPhoto();
+            setProgress(false);
           })
-          .catch();
+          .catch(() => {
+            setProgress(false);
+          });
       })
-      .catch();
+      .catch(() => {
+        setProgress(false);
+      });
   };
 
   const getCourseCreated = () => {
@@ -334,16 +347,20 @@ const PartnerNotificationPage = () => {
                 </Select>
               </div>
 
-              <Button
-                color="secondary"
-                variant="contained"
-                style={{ textTransform: "capitalize", marginTop: "10px" }}
-                onClick={(e) => {
-                  createNotification(e);
-                }}
-              >
-                Send notification
-              </Button>
+              {progress ? (
+                <CircularProgress style={{ marginTop: "10px" }} />
+              ) : (
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  style={{ textTransform: "capitalize", marginTop: "10px" }}
+                  onClick={(e) => {
+                    createNotification(e);
+                  }}
+                >
+                  Send notification
+                </Button>
+              )}
             </div>
           </Grid>
           <Grid item xs={4}>
